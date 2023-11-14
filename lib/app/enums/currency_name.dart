@@ -1,0 +1,1 @@
+enum CurrencyName { pound, dirHam }

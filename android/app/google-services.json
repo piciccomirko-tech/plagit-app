@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "831689638350",
+    "project_id": "mirko-hospitality-ea7e2",
+    "storage_bucket": "mirko-hospitality-ea7e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:831689638350:android:b238febdefb09240dd2b9f",
+        "android_client_info": {
+          "package_name": "com.invain.mh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "831689638350-lup1rjkf8ec747016etitcnnlhj5hb1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPRLpwsfdMj_R_K8UDIuDLCzP40_Dfy_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "831689638350-lup1rjkf8ec747016etitcnnlhj5hb1p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

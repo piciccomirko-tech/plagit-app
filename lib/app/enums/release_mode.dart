@@ -1,0 +1,4 @@
+enum ReleaseMode {
+  debug,
+  release,
+}
