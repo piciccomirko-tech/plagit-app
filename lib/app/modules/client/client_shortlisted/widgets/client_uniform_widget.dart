@@ -27,9 +27,9 @@ class ClientUniformWidget extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 10),
-              const Text('Will you provide uniform to the'),
+               Text('Will you provide uniform to the', style: MyColors.l111111_dwhite(context).medium15),
               const SizedBox(height: 5),
-              const Text('employees?'),
+               Text('employees?', style: MyColors.l111111_dwhite(context).medium15),
               const SizedBox(height: 20),
               Obx(
                 () => RadioListTile(

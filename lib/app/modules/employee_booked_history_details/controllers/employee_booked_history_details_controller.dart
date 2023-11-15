@@ -1,14 +1,12 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:get/get.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
-import 'package:mh/app/common/utils/logcat.dart';
-import 'package:mh/app/common/utils/utils.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
+import 'package:mh/app/modules/client/client_shortlisted/widgets/client_uniform_image_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/models/single_booking_details_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
@@ -30,7 +28,6 @@ class EmployeeBookedHistoryDetailsController extends GetxController {
   void onInit() async {
     notificationId = Get.arguments;
     await _getBookingDetails();
-    await _getUniforms();
     super.onInit();
   }
 
@@ -85,8 +82,9 @@ class EmployeeBookedHistoryDetailsController extends GetxController {
     }
   }
 
-  Future<void> _getUniforms() async {
-    Either<CustomError, PositionInfoModel> responseData = await _apiHelper.getPositionInfo(positionId: '');
+  void onViewUniformClick() async {
+    Either<CustomError, PositionInfoModel> responseData =
+        await _apiHelper.getPositionInfo(positionId: _appController.user.value.employee?.positionId ?? '');
     responseData.fold((CustomError customError) {
       Utils.errorDialog(context!, customError);
     }, (response) {
@@ -96,7 +94,12 @@ class EmployeeBookedHistoryDetailsController extends GetxController {
       }
       uniformImageDataLoaded.value = true;
     });
-  }
 
-  void getPositionId() {}
+    Get.dialog(Dialog(
+      backgroundColor: MyColors.lightCard(Get.context!),
+      insetPadding: EdgeInsets.symmetric(horizontal: 15.0.w),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      child: ClientUniformImageWidget(positionInfoDetailsModel: positionInfo.value),
+    ));
+  }
 }

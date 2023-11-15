@@ -1,4 +1,5 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar_back_button.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
@@ -85,7 +86,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                   minLeadingWidth: 0.0,
                                   isThreeLine: true,
                                   leading: const CircleAvatar(
-                                    backgroundColor: MyColors.c_C6A34F,
+                                    backgroundColor: Colors.orange,
                                     child: Icon(Icons.notifications_active_outlined, color: MyColors.white),
                                   ),
                                   title: Text('${controller.bookingDetails.value.text}',
@@ -97,7 +98,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
                               Material(
                                 color: Colors.transparent,
                                 child: ListTile(
@@ -111,11 +112,42 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         'This restaurant is situated at a distance of ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609).toStringAsFixed(2)} miles from your location',
                                         style: MyColors.l111111_dwhite(context).semiBold15)),
                               ),
-                              const SizedBox(height: 20),
+                              const SizedBox(height: 10),
+                              if(controller.bookingDetails.value.uniformMandatory == true)
                               Material(
-                                  child: Text(
-                                      controller.bookingDetails.value.uniformMandatory==true?
-                                      'Your selected uniforms':'No uniform has been selected'))
+                                color: Colors.transparent,
+                                child: ListTile(
+                                    minVerticalPadding: 0.0,
+                                    minLeadingWidth: 0.0,
+                                    trailing: InkWell(
+                                      onTap: controller.onViewUniformClick,
+                                      child: const CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        child: Icon(Icons.remove_red_eye, color: MyColors.c_C6A34F),
+                                      ),
+                                    ),
+                                    leading:  CircleAvatar(
+                                      backgroundColor: Colors.purple,
+                                      child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
+                                    ),
+                                    title: Text(
+                                      "View your selected uniforms",
+                                        style: MyColors.l111111_dwhite(context).semiBold15)),
+                              )
+                              else
+                                Material(
+                                  color: Colors.transparent,
+                                  child: ListTile(
+                                      minVerticalPadding: 0.0,
+                                      minLeadingWidth: 0.0,
+                                      leading:  CircleAvatar(
+                                        backgroundColor: Colors.purple,
+                                        child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
+                                      ),
+                                      title: Text(
+                                          "No uniform has been selected",
+                                          style: MyColors.l111111_dwhite(context).semiBold15)),
+                                )
                             ],
                           )))
               ],

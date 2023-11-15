@@ -197,7 +197,7 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                       Row(
                         children: [
                           _detailsItem(MyAssets.exp, MyStrings.exp.tr, "${user.employeeExperience ?? 0} years"),
-                          _detailsItem(MyAssets.flag, 'Nationality:', user.nationality??''),
+                          _detailsItem(MyAssets.flag, '', user.nationality??''),
                         ],
                       ),
                       SizedBox(height: 8.h),

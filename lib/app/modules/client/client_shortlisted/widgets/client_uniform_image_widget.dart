@@ -24,10 +24,6 @@ class ClientUniformImageWidget extends StatelessWidget {
                   const Wrap()
                 ],
               ),
-              const SizedBox(height: 10),
-               Text('Here are the uniforms for different posts', style: MyColors.l111111_dwhite(context).medium15),
-              const SizedBox(height: 5),
-               Text('provided by us', style: MyColors.l111111_dwhite(context).medium15),
               const SizedBox(height: 20),
               SizedBox(
                 height: Get.width * 0.8,
