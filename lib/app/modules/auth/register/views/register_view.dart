@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:intl_phone_field/country_picker_dialog.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:mh/app/modules/auth/register/widgets/employee_extra_field_widget.dart';
-
 import '../../../../common/data/data.dart';
 import '../../../../common/style/my_decoration.dart';
 import '../../../../common/utils/exports.dart';

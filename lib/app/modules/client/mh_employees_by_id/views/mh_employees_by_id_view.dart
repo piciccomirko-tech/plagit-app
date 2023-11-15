@@ -197,7 +197,7 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                       Row(
                         children: [
                           _detailsItem(MyAssets.exp, MyStrings.exp.tr, "${user.employeeExperience ?? 0} years"),
-                          _detailsItem(MyAssets.totalHour, 'Total Hour:', "${user.totalWorkingHour?.toStringAsFixed(2) ?? 0}h"),
+                          _detailsItem(MyAssets.flag, 'Nationality:', user.nationality??''),
                         ],
                       ),
                       SizedBox(height: 8.h),
@@ -307,9 +307,13 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
               style: MyColors.l7B7B7B_dtext(controller.context!).medium11,
             ),
             SizedBox(width: 3.w),
-            Text(
-              value,
-              style: MyColors.l111111_dwhite(controller.context!).medium11,
+            Flexible(
+              child: Text(
+                value,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: MyColors.l111111_dwhite(controller.context!).medium11,
+              ),
             ),
           ],
         ),

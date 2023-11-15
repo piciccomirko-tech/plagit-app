@@ -151,8 +151,8 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          _detailsItem(MyAssets.totalHour, 'Total Hour:',
-                              (hiredHistory.employeeDetails?.totalWorkingHour ?? 0).toString()),
+                          _detailsItem(MyAssets.totalHour, 'Total hour:',
+                              "${double.parse(hiredHistory.employeeDetails?.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h"),
                           _detailsItem(MyAssets.rate, 'Rate:',
                               "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(hiredHistory.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}"),
                         ],
@@ -169,8 +169,11 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               margin: EdgeInsets.zero,
                               fontSize: 12,
                               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                              onTap: () => Get.toNamed(Routes.calender,
-                                  arguments: [hiredHistory.employeeDetails?.employeeId ?? '', '', hiredHistory.employeeDetails?.hasUniform == true ? null:false]),
+                              onTap: () => Get.toNamed(Routes.calender, arguments: [
+                                hiredHistory.employeeDetails?.employeeId ?? '',
+                                '',
+                                hiredHistory.employeeDetails?.hasUniform == true ? null : false
+                              ]),
                             ),
                           ),
                         ],

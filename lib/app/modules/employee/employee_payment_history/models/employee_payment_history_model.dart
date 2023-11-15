@@ -19,7 +19,7 @@ class EmployeePaymentHistory {
 
 class EmployeePaymentHistoryModel {
   String? sId;
-  double? totalHours;
+  String? totalHours;
   double? amount;
   double? employeeAmount;
   double? contractorHourlyRate;
@@ -33,7 +33,7 @@ class EmployeePaymentHistoryModel {
 
   EmployeePaymentHistoryModel(
       {this.sId,
-      this.totalHours = 0.0,
+      this.totalHours = "0.0",
       this.amount = 0.0,
       this.employeeAmount = 0.0,
       this.contractorHourlyRate = 0.0,
@@ -47,7 +47,7 @@ class EmployeePaymentHistoryModel {
 
   EmployeePaymentHistoryModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
-    totalHours = json['totalHours'] == null ? 0.0 : double.parse(json['totalHours'].toString());
+    totalHours = json['totalHours'].toString();
     amount = json['amount'] == null ? 0.0 : double.parse(json['amount'].toString());
     employeeAmount = json['employeeAmount'] == null ? 0.0 : double.parse(json['employeeAmount'].toString());
     contractorHourlyRate =

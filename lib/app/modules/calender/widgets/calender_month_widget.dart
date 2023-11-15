@@ -33,15 +33,10 @@ class CalenderMonthWidget extends StatelessWidget {
         bool canTapDate = false;
         bool canUpdateUnavailableDate = false;
 
-        if (Get.isRegistered<ClientHomeController>() == true &&
-            currentDate.toString().substring(0, 10) == today.toString().substring(0, 10)) {
+        if (currentDate.toString().substring(0, 10) == today.toString().substring(0, 10)) {
           borderColor = MyColors.c_C6A34F; // Today's date should be red
-          textColor = Colors.green;
-          canTapDate = true;
-        } else if (currentDate.toString().substring(0, 10) == today.toString().substring(0, 10)) {
-          borderColor = MyColors.c_C6A34F; // Today's date should be red
-          textColor = Colors.grey;
-        } else if (controller.dateListModel.value.bookedDates!.containsDate(currentDate)) {
+        }
+        if (controller.dateListModel.value.bookedDates!.containsDate(currentDate)) {
           textColor = Colors.red;
         } else if (controller.dateListModel.value.pendingDates!.containsDate(currentDate)) {
           textColor = Colors.amber;
@@ -50,6 +45,14 @@ class CalenderMonthWidget extends StatelessWidget {
           if (Get.isRegistered<EmployeeHomeController>()) {
             canUpdateUnavailableDate = true;
           }
+        } else if (Get.isRegistered<ClientHomeController>() == true &&
+            currentDate.toString().substring(0, 10) == today.toString().substring(0, 10)) {
+          borderColor = MyColors.c_C6A34F; // Today's date should be red
+          textColor = Colors.green;
+          canTapDate = true;
+        } else if (currentDate.toString().substring(0, 10) == today.toString().substring(0, 10)) {
+          borderColor = MyColors.c_C6A34F; // Today's date should be red
+          textColor = Colors.grey;
         } else if (currentDate.isBefore(DateTime.now()) || controller.selectedDate.value == currentDate) {
           textColor = Colors.grey;
         } else {

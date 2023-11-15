@@ -62,8 +62,8 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
           const CustomAppbarBackButton(),
           const Spacer(),
           Container(
-            width: 210.w,
-            height: 218.h,
+            width: 250.w,
+            height: 300.h,
             decoration: BoxDecoration(
               color: Colors.grey.withOpacity(.1),
               borderRadius: BorderRadius.circular(20),
@@ -292,7 +292,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
             Row(
               children: [
                 _detailsItem(MyAssets.totalHour, '${MyStrings.totalHour.tr}:',
-                    "${(controller.employee.totalWorkingHour?.toStringAsFixed(2) ?? 0)}h"),
+                    "${double.parse(controller.employee.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h"),
                 const Spacer(),
                 _detailsItem(MyAssets.review, MyStrings.review.tr, "1 time"),
               ],
@@ -314,7 +314,6 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
               ],
             ),
             SizedBox(height: 18.h),
-
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -322,7 +321,6 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
                     MyAssets.organization, 'Current Organization:', controller.employee.currentOrganisation ?? "-"),
               ],
             ),
-
             SizedBox(height: 5.h),
           ],
         ),

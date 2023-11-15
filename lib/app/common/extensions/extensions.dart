@@ -48,6 +48,12 @@ extension ImageUrl on String {
   }
 }
 
+extension UniformImageUrl on String {
+  String get uniformImageUrl {
+    return "https://mh-user-bucket.s3.amazonaws.com/public/$this";
+  }
+}
+
 extension PaymentMethods on SelectedPaymentMethod {
   bool get isCard => this == SelectedPaymentMethod.card;
 

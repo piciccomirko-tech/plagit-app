@@ -21,7 +21,7 @@ class Employee {
     this.permanentAddress,
     this.higherEducation,
     this.licensesNo,
-    this.emmergencyContact,
+    this.emergencyContact,
     this.countryName,
     this.sourceFrom,
     this.employeeExperience,
@@ -64,11 +64,11 @@ class Employee {
   final String? permanentAddress;
   final String? higherEducation;
   final String? licensesNo;
-  final String? emmergencyContact;
+  final String? emergencyContact;
   final String? countryName;
   final String? employeeExperience;
   final double? rating;
-  final double? totalWorkingHour;
+  final String? totalWorkingHour;
   final double? hourlyRate;
   final bool? isReferPerson;
   final bool? isHired;
@@ -114,13 +114,13 @@ class Employee {
     permanentAddress: json["permanentAddress"],
     higherEducation: json["higherEducation"],
     licensesNo: json["licensesNo"],
-    emmergencyContact: json["emmergencyContact"],
+    emergencyContact: json["emmergencyContact"],
     countryName: json["countryName"],
     sourceFrom: json["sourceFrom"],
     employeeExperience: json["employeeExperience"].toString(),
     hourlyRate: json["hourlyRate"] == null ? 0.0 : double.parse(json["hourlyRate"].toString()),
     rating: json["rating"] == null ? 0.0 : double.parse(json["rating"].toString()),
-    totalWorkingHour: json["totalWorkingHour"] == null ? 0.0 : double.parse(json["totalWorkingHour"].toString()),
+    totalWorkingHour: json["totalWorkingHour"].toString(),
     isReferPerson: json["isReferPerson"],
     isHired: json["isHired"],
     hiredFromDate: json["hiredFromDate"] == null ? null : DateTime.parse(json["hiredFromDate"]),
@@ -159,7 +159,7 @@ class Employee {
     "permanentAddress": permanentAddress,
     "higherEducation": higherEducation,
     "licensesNo": licensesNo,
-    "emmergencyContact": emmergencyContact,
+    "emmergencyContact": emergencyContact,
     "countryName": countryName,
     "sourceFrom": sourceFrom,
     "employeeExperience": employeeExperience,
@@ -201,7 +201,7 @@ class Employee {
     permanentAddress: permanentAddress,
     higherEducation: higherEducation,
     licensesNo: licensesNo,
-    emmergencyContact: emmergencyContact,
+    emergencyContact: emergencyContact,
     countryName: userInfo.details?.countryName ?? countryName,
     sourceFrom: sourceFrom,
     employeeExperience: employeeExperience,

@@ -201,7 +201,11 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          _detailsItem(controller.getPositionLogo(user.positionId!), user.positionName ?? "", ""),
+                          _detailsItem(
+                              tag: 'position',
+                              controller.getPositionLogo(user.positionId!),
+                              user.positionName ?? "",
+                              ""),
                           _activeStatus(active: user.active ?? false),
                           const SizedBox(width: 7),
                         ],
@@ -210,7 +214,10 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                       Row(
                         children: [
                           _detailsItem(
-                              MyAssets.totalHour, MyStrings.totalHour.tr, (user.totalWorkingHour ?? 0.0).toString()),
+                              tag: '',
+                              MyAssets.flag,
+                              'Nationality:',
+                              user.nationality??'TBA'),
                         ],
                       ),
                     ],
@@ -225,18 +232,19 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
   }
 
   Widget _image(String profilePicture) => Container(
-        margin: const EdgeInsets.fromLTRB(16, 16, 13, 16),
-        width: 74.w,
-        height: 74.w,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          color: Colors.grey.withOpacity(.1),
-        ),
-        child: CustomNetworkImage(
-          url: profilePicture,
-          radius: 5,
-        ),
-      );
+    margin: const EdgeInsets.fromLTRB(16, 16, 13, 16),
+    width: 70.w,
+    height: 74.w,
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(5),
+      color: Colors.grey.withOpacity(.1),
+    ),
+    child: CustomNetworkImage(
+      url: profilePicture,
+      fit: BoxFit.fill,
+      radius: 5,
+    ),
+  );
 
   Widget _name(String name) => Text(
         name,
@@ -272,14 +280,16 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
         ),
       );
 
-  Widget _detailsItem(String icon, String title, String value) => Expanded(
+  Widget _detailsItem(String icon, String title, String value, {required String tag}) => Expanded(
         child: Row(
           children: [
-            Image.asset(
-              icon,
-              width: 14.w,
-              height: 14.w,
-            ),
+            tag == 'position'
+                ? SizedBox(width: 14.w, height: 14.w, child: CustomNetworkImage(url: icon.uniformImageUrl))
+                : Image.asset(
+                    icon,
+                    width: 14.w,
+                    height: 14.w,
+                  ),
             SizedBox(width: 10.w),
             Text(
               title,

@@ -7,7 +7,7 @@ class EmployeeDetails {
   String? permanentAddress;
   dynamic employeeExperience;
   double? rating;
-  double? totalWorkingHour;
+  String? totalWorkingHour;
   double? hourlyRate;
   double? contractorHourlyRate;
   String? sId;
@@ -54,7 +54,7 @@ class EmployeeDetails {
     permanentAddress = json['permanentAddress'];
     employeeExperience = json['employeeExperience'];
     rating = json['rating'] == null ? 0.0 : double.parse(json['rating'].toString());
-    totalWorkingHour = json['totalWorkingHour'] == null ? 0.0 : double.parse(json['totalWorkingHour'].toString());
+    totalWorkingHour = json['totalWorkingHour'].toString();
     hourlyRate = json['hourlyRate'] == null ? 0.0 : double.parse(json['hourlyRate'].toString());
     contractorHourlyRate =
         json['contractorHourlyRate'] == null ? 0.0 : double.parse(json['contractorHourlyRate'].toString());

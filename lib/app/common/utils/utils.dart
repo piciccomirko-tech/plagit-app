@@ -223,7 +223,7 @@ class Utils {
         restaurantName: '-',
         position: '-',
         contractorPerHoursRate: 0.0,
-        totalHours: 0.0,
+        totalHours: '0.0',
         employeeAmount: 0.0,
         status: '-');
 
@@ -237,7 +237,7 @@ class Utils {
     employeePayment.restaurantName = element.restaurantName ?? '';
     employeePayment.position = element.positionName ?? '';
     employeePayment.contractorPerHoursRate = element.contractorHourlyRate ?? 0.0;
-    employeePayment.totalHours = element.totalHours ?? 0.0;
+    employeePayment.totalHours = element.totalHours??'0.0';
     employeePayment.employeeAmount = element.employeeAmount ?? 0.0;
     employeePayment.status = element.status ?? '';
     return employeePayment;

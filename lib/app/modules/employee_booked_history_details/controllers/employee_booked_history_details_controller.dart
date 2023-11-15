@@ -1,12 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/logcat.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
+import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/single_booking_details_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
@@ -18,13 +20,17 @@ class EmployeeBookedHistoryDetailsController extends GetxController {
   String notificationId = '';
 
   final ApiHelper _apiHelper = Get.find<ApiHelper>();
+  final AppController _appController = Get.find<AppController>();
 
   BuildContext? context;
+  Rx<PositionInfoDetailsModel> positionInfo = PositionInfoDetailsModel().obs;
+  RxBool uniformImageDataLoaded = false.obs;
 
   @override
   void onInit() async {
     notificationId = Get.arguments;
     await _getBookingDetails();
+    await _getUniforms();
     super.onInit();
   }
 
@@ -78,4 +84,19 @@ class EmployeeBookedHistoryDetailsController extends GetxController {
       Utils.showSnackBar(message: 'You cannot delete when you have only one range of booking date', isTrue: false);
     }
   }
+
+  Future<void> _getUniforms() async {
+    Either<CustomError, PositionInfoModel> responseData = await _apiHelper.getPositionInfo(positionId: '');
+    responseData.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError);
+    }, (response) {
+      if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+        positionInfo.value = response.details!;
+        positionInfo.refresh();
+      }
+      uniformImageDataLoaded.value = true;
+    });
+  }
+
+  void getPositionId() {}
 }

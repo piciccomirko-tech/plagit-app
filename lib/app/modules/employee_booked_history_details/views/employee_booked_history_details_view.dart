@@ -47,7 +47,6 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                         ? Center(child: ShimmerWidget.bookingDetailsShimmerWidget())
                         : Column(
                             children: [
-                              const SizedBox(height: 20),
                               Container(
                                   width: Get.width * 0.8,
                                   padding: const EdgeInsets.all(10.0),
@@ -78,7 +77,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                   );
                                 }).toList(),
                               ),
-                              const SizedBox(height: 50),
+                              const SizedBox(height: 20),
                               Material(
                                 color: Colors.transparent,
                                 child: ListTile(
@@ -112,6 +111,11 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         'This restaurant is situated at a distance of ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609).toStringAsFixed(2)} miles from your location',
                                         style: MyColors.l111111_dwhite(context).semiBold15)),
                               ),
+                              const SizedBox(height: 20),
+                              Material(
+                                  child: Text(
+                                      controller.bookingDetails.value.uniformMandatory==true?
+                                      'Your selected uniforms':'No uniform has been selected'))
                             ],
                           )))
               ],

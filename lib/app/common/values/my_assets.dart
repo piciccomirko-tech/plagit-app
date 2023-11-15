@@ -28,6 +28,7 @@ class MyAssets {
   static const exp = "assets/images/exp.png";
   static const rate = "assets/images/rate.png";
   static const totalHour = "assets/images/total_hour.png";
+  static const flag = "assets/images/flag.png";
   static const review = "assets/images/review.png";
   static const license = "assets/images/license.png";
   static const height = "assets/icons/height.png";

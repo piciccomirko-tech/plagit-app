@@ -199,7 +199,7 @@ class SuggestedEmployeeDetail {
   final String? positionId;
   final String? positionName;
   final double? rating;
-  final double? totalWorkingHour;
+  final String? totalWorkingHour;
   final double? hourlyRate;
   final String? profilePicture;
   final String? cv;
@@ -215,7 +215,7 @@ class SuggestedEmployeeDetail {
     positionId: json["positionId"],
     positionName: json["positionName"],
     rating: json["rating"] == null ? 0.0 : double.parse(json["rating"].toString()),
-    totalWorkingHour: json["totalWorkingHour"] == null ? 0.0 : double.parse(json["totalWorkingHour"].toString()),
+    totalWorkingHour: json["totalWorkingHour"].toString(),
     hourlyRate: double.parse(json["hourlyRate"].toString()),
     profilePicture: json["profilePicture"],
     cv: json["cv"],

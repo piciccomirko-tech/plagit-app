@@ -4,7 +4,7 @@ class EmployeePaymentModel {
   String restaurantName;
   String position;
   double contractorPerHoursRate;
-  double totalHours;
+  String totalHours;
   double employeeAmount;
   String status;
 

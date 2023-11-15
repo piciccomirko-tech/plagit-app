@@ -68,7 +68,7 @@ class Details {
   bool? verified;
   bool? active;
   double? rating;
-  double? totalWorkingHour;
+  String? totalWorkingHour;
   double? hourlyRate;
   double? clientDiscount;
   PushNotificationDetails? pushNotificationDetails;
@@ -176,7 +176,7 @@ class Details {
     verified = json['verified'];
     active = json['active'];
     rating = json['rating'] == null ? 0.0 : double.parse(json['rating'].toString());
-    totalWorkingHour = json['totalWorkingHour'] == null ? 0.0 : double.parse(json['totalWorkingHour'].toString());
+    totalWorkingHour = json['totalWorkingHour'].toString();
     hourlyRate = json['hourlyRate'] == null ? 0.0 : double.parse(json['hourlyRate'].toString());
     clientDiscount = json['clientDiscount'] == null ? 0.0 : double.parse(json['clientDiscount'].toString());
     pushNotificationDetails = json['pushNotificationDetails'] != null

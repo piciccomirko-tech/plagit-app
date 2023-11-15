@@ -13,11 +13,13 @@ class PositionInfoModel {
 }
 
 class PositionInfoDetailsModel {
+  String? name;
   List<String>? images;
 
-  PositionInfoDetailsModel({this.images});
+  PositionInfoDetailsModel({this.name, this.images});
 
   PositionInfoDetailsModel.fromJson(Map<String, dynamic> json) {
+    name = json['name'];
     images = json['images'].cast<String>();
   }
 }

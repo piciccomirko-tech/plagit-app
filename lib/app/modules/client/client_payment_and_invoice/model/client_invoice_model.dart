@@ -24,7 +24,7 @@ class InvoiceModel {
   double? platformFee;
   double? amount;
   int? totalEmployee;
-  double? totalWorkingHour;
+  String? totalWorkingHour;
   DateTime? fromWeekDate;
   DateTime? toWeekDate;
   DateTime? invoiceDate;
@@ -57,7 +57,7 @@ class InvoiceModel {
   InvoiceModel.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     amount = json['amount'] == null ? 0.0 : double.parse(json['amount'].toString());
-    totalWorkingHour = json['totalWorkingHour'] == null ? 0.0 : double.parse(json['totalWorkingHour'].toString());
+    totalWorkingHour = json['totalWorkingHour'].toString();
     totalAmount = json['totalAmount'] == null ? 0.0 : double.parse(json['totalAmount'].toString());
     vat = json['vat'].toString();
     vatAmount = json['vatAmount'] == null ? 0.0 : double.parse(json['vatAmount'].toString());

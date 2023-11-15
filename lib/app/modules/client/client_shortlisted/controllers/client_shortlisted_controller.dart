@@ -24,7 +24,7 @@ class ClientShortlistedController extends GetxController {
 
   RxString selectedOption = ''.obs;
 
-  RxList<String> uniformImageList = <String>[].obs;
+  Rx<PositionInfoDetailsModel> positionInfo = PositionInfoDetailsModel().obs;
   RxBool uniformImageDataLoaded = false.obs;
 
   UpdateShortListRequestModel? updateShortListRequestModel;
@@ -67,7 +67,8 @@ class ClientShortlistedController extends GetxController {
     }
   }
 
-  void onUniformClick({required String shortListId, required List<RequestDateModel> requestDateList, required String positionId}) {
+  void onUniformClick(
+      {required String shortListId, required List<RequestDateModel> requestDateList, required String positionId}) {
     updateShortListRequestModel =
         UpdateShortListRequestModel(shortListId: shortListId, requestDateList: requestDateList, uniformMandatory: null);
     employeePositionId = positionId;
@@ -129,13 +130,13 @@ class ClientShortlistedController extends GetxController {
 
   void onViewUniformClick() async {
     Either<CustomError, PositionInfoModel> responseData =
-        await _apiHelper.getPositionInfo(positionId: employeePositionId??'');
+        await _apiHelper.getPositionInfo(positionId: employeePositionId ?? '');
     responseData.fold((CustomError customError) {
       Utils.errorDialog(context!, customError);
     }, (response) {
-      if (response.status == "success" && response.statusCode == 200) {
-        uniformImageList.value = response.details?.images ?? [];
-        uniformImageList.refresh();
+      if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+        positionInfo.value = response.details!;
+        positionInfo.refresh();
       }
       uniformImageDataLoaded.value = true;
     });
@@ -144,7 +145,7 @@ class ClientShortlistedController extends GetxController {
       backgroundColor: MyColors.lightCard(Get.context!),
       insetPadding: EdgeInsets.symmetric(horizontal: 15.0.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      child: ClientUniformImageWidget(imageList: uniformImageList),
+      child: ClientUniformImageWidget(positionInfoDetailsModel: positionInfo.value),
     ));
   }
 }

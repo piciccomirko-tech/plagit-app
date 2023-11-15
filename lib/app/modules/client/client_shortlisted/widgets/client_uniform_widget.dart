@@ -22,31 +22,31 @@ class ClientUniformWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const CustomAppbarBackButton(),
-                  Text('Select Uniform', style: MyColors.l111111_dwhite(context).semiBold20),
+                  Text('Uniform Provided?', style: MyColors.l111111_dwhite(context).semiBold20),
                   const Wrap()
                 ],
               ),
               const SizedBox(height: 10),
-              const Text('Do you need employees to have uniform'),
+              const Text('Will you provide uniform to the'),
               const SizedBox(height: 5),
-              const Text('from us?'),
+              const Text('employees?'),
               const SizedBox(height: 20),
               Obx(
                 () => RadioListTile(
                   activeColor: MyColors.c_C6A34F,
-                  title: Text('Yes, Definitely needed', style: MyColors.l111111_dwhite(context).semiBold18),
+                  title: Text('Yes, we will', style: MyColors.l111111_dwhite(context).semiBold18),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 5),
-                      const Text(
-                          'In case if you need any uniform from us for employees, different uniforms for different post (eg: chef, waiter)',
-                          style: TextStyle(fontSize: 12)),
+                       Text(
+                          'We will provide different uniforms for our employees',
+                          style: MyColors.l111111_dwhite(context).medium13),
                       const SizedBox(height: 5),
                       InkWell(
                         onTap: clientShortlistedController.onViewUniformClick,
                         child: const Text(
-                          'View Uniform',
+                          'View Sample Uniform',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             decoration: TextDecoration.underline,
@@ -61,16 +61,22 @@ class ClientUniformWidget extends StatelessWidget {
                   onChanged: clientShortlistedController.onUniformChange,
                 ),
               ),
+              const SizedBox(height: 10),
               Obx(
                 () => RadioListTile(
                   activeColor: MyColors.c_C6A34F,
-                  title: Text('No need', style: MyColors.l111111_dwhite(context).semiBold18),
-                  subtitle: const Column(
+                  title: Text("No, we don't", style: MyColors.l111111_dwhite(context).semiBold18),
+                  subtitle:  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 5),
+                      const SizedBox(height: 5),
                       Text(
-                          "In case if you don't need any uniform from us, or you have your own uniform for the employees",
-                          style: TextStyle(fontSize: 12)),
+                          "We will not provide any uniforms for our employees.",
+                          style: MyColors.l111111_dwhite(context).medium13),
+                      const SizedBox(height: 5),
+                      Text(
+                          "It's not mandatory",
+                          style: MyColors.l111111_dwhite(context).medium13),
                     ],
                   ),
                   value: 'No',

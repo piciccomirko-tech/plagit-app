@@ -193,7 +193,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
         _cell(
             width: 100.w,
             height: height,
-            value: '${(invoice.totalWorkingHour?.toStringAsFixed(2) ?? 0.0).toString()}h',
+            value: "${double.parse(invoice.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h",
             isPaid: invoice.status == "PAID"),
         _cell(
             width: 100.w,

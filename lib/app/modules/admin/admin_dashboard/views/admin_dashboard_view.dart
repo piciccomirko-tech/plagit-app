@@ -50,6 +50,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                               const Icon(
                                 Icons.arrow_drop_down_circle,
                                 size: 16,
+                                color: MyColors.c_C6A34F,
                               ),
                             ],
                           ),

@@ -70,11 +70,7 @@ class MhEmployeesView extends GetView<MhEmployeesController> {
               SizedBox(
                 width: 50.w,
                 height: 50.w,
-                child: CustomNetworkImage(
-                  url: (position.logo ?? '').imageUrl,
-                  //  width: 50.w,
-                  // height: 50.w,
-                ),
+                child: CustomNetworkImage(url: (position.logo ?? '').uniformImageUrl),
               ),
               SizedBox(height: 9.h),
               Text(
