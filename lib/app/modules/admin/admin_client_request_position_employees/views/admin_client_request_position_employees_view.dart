@@ -184,7 +184,7 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
                         children: [
                           _detailsItem(MyAssets.exp, MyStrings.exp.tr, (user.employeeExperience ?? 0).toString()),
                           _detailsItem(
-                              MyAssets.totalHour, MyStrings.totalHour.tr, (user.totalWorkingHour ?? 0).toString()),
+                              MyAssets.totalHour, MyStrings.totalHour.tr, user.totalWorkingHour ?? '0.0'),
                         ],
                       ),
                       SizedBox(height: 8.h),

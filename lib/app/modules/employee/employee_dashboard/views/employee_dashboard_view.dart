@@ -31,7 +31,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
                       Expanded(
                         child: HorizontalDataTable(
                           leftHandSideColumnWidth: 90.w,
-                          rightHandSideColumnWidth: 520.w,
+                          rightHandSideColumnWidth: 670.w,
                           isFixedHeader: true,
                           headerWidgets: _getTitleWidget(),
                           leftSideItemBuilder: _generateFirstColumnRow,
@@ -54,10 +54,11 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
   List<Widget> _getTitleWidget() {
     return [
       _getTitleItemWidget('Date', 90.w),
-      _getTitleItemWidget('Check in', 100.w),
-      _getTitleItemWidget('Check out', 100.w),
+      _getTitleItemWidget('Restaurant Name', 150.w),
+      _getTitleItemWidget('Check In', 100.w),
+      _getTitleItemWidget('Check Out', 100.w),
       _getTitleItemWidget('Break Time', 100.w),
-      _getTitleItemWidget('Total hours', 100.w),
+      _getTitleItemWidget('Total Hours', 100.w),
       _getTitleItemWidget('Complain', 120.w),
     ];
   }
@@ -92,6 +93,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
 
     return Row(
       children: <Widget>[
+        _cell(width: 150.w, value: dailyStatistics.restaurantName, clientUpdatedValue: dailyStatistics.restaurantName),
         _cell(width: 100.w, value: dailyStatistics.displayCheckInTime, clientUpdatedValue: dailyStatistics.employeeCheckInTime),
         _cell(width: 100.w, value: dailyStatistics.displayCheckOutTime, clientUpdatedValue: dailyStatistics.employeeCheckOutTime),
         _cell(width: 100.w, value: dailyStatistics.displayBreakTime, clientUpdatedValue: dailyStatistics.employeeBreakTime),

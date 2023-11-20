@@ -44,8 +44,9 @@ class ClientMyEmployeeController extends GetxController {
     });
   }
 
-  void onCalenderClick({required List<RequestDateModel> requestDateList}) {
-    Get.bottomSheet(EmployeeHiredHistoryDetailsWidget(requestDateList: requestDateList));
+  void onCalenderClick({required List<RequestDateModel> bookedDateList}) {
+    bookedDateList.sort((RequestDateModel a, RequestDateModel b) => a.startDate!.compareTo(b.startDate!));
+    calculatePreviousDates(bookedDateList: bookedDateList);
   }
 
   void chatWithEmployee({required String employeeName, required String employeeId}) {
@@ -56,5 +57,18 @@ class ClientMyEmployeeController extends GetxController {
       MyStrings.arg.clientId: appController.user.value.userId,
       MyStrings.arg.employeeId: employeeId,
     });
+  }
+
+  void calculatePreviousDates({required List<RequestDateModel> bookedDateList}) {
+    for (var i in bookedDateList) {
+      if (DateTime.parse(i.endDate ?? '').toString().substring(0, 10) == DateTime.now().toString().substring(0, 10)) {
+        i.status = '';
+      } else if (DateTime.parse(i.endDate ?? '').isBefore(DateTime.now())) {
+        i.status = 'Done';
+      } else {
+        i.status = '';
+      }
+    }
+    Get.bottomSheet(EmployeeHiredHistoryDetailsWidget(requestDateList: bookedDateList));
   }
 }

@@ -143,7 +143,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               MyAssets.exp, "", Utils.getPositionName(hiredHistory.employeeDetails?.positionId ?? "")),
                           InkWell(
                               onTap: () =>
-                                  controller.onCalenderClick(requestDateList: hiredHistory.requestDateList ?? []),
+                                  controller.onCalenderClick(bookedDateList: hiredHistory.requestDateList ?? []),
                               child: Image.asset(MyAssets.calender2, height: 20, width: 20)),
                           SizedBox(width: 8.w)
                         ],
@@ -151,8 +151,8 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          _detailsItem(MyAssets.totalHour, 'Total hour:',
-                              "${double.parse(hiredHistory.employeeDetails?.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h"),
+                         /* _detailsItem(MyAssets.totalHour, 'Total hour:',
+                              "${double.parse(hiredHistory.employeeDetails?.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h"),*/
                           _detailsItem(MyAssets.rate, 'Rate:',
                               "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(hiredHistory.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}"),
                         ],

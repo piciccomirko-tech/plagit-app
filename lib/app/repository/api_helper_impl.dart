@@ -555,7 +555,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<Response> checkout({required EmployeeCheckOutRequestModel employeeCheckOutRequestModel}) async {
-    var response = await put("current-hired-employees/update", jsonEncode(employeeCheckOutRequestModel.toJson()));
+    Response response = await put("current-hired-employees/update", jsonEncode(employeeCheckOutRequestModel.toJson()));
     if (response.statusCode == null) {
       response = await put("current-hired-employees/update", jsonEncode(employeeCheckOutRequestModel.toJson()));
     }
@@ -589,7 +589,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<Response> deleteAccount(Map<String, dynamic> data) async {
-    var response = await put("users/update-status", jsonEncode(data));
+    Response response = await put("users/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("users/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("users/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("users/update-status", jsonEncode(data));
@@ -620,7 +620,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<TodayCheckInOutDetails> getTodayCheckInOutDetails(String employeeId) async {
-    var response = await get("current-hired-employees/details/$employeeId");
+    Response response = await get("current-hired-employees/details/$employeeId");
     if (response.statusCode == null) response = await get("current-hired-employees/details/$employeeId");
     if (response.statusCode == null) response = await get("current-hired-employees/details/$employeeId");
     if (response.statusCode == null) response = await get("current-hired-employees/details/$employeeId");
@@ -656,7 +656,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<CheckInCheckOutHistory> getEmployeeCheckInOutHistory() async {
-    var response = await get("check-in-check-out-histories/list");
+    Response response = await get("check-in-check-out-histories/list");
     if (response.statusCode == null) response = await get("check-in-check-out-histories/list");
     if (response.statusCode == null) response = await get("check-in-check-out-histories/list");
     if (response.statusCode == null) response = await get("check-in-check-out-histories/list");
@@ -699,7 +699,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<Response> addEmployeeAsSuggest(Map<String, dynamic> data) async {
-    var response = await put("request-employees/update", jsonEncode(data));
+    Response response = await put("request-employees/update", jsonEncode(data));
     if (response.statusCode == null) response = await put("request-employees/update", jsonEncode(data));
     if (response.statusCode == null) response = await put("request-employees/update", jsonEncode(data));
     if (response.statusCode == null) response = await put("request-employees/update", jsonEncode(data));
@@ -713,7 +713,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<OneToOneMsg> getMsg(String senderId, String receiverId) async {
-    var response = await get("messages?receiverId=$receiverId&senderId=$senderId");
+    Response response = await get("messages?receiverId=$receiverId&senderId=$senderId");
     if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
     if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
     if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
@@ -726,7 +726,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<Response> sendMsg(Map<String, dynamic> data) async {
-    var response = await post("messages/create", jsonEncode(data));
+    Response response = await post("messages/create", jsonEncode(data));
     if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
     if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
     if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
@@ -742,7 +742,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<EmployeeFullDetails> employeeFullDetails(String id) async {
     String url = "users/$id";
 
-    var response = await get(url);
+    Response response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
@@ -755,7 +755,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<ClientRegistrationResponse> updateClientProfile(ClientProfileUpdate clientProfileUpdate) async {
-    var response = await put("users/update-client", jsonEncode(clientProfileUpdate.toJson));
+    Response response = await put("users/update-client", jsonEncode(clientProfileUpdate.toJson));
     if (response.statusCode == null) {
       response = await put("users/update-client", jsonEncode(clientProfileUpdate.toJson));
     }
@@ -776,7 +776,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<ClientInvoiceModel> getClientInvoice(String clientId) async {
     String url = "invoices?clientId=$clientId";
 
-    var response = await get(url);
+    Response response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
@@ -789,7 +789,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<Response> updatePaymentStatus(Map<String, dynamic> data) async {
-    var response = await put("invoices/update-status", jsonEncode(data));
+    Response response = await put("invoices/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("invoices/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("invoices/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("invoices/update-status", jsonEncode(data));
@@ -864,7 +864,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<BookingHistoryModel> cancelClientRequestFromAdmin({required String requestId}) async {
     String url = "request-employees/remove/$requestId";
 
-    var response = await delete(url);
+    Response response = await delete(url);
     if (response.statusCode == null) response = await delete(url);
     if (response.statusCode == null) response = await delete(url);
     if (response.statusCode == null) response = await delete(url);
@@ -880,7 +880,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       {required String employeeId, required String requestId}) async {
     String url = "request-employees/cancel-suggest/$requestId";
 
-    var response = await patch(url, jsonEncode({"employeeId": employeeId}));
+    Response response = await patch(url, jsonEncode({"employeeId": employeeId}));
     if (response.statusCode == null) response = await patch(url, jsonEncode({"employeeId": employeeId}));
     if (response.statusCode == null) response = await patch(url, jsonEncode({"employeeId": employeeId}));
     if (response.statusCode == null) response = await patch(url, jsonEncode({"employeeId": employeeId}));
@@ -910,7 +910,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<EmployeePaymentHistory> employeePaymentHistory({required String employeeId}) async {
     String url = "employee-invoices?employeeId=$employeeId";
 
-    var response = await get(url);
+    Response response = await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);

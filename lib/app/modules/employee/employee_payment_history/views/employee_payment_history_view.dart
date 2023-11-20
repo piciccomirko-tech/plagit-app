@@ -140,7 +140,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
         _cell(
             width: 100.w,
             widget: Text(
-              '${double.parse(controller.employeePaymentHistory(index).totalHours).toStringAsFixed(2)}h',
+              '${controller.employeePaymentHistory(index).totalHours}h',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

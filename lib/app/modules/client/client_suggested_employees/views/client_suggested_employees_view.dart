@@ -135,7 +135,7 @@ class ClientSuggestedEmployeesView extends GetView<ClientSuggestedEmployeesContr
                                 "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(employee.hourlyRate?.toStringAsFixed(2) ?? 0)}"
                           })),
                       _detailsItem(
-                          MyAssets.totalHour, MyStrings.totalHour.tr, (employee.totalWorkingHour ?? 0).toString()),
+                          MyAssets.totalHour, MyStrings.totalHour.tr, employee.totalWorkingHour ?? '0.0'),
                     ],
                   ),
                   Row(

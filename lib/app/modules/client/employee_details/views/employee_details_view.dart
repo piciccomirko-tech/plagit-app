@@ -292,7 +292,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
             Row(
               children: [
                 _detailsItem(MyAssets.totalHour, '${MyStrings.totalHour.tr}:',
-                    "${double.parse(controller.employee.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h"),
+                    "${controller.employee.totalWorkingHour ?? '0.0'}h"),
                 const Spacer(),
                 _detailsItem(MyAssets.review, MyStrings.review.tr, "1 time"),
               ],

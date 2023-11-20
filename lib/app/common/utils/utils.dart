@@ -271,7 +271,7 @@ class Utils {
                 pw.Image(image!, height: 120, width: 120),
                 pw.SizedBox(height: 30), // Add some spacing between image and text
                 pw.Text(
-                  'MH Premier Staffing Solutions',
+                  'MH Premier Staffing Solutions Ltd',
                   style: pw.TextStyle(
                     color: PdfColor.fromHex('C6A34F'), // Set the text color to blue.
                     fontSize: 30,

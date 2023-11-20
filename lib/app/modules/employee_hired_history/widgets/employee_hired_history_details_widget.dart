@@ -51,7 +51,7 @@ class EmployeeHiredHistoryDetailsWidget extends StatelessWidget {
                             children: [
                               TimeRangeWidget(
                                   requestDate: requestDateList[index], hasDeleteOption: false, onTap: () {}),
-                              if (requestDateList[index].status!.isNotEmpty && requestDateList[index].status != null)
+                              if (requestDateList[index].status != null && requestDateList[index].status!.isNotEmpty)
                                 Positioned.fill(
                                     child: Align(
                                   alignment: Alignment.center,

@@ -1,5 +1,4 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar_back_button.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
@@ -131,7 +130,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                       child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
                                     ),
                                     title: Text(
-                                      "View your selected uniforms",
+                                      "Restaurant will provide you uniforms, view uniforms",
                                         style: MyColors.l111111_dwhite(context).semiBold15)),
                               )
                               else
