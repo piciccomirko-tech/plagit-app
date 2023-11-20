@@ -129,7 +129,7 @@ class AdminDashboardController extends GetxController {
 
       UserDailyStatistics s = dailyStatistics(i);
 
-      totalWorkingTimeInMinutes.value += s.totalWorkingTimeInMinute;
+      totalWorkingTimeInMinutes.value += s.totalWorkingTimeInSecond;
       amount.value += double.parse(s.amount);
     }
 

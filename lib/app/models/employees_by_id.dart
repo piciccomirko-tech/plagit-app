@@ -87,7 +87,7 @@ class Employee {
       this.employeeExperience,
       this.rating = 0.0,
       this.totalRating = 0,
-      this.totalWorkingHour,
+      this.totalWorkingHour = "00:00",
       this.hourlyRate,
       this.contractorHourlyRate,
       this.certificates,

@@ -193,7 +193,9 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
         _cell(
             width: 100.w,
             height: height,
-            value: "${invoice.totalWorkingHour ?? '0.0'}h",
+            value: invoice.totalWorkingHour!.contains(':')
+                ? "${invoice.totalWorkingHour ?? '0.0'}h"
+                : "${double.parse(invoice.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h",
             isPaid: invoice.status == "PAID"),
         _cell(
             width: 100.w,
@@ -206,7 +208,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             width: 100.w,
             height: height,
             value:
-            '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.vatAmount ?? 0).toStringAsFixed(2)}',
+                '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.vatAmount ?? 0).toStringAsFixed(2)}',
             isPaid: invoice.status == "PAID"),
         _cell(
             width: 100.w,

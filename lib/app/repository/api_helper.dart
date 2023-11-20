@@ -122,10 +122,6 @@ abstract class ApiHelper {
 
   EitherModel<CommonResponseModel> checkIn({required EmployeeCheckInRequestModel employeeCheckInRequestModel});
 
-  EitherModel<TodayCheckInOutDetails> emergencyCheckIn(Map<String, dynamic> data);
-
-  EitherModel<Response> emergencyCheckOut(Map<String, dynamic> data);
-
   EitherModel<Response> checkout({required EmployeeCheckOutRequestModel employeeCheckOutRequestModel});
 
   EitherModel<Response> updateCheckInOutByClient(Map<String, dynamic> data);

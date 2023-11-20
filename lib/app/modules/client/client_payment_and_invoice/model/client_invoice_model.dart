@@ -38,7 +38,7 @@ class InvoiceModel {
   InvoiceModel(
       {this.sId,
       this.totalAmount,
-      this.totalWorkingHour,
+      this.totalWorkingHour = "00:00",
       this.vat,
       this.vatAmount,
       this.platformFee,

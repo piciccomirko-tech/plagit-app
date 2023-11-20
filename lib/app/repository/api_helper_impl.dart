@@ -565,7 +565,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) {
       response = await put("current-hired-employees/update", jsonEncode(employeeCheckOutRequestModel.toJson()));
     }
-
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},
@@ -1050,33 +1049,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) {
       response = await put("notifications/update-request-date", jsonEncode(rejectedDateRequestModel.toJson()));
     }
-
-    return _convert<Response>(
-      response,
-      (Map<String, dynamic> data) {},
-      onlyErrorCheck: true,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
-  EitherModel<TodayCheckInOutDetails> emergencyCheckIn(Map<String, dynamic> data) async {
-    Response response = await post("current-hired-employees/create", jsonEncode(data));
-    if (response.statusCode == null) response = await post("current-hired-employees/create", jsonEncode(data));
-    if (response.statusCode == null) response = await post("current-hired-employees/create", jsonEncode(data));
-    if (response.statusCode == null) response = await post("current-hired-employees/create", jsonEncode(data));
-
-    return _convert<TodayCheckInOutDetails>(
-      response,
-      TodayCheckInOutDetails.fromJson,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
-  EitherModel<Response> emergencyCheckOut(Map<String, dynamic> data) async {
-    Response response = await put("current-hired-employees/update", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update", jsonEncode(data));
 
     return _convert<Response>(
       response,

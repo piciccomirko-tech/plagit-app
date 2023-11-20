@@ -167,7 +167,6 @@ class EmployeeHomeController extends GetxController {
     );
   }
 
-
   void onProfileClick() {
     Get.toNamed(Routes.employeeSelfProfile);
   }
@@ -223,7 +222,7 @@ class EmployeeHomeController extends GetxController {
         checkOut: true,
         lat: '${currentLocation?.latitude ?? 0.0}',
         long: '${currentLocation?.longitude ?? 0.0}',
-        breakTime: (hour * 60) + (min * 5),
+        breakTime: (hour * 60) + min,
         totalWorkingHour:
             double.parse((double.parse(dailyStatistics.workingHour.split(' ').first) / 60).toStringAsFixed(2)),
         checkOutDistance: restaurantDistanceFromEmployee(
@@ -452,9 +451,9 @@ class EmployeeHomeController extends GetxController {
           targetLat: targetLat,
           targetLong: targetLng,
           currentLat: currentLocation!.latitude,
-          //23.8120296,
+          // 23.8118861,
           currentLong: currentLocation!.longitude
-          //90.3555054
+          //90.3553372
           );
     }
     return 0.0;

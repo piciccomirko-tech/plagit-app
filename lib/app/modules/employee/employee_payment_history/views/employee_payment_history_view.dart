@@ -25,7 +25,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
       ),
       body: Obx(() {
         if (controller.employeePaymentHistoryDataLoaded.value == false) {
-          return  Center(child: CustomLoader.loading());
+          return Center(child: CustomLoader.loading());
         } else if (controller.employeePaymentHistoryDataLoaded.value == true &&
             controller.employeePaymentHistoryList.isEmpty) {
           return const NoItemFound();
@@ -131,7 +131,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
         _cell(
             width: 100.w,
             widget: Text(
-            '${Utils.getCurrencySymbol(controller.appController.user.value.employee?.countryName ?? "")}${controller.employeePaymentHistory(index).contractorPerHoursRate.toStringAsFixed(2)}',
+              '${Utils.getCurrencySymbol(controller.appController.user.value.employee?.countryName ?? "")}${controller.employeePaymentHistory(index).contractorPerHoursRate.toStringAsFixed(2)}',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
@@ -140,7 +140,9 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
         _cell(
             width: 100.w,
             widget: Text(
-              '${controller.employeePaymentHistory(index).totalHours}h',
+              controller.employeePaymentHistory(index).totalHours.contains(':')
+                  ? '${controller.employeePaymentHistory(index).totalHours}h'
+                  : '${double.parse(controller.employeePaymentHistory(index).totalHours).toStringAsFixed(2)}h',
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

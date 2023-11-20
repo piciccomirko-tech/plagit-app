@@ -115,19 +115,25 @@ class Utils {
     return DateTime.parse('${now.toString().split(" ").first} $formattedTime');
   }
 
-  static String minuteToHour(int minute) {
-    if (minute < 60) return '$minute min';
-    return "${(minute / 60).toStringAsFixed(0)} H ${minute % 60} min";
+  static String secondToHour(int second) {
+    Duration duration = Duration(seconds: second);
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+    String hours = twoDigits(duration.inHours);
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+    String seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return '${hours}h: ${minutes}m: ${seconds}s';
   }
 
-  static int? _getWorkingTimeInMinute(DateTime? checkInTime, DateTime? checkOutTime, int? breakTime) {
+  static int? _getWorkingTimeInSeconds({DateTime? checkInTime, DateTime? checkOutTime, int? breakTime}) {
     if (checkOutTime == null && checkInTime != null) {
-      return getCurrentTime.difference(checkInTime.toLocal()).inMinutes;
+      return getCurrentTime.difference(checkInTime.toLocal()).inSeconds;
     }
 
     if (checkInTime != null && checkOutTime != null) {
-      int timeDifference = checkOutTime.difference(checkInTime).inMinutes;
-      return (timeDifference - (breakTime ?? 0));
+      int timeDifference = checkOutTime.difference(checkInTime).inSeconds;
+      return (timeDifference - (breakTime ?? 0) * 60);
     }
 
     return null;
@@ -151,7 +157,7 @@ class Utils {
       workingHour: "-",
       amount: "-",
       complain: "-",
-      totalWorkingTimeInMinute: 0,
+      totalWorkingTimeInSecond: 0,
     );
 
     DateTime? employeeCheckIn = element.checkInCheckOutDetails?.checkInTime;
@@ -186,15 +192,16 @@ class Utils {
     int? tempBreakTime = (element.checkInCheckOutDetails?.clientBreakTime ?? 0) == 0
         ? (element.checkInCheckOutDetails?.breakTime ?? 0)
         : (element.checkInCheckOutDetails?.clientBreakTime ?? 0);
-    int? tempWorkingTimeInMinute = _getWorkingTimeInMinute(tempCheckInTime, tempCheckOutTime, tempBreakTime);
+    int? tempWorkingTimeInSeconds = _getWorkingTimeInSeconds(
+        checkInTime: tempCheckInTime, checkOutTime: tempCheckOutTime, breakTime: tempBreakTime);
 
     if ((tempCheckInTime) != null) {
       dailyStatistics.date = DateTime.parse(tempCheckInTime.toLocal().toString().split(" ").first).dMMMy;
-      dailyStatistics.displayCheckInTime = "${tempCheckInTime.toLocal().hour} : ${tempCheckInTime.toLocal().minute}";
+      dailyStatistics.displayCheckInTime = DateFormat('HH: mm: ss').format(tempCheckInTime);
     }
 
     if (tempCheckOutTime != null) {
-      dailyStatistics.displayCheckOutTime = "${tempCheckOutTime.toLocal().hour} : ${tempCheckOutTime.toLocal().minute}";
+      dailyStatistics.displayCheckOutTime = DateFormat('HH: mm: ss').format(tempCheckOutTime);
     }
 
     if (tempBreakTime != 0) {
@@ -202,11 +209,11 @@ class Utils {
     }
 
     // working time and amount
-    if (tempWorkingTimeInMinute != null) {
-      dailyStatistics.totalWorkingTimeInMinute = tempWorkingTimeInMinute;
-      dailyStatistics.workingHour = minuteToHour(tempWorkingTimeInMinute);
+    if (tempWorkingTimeInSeconds != null) {
+      dailyStatistics.totalWorkingTimeInSecond = tempWorkingTimeInSeconds;
+      dailyStatistics.workingHour = secondToHour(tempWorkingTimeInSeconds);
       dailyStatistics.amount =
-          ((tempWorkingTimeInMinute / 60) * (element.employeeDetails?.hourlyRate ?? 0)).toStringAsFixed(1);
+          ((tempWorkingTimeInSeconds / 3600) * (element.employeeDetails?.hourlyRate ?? 0.0)).toStringAsFixed(2);
     }
 
     dailyStatistics.restaurantName = element.restaurantDetails?.restaurantName ?? '';
@@ -237,7 +244,7 @@ class Utils {
     employeePayment.restaurantName = element.restaurantName ?? '';
     employeePayment.position = element.positionName ?? '';
     employeePayment.contractorPerHoursRate = element.contractorHourlyRate ?? 0.0;
-    employeePayment.totalHours = element.totalHours??'0.0';
+    employeePayment.totalHours = element.totalHours ?? '0.0';
     employeePayment.employeeAmount = element.employeeAmount ?? 0.0;
     employeePayment.status = element.status ?? '';
     return employeePayment;
@@ -309,12 +316,13 @@ class Utils {
                 pw.Text(
                     'Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.amount?.toStringAsFixed(2)}'),
                 pw.Text('VAT: ${invoice.vat}%'),
-                pw.Text('VAT Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.vatAmount?.toStringAsFixed(2)}'),
+                pw.Text(
+                    'VAT Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.vatAmount?.toStringAsFixed(2)}'),
                 pw.Text(
                     'Platform Fee: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.platformFee?.toStringAsFixed(2)}'),
 
                 pw.Divider(indent: 100, endIndent: 100),
-               // pw.SizedBox(height: 10),
+                // pw.SizedBox(height: 10),
                 pw.Text(
                     'Total Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.amount?.toStringAsFixed(2)}',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16)),

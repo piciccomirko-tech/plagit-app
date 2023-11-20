@@ -15,7 +15,7 @@ class UserDailyStatistics {
   String workingHour;
   String amount;
   String complain;
-  int totalWorkingTimeInMinute = 0;
+  int totalWorkingTimeInSecond = 0;
 
   UserDailyStatistics({
     required this.date,
@@ -34,6 +34,6 @@ class UserDailyStatistics {
     required this.workingHour,
     required this.amount,
     required this.complain,
-    required this.totalWorkingTimeInMinute,
+    required this.totalWorkingTimeInSecond,
   });
 }
