@@ -169,7 +169,7 @@ class ClientDashboardController extends GetxController {
     dashboardDate.value = dateTime;
     dashboardDate.refresh();
 
-    selectedDate.value = DateFormat('E, d MMM ,y').format(dashboardDate.value);
+    selectedDate.value = DateFormat('E, d MMM, y').format(dashboardDate.value);
 
     _fetchCheckInOutHistory();
   }

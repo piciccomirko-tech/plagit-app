@@ -209,6 +209,8 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                           (clientUpdatedValue == null) || (clientUpdatedValue == value) ? "" : '\n$clientUpdatedValue',
                       style: const TextStyle(
                         decoration: TextDecoration.lineThrough,
+                          decorationColor: Colors.red, // Set the color here
+                          decorationThickness: 2.0
                       )),
                 ]),
                 textAlign: TextAlign.center,

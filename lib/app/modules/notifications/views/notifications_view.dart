@@ -24,7 +24,9 @@ class NotificationsView extends GetView<NotificationsController> {
               controller: controller.scrollController,
               itemCount: controller.notificationList.length,
               itemBuilder: (BuildContext context, int index) {
-                if(index == controller.notificationList.length -1 && controller.isMoreDataAvailable.value == true){
+                if (index == controller.notificationList.length - 1 &&
+                    controller.isMoreDataAvailable.value == true &&
+                    controller.notificationList.length > 19) {
                   return const Center(child: CupertinoActivityIndicator());
                 }
                 BookingDetailsModel notification = controller.notificationList[index];

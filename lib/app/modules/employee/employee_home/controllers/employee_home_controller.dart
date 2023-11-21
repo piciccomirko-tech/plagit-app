@@ -216,15 +216,12 @@ class EmployeeHomeController extends GetxController {
 
   Future<void> onBreakTimePickDone(int hour, int min) async {
     CustomLoader.show(context!);
-
     EmployeeCheckOutRequestModel employeeCheckOutRequestModel = EmployeeCheckOutRequestModel(
         id: todayCheckInOutDetails.value.details?.id ?? '',
         checkOut: true,
         lat: '${currentLocation?.latitude ?? 0.0}',
         long: '${currentLocation?.longitude ?? 0.0}',
         breakTime: (hour * 60) + min,
-        totalWorkingHour:
-            double.parse((double.parse(dailyStatistics.workingHour.split(' ').first) / 60).toStringAsFixed(2)),
         checkOutDistance: restaurantDistanceFromEmployee(
             targetLat:
                 double.parse('${todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.lat ?? 0.0}'),
@@ -451,9 +448,9 @@ class EmployeeHomeController extends GetxController {
           targetLat: targetLat,
           targetLong: targetLng,
           currentLat: currentLocation!.latitude,
-          // 23.8118861,
+          //23.795455885215837,
           currentLong: currentLocation!.longitude
-          //90.3553372
+          //90.40503904223443
           );
     }
     return 0.0;

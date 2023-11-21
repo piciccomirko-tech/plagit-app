@@ -4,7 +4,6 @@ class EmployeeCheckOutRequestModel {
   final String lat;
   final String long;
   final int breakTime;
-  final double totalWorkingHour;
   final double checkOutDistance;
   final String checkOutTime;
 
@@ -14,7 +13,6 @@ class EmployeeCheckOutRequestModel {
       required this.lat,
       required this.long,
       required this.breakTime,
-      required this.totalWorkingHour,
       required this.checkOutDistance,
       required this.checkOutTime});
 
@@ -25,7 +23,6 @@ class EmployeeCheckOutRequestModel {
     data['lat'] = lat;
     data['long'] = long;
     data['breakTime'] = breakTime;
-    data['totalWorkingHour'] = totalWorkingHour;
     data['checkOutDistance'] = checkOutDistance;
     data['checkOutTime'] = checkOutTime;
     return data;
