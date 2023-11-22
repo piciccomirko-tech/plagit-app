@@ -10,8 +10,8 @@ class SplashView extends GetView<SplashController> {
   Widget build(BuildContext context) {
     controller.context = context;
 
-    return WillPopScope(
-      onWillPop: () => Utils.appExitConfirmation(context),
+    return PopScope(
+      onPopInvoked: (bool pop) async => Utils.appExitConfirmation(context),
       child: Scaffold(
         body: Center(child: CustomLoader.loading()),
       ),

@@ -8,8 +8,8 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => Utils.appExitConfirmation(context),
+    return PopScope(
+      onPopInvoked: (bool pop) async => Utils.appExitConfirmation(context),
       child: Scaffold(
         body: SizedBox(
           width: double.infinity,
@@ -19,18 +19,14 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-
                 SizedBox(height: Get.height * .05),
-
                 Expanded(
                   flex: 2,
                   child: Lottie.asset(
                     MyAssets.lottie.registrationDone,
                   ),
                 ),
-
                 SizedBox(height: Get.height * .05),
-
                 Align(
                   alignment: Alignment.center,
                   child: Text(
@@ -40,9 +36,7 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
                     ),
                   ),
                 ),
-
                 SizedBox(height: Get.height * .05),
-
                 Expanded(
                   flex: 1,
                   child: Column(
@@ -64,7 +58,6 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
                     ],
                   ),
                 ),
-
                 Expanded(
                   flex: 1,
                   child: Align(

@@ -253,6 +253,7 @@ class Utils {
     return employeePayment;
   }
 
+
   static String getCurrentTimeWithAMPM() {
     DateTime now = DateTime.now();
     String formattedTime = DateFormat('hh:mm a').format(now);

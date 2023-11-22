@@ -6,6 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
@@ -1187,5 +1188,22 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       PositionInfoModel.fromJson,
     ).fold((CustomError l) => left(l), (PositionInfoModel r) => right(r));
+  }
+
+  @override
+  EitherModel<TodaysEmployeesModel> getTodaysEmployees(
+      {required String startDate, required String endDate, String? employeeName, String? restaurantName}) async {
+    String url = "book-history?startDate=$startDate&endDate=$endDate&hiredStatus=ALLOW";
+    if ((employeeName ?? "").isNotEmpty && employeeName != 'All Employees') url += "&employeeName=$employeeName";
+    if ((restaurantName ?? "").isNotEmpty && restaurantName != 'All Restaurants') url += "&restaurantName=$restaurantName";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    return _convert<TodaysEmployeesModel>(
+      response,
+      TodaysEmployeesModel.fromJson,
+    ).fold((CustomError l) => left(l), (TodaysEmployeesModel r) => right(r));
   }
 }

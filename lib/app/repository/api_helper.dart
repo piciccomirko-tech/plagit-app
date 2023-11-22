@@ -1,5 +1,6 @@
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
@@ -202,4 +203,5 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> otpCheck({required OtpCheckRequestModel otpCheckRequestModel});
   EitherModel<CommonResponseModel> resetPassword({required ResetPasswordRequestModel resetPasswordRequestModel});
   EitherModel<PositionInfoModel> getPositionInfo({required String positionId});
+  EitherModel<TodaysEmployeesModel> getTodaysEmployees({required String startDate, required String endDate, String? employeeName, String? restaurantName});
 }
