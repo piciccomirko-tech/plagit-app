@@ -925,11 +925,10 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<ReviewDialogModel> showReviewDialog() async {
     String url = "review/view-eligible";
 
-    var response = await get(url);
+    Response response = await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
-
     return _convert<ReviewDialogModel>(
       response,
       ReviewDialogModel.fromJson,
