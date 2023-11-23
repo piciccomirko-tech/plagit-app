@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:intl/intl.dart';
 import 'package:mh/app/models/employee_details.dart';
+import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_loader.dart';
@@ -39,7 +40,7 @@ class ClientDashboardController extends GetxController {
 
   String selectedComplainType = "Check In Before";
 
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController tecTime = TextEditingController();
   TextEditingController tecComment = TextEditingController();
 
@@ -262,12 +263,27 @@ class ClientDashboardController extends GetxController {
   }
 
   void chatWithEmployee({required EmployeeDetails employeeDetails}) {
-    Get.toNamed(Routes.clientEmployeeChat, arguments: {
-      MyStrings.arg.receiverName: employeeDetails.name ?? "-",
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: employeeDetails.employeeId ?? "",
-      MyStrings.arg.clientId: appController.user.value.userId,
-      MyStrings.arg.employeeId: employeeDetails.employeeId ?? "",
+    CustomLoader.show(context!);
+    _apiHelper
+        .matchEmployee(employeeId: employeeDetails.employeeId ?? '')
+        .then((Either<CustomError, CommonResponseModel> response) {
+      CustomLoader.hide(context!);
+      response.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (CommonResponseModel responseData) {
+        if (responseData.status == "success" && responseData.statusCode == 200 && responseData.result == "true") {
+          Get.toNamed(Routes.clientEmployeeChat, arguments: {
+            MyStrings.arg.receiverName: employeeDetails.name ?? "-",
+            MyStrings.arg.fromId: appController.user.value.userId,
+            MyStrings.arg.toId: employeeDetails.employeeId ?? "",
+            MyStrings.arg.clientId: appController.user.value.userId,
+            MyStrings.arg.employeeId: employeeDetails.employeeId ?? "",
+          });
+        } else {
+          Utils.showSnackBar(
+              message: 'You cannot chat with this employee \nbecause he is not hired today', isTrue: false);
+        }
+      });
     });
   }
 

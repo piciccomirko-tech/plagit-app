@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dartz/dartz.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 
 import '../../../../common/controller/app_controller.dart';
@@ -23,7 +24,7 @@ class AdminHomeController extends GetxController {
   RxInt unreadMsgFromEmployee = 0.obs;
   RxInt unreadMsgFromClient = 0.obs;
 
-  int numberOfRequestFromClient = 0;
+  RxInt numberOfRequestFromClient = 0.obs;
 
   String requestId = '';
 
@@ -32,8 +33,8 @@ class AdminHomeController extends GetxController {
   RxList<String> chatUserIds = <String>[].obs;
 
   @override
-  void onInit() {
-    homeMethods();
+  void onInit() async {
+    await homeMethods();
     super.onInit();
   }
 
@@ -74,22 +75,20 @@ class AdminHomeController extends GetxController {
 
   Future<void> _fetchRequest() async {
     loading.value = true;
-
-    await _apiHelper.getRequestedEmployees().then((response) {
-      loading.value = false;
-
-      response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = _fetchRequest);
-      }, (RequestedEmployees requestedEmployees) async {
-        this.requestedEmployees.value = requestedEmployees;
-        this.requestedEmployees.refresh();
-        calculateNumberOfRequestFromClient();
-      });
+    Either<CustomError, RequestedEmployees> response = await _apiHelper.getRequestedEmployees();
+    loading.value = false;
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError..onRetry = _fetchRequest);
+    }, (RequestedEmployees requestedEmployees) async {
+      this.requestedEmployees.value = requestedEmployees;
+      this.requestedEmployees.refresh();
+      calculateNumberOfRequestFromClient();
     });
   }
 
-  Future<void> reloadPage() async {
-    await _fetchRequest();
+  void reloadPage() async {
+    await homeMethods();
+    Utils.showSnackBar(message: 'This page has been refreshed...', isTrue: true);
   }
 
   void _trackUnreadMsg() {
@@ -121,22 +120,17 @@ class AdminHomeController extends GetxController {
     });
   }
 
-  void homeMethods() {
-    _trackUnreadMsg();
-    _fetchRequest();
+  Future<void> homeMethods() async {
     notificationsController.getNotificationList();
-  }
-
-  void refreshPage() {
-    homeMethods();
-    Utils.showSnackBar(message: 'This page has been refreshed...', isTrue: true);
+    _trackUnreadMsg();
+    await _fetchRequest();
   }
 
   void calculateNumberOfRequestFromClient() {
-    numberOfRequestFromClient = 0;
+    numberOfRequestFromClient.value = 0;
     for (var i in requestedEmployees.value.requestEmployeeList!) {
       if (i.suggestedEmployeeDetails!.isEmpty) {
-        numberOfRequestFromClient += 1;
+        numberOfRequestFromClient.value += 1;
       }
     }
   }

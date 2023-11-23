@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
+import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/admin/admin_home/models/admin_home_card_model.dart';
 import 'package:mh/app/modules/admin/admin_home/widgets/admin_home_card_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
@@ -74,28 +75,31 @@ class AdminHomeView extends GetView<AdminHomeController> {
                         flex: 10,
                         child: _restaurantName("Hi, ${controller.appController.user.value.admin?.name ?? "-"}")),
                     const SizedBox(width: 10),
-                    Expanded(flex: 1, child: RefreshWidget(onTap: controller.refreshPage))
+                    Expanded(flex: 1, child: RefreshWidget(onTap: controller.reloadPage))
                   ],
                 ),
                 SizedBox(height: 20.h),
                 _promotionText,
                 SizedBox(height: 40.h),
-                AnimationLimiter(
-                  child: ListView.builder(
-                      itemCount: adminHomeCardList.length,
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      primary: false,
-                      itemBuilder: (context, index) {
-                        return AnimationConfiguration.staggeredList(
-                            position: index,
-                            duration: const Duration(milliseconds: 800),
-                            child: SlideAnimation(
-                                horizontalOffset: 50.0,
-                                child: FadeInAnimation(
-                                    child: AdminHomeCardWidget(adminHomeCardModel: adminHomeCardList[index]))));
-                      }),
-                )
+                Obx(() => controller.loading.value == true
+                    ? ShimmerWidget.clientMyEmployeesShimmerWidget()
+                    : AnimationLimiter(
+                        child: ListView.builder(
+                            itemCount: adminHomeCardList.length,
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            primary: false,
+                            itemBuilder: (context, index) {
+                              return AnimationConfiguration.staggeredList(
+                                  position: index,
+                                  duration: const Duration(milliseconds: 800),
+                                  child: SlideAnimation(
+                                      horizontalOffset: 50.0,
+                                      child: FadeInAnimation(
+                                          child: AdminHomeCardWidget(
+                                              adminHomeCardModel: adminHomeCardList[index], index: index))));
+                            }),
+                      ))
                 /* Row(
                   children: [
                     Expanded(
