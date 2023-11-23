@@ -4,6 +4,7 @@ import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employ
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
@@ -204,4 +205,6 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> resetPassword({required ResetPasswordRequestModel resetPasswordRequestModel});
   EitherModel<PositionInfoModel> getPositionInfo({required String positionId});
   EitherModel<TodaysEmployeesModel> getTodaysEmployees({required String startDate, required String endDate, String? employeeName, String? restaurantName});
+  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate});
+  EitherModel<CommonResponseModel> matchEmployee({required String employeeId});
 }

@@ -4,12 +4,14 @@ import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
@@ -1194,7 +1196,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       {required String startDate, required String endDate, String? employeeName, String? restaurantName}) async {
     String url = "book-history?startDate=$startDate&endDate=$endDate&hiredStatus=ALLOW";
     if ((employeeName ?? "").isNotEmpty && employeeName != 'All Employees') url += "&employeeName=$employeeName";
-    if ((restaurantName ?? "").isNotEmpty && restaurantName != 'All Restaurants') url += "&restaurantName=$restaurantName";
+    if ((restaurantName ?? "").isNotEmpty && restaurantName != 'All Restaurants')
+      url += "&restaurantName=$restaurantName";
 
     Response response = await get(url);
     if (response.statusCode == null) await get(url);
@@ -1204,5 +1207,35 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       TodaysEmployeesModel.fromJson,
     ).fold((CustomError l) => left(l), (TodaysEmployeesModel r) => right(r));
+  }
+
+  @override
+  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate}) async {
+    String url = "book-history/client-employee?hiredBy=${Get.find<AppController>().user.value.client?.id ?? ''}";
+    if ((startDate ?? "").isNotEmpty) url += "&startDate=$startDate";
+    if ((endDate ?? "").isNotEmpty) url += "&endDate=$endDate";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    return _convert<ClientMyEmployeesModel>(
+      response,
+      ClientMyEmployeesModel.fromJson,
+    ).fold((CustomError l) => left(l), (ClientMyEmployeesModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> matchEmployee({required String employeeId}) async {
+    String url =
+        "book-history/match-with-employee?employeeId=$employeeId&currentDate=${DateTime.now().toString().split(' ').first}";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
   }
 }
