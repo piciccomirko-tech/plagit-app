@@ -19,28 +19,103 @@ class AdminTodaysEmployeeBodyWidget extends GetWidget<AdminTodaysEmployeesContro
       children: [
         const SizedBox(height: 15),
         Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                flex: 2,
+                  child: SizedBox(
+                height: 40.h,
+                child: Obx(
+                      () => ClipRRect(
+                    borderRadius: BorderRadius.circular(5.0),
+                    child: DropdownButtonFormField<String>(
+                      dropdownColor: MyColors.lightCard(context),
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      onChanged: controller.onClientChange,
+                      isExpanded: true,
+                      itemHeight: 58.h,
+                      borderRadius: BorderRadius.circular(5.0),
+                      isDense: false,
+                      hint: Text(
+                        controller.clientLoading.value ? "Loading..." : "Select Client",
+                        style: MyColors.l7B7B7B_dtext(context).regular18,
+                      ),
+                      value: controller.selectedRestaurantName.value,
+                      items: controller.restaurants.map((e) {
+                        return DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e,
+                            style: MyColors.l111111_dwhite(context).medium16,
+                          ),
+                        );
+                      }).toList(),
+                      decoration:  InputDecoration(
+                        filled: true,
+                        fillColor: MyColors.c_C6A34F.withOpacity(0.5),
+                        contentPadding: const EdgeInsets.fromLTRB(10, 0, 5, 15),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        errorBorder: InputBorder.none,
+                        hintMaxLines: 1,
+                      ),
+                    ),
+                  ),
+                ),
+              )),
+              const SizedBox(width: 10),
+              Expanded(
+                flex: 3,
+                  child: Container(
+                padding: const EdgeInsets.all(4.0),
+                decoration: BoxDecoration(color: MyColors.c_C6A34F.withOpacity(0.5), borderRadius: BorderRadius.circular(5.0)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(MyAssets.calender, height: 20, width: 20),
+                    const SizedBox(width: 10),
+                    GestureDetector(
+                      onTap: () => _selectDate(context),
+                      child: Row(
+                        children: [
+                          Obx(
+                                () => Text(
+                              controller.startDate.value.EdMMMy,
+                              style: MyColors.l111111_dwhite(context).medium16,
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          const Icon(Icons.arrow_drop_down),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.0.w),
           child: Obx(
             () => Visibility(
               visible: controller.todaysEmployeesList.isNotEmpty,
-              child: Container(
-                width: Get.width*0.7,
-                padding: const EdgeInsets.all(5.0),
-                decoration: const BoxDecoration(
-                  color: MyColors.c_C6A34F,
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(5.0), bottomLeft:Radius.circular(5.0) )
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(MyAssets.manager, height: 25, width: 25),
-                    Text(
-                      " ${controller.todaysEmployeesList.length}",
-                      style: MyColors.white.semiBold24,
-                    ),
-                    Text(' Employees Active', style: MyColors.white.semiBold15)
-                  ],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(MyAssets.manager, height: 25, width: 25),
+                  Text(
+                    " ${controller.todaysEmployeesList.length}",
+                    style: MyColors.l111111_dwhite(context).semiBold24,
+                  ),
+                  Text(' employees are working', style: MyColors.l111111_dwhite(context).semiBold15)
+                ],
               ),
             ),
           ),
@@ -203,4 +278,16 @@ class AdminTodaysEmployeeBodyWidget extends GetWidget<AdminTodaysEmployeesContro
       ],
     );
   }
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: controller.startDate.value,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != controller.startDate.value) {
+      controller.onDatePicked(picked);
+    }
+  }
+
 }

@@ -32,7 +32,6 @@ class AdminTodaysEmployeesController extends GetxController {
   @override
   void onInit() async {
     await _fetchClients();
-    await _fetchEmployees();
     await _getTodaysEmployees();
     super.onInit();
   }
@@ -91,33 +90,6 @@ class AdminTodaysEmployeesController extends GetxController {
     });
   }
 
-  void onEmployeeChange(String? value) {
-    if (value == todaysEmployees.first) {
-      selectedEmployeeName.value = 'All Employees';
-    } else {
-      selectedEmployeeName.value =
-          (employees.value.users ?? []).firstWhere((element) => element.firstName == value).firstName ?? '';
-    }
-
-    _getTodaysEmployees();
-  }
-
-  Future<void> _fetchEmployees() async {
-    employeeDataLoading.value = true;
-
-    await _apiHelper.getAllUsersFromAdmin(requestType: "EMPLOYEE").then((Either<CustomError, Employees> response) {
-      employeeDataLoading.value = false;
-
-      response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry);
-      }, (Employees e) {
-        employees.value = e;
-        employees.refresh();
-
-        todaysEmployees.addAll((e.users ?? []).map((Employee e) => e.firstName ?? '').toList());
-      });
-    });
-  }
 
   String getTime({required int index, required String tag}) {
     final List<RequestDateModel> bookingDateList = todaysEmployeesList[index].bookedDate ?? [];

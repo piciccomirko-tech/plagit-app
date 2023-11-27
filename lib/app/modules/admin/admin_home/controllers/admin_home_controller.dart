@@ -134,4 +134,8 @@ class AdminHomeController extends GetxController {
       }
     }
   }
+
+  void onTodaysEmployeesPressed() {
+    Get.toNamed(Routes.adminTodaysEmployees);
+  }
 }

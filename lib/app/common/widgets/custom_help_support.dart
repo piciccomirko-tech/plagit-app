@@ -2,11 +2,10 @@ import '../utils/exports.dart';
 
 class CustomHelpSupport extends StatelessWidget {
   final Function() onTap;
+  final String title;
+  final String asset;
 
-  const CustomHelpSupport({
-    super.key,
-    required this.onTap,
-  });
+  const CustomHelpSupport({super.key, required this.onTap, required this.title, required this.asset});
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +26,13 @@ class CustomHelpSupport extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Image.asset(
-                MyAssets.helpSupport,
+              asset,
                 width: 38.w,
                 height: 38.w,
               ),
-
               SizedBox(width: 20.w),
-
               Text(
-                MyStrings.helpSupport.tr,
+                title,
                 style: MyColors.l111111_dwhite(context).medium16,
               ),
             ],

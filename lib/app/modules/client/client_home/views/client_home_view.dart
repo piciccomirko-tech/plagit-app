@@ -218,6 +218,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                   children: [
                     CustomHelpSupport(
                       onTap: controller.onHelpAndSupportClick,
+                      title: MyStrings.helpSupport.tr,
+                      asset: MyAssets.helpSupport,
                     ),
                     Obx(
                       () => Positioned(
