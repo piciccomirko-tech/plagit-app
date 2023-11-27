@@ -11,8 +11,8 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
     controller.context = context;
     Utils.setStatusBarColorColor(Theme.of(context).brightness);
 
-    return PopScope(
-      onPopInvoked: (bool pop) async => Utils.appExitConfirmation(context),
+    return WillPopScope(
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
         body: Stack(
           children: [

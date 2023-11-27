@@ -1196,8 +1196,9 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       {required String startDate, required String endDate, String? employeeName, String? restaurantName}) async {
     String url = "book-history?startDate=$startDate&endDate=$endDate&hiredStatus=ALLOW";
     if ((employeeName ?? "").isNotEmpty && employeeName != 'All Employees') url += "&employeeName=$employeeName";
-    if ((restaurantName ?? "").isNotEmpty && restaurantName != 'All Restaurants')
+    if ((restaurantName ?? "").isNotEmpty && restaurantName != 'All Restaurants') {
       url += "&restaurantName=$restaurantName";
+    }
 
     Response response = await get(url);
     if (response.statusCode == null) await get(url);

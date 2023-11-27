@@ -17,8 +17,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
   Widget build(BuildContext context) {
     controller.context = context;
 
-    return PopScope(
-      onPopInvoked: (bool pop) async => Utils.appExitConfirmation(context),
+    return WillPopScope(
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
         appBar: CustomAppbar.appbar(
           context: context,

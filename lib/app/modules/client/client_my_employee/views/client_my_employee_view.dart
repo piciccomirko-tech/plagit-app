@@ -26,10 +26,10 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             SizedBox(
               height: 30,
-              child: CustomRadioButton(
+              child: Obx(() => CustomRadioButton(
                 elevation: 0,
                 selectedBorderColor: Colors.transparent,
                 unSelectedBorderColor: Colors.transparent,
@@ -38,21 +38,21 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                 padding: 0.0,
                 radius: 30,
                 shapeRadius: 30,
-                defaultSelected: '',
+                defaultSelected: (DateTime.now().toString().split(' ').first),
                 margin: EdgeInsets.only(right: 10.w),
                 unSelectedColor: MyColors.c_C6A34F.withOpacity(0.5),
-                buttonLables: const ['All Employees', "Today's Employees"],
+                buttonLables:  ["${controller.selectedDate.value.EdMMMy}" " \u25BC", 'All Employees'],
                 buttonValues: [
-                  '',
                   (DateTime.now().toString().split(' ').first),
+                  ''
                 ],
                 buttonTextStyle: const ButtonTextStyle(
                     selectedColor: Colors.white, unSelectedColor: Colors.black, textStyle: TextStyle(fontSize: 13)),
                 radioButtonValue: controller.onRadioButtonTap,
                 selectedColor: MyColors.c_C6A34F,
-              ),
+              )),
             ),
-            Obx(() => Visibility(
+            /*Obx(() => Visibility(
               visible: controller.hideCalender.value == false,
                 child: Container(
               width: Get.width*0.7,
@@ -83,7 +83,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                   ),
                 ],
               ),
-            ))),
+            ))),*/
             Obx(
               () => controller.isLoading.value
                   ? _loading
@@ -345,15 +345,4 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
         ),
       );
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: controller.selectedDate.value,
-      firstDate: DateTime(2015, 8),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null && picked != controller.startDate.value) {
-      controller.onDatePicked(picked);
-    }
-  }
 }

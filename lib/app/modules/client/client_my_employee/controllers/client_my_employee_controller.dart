@@ -22,11 +22,9 @@ class ClientMyEmployeeController extends GetxController {
   final ClientHomeController clientHomeController = Get.find<ClientHomeController>();
   RxList<EmployeeModel> employees = <EmployeeModel>[].obs;
   RxBool isLoading = true.obs;
-  RxString startDate = ''.obs;
-  RxString endDate = ''.obs;
+  RxString startDate = DateTime.now().toString().split(" ").first.obs;
+  RxString endDate = DateTime.now().toString().split(" ").first.obs;
   Rx<DateTime> selectedDate = DateTime.now().obs;
-  RxBool hideCalender = false.obs;
-
   @override
   void onInit() async {
     await _getAllHiredEmployees();
@@ -94,12 +92,11 @@ class ClientMyEmployeeController extends GetxController {
   }
 
   void onRadioButtonTap(String value) {
+
     startDate.value = value;
     endDate.value = value;
-    if (value.isNotEmpty) {
-      hideCalender.value = true;
-    } else {
-      hideCalender.value = false;
+    if(value.isNotEmpty){
+      _selectDate(context!);
     }
     _getAllHiredEmployees();
   }
@@ -112,5 +109,17 @@ class ClientMyEmployeeController extends GetxController {
     endDate.refresh();
 
     _getAllHiredEmployees();
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate.value,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != DateTime.parse(startDate.value)) {
+      onDatePicked(picked);
+    }
   }
 }

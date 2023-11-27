@@ -8,8 +8,8 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      onPopInvoked: (bool pop) async => Utils.appExitConfirmation(context),
+    return WillPopScope(
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
         body: SizedBox(
           width: double.infinity,

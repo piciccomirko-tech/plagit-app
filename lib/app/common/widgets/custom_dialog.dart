@@ -66,8 +66,8 @@ class CustomDialogue {
         Duration.zero,
         () {
           return Get.dialog(
-            PopScope(
-              onPopInvoked: (bool pop) async => true,
+            WillPopScope(
+              onWillPop: () async => true,
               child: Align(
                 alignment: Alignment.center,
                 child: Material(
@@ -149,8 +149,8 @@ class CustomDialogue {
         Duration.zero,
         () {
           return Get.dialog(
-            PopScope(
-              onPopInvoked: (bool pop) async => true,
+            WillPopScope(
+              onWillPop: () async => true,
               child: Align(
                 alignment: Alignment.center,
                 child: Material(
@@ -231,8 +231,8 @@ class CustomDialogue {
       Duration.zero,
       () {
         return Get.dialog(
-          PopScope(
-            onPopInvoked: (bool pop) async => true,
+          WillPopScope(
+            onWillPop: () async => true,
             child: Align(
               alignment: Alignment.center,
               child: Material(
