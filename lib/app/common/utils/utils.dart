@@ -170,8 +170,8 @@ class Utils {
       //"${employeeCheckIn.toLocal().hour} : ${employeeCheckIn.toLocal().minute}";
     }
     if (employeeCheckout != null) {
-      dailyStatistics.employeeCheckOutTime =  DateFormat('HH: mm: ss').format(employeeCheckout);
-          //"${employeeCheckout.toLocal().hour} : ${employeeCheckout.toLocal().minute}";
+      dailyStatistics.employeeCheckOutTime = DateFormat('HH: mm: ss').format(employeeCheckout);
+      //"${employeeCheckout.toLocal().hour} : ${employeeCheckout.toLocal().minute}";
     }
     if (element.checkInCheckOutDetails?.breakTime != null && element.checkInCheckOutDetails?.breakTime != 0) {
       dailyStatistics.employeeBreakTime = "${element.checkInCheckOutDetails?.breakTime ?? 0} min";
@@ -179,7 +179,7 @@ class Utils {
 
     if (clientCheckIn != null) {
       dailyStatistics.clientCheckInTime = DateFormat('HH: mm: ss').format(clientCheckIn);
-     // "${clientCheckIn.toLocal().hour} : ${clientCheckIn.toLocal().minute}";
+      // "${clientCheckIn.toLocal().hour} : ${clientCheckIn.toLocal().minute}";
     }
     if (clientCheckOut != null) {
       dailyStatistics.clientCheckOutTime = DateFormat('HH: mm: ss').format(clientCheckOut);
@@ -252,7 +252,6 @@ class Utils {
     employeePayment.status = element.status ?? '';
     return employeePayment;
   }
-
 
   static String getCurrentTimeWithAMPM() {
     DateTime now = DateTime.now();
@@ -343,6 +342,214 @@ class Utils {
                       ])),
                   pw.Expanded(flex: 1, child: pw.Wrap()),
                 ]),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+
+    // Save the PDF to a file.
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final String sPath = '${appDocDir.path}/invoice.pdf';
+    final File sFile = File(sPath);
+    await sFile.writeAsBytes(await pdf.save());
+
+    return sFile;
+  }
+
+  static Future<File> generatePdfWithImageAndTextForUk({required InvoiceModel invoice}) async {
+    final pw.Document pdf = pw.Document();
+    pw.MemoryImage? image;
+    File file;
+    file = await assetToFile(MyAssets.logo);
+    if (file.existsSync()) {
+      image = pw.MemoryImage(file.readAsBytesSync());
+    }
+
+    // Add a page to the PDF
+    pdf.addPage(
+      pw.Page(
+        margin: const pw.EdgeInsets.symmetric(horizontal: 15.0),
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Column(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Container(
+                    padding: const pw.EdgeInsets.all(10.0),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                    child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+                      pw.Image(image!, height: 80, width: 80),
+                      pw.Text('INVOICE',
+                          style: pw.TextStyle(fontSize: 25, fontWeight: pw.FontWeight.bold, color: PdfColors.white))
+                    ])),
+                pw.SizedBox(height: 3),
+                pw.Container(
+                    height: 8,
+                    child: pw.Row(children: [
+                      pw.Expanded(
+                          flex: 1,
+                          child:
+                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('C6A34F').shade(0.1)))),
+                      pw.Expanded(
+                          flex: 1,
+                          child:
+                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('C6A34F').shade(0.7)))),
+                      pw.Expanded(
+                          flex: 1,
+                          child:
+                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('C6A34F').shade(1.0))))
+                    ])),
+                pw.SizedBox(height: 30),
+                pw.Text(
+                  'MH Premier Staffing Solutions Ltd',
+                  style: const pw.TextStyle(
+                    color: PdfColors.black, // Set the text color to blue.
+                    fontSize: 30,
+                  ),
+                ),
+                pw.SizedBox(height: 30),
+                pw.Row(children: [
+                  pw.Expanded(
+                      flex: 1,
+                      child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                        pw.Text('48 Warwick St, Regent St'),
+                        pw.Text('London, W1B SAW'),
+                        pw.Text('VAT number: 450105738'),
+                        pw.Text('account@mhpremierstaffingsolutions.com'),
+                        pw.Text('07960966110')
+                      ])),
+                  pw.Expanded(flex: 1, child: pw.Wrap())
+                ]),
+                pw.SizedBox(height: 30),
+                pw.Row(children: [
+                  pw.Expanded(
+                    flex: 1,
+                    child: pw.Column(
+                        mainAxisAlignment: pw.MainAxisAlignment.start,
+                        crossAxisAlignment: pw.CrossAxisAlignment.start,
+                        children: [pw.Text('To:', style: const pw.TextStyle(
+                          color: PdfColors.black, // Set the text color to blue.
+                          fontSize: 20,
+                        ))]),
+                  ),
+                  pw.Expanded(
+                      flex: 4,
+                      child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                        pw.Text(invoice.restaurantName ?? ""),
+                        pw.SizedBox(height: 10),
+                        pw.Text(invoice.restaurantAddress ?? ''),
+                        pw.Text(invoice.restaurantEmail ?? ''),
+                        pw.Text(invoice.restaurantPhone ?? ''),
+                      ])),
+                  pw.Expanded(
+                      flex: 2,
+                      child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                        pw.Text('Invoice No: ${invoice.invoiceNumber}'),
+                        pw.SizedBox(height: 10),
+                        pw.Text('Date: ${DateFormat('d MMM y').format(invoice.invoiceDate!)}')
+                      ]))
+                ]),
+                pw.SizedBox(height: 30),
+                pw.Container(
+                    padding: const pw.EdgeInsets.all(10.0),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                    child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+                      pw.Text('QUANTITY', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                      pw.Text('DATE', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+                      pw.Text('TOTAL', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold))
+                    ])),
+                pw.Divider(color: PdfColors.black, height: 0.0),
+                pw.SizedBox(height: 10),
+                pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+                  pw.Text('One week'),
+                  pw.Text(
+                    'From ${DateFormat('d MMM').format(invoice.fromWeekDate!)} to ${DateFormat('d MMM y').format(invoice.toWeekDate!)}',
+                  ),
+                  pw.Text(
+                      '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.amount?.toStringAsFixed(2)}')
+                ]),
+                pw.SizedBox(height: 10),
+                pw.Divider(color: PdfColors.black, height: 0.0),
+                pw.SizedBox(height: 10),
+                pw.Row(children: [
+                  pw.Expanded(flex: 1, child: pw.Wrap()),
+                  pw.Expanded(
+                      flex: 1,
+                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+                        pw.Text('VAT'),
+                        pw.Text(
+                          '${invoice.vat}%',
+                        ),
+                        pw.Text(
+                            '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.vatAmount?.toStringAsFixed(2)}')
+                      ]))
+                ]),
+                pw.SizedBox(height: 10),
+                pw.Divider(color: PdfColors.grey400, height: 0.0),
+                pw.SizedBox(height: 10),
+                pw.Row(children: [
+                  pw.Expanded(flex: 1, child: pw.Wrap()),
+                  pw.Expanded(
+                      flex: 1,
+                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+                        pw.Text('Platform Fee'),
+                        pw.Text(
+                            '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.platformFee?.toStringAsFixed(2)}')
+                      ]))
+                ]),
+                pw.SizedBox(height: 10),
+                pw.Divider(color: PdfColors.grey400, height: 0.0),
+                pw.Container(
+                    padding: const pw.EdgeInsets.symmetric(vertical: 10.0),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                    child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
+                      pw.Text(
+                          'TOTAL: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.totalAmount?.toStringAsFixed(2)} ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15)),
+                    ])),
+                pw.Divider(color: PdfColors.grey400, height: 0.0),
+                pw.SizedBox(height: 20),
+                pw.Row(children: [
+                  pw.Expanded(
+                      flex: 1,
+                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
+                        pw.Expanded(
+                          flex: 2,
+                          child: pw.Text('Bank Transfer:', style: const pw.TextStyle( fontSize: 20)),
+                        ),
+                        pw.Expanded(
+                            flex: 5,
+                            child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                              pw.Text('MH PREMIER STAFFING SOLUTIONS'),
+                              pw.Text('Account Number: 06418279'),
+                              pw.Text('Sort Code: 04-29-09'),
+                              pw.Text('Beneficiary Address: 48, Warwick Street, W1B SAW, London, United Kingdom'),
+                              pw.Text('Company Number: 14706276'),
+                              pw.Text('Bank / Payment Institution: Revolut Ltd'),
+                              pw.Text('Bank / Payment Institution Address: 7 Westferry Circus, E14 4HD, London,'),
+                              pw.Text('United Kingdom'),
+                            ]))
+                      ])),
+                ]),
+                pw.SizedBox(height: 20),
+                pw.Divider(color: PdfColors.grey400, height: 0.0),
+                pw.SizedBox(height: 10),
+                pw.Center(
+                    child: pw.Container(
+                      width: double.infinity,
+                        padding: const pw.EdgeInsets.symmetric(vertical: 10.0),
+                        decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                        child: pw.Column(
+                            crossAxisAlignment: pw.CrossAxisAlignment.center,
+                            mainAxisAlignment: pw.MainAxisAlignment.center,
+                            children: [
+                              pw.Text('Make all cheques payable to MH Premier Staffing Solutions Ltd'),
+                              pw.SizedBox(height: 10),
+                              pw.Text('THANK YOU FOR YOUR BUSINESS'),
+                            ]))),
+                pw.SizedBox(height: 10)
               ],
             ),
           );

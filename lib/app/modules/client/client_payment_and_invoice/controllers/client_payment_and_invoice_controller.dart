@@ -27,7 +27,8 @@ class ClientPaymentAndInvoiceController extends GetxController {
     _selectedInvoiceId = clientHomeController.clientInvoice.value.invoices![index].sId ?? "";
     makeStripePayment(
         stripeRequestModel: StripeRequestModel(
-            amount: double.parse(clientHomeController.clientInvoice.value.invoices![index].totalAmount?.toStringAsFixed(2)??'0.0'),
+            amount: double.parse(
+                clientHomeController.clientInvoice.value.invoices![index].totalAmount?.toStringAsFixed(2) ?? '0.0'),
             invoiceId: _selectedInvoiceId,
             currency: appController.user.value.client?.countryName?.toLowerCase() == 'united kingdom'
                 ? 'gbp'
@@ -36,9 +37,12 @@ class ClientPaymentAndInvoiceController extends GetxController {
                     : 'usd'));
   }
 
-
   void onViewInvoicePress({required InvoiceModel invoice}) async {
-    invoiceFile = await Utils.generatePdfWithImageAndText(invoice: invoice);
+    if ((Get.find<AppController>().user.value.client?.countryName?.toLowerCase() ?? '') == 'united kingdom') {
+      invoiceFile = await Utils.generatePdfWithImageAndTextForUk(invoice: invoice);
+    } else {
+      invoiceFile = await Utils.generatePdfWithImageAndText(invoice: invoice);
+    }
     Get.toNamed(Routes.invoicePdf, arguments: [invoiceFile]);
   }
 
