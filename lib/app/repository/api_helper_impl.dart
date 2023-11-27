@@ -1,11 +1,9 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
-import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
@@ -1211,10 +1209,11 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate}) async {
-    String url = "book-history/client-employee?hiredBy=${Get.find<AppController>().user.value.client?.id ?? ''}";
+  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate, required String hiredBy, String? employeeId}) async {
+    String url = "book-history/client-employee?hiredBy=$hiredBy";
     if ((startDate ?? "").isNotEmpty) url += "&startDate=$startDate";
     if ((endDate ?? "").isNotEmpty) url += "&endDate=$endDate";
+    if ((employeeId ?? "").isNotEmpty) url += "&employeeId=$employeeId";
     Response response = await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);

@@ -205,6 +205,6 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> resetPassword({required ResetPasswordRequestModel resetPasswordRequestModel});
   EitherModel<PositionInfoModel> getPositionInfo({required String positionId});
   EitherModel<TodaysEmployeesModel> getTodaysEmployees({required String startDate, required String endDate, String? employeeName, String? restaurantName});
-  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate});
+  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate, required String hiredBy, String? employeeId});
   EitherModel<CommonResponseModel> matchEmployee({required String employeeId});
 }

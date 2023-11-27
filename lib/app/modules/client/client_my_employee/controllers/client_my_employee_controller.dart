@@ -25,6 +25,7 @@ class ClientMyEmployeeController extends GetxController {
   RxString startDate = DateTime.now().toString().split(" ").first.obs;
   RxString endDate = DateTime.now().toString().split(" ").first.obs;
   Rx<DateTime> selectedDate = DateTime.now().obs;
+  RxList<RequestDateModel> prevDateList = <RequestDateModel>[].obs;
   @override
   void onInit() async {
     await _getAllHiredEmployees();
@@ -33,8 +34,8 @@ class ClientMyEmployeeController extends GetxController {
 
   Future<void> _getAllHiredEmployees() async {
     isLoading.value = true;
-    Either<CustomError, ClientMyEmployeesModel> response =
-        await _apiHelper.getClientMyEmployees(startDate: startDate.value, endDate: endDate.value);
+    Either<CustomError, ClientMyEmployeesModel> response = await _apiHelper.getClientMyEmployees(
+        startDate: startDate.value, endDate: endDate.value, hiredBy: appController.user.value.client?.id ?? '');
     isLoading.value = false;
     response.fold((CustomError customError) {
       Utils.errorDialog(context!, customError);
@@ -92,10 +93,9 @@ class ClientMyEmployeeController extends GetxController {
   }
 
   void onRadioButtonTap(String value) {
-
     startDate.value = value;
     endDate.value = value;
-    if(value.isNotEmpty){
+    if (value.isNotEmpty) {
       _selectDate(context!);
     }
     _getAllHiredEmployees();
@@ -121,5 +121,32 @@ class ClientMyEmployeeController extends GetxController {
     if (picked != null && picked != DateTime.parse(startDate.value)) {
       onDatePicked(picked);
     }
+  }
+
+  void onPrevDatePressed({required String employeeId}) async {
+    await _getPreviousDate(employeeId: employeeId);
+    if (prevDateList.isNotEmpty) {
+      prevDateList.sort((RequestDateModel a, RequestDateModel b) => a.startDate!.compareTo(b.startDate!));
+    }
+    Get.bottomSheet(EmployeeHiredHistoryDetailsWidget(requestDateList: prevDateList));
+  }
+
+  Future<void> _getPreviousDate({required String employeeId}) async {
+    CustomLoader.show(context!);
+    Either<CustomError, ClientMyEmployeesModel> response = await _apiHelper.getClientMyEmployees(
+        hiredBy: appController.user.value.client?.id ?? '', employeeId: employeeId);
+    CustomLoader.hide(context!);
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError);
+    }, (ClientMyEmployeesModel emp) {
+      if (emp.status == "success" &&
+          emp.statusCode == 200 &&
+          emp.details != null &&
+          emp.details?.result != null &&
+          emp.details!.result!.isNotEmpty) {
+        prevDateList.value = emp.details!.result?.first.employee?.first.previousDate ?? [];
+        prevDateList.refresh();
+      }
+    });
   }
 }

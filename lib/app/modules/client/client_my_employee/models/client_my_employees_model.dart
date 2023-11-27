@@ -60,7 +60,9 @@ class EmployeeModel {
   EmployeeDetails? employeeDetails;
   List<RequestDateModel>? bookedDate;
 
-  EmployeeModel({this.employeeId, this.employeeDetails, this.bookedDate});
+  List<RequestDateModel>? previousDate;
+
+  EmployeeModel({this.employeeId, this.employeeDetails, this.bookedDate, this.previousDate});
 
   EmployeeModel.fromJson(Map<String, dynamic> json) {
     employeeId = json['employeeId'];
@@ -71,6 +73,12 @@ class EmployeeModel {
       bookedDate = <RequestDateModel>[];
       json['bookedDate'].forEach((v) {
         bookedDate!.add(RequestDateModel.fromJson(v));
+      });
+    }
+    if (json['prevDateHistory'] != null) {
+      previousDate = <RequestDateModel>[];
+      json['prevDateHistory'].forEach((v) {
+        previousDate!.add(RequestDateModel.fromJson(v));
       });
     }
   }

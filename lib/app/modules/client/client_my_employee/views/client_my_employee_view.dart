@@ -30,27 +30,24 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
             SizedBox(
               height: 30,
               child: Obx(() => CustomRadioButton(
-                elevation: 0,
-                selectedBorderColor: Colors.transparent,
-                unSelectedBorderColor: Colors.transparent,
-                absoluteZeroSpacing: true,
-                width: Get.width * 0.45,
-                padding: 0.0,
-                radius: 30,
-                shapeRadius: 30,
-                defaultSelected: (DateTime.now().toString().split(' ').first),
-                margin: EdgeInsets.only(right: 10.w),
-                unSelectedColor: MyColors.c_C6A34F.withOpacity(0.5),
-                buttonLables:  ["${controller.selectedDate.value.EdMMMy}" " \u25BC", 'All Employees'],
-                buttonValues: [
-                  (DateTime.now().toString().split(' ').first),
-                  ''
-                ],
-                buttonTextStyle: const ButtonTextStyle(
-                    selectedColor: Colors.white, unSelectedColor: Colors.black, textStyle: TextStyle(fontSize: 13)),
-                radioButtonValue: controller.onRadioButtonTap,
-                selectedColor: MyColors.c_C6A34F,
-              )),
+                    elevation: 0,
+                    selectedBorderColor: Colors.transparent,
+                    unSelectedBorderColor: Colors.transparent,
+                    absoluteZeroSpacing: true,
+                    width: Get.width * 0.45,
+                    padding: 0.0,
+                    radius: 30,
+                    shapeRadius: 30,
+                    defaultSelected: (DateTime.now().toString().split(' ').first),
+                    margin: EdgeInsets.only(right: 10.w),
+                    unSelectedColor: MyColors.c_C6A34F.withOpacity(0.5),
+                    buttonLables: ["${controller.selectedDate.value.EdMMMy}" " \u25BC", 'All Employees'],
+                    buttonValues: [(DateTime.now().toString().split(' ').first), ''],
+                    buttonTextStyle: const ButtonTextStyle(
+                        selectedColor: Colors.white, unSelectedColor: Colors.black, textStyle: TextStyle(fontSize: 13)),
+                    radioButtonValue: controller.onRadioButtonTap,
+                    selectedColor: MyColors.c_C6A34F,
+                  )),
             ),
             /*Obx(() => Visibility(
               visible: controller.hideCalender.value == false,
@@ -152,8 +149,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
               right: 40.w,
               top: 4.h,
               child: _chat(
-                  employeeName: hiredHistory.employeeDetails?.name ?? '',
-                  employeeId: hiredHistory.employeeId ?? ''),
+                  employeeName: hiredHistory.employeeDetails?.name ?? '', employeeId: hiredHistory.employeeId ?? ''),
             ),
             Row(
               children: [
@@ -215,8 +211,22 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       ),
                       SizedBox(height: 8.h),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Obx(() => Visibility(
+                              visible: controller.startDate.value.isEmpty,
+                              child: SizedBox(
+                                width: 122.w,
+                                child: CustomButtons.button(
+                                    height: 28.w,
+                                    text: "Previous Dates",
+                                    margin: EdgeInsets.zero,
+                                    fontSize: 12,
+                                    backgroundColor: Colors.teal,
+                                    customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                                    onTap: () => controller.onPrevDatePressed(
+                                        employeeId: hiredHistory.employeeId ?? '')),
+                              ))),
                           SizedBox(
                             width: 122.w,
                             child: CustomButtons.button(
@@ -331,9 +341,10 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                 right: -5.w,
                 child: Obx(
                   () {
-                    var result = controller.clientHomeController.employeeChatDetails.where((data) =>
-                        data["employeeId"] == employeeId &&
-                        data["${controller.appController.user.value.userId}_unread"] > 0);
+                    Iterable<Map<String, dynamic>> result = controller.clientHomeController.employeeChatDetails.where(
+                        (data) =>
+                            data["employeeId"] == employeeId &&
+                            data["${controller.appController.user.value.userId}_unread"] > 0);
 
                     if (result.isEmpty) return Container();
                     return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());
@@ -344,5 +355,4 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
           ),
         ),
       );
-
 }
