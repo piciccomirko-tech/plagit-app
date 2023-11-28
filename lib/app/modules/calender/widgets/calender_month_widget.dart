@@ -36,11 +36,11 @@ class CalenderMonthWidget extends StatelessWidget {
         if (currentDate.toString().substring(0, 10) == today.toString().substring(0, 10)) {
           borderColor = MyColors.c_C6A34F; // Today's date should be red
         }
-        if (controller.dateListModel.value.bookedDates!.containsDate(currentDate)) {
+        if ((controller.dateListModel.value.bookedDates ?? []).containsDate(currentDate)) {
           textColor = Colors.red;
-        } else if (controller.dateListModel.value.pendingDates!.containsDate(currentDate)) {
+        } else if ((controller.dateListModel.value.pendingDates ?? []).containsDate(currentDate)) {
           textColor = Colors.amber;
-        } else if (controller.dateListModel.value.unavailableDates!.containsDate(currentDate)) {
+        } else if ((controller.dateListModel.value.unavailableDates ?? []).containsDate(currentDate)) {
           textColor = Colors.blue;
           if (Get.isRegistered<EmployeeHomeController>()) {
             canUpdateUnavailableDate = true;

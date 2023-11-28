@@ -72,8 +72,8 @@ class EmployeeHomeController extends GetxController {
 
   @override
   void onReady() {
-    Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
-    //connectWithSocket();
+    Future.delayed(const Duration(seconds: 1), () => showHomePopUpForCalender());
+    Future.delayed(const Duration(seconds: 3), () => showReviewBottomSheet());
     super.onReady();
   }
 
@@ -496,5 +496,36 @@ class EmployeeHomeController extends GetxController {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           child: const CheckOutSuccessWidget()));
     }
+  }
+
+  void showHomePopUpForCalender() {
+    _apiHelper.getSkipDate().then((Either<CustomError, CommonResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError..onRetry);
+      }, (CommonResponseModel response) {
+        if (response.status == "success" &&
+            response.statusCode == 200 &&
+            response.details != null &&
+            response.details?.skipDate != null &&
+            response.details!.skipDate!.isNotEmpty &&
+            response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
+          Get.dialog(Dialog(
+            child: Container(
+              height: 100,
+              width: Get.width * 0.8,
+              decoration: BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomButtons.button(text: "Update Calender", onTap: () {}),
+                  CustomButtons.button(text: "Update Calender", onTap: () {})
+                ],
+              ),
+            ),
+          ));
+        }
+      });
+    });
   }
 }

@@ -70,7 +70,7 @@ import 'api_helper.dart';
 class ApiHelperImpl extends GetConnect implements ApiHelper {
   @override
   void onInit() {
-    httpClient.baseUrl = ServerUrls.serverLiveUrlUser;
+    httpClient.baseUrl = ServerUrls.serverTestUrlUser;
     httpClient.timeout = const Duration(seconds: 120);
 
     httpClient.addRequestModifier<dynamic>((Request request) {
@@ -1209,7 +1209,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate, required String hiredBy, String? employeeId}) async {
+  EitherModel<ClientMyEmployeesModel> getClientMyEmployees(
+      {String? startDate, String? endDate, required String hiredBy, String? employeeId}) async {
     String url = "book-history/client-employee?hiredBy=$hiredBy";
     if ((startDate ?? "").isNotEmpty) url += "&startDate=$startDate";
     if ((endDate ?? "").isNotEmpty) url += "&endDate=$endDate";
@@ -1233,6 +1234,22 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> getSkipDate() async {
+    String url = "users/skip-date";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    print('ApiHelperImpl.getSkipDate: ${response.bodyString}');
     return _convert<CommonResponseModel>(
       response,
       CommonResponseModel.fromJson,

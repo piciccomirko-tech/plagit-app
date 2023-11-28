@@ -436,13 +436,11 @@ class Utils {
                         ))]),
                   ),
                   pw.Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
                         pw.Text(invoice.restaurantName ?? ""),
                         pw.SizedBox(height: 10),
-                        pw.Text(invoice.restaurantAddress ?? ''),
-                        pw.Text(invoice.restaurantEmail ?? ''),
-                        pw.Text(invoice.restaurantPhone ?? ''),
+                        pw.Text(invoice.restaurantAddress ?? '')
                       ])),
                   pw.Expanded(
                       flex: 2,
@@ -464,7 +462,7 @@ class Utils {
                 pw.Divider(color: PdfColors.black, height: 0.0),
                 pw.SizedBox(height: 10),
                 pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-                  pw.Text('One week'),
+                  pw.Text('One Week'),
                   pw.Text(
                     'From ${DateFormat('d MMM').format(invoice.fromWeekDate!)} to ${DateFormat('d MMM y').format(invoice.toWeekDate!)}',
                   ),

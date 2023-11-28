@@ -49,38 +49,6 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                     selectedColor: MyColors.c_C6A34F,
                   )),
             ),
-            /*Obx(() => Visibility(
-              visible: controller.hideCalender.value == false,
-                child: Container(
-              width: Get.width*0.7,
-              margin: const EdgeInsets.only(top: 10),
-              padding: const EdgeInsets.all(4.0),
-              decoration: BoxDecoration(color: MyColors.c_C6A34F, borderRadius: BorderRadius.circular(30.0)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(MyAssets.calender, height: 20, width: 20),
-                  const SizedBox(width: 10),
-                  GestureDetector(
-                    onTap: () => _selectDate(context),
-                    child: Row(
-                      children: [
-                        Obx(
-                              () => Text(
-                            controller.selectedDate.value.EdMMMy,
-                            style: MyColors.white.medium14,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        const Icon(Icons.arrow_drop_down, color: MyColors.white),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ))),*/
             Obx(
               () => controller.isLoading.value
                   ? _loading
@@ -94,7 +62,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
     );
   }
 
-  Widget get _noEmployeeHireYet => const NoItemFound();
+  Widget get _noEmployeeHireYet => const Center(child: NoItemFound());
 
   Widget get _loading => Padding(
         padding: const EdgeInsets.all(15.0),
