@@ -107,6 +107,7 @@ class _Lottie {
   String inputEmailLottie = "assets/lottie/input_email.json";
   String otpCheckLottie = "assets/lottie/otp_check.json";
   String resetPasswordLottie = "assets/lottie/reset_password.json";
+  String calenderLottie = "assets/lottie/calender.json";
 }
 
 class _PaymentMethod {

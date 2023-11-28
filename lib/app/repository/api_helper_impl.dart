@@ -1249,7 +1249,21 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
 
-    print('ApiHelperImpl.getSkipDate: ${response.bodyString}');
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> updateSkipDate() async {
+    String url = "users/skip-date";
+    String requestBody = jsonEncode({"date": DateTime.now().toString().split(" ").first});
+    Response response = await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    print('ApiHelperImpl.updateSkipDate: ${response.bodyString}');
     return _convert<CommonResponseModel>(
       response,
       CommonResponseModel.fromJson,

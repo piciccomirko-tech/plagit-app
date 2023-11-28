@@ -208,5 +208,6 @@ abstract class ApiHelper {
   EitherModel<ClientMyEmployeesModel> getClientMyEmployees({String? startDate, String? endDate, required String hiredBy, String? employeeId});
   EitherModel<CommonResponseModel> matchEmployee({required String employeeId});
   EitherModel<CommonResponseModel> getSkipDate();
+  EitherModel<CommonResponseModel> updateSkipDate();
 
 }
