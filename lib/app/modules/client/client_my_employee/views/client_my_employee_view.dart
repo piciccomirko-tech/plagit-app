@@ -83,6 +83,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
       );
 
   Widget _employeeItem(EmployeeModel hiredHistory) {
+    print('ClientMyEmployeeView._employeeItem: ${(hiredHistory.employeeDetails?.profilePicture??"").imageUrl}');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.w).copyWith(
         bottom: 20.h,

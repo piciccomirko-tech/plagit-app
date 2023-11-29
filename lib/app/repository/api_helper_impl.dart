@@ -10,6 +10,7 @@ import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employ
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
@@ -575,7 +576,25 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
+  EitherModel<Response> updateCheckInOutByClientLatest({required ClientUpdateStatusModel clientUpdateStatusModel}) async {
+    String url = "current-hired-employees/update-status";
+    String requestBody = jsonEncode(clientUpdateStatusModel.toJson());
+    Response response = await put(url, requestBody);
+    if (response.statusCode == null) response = await put(url, requestBody);
+    if (response.statusCode == null) response = await put(url, requestBody);
+    if (response.statusCode == null) response = await put(url, requestBody);
+    print('ApiHelperImpl.updateCheckInOutByClientLatest response: ${response.bodyString}');
+    print('ApiHelperImpl.updateCheckInOutByClientLatest request: $requestBody');
+    return _convert<Response>(
+      response,
+      (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
   EitherModel<Response> updateCheckInOutByClient(Map<String, dynamic> data) async {
+    print('ApiHelperImpl.updateCheckInOutByClient: ${jsonEncode(data)}');
     Response response = await put("current-hired-employees/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
     if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
@@ -583,11 +602,10 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
     return _convert<Response>(
       response,
-      (Map<String, dynamic> data) {},
+          (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((l) => left(l), (r) => right(r));
   }
-
   @override
   EitherModel<Response> deleteAccount(Map<String, dynamic> data) async {
     Response response = await put("users/update-status", jsonEncode(data));
@@ -1263,7 +1281,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
-    print('ApiHelperImpl.updateSkipDate: ${response.bodyString}');
     return _convert<CommonResponseModel>(
       response,
       CommonResponseModel.fromJson,

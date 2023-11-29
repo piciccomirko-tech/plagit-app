@@ -3,7 +3,7 @@ version: 2.4.5+42
 publish_to: none
 description: A new Flutter project.
 environment:
-  sdk: '>=3.2.0 <4.0.0'
+  sdk: '>=3.2.1 <4.0.0'
 
 dependencies:
 
@@ -38,16 +38,6 @@ dependencies:
   share_plus: ^7.2.1
 
   pin_code_fields: ^8.0.1
-
-  # check ui in different device
-#  device_preview: ^1.1.0
-
-  # bottom modal sheet
-  modal_bottom_sheet:
-    git:
-      url: https://github.com/followthemoney1/modal_bottom_sheet.git
-      ref: main
-      path: modal_bottom_sheet
 
   # dotted border for beautiful ui
   dotted_border: ^2.1.0

@@ -1,6 +1,10 @@
 import 'package:dartz/dartz.dart';
 import 'package:intl/intl.dart';
+import 'package:mh/app/common/widgets/break_time_picker_widget.dart';
+import 'package:mh/app/common/widgets/timer_wheel_for24_h_widget.dart';
+import 'package:mh/app/models/check_in_check_out_details.dart';
 import 'package:mh/app/models/employee_details.dart';
+import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -30,15 +34,7 @@ class ClientDashboardController extends GetxController {
     {"name": "More", "width": 100.0},
   ];
 
-  List<String> complainType = [
-    "Check In Before",
-    "Check In After",
-    "Check Out Before",
-    "Check Out After",
-    "Break Time",
-  ];
-
-  String selectedComplainType = "Check In Before";
+  Rx<ClientUpdateStatusModel> clientUpdateStatusModel = ClientUpdateStatusModel().obs;
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   TextEditingController tecTime = TextEditingController();
@@ -59,7 +55,8 @@ class ClientDashboardController extends GetxController {
   }
 
   String getComment(int index) {
-    return checkInCheckOutHistory.value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.clientComment ?? '';
+    CheckInCheckOutDetails? check = checkInCheckOutHistory.value.checkInCheckOutHistory?[index].checkInCheckOutDetails;
+    return check?.clientComment ?? '';
   }
 
   /*CheckInCheckOutHistoryElement? getCheckInOutDate(int index) {
@@ -78,6 +75,14 @@ class ClientDashboardController extends GetxController {
     CheckInCheckOutHistoryElement? element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
 
     if (element.checkInCheckOutDetails != null) {
+      CheckInCheckOutDetails? check = element.checkInCheckOutDetails;
+      clientUpdateStatusModel.value = ClientUpdateStatusModel(
+          clientCheckInTime: (check?.clientCheckInTime ?? check?.checkInTime ?? '').toString(),
+          clientCheckOutTime: (check?.clientCheckOutTime ?? check?.checkOutTime ?? '').toString(),
+          clientBreakTime: check?.clientBreakTime ?? check?.breakTime ?? 0);
+      tecComment.text = element.checkInCheckOutDetails?.clientComment ?? '';
+      clientUpdateStatusModel.refresh();
+
       // checkout is 24h ago
       if ((element.checkInCheckOutDetails?.checkOutTime != null) &&
           DateTime.now().difference(element.checkInCheckOutDetails!.checkOutTime!.toLocal()).inHours > 12) {
@@ -99,7 +104,7 @@ class ClientDashboardController extends GetxController {
     return true;
   }
 
-  void setUpdatedDate(int index) {
+/*  void setUpdatedDate(int index) {
     CheckInCheckOutHistoryElement? element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
     if (element.checkInCheckOutDetails != null) {
       tecComment.text = element.checkInCheckOutDetails?.clientComment ?? "";
@@ -164,22 +169,20 @@ class ClientDashboardController extends GetxController {
         tecTime.text = (element.checkInCheckOutDetails?.clientBreakTime ?? 0).toString();
       }
     }
-  }
+  }*/
 
   void onDatePicked(DateTime dateTime) {
     dashboardDate.value = dateTime;
     dashboardDate.refresh();
-
-    selectedDate.value = DateFormat('E, d MMM, y').format(dashboardDate.value);
-
+    selectedDate.value = DateFormat('E, d MMM y').format(dashboardDate.value);
     _fetchCheckInOutHistory();
   }
 
-  void onComplainTypeChange(int index, String? type) {
+/*  void onComplainTypeChange(int index, String? type) {
     selectedComplainType = type!;
 
     setUpdatedDate(index);
-  }
+  }*/
 
   Future<void> _fetchCheckInOutHistory() async {
     loading.value = true;
@@ -203,7 +206,7 @@ class ClientDashboardController extends GetxController {
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 
-      CheckInCheckOutHistoryElement element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
+      /*CheckInCheckOutHistoryElement element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
 
       int checkInDiff = 0, checkOutDiff = 0, breakTime = 0;
 
@@ -225,10 +228,8 @@ class ClientDashboardController extends GetxController {
 
       Map<String, dynamic> data = {
         "id": element.currentHiredEmployeeId,
-        "checkIn": (element.checkInCheckOutDetails?.checkIn ?? false) ||
-            (element.checkInCheckOutDetails?.emmergencyCheckIn ?? false),
-        "checkOut": (element.checkInCheckOutDetails?.checkOut ?? false) ||
-            (element.checkInCheckOutDetails?.emmergencyCheckOut ?? false),
+        "checkIn": element.checkInCheckOutDetails?.checkIn ?? false,
+        "checkOut": element.checkInCheckOutDetails?.checkOut ?? false,
         if (tecComment.text.isNotEmpty) "clientComment": tecComment.text,
         "clientBreakTime": selectedComplainType == complainType.last ? int.parse(tecTime.text) : breakTime,
         "clientCheckInTime": complainType[0] == selectedComplainType
@@ -243,10 +244,20 @@ class ClientDashboardController extends GetxController {
                     ? int.parse(tecTime.text)
                     : checkOutDiff
             : 0,
-      };
+      };*/
+
+      CheckInCheckOutHistoryElement element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
+
+      clientUpdateStatusModel.value.id =
+          checkInCheckOutHistory.value.checkInCheckOutHistory?[index].currentHiredEmployeeId ?? '';
+      clientUpdateStatusModel.value.checkIn = element.checkInCheckOutDetails?.checkIn ?? false;
+      clientUpdateStatusModel.value.checkOut = element.checkInCheckOutDetails?.checkOut ?? false;
+      clientUpdateStatusModel.value.clientComment = tecComment.text;
 
       CustomLoader.show(context!);
-      await _apiHelper.updateCheckInOutByClient(data).then((Either<CustomError, Response> response) {
+      await _apiHelper
+          .updateCheckInOutByClientLatest(clientUpdateStatusModel: clientUpdateStatusModel.value)
+          .then((Either<CustomError, Response> response) {
         CustomLoader.hide(context!);
 
         response.fold((CustomError customError) {
@@ -291,12 +302,111 @@ class ClientDashboardController extends GetxController {
     if (checkInCheckOutHistory.value.checkInCheckOutHistory != null &&
         checkInCheckOutHistory.value.checkInCheckOutHistory!.isNotEmpty) {
       totalActiveEmployee.clear();
-      for (var i in checkInCheckOutHistory.value.checkInCheckOutHistory!) {
+      for (CheckInCheckOutHistoryElement i in checkInCheckOutHistory.value.checkInCheckOutHistory!) {
         if (!totalActiveEmployee.contains(i.employeeId ?? '')) {
           totalActiveEmployee.add(i.employeeId ?? '');
         }
       }
       totalActiveEmployee.refresh();
     }
+  }
+
+  void onClockPressed({required int index, required String tag}) {
+    Get.dialog(Dialog(
+      child: Container(
+        height: 320,
+        padding: const EdgeInsets.all(10.0),
+        decoration: BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(5.0)),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              TimerWheel24HWidget(
+                height: 250,
+                width: 300,
+                centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
+                initialTime: DateTime.parse(tag == 'checkIn'
+                    ? (checkInCheckOutHistory
+                                .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.clientCheckInTime ??
+                            checkInCheckOutHistory
+                                .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.checkInTime)
+                        .toString()
+                    : (checkInCheckOutHistory
+                                .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.clientCheckOutTime ??
+                            checkInCheckOutHistory
+                                .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.checkOutTime)
+                        .toString()),
+                onTimeChanged: (String time) {
+                  if (tag == "checkIn") {
+                    clientUpdateStatusModel.value.clientCheckInTime =
+                        "${dashboardDate.value.toString().split(" ").first} $time";
+                  } else {
+                    clientUpdateStatusModel.value.clientCheckOutTime =
+                        "${dashboardDate.value.toString().split(" ").first} $time";
+                  }
+                  clientUpdateStatusModel.refresh();
+                },
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    height: 30,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          elevation: 0.0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                          backgroundColor: MyColors.c_C6A34F,
+                        ),
+                        onPressed: () => Get.back(),
+                        child: Text("OK", style: MyColors.white.semiBold16)),
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+    ));
+  }
+
+  void onBreakTimeChange(int totalMinutes) {
+    clientUpdateStatusModel.value.clientBreakTime = totalMinutes;
+    clientUpdateStatusModel.refresh();
+  }
+
+  void onBreakTimePressed() {
+    Get.dialog(Dialog(
+      child: Container(
+          padding: const EdgeInsets.all(10.0),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: MyColors.lightCard(context!)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              BreakTimePickerWidget(onBreakTimeChanged: onBreakTimeChange),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(
+                    height: 30,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          elevation: 0.0,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5.0)),
+                          backgroundColor: MyColors.c_C6A34F,
+                        ),
+                        onPressed: () => Get.back(),
+                        child: Text("OK", style: MyColors.white.semiBold16)),
+                  )
+                ],
+              )
+            ],
+          )),
+    ));
   }
 }

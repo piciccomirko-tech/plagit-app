@@ -26,7 +26,6 @@ class SettingsController extends GetxController {
 
   void onSubmitPressed() async {
     Utils.unFocus();
-
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
 

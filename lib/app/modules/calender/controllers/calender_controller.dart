@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
@@ -22,7 +22,6 @@ import 'package:mh/app/modules/employee/employee_home/controllers/employee_home_
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/repository/api_helper.dart';
 import 'package:mh/app/routes/app_pages.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 class CalenderController extends GetxController {
   BuildContext? context;
@@ -363,67 +362,69 @@ class CalenderController extends GetxController {
     requestDateList[index].startTime = Utils.getCurrentTimeWithAMPM();
     requestDateList[index].endTime = Utils.getCurrentTimeWithAMPM();
 
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context!,
       builder: (BuildContext context) {
         return Container(
           color: MyColors.lightCard(context),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 19.h),
-                Center(
-                  child: Container(
-                    height: 4.h,
-                    width: 80.w,
-                    decoration: const BoxDecoration(
-                      color: MyColors.c_5C5C5C,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 19.h),
+                  Center(
+                    child: Container(
+                      height: 4.h,
+                      width: 80.w,
+                      decoration: const BoxDecoration(
+                        color: MyColors.c_5C5C5C,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 19.h),
-                _title(context, "From time"),
-                TimerWheelWidget(
-                  height: 150.h,
-                  width: 300.w,
-                  centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
-                  onTimeChanged: (String time) {
-                    requestDateList[index].startTime = time;
-                    requestDateList.refresh();
-                  },
-                ),
-                SizedBox(height: 30.h),
-                _title(context, "To time"),
-                SizedBox(height: 11.h),
-                TimerWheelWidget(
-                  height: 150.h,
-                  width: 300.w,
-                  centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
-                  onTimeChanged: (String time) {
-                    requestDateList[index].endTime = time;
-                    requestDateList.refresh();
-                  },
-                ),
-                SizedBox(height: 30.h),
-                CustomButtons.button(
-                  text: "Done",
-                  onTap: () {
-                    if (requestDateList[index].startTime == requestDateList[index].endTime) {
-                      CustomDialogue.information(
-                        context: context,
-                        title: "Invalid Time Range",
-                        description: "From-time and To-time should be same",
-                      );
-                    } else {
-                      Get.back(); // hide modal
-                    }
-                  },
-                  margin: const EdgeInsets.symmetric(horizontal: 18),
-                ),
-                SizedBox(height: 20.h),
-              ],
+                  SizedBox(height: 19.h),
+                  _title(context, "From time"),
+                  TimerWheelWidget(
+                    height: 150.h,
+                    width: 300.w,
+                    centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
+                    onTimeChanged: (String time) {
+                      requestDateList[index].startTime = time;
+                      requestDateList.refresh();
+                    },
+                  ),
+                  SizedBox(height: 30.h),
+                  _title(context, "To time"),
+                  SizedBox(height: 11.h),
+                  TimerWheelWidget(
+                    height: 150.h,
+                    width: 300.w,
+                    centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
+                    onTimeChanged: (String time) {
+                      requestDateList[index].endTime = time;
+                      requestDateList.refresh();
+                    },
+                  ),
+                  SizedBox(height: 30.h),
+                  CustomButtons.button(
+                    text: "Done",
+                    onTap: () {
+                      if (requestDateList[index].startTime == requestDateList[index].endTime) {
+                        CustomDialogue.information(
+                          context: context,
+                          title: "Invalid Time Range",
+                          description: "From-time and To-time should be same",
+                        );
+                      } else {
+                        Get.back(); // hide modal
+                      }
+                    },
+                    margin: const EdgeInsets.symmetric(horizontal: 18),
+                  ),
+                  SizedBox(height: 20.h),
+                ],
+              ),
             ),
           ),
         );

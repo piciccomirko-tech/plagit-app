@@ -33,6 +33,9 @@ class MyAssets {
   static const license = "assets/images/license.png";
   static const height = "assets/icons/height.png";
   static const weight = "assets/icons/weight.png";
+  static const checkIn = "assets/icons/checkin.png";
+  static const checkOut = "assets/icons/checkout.png";
+  static const breakTime = "assets/icons/break_time.png";
   static const nationality = "assets/icons/nationality.png";
   static const organization = "assets/icons/organization.png";
   static const dressSize = "assets/icons/dress_size.png";

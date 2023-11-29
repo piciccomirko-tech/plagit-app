@@ -5,8 +5,6 @@ import 'package:mh/app/common/utils/validators.dart';
 import 'package:mh/app/common/widgets/custom_dropdown.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/modules/client/client_dashboard/views/client_dashboard_view.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/no_item_found.dart';
@@ -380,7 +378,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       : GestureDetector(
           onTap: () {
             controller.setUpdatedDate(index);
-            showMaterialModalBottomSheet(
+            showModalBottomSheet(
               context: controller.context!,
               builder: (context) => Container(
                 // padding: EdgeInsets.only(

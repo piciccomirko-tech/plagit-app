@@ -1,5 +1,4 @@
 import 'package:mh/app/modules/employee/employee_home/controllers/employee_home_controller.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../utils/exports.dart';
 import 'custom_badge.dart';
@@ -9,7 +8,7 @@ class ChatWithUserChoose {
     int msgFromAdmin = 0,
     int msgFromClient = 0
   }) {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Container(
         color: MyColors.lightCard(context),

@@ -11,8 +11,6 @@ import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
 import '../utils/exports.dart';
 import 'custom_dropdown.dart';
 
@@ -27,7 +25,7 @@ class CustomFilter {
     required Function() onResetClick,
     bool showPositionId = false,
   }) {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
         String selectedExp = "";
