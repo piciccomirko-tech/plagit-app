@@ -73,8 +73,8 @@ class EmployeeHomeController extends GetxController {
 
   @override
   void onReady() {
-    Future.delayed(const Duration(seconds: 1), () => showHomePopUpForCalender());
-    Future.delayed(const Duration(seconds: 3), () => showReviewBottomSheet());
+    showHomePopUpForCalender();
+    Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
     super.onReady();
   }
 
@@ -305,7 +305,7 @@ class EmployeeHomeController extends GetxController {
             .collection('employee_client_chat')
             .where("employeeId", isEqualTo: appController.user.value.employee?.id ?? '')
             .where("clientId",
-            isEqualTo: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? '')
+                isEqualTo: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? '')
             .snapshots()
             .listen((QuerySnapshot<Map<String, dynamic>> event) {
           if (event.docs.isNotEmpty) {
@@ -504,47 +504,51 @@ class EmployeeHomeController extends GetxController {
       responseData.fold((CustomError customError) {
         Utils.errorDialog(context!, customError..onRetry);
       }, (CommonResponseModel response) {
-        if (response.status == "success" &&
-            response.statusCode == 200 &&
-            response.details != null &&
-            response.details?.skipDate != null &&
-            response.details!.skipDate!.isNotEmpty &&
-            response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
-          Get.dialog(Dialog(
-            insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-            child: Container(
-              height: 350,
-              decoration: BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Lottie.asset(MyAssets.lottie.calenderLottie),
-                  Text('PLEASE UPDATE YOUR CALENDER', style: MyColors.c_C6A34F.semiBold18),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomButtons.button(
-                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          margin: EdgeInsets.zero,
-                          text: "Update",
-                          onTap: () => onCalenderUpdatePressed(tag: 'update'),
-                          customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
-                      const SizedBox(width: 20),
-                      CustomButtons.button(
-                          padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                          margin: EdgeInsets.zero,
-                          backgroundColor: Colors.grey.shade400,
-                          text: 'Close',
-                          onTap: () => onCalenderUpdatePressed(tag: 'close'),
-                          customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
-                    ],
-                  )
-                ],
+        print('EmployeeHomeController.showHomePopUpForCalender: ${response.details?.skipDate}');
+        if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+          if (response.details?.skipDate == null ||
+              response.details!.skipDate!.isEmpty ||
+              response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
+            Get.dialog(
+                Dialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+              child: Container(
+                height: 350,
+                decoration:
+                    BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset(MyAssets.lottie.calenderLottie),
+                    Text('PLEASE UPDATE YOUR CALENDER', style: MyColors.c_C6A34F.semiBold18),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomButtons.button(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            margin: EdgeInsets.zero,
+                            text: "Update",
+                            onTap: () => onCalenderUpdatePressed(tag: 'update'),
+                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                        const SizedBox(width: 20),
+                        CustomButtons.button(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            margin: EdgeInsets.zero,
+                            backgroundColor: Colors.grey.shade400,
+                            text: 'Close',
+                            onTap: () => onCalenderUpdatePressed(tag: 'close'),
+                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
-          ));
+              barrierDismissible: false
+            );
+          }
         }
       });
     });
