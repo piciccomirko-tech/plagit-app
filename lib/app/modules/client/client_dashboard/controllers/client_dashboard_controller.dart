@@ -79,7 +79,9 @@ class ClientDashboardController extends GetxController {
       clientUpdateStatusModel.value = ClientUpdateStatusModel(
           clientCheckInTime: (check?.clientCheckInTime ?? check?.checkInTime ?? '').toString(),
           clientCheckOutTime: (check?.clientCheckOutTime ?? check?.checkOutTime ?? '').toString(),
-          clientBreakTime: check?.clientBreakTime ?? check?.breakTime ?? 0);
+          clientBreakTime: check?.clientBreakTime == null || check?.clientBreakTime == 0
+              ? check?.breakTime
+              : check?.clientBreakTime);
       tecComment.text = element.checkInCheckOutDetails?.clientComment ?? '';
       clientUpdateStatusModel.refresh();
 

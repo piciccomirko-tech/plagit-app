@@ -58,7 +58,6 @@ class CalenderController extends GetxController {
   @override
   void onInit() {
     employeeId = Get.arguments[0];
-    print('CalenderController.onInit: $employeeId');
     shortListId = Get.arguments[1] ?? '';
     uniformMandatory = Get.arguments[2];
     _getCalenderData();
@@ -464,7 +463,6 @@ class CalenderController extends GetxController {
           shortListId: shortListId, requestDateList: requestDateList, uniformMandatory: uniformMandatory);
       await _updateShortListDateOrTime(updateShortListRequestModel: updateShortListRequestModel);
     } else {
-      print('CalenderController.onBookNowClick: $employeeId');
       await shortlistController.onBookNowClick(
           employeeId: employeeId, requestDateList: requestDateList, uniformMandatory: uniformMandatory);
     }

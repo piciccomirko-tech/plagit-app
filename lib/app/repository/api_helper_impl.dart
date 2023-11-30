@@ -418,8 +418,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) {
       response = await post("short-list/create", jsonEncode(addToShortListRequestModel.toJson()));
     }
-    print('ApiHelperImpl.addToShortlist request: ${jsonEncode(addToShortListRequestModel.toJson())}');
-    print('ApiHelperImpl.addToShortlist response: ${response.bodyString}');
 
     return _convert<Response>(
       response,

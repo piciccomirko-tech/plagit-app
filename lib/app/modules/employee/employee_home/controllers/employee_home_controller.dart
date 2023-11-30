@@ -504,7 +504,6 @@ class EmployeeHomeController extends GetxController {
       responseData.fold((CustomError customError) {
         Utils.errorDialog(context!, customError..onRetry);
       }, (CommonResponseModel response) {
-        print('EmployeeHomeController.showHomePopUpForCalender: ${response.details?.skipDate}');
         if (response.status == "success" && response.statusCode == 200 && response.details != null) {
           if (response.details?.skipDate == null ||
               response.details!.skipDate!.isEmpty ||
