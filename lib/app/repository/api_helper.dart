@@ -127,9 +127,7 @@ abstract class ApiHelper {
 
   EitherModel<Response> checkout({required EmployeeCheckOutRequestModel employeeCheckOutRequestModel});
 
-  EitherModel<Response> updateCheckInOutByClientLatest({required ClientUpdateStatusModel clientUpdateStatusModel});
-
-  EitherModel<Response> updateCheckInOutByClient(Map<String, dynamic> data);
+  EitherModel<Response> updateCheckInOutByClient({required ClientUpdateStatusModel clientUpdateStatusModel});
 
   EitherModel<Response> deleteAccount(Map<String, dynamic> data);
 

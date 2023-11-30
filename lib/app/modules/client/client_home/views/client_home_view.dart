@@ -59,8 +59,11 @@ class ClientHomeView extends GetView<ClientHomeController> {
                   onProfileTap: controller.onProfileClick,
                 );
               },
-              icon: const Icon(
-                CupertinoIcons.person,
+              icon: const Padding(
+                padding: EdgeInsets.only(top: 9.0),
+                child: Icon(
+                  CupertinoIcons.person,
+                ),
               ),
             )
           ],
@@ -139,7 +142,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                       top: 4,
                                       right: 5,
                                       child: Visibility(
-                                        visible: controller.unreadMsgFromEmployee > 0,
+                                        visible: controller.unreadMsgFromEmployee.value > 0,
                                         child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
                                       ),
                                     ),

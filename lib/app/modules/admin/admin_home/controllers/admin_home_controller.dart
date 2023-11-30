@@ -24,7 +24,7 @@ class AdminHomeController extends GetxController {
   RxInt unreadMsgFromEmployee = 0.obs;
   RxInt unreadMsgFromClient = 0.obs;
 
-  RxInt numberOfRequestFromClient = 0.obs;
+  int numberOfRequestFromClient = 0;
 
   String requestId = '';
 
@@ -127,10 +127,10 @@ class AdminHomeController extends GetxController {
   }
 
   void calculateNumberOfRequestFromClient() {
-    numberOfRequestFromClient.value = 0;
+    numberOfRequestFromClient = 0;
     for (var i in requestedEmployees.value.requestEmployeeList!) {
       if (i.suggestedEmployeeDetails!.isEmpty) {
-        numberOfRequestFromClient.value += 1;
+        numberOfRequestFromClient += 1;
       }
     }
   }

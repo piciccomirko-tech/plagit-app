@@ -83,7 +83,6 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
       );
 
   Widget _employeeItem(EmployeeModel hiredHistory) {
-    print('ClientMyEmployeeView._employeeItem: ${(hiredHistory.employeeDetails?.profilePicture??"").imageUrl}');
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.w).copyWith(
         bottom: 20.h,
@@ -193,8 +192,8 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                                     fontSize: 12,
                                     backgroundColor: Colors.teal,
                                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                                    onTap: () => controller.onPrevDatePressed(
-                                        employeeId: hiredHistory.employeeId ?? '')),
+                                    onTap: () =>
+                                        controller.onPrevDatePressed(employeeId: hiredHistory.employeeId ?? '')),
                               ))),
                           SizedBox(
                             width: 122.w,
@@ -310,10 +309,9 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                 right: -5.w,
                 child: Obx(
                   () {
-                    Iterable<Map<String, dynamic>> result = controller.clientHomeController.employeeChatDetails.where(
-                        (data) =>
-                            data["employeeId"] == employeeId &&
-                            data["${controller.appController.user.value.userId}_unread"] > 0);
+                    var result = controller.clientHomeController.employeeChatDetails.where((data) =>
+                        data["employeeId"] == employeeId &&
+                        data["${controller.appController.user.value.userId}_unread"] > 0);
 
                     if (result.isEmpty) return Container();
                     return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());

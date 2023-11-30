@@ -44,7 +44,7 @@ class AdminHomeCardWidget extends StatelessWidget {
               child: Align(
             alignment: Alignment.topLeft,
             child: Obx(() => Visibility(
-                visible: index == 1 && Get.find<AdminHomeController>().numberOfRequestFromClient.value > 0,
+                visible: index == 1 && Get.find<AdminHomeController>().numberOfRequestFromClient > 0,
                 child: Padding(
                   padding: const EdgeInsets.all(3.0),
                   child: CircleAvatar(

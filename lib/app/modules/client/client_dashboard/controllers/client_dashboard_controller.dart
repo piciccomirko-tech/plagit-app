@@ -256,7 +256,7 @@ class ClientDashboardController extends GetxController {
 
       CustomLoader.show(context!);
       await _apiHelper
-          .updateCheckInOutByClientLatest(clientUpdateStatusModel: clientUpdateStatusModel.value)
+          .updateCheckInOutByClient(clientUpdateStatusModel: clientUpdateStatusModel.value)
           .then((Either<CustomError, Response> response) {
         CustomLoader.hide(context!);
 

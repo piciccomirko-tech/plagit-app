@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:mh/app/common/utils/exports.dart';
 
 class BreakTimePickerWidget extends StatefulWidget {
   final Function(int) onBreakTimeChanged;
-
-  const BreakTimePickerWidget({Key? key, required this.onBreakTimeChanged});
+  const BreakTimePickerWidget({super.key, required this.onBreakTimeChanged});
 
   @override
   BreakTimePickerWidgetState createState() => BreakTimePickerWidgetState();
@@ -66,7 +64,7 @@ class BreakTimePickerWidgetState extends State<BreakTimePickerWidget> {
           child: Column(
             children: [
               Text('Minutes', style: MyColors.l111111_dwhite(context).semiBold16),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               Expanded(
                 child: _buildPicker(
                   controller: _minutesController,
@@ -81,7 +79,6 @@ class BreakTimePickerWidgetState extends State<BreakTimePickerWidget> {
       ],
     );
   }
-
 
   Widget _buildPicker({
     required FixedExtentScrollController controller,

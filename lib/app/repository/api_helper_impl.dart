@@ -576,15 +576,14 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<Response> updateCheckInOutByClientLatest({required ClientUpdateStatusModel clientUpdateStatusModel}) async {
+  EitherModel<Response> updateCheckInOutByClient({required ClientUpdateStatusModel clientUpdateStatusModel}) async {
     String url = "current-hired-employees/update-status";
     String requestBody = jsonEncode(clientUpdateStatusModel.toJson());
     Response response = await put(url, requestBody);
     if (response.statusCode == null) response = await put(url, requestBody);
     if (response.statusCode == null) response = await put(url, requestBody);
     if (response.statusCode == null) response = await put(url, requestBody);
-    print('ApiHelperImpl.updateCheckInOutByClientLatest response: ${response.bodyString}');
-    print('ApiHelperImpl.updateCheckInOutByClientLatest request: $requestBody');
+
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},
@@ -592,20 +591,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 
-  @override
-  EitherModel<Response> updateCheckInOutByClient(Map<String, dynamic> data) async {
-    print('ApiHelperImpl.updateCheckInOutByClient: ${jsonEncode(data)}');
-    Response response = await put("current-hired-employees/update-status", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
-
-    return _convert<Response>(
-      response,
-          (Map<String, dynamic> data) {},
-      onlyErrorCheck: true,
-    ).fold((l) => left(l), (r) => right(r));
-  }
   @override
   EitherModel<Response> deleteAccount(Map<String, dynamic> data) async {
     Response response = await put("users/update-status", jsonEncode(data));

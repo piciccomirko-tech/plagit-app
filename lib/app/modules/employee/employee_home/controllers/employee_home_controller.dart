@@ -305,7 +305,7 @@ class EmployeeHomeController extends GetxController {
             .collection('employee_client_chat')
             .where("employeeId", isEqualTo: appController.user.value.employee?.id ?? '')
             .where("clientId",
-                isEqualTo: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? '')
+            isEqualTo: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? '')
             .snapshots()
             .listen((QuerySnapshot<Map<String, dynamic>> event) {
           if (event.docs.isNotEmpty) {
