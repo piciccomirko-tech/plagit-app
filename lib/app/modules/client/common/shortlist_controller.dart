@@ -185,7 +185,7 @@ class ShortlistController extends GetxService {
       String? id,
       required String fromWhere,
       required bool? uniformMandatory,
-      required List<RequestDateModel> requestedDateList}) {
+      required List<RequestDateModel> requestedDateList}) async {
     _selectedId = employeeId;
 
     if (_isEmployeeAddedInShortlist(employeeId)) {
@@ -194,7 +194,7 @@ class ShortlistController extends GetxService {
       if (fromWhere == 'Requested Employees') {
         _addEmployeeToShortListNew(employeeId: employeeId, id: id ?? '');
       } else {
-        _addEmployeeToShortlist(
+       await _addEmployeeToShortlist(
             employeeId: employeeId, requestDateList: requestedDateList, uniformMandatory: uniformMandatory);
       }
     }

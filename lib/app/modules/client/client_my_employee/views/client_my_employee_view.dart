@@ -204,7 +204,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               fontSize: 12,
                               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                               onTap: () => Get.toNamed(Routes.calender, arguments: [
-                                hiredHistory.employeeDetails?.employeeId ?? '',
+                                hiredHistory.employeeId ?? '',
                                 '',
                                 hiredHistory.employeeDetails?.hasUniform == true ? null : false
                               ]),
