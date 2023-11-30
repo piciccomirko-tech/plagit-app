@@ -106,8 +106,10 @@ class CalenderController extends GetxController {
   }
 
   void onPageChanged(int index) {
+    final DateTime now = DateTime.now();
+    selectedDate.value = DateTime(now.year, now.month + index, now.day);
     currentPageIndex.value = index;
-    selectedDate.value = DateTime.now().add(Duration(days: index * 30));
+    //selectedDate.value = DateTime.now().add(Duration(days: index * 30));
   }
 
   ///---------------- For employee only -------------------

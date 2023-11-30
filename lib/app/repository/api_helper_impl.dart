@@ -73,7 +73,7 @@ import 'api_helper.dart';
 class ApiHelperImpl extends GetConnect implements ApiHelper {
   @override
   void onInit() {
-    httpClient.baseUrl = ServerUrls.serverTestUrlUser;
+    httpClient.baseUrl = ServerUrls.serverLiveUrlUser;
     httpClient.timeout = const Duration(seconds: 120);
 
     httpClient.addRequestModifier<dynamic>((Request request) {
