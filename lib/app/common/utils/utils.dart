@@ -358,7 +358,7 @@ class Utils {
     return sFile;
   }
 
-  static Future<File> generatePdfWithImageAndTextForUk({required InvoiceModel invoice}) async {
+  static Future<File> generatePdfWithImageAndTextForUk({required InvoiceModel invoice, required String companyName}) async {
     final pw.Document pdf = pw.Document();
     pw.MemoryImage? image;
     File file;
@@ -440,6 +440,7 @@ class Utils {
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
                         pw.Text(invoice.restaurantName ?? ""),
                         pw.SizedBox(height: 10),
+                        pw.Text(companyName),
                         pw.Text(invoice.restaurantAddress ?? '')
                       ])),
                   pw.Expanded(

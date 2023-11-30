@@ -6,6 +6,7 @@ import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
+import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_bank_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
@@ -212,4 +213,5 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> matchEmployee({required String employeeId});
   EitherModel<CommonResponseModel> getSkipDate();
   EitherModel<CommonResponseModel> updateSkipDate();
+  EitherModel<ClientBankInfoModel> getBankInfo();
 }

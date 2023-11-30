@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
@@ -12,6 +13,7 @@ import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
+import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_bank_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
@@ -1271,5 +1273,20 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       CommonResponseModel.fromJson,
     ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<ClientBankInfoModel> getBankInfo() async {
+    String url = "users/bank-info/${Get.find<AppController>().user.value.client?.id}";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<ClientBankInfoModel>(
+      response,
+      ClientBankInfoModel.fromJson,
+    ).fold((CustomError l) => left(l), (ClientBankInfoModel r) => right(r));
   }
 }
