@@ -520,7 +520,7 @@ class EmployeeHomeController extends GetxController {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Lottie.asset(MyAssets.lottie.calenderLottie),
-                    Text('PLEASE UPDATE YOUR CALENDER', style: MyColors.c_C6A34F.semiBold18),
+                    Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -437,150 +437,152 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
         key: controller.formKey,
         child: Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Center(
-                child: Container(
-                  height: 4.h,
-                  width: 80.w,
-                  decoration: const BoxDecoration(
-                    color: MyColors.c_5C5C5C,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Center(
+                  child: Container(
+                    height: 4.h,
+                    width: 80.w,
+                    decoration: const BoxDecoration(
+                      color: MyColors.c_5C5C5C,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.green),
-                        child: Center(child: Text('CheckIn Time', style: MyColors.white.semiBold16)),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Image.asset(MyAssets.checkIn, height: 30, width: 30),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(5.0)),
-                        child: Center(
-                            child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Obx(() => Text(
-                                '${controller.clientUpdateStatusModel.value.clientCheckInTime?.split(" ").last.substring(0, 8)}',
-                                style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
-                            InkWell(
-                                onTap: () => controller.onClockPressed(index: index, tag: 'checkIn'),
-                                child: Image.asset(MyAssets.clock, height: 20, width: 20))
-                          ],
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.green),
+                          child: Center(child: Text('CheckIn Time', style: MyColors.white.semiBold16)),
                         )),
-                      ))
-                ],
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.red),
-                        child: Center(child: Text('CheckOut Time', style: MyColors.white.semiBold16)),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Image.asset(MyAssets.checkOut, height: 30, width: 30),
-                  ),
-                  Expanded(
-                      flex: 1,
-                      child: Container(
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.asset(MyAssets.checkIn, height: 30, width: 30),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade400),
-                              borderRadius: BorderRadius.circular(5.0)),
-                          child: Obx(() => controller.clientUpdateStatusModel.value.clientCheckOutTime == null ||
-                                  controller.clientUpdateStatusModel.value.clientCheckOutTime!.isEmpty
-                              ? const Text('')
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Text(
-                                        "${controller.clientUpdateStatusModel.value.clientCheckOutTime?.split(" ").last.substring(0, 8)}",
-                                        style: MyColors.l111111_dwhite(controller.context!).semiBold16),
-                                    InkWell(
-                                        onTap: () => controller.onClockPressed(index: index, tag: 'checkout'),
-                                        child: Image.asset(MyAssets.clock, height: 20, width: 20))
-                                  ],
-                                ))))
-                ],
-              ),
-              SizedBox(height: 20.h),
-              Row(
-                children: [
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.blueGrey),
-                        child: Center(child: Text('Break Time', style: MyColors.white.semiBold16)),
-                      )),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    child: Image.asset(MyAssets.breakTime, height: 30, width: 30),
+                              border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(5.0)),
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Obx(() => Text(
+                                  '${controller.clientUpdateStatusModel.value.clientCheckInTime?.split(" ").last.substring(0, 8)}',
+                                  style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
+                              InkWell(
+                                  onTap: () => controller.onClockPressed(index: index, tag: 'checkIn'),
+                                  child: Image.asset(MyAssets.clock, height: 20, width: 20))
+                            ],
+                          )),
+                        ))
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.red),
+                          child: Center(child: Text('CheckOut Time', style: MyColors.white.semiBold16)),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.asset(MyAssets.checkOut, height: 30, width: 30),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade400),
+                                borderRadius: BorderRadius.circular(5.0)),
+                            child: Obx(() => controller.clientUpdateStatusModel.value.clientCheckOutTime == null ||
+                                    controller.clientUpdateStatusModel.value.clientCheckOutTime!.isEmpty
+                                ? const Text('')
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                          "${controller.clientUpdateStatusModel.value.clientCheckOutTime?.split(" ").last.substring(0, 8)}",
+                                          style: MyColors.l111111_dwhite(controller.context!).semiBold16),
+                                      InkWell(
+                                          onTap: () => controller.onClockPressed(index: index, tag: 'checkout'),
+                                          child: Image.asset(MyAssets.clock, height: 20, width: 20))
+                                    ],
+                                  ))))
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.blueGrey),
+                          child: Center(child: Text('Break Time', style: MyColors.white.semiBold16)),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.asset(MyAssets.breakTime, height: 30, width: 30),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(5.0)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Obx(() => Text("${controller.clientUpdateStatusModel.value.clientBreakTime} minutes",
+                                  style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
+                              InkWell(
+                                  onTap: controller.onBreakTimePressed,
+                                  child: Image.asset(MyAssets.clock, height: 20, width: 20))
+                            ],
+                          ),
+                        ))
+                  ],
+                ),
+                SizedBox(height: 30.h),
+                TextFormField(
+                  controller: controller.tecComment,
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: null,
+                  cursorColor: MyColors.c_C6A34F,
+                  style: MyColors.l111111_dwhite(controller.context!).regular14,
+                  decoration: MyDecoration.inputFieldDecoration(
+                    context: controller.context!,
+                    label: "Comment",
                   ),
-                  Expanded(
-                      flex: 1,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(5.0)),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Obx(() => Text("${controller.clientUpdateStatusModel.value.clientBreakTime} minutes",
-                                style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
-                            InkWell(
-                                onTap: controller.onBreakTimePressed,
-                                child: Image.asset(MyAssets.clock, height: 20, width: 20))
-                          ],
-                        ),
-                      ))
-                ],
-              ),
-              SizedBox(height: 30.h),
-              TextFormField(
-                controller: controller.tecComment,
-                keyboardType: TextInputType.multiline,
-                minLines: 1,
-                maxLines: null,
-                cursorColor: MyColors.c_C6A34F,
-                style: MyColors.l111111_dwhite(controller.context!).regular14,
-                decoration: MyDecoration.inputFieldDecoration(
-                  context: controller.context!,
-                  label: "Comment",
+                  validator: (String? value) => Validators.emptyValidator(
+                    value?.trim(),
+                    MyStrings.required.tr,
+                  ),
                 ),
-                validator: (String? value) => Validators.emptyValidator(
-                  value?.trim(),
-                  MyStrings.required.tr,
+                SizedBox(height: 30.h),
+                CustomButtons.button(
+                  height: 52.h,
+                  onTap: () => controller.onUpdatePressed(index),
+                  text: "Update",
+                  margin: const EdgeInsets.symmetric(horizontal: 14),
+                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                 ),
-              ),
-              SizedBox(height: 30.h),
-              CustomButtons.button(
-                height: 52.h,
-                onTap: () => controller.onUpdatePressed(index),
-                text: "Update",
-                margin: const EdgeInsets.symmetric(horizontal: 14),
-                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-              ),
-              SizedBox(height: 30.h),
-            ],
+                SizedBox(height: 30.h),
+              ],
+            ),
           ),
         ),
       );
