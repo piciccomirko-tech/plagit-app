@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 
 import '../../enums/user_type.dart';
 import '../../modules/client/client_home/controllers/client_home_controller.dart';
@@ -12,7 +11,7 @@ class CustomMenu {
     Function()? onProfileTap,
     Function()? onSettingsTap,
   }) {
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (context) => Container(
         color: MyColors.lightCard(context),

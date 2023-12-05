@@ -1,13 +1,14 @@
+import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/widgets/custom_badge.dart';
+import 'package:mh/app/common/widgets/no_item_found.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
+import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/routes/app_pages.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/custom_network_image.dart';
-import '../../client_dashboard/models/current_hired_employees.dart';
 import '../controllers/client_my_employee_controller.dart';
 
 class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
@@ -22,28 +23,46 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
         title: MyStrings.myEmployees.tr,
         context: context,
       ),
-      body: Obx(
-        () => controller.isLoading.value
-            ? _loading
-            : (controller.employees.value.hiredHistories ?? []).isEmpty
-                ? _noEmployeeHireYet
-                : _showEmployeeList,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 15),
+            SizedBox(
+              height: 30,
+              child: Obx(() => CustomRadioButton(
+                    elevation: 0,
+                    selectedBorderColor: Colors.transparent,
+                    unSelectedBorderColor: Colors.transparent,
+                    absoluteZeroSpacing: true,
+                    width: Get.width * 0.45,
+                    padding: 0.0,
+                    radius: 30,
+                    shapeRadius: 30,
+                    defaultSelected: (DateTime.now().toString().split(' ').first),
+                    margin: EdgeInsets.only(right: 10.w),
+                    unSelectedColor: MyColors.c_C6A34F.withOpacity(0.5),
+                    buttonLables: ["${controller.selectedDate.value.EdMMMy}" " \u25BC", 'All Employees'],
+                    buttonValues: [(DateTime.now().toString().split(' ').first), ''],
+                    buttonTextStyle: const ButtonTextStyle(
+                        selectedColor: Colors.white, unSelectedColor: Colors.black, textStyle: TextStyle(fontSize: 13)),
+                    radioButtonValue: controller.onRadioButtonTap,
+                    selectedColor: MyColors.c_C6A34F,
+                  )),
+            ),
+            Obx(
+              () => controller.isLoading.value
+                  ? _loading
+                  : controller.employees.isEmpty
+                      ? _noEmployeeHireYet
+                      : _showEmployeeList,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget get _noEmployeeHireYet => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Center(
-            child: Text(
-              "No employee hire yet",
-              style: MyColors.l111111_dwhite(controller.context!).semiBold16,
-            ),
-          ),
-        ],
-      );
+  Widget get _noEmployeeHireYet => const Center(child: NoItemFound());
 
   Widget get _loading => Padding(
         padding: const EdgeInsets.all(15.0),
@@ -52,15 +71,18 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
 
   Widget get _showEmployeeList => ListView.builder(
         padding: EdgeInsets.symmetric(vertical: 20.h),
-        itemCount: controller.employees.value.hiredHistories?.length ?? 0,
+        itemCount: controller.employees.length,
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        primary: false,
         itemBuilder: (context, index) {
           return _employeeItem(
-            controller.employees.value.hiredHistories![index],
+            controller.employees[index],
           );
         },
       );
 
-  Widget _employeeItem(HiredHistory hiredHistory) {
+  Widget _employeeItem(EmployeeModel hiredHistory) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.w).copyWith(
         bottom: 20.h,
@@ -95,8 +117,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
               right: 40.w,
               top: 4.h,
               child: _chat(
-                  employeeName: hiredHistory.employeeDetails?.name ?? '',
-                  employeeId: hiredHistory.employeeDetails?.employeeId ?? ''),
+                  employeeName: hiredHistory.employeeDetails?.name ?? '', employeeId: hiredHistory.employeeId ?? ''),
             ),
             Row(
               children: [
@@ -142,8 +163,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                           _detailsItem(
                               MyAssets.exp, "", Utils.getPositionName(hiredHistory.employeeDetails?.positionId ?? "")),
                           InkWell(
-                              onTap: () =>
-                                  controller.onCalenderClick(bookedDateList: hiredHistory.requestDateList ?? []),
+                              onTap: () => controller.onCalenderClick(bookedDateList: hiredHistory.bookedDate ?? []),
                               child: Image.asset(MyAssets.calender2, height: 20, width: 20)),
                           SizedBox(width: 8.w)
                         ],
@@ -151,7 +171,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                         /* _detailsItem(MyAssets.totalHour, 'Total hour:',
+                          /* _detailsItem(MyAssets.totalHour, 'Total hour:',
                               "${double.parse(hiredHistory.employeeDetails?.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h"),*/
                           _detailsItem(MyAssets.rate, 'Rate:',
                               "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(hiredHistory.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}"),
@@ -159,8 +179,22 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       ),
                       SizedBox(height: 8.h),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
+                          Obx(() => Visibility(
+                              visible: controller.startDate.value.isEmpty,
+                              child: SizedBox(
+                                width: 122.w,
+                                child: CustomButtons.button(
+                                    height: 28.w,
+                                    text: "Previous Dates",
+                                    margin: EdgeInsets.zero,
+                                    fontSize: 12,
+                                    backgroundColor: Colors.teal,
+                                    customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                                    onTap: () =>
+                                        controller.onPrevDatePressed(employeeId: hiredHistory.employeeId ?? '')),
+                              ))),
                           SizedBox(
                             width: 122.w,
                             child: CustomButtons.button(
@@ -170,7 +204,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               fontSize: 12,
                               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                               onTap: () => Get.toNamed(Routes.calender, arguments: [
-                                hiredHistory.employeeDetails?.employeeId ?? '',
+                                hiredHistory.employeeId ?? '',
                                 '',
                                 hiredHistory.employeeDetails?.hasUniform == true ? null : false
                               ]),

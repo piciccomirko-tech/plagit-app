@@ -18,7 +18,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
     controller.context = context;
 
     return WillPopScope(
-      onWillPop: () => Utils.appExitConfirmation(context),
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
         appBar: CustomAppbar.appbar(
           context: context,
@@ -59,8 +59,11 @@ class ClientHomeView extends GetView<ClientHomeController> {
                   onProfileTap: controller.onProfileClick,
                 );
               },
-              icon: const Icon(
-                CupertinoIcons.person,
+              icon: const Padding(
+                padding: EdgeInsets.only(top: 9.0),
+                child: Icon(
+                  CupertinoIcons.person,
+                ),
               ),
             )
           ],
@@ -139,7 +142,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                       top: 4,
                                       right: 5,
                                       child: Visibility(
-                                        visible: controller.unreadMsgFromEmployee > 0,
+                                        visible: controller.unreadMsgFromEmployee.value > 0,
                                         child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
                                       ),
                                     ),
@@ -218,6 +221,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                   children: [
                     CustomHelpSupport(
                       onTap: controller.onHelpAndSupportClick,
+                      title: MyStrings.helpSupport.tr,
+                      asset: MyAssets.helpSupport,
                     ),
                     Obx(
                       () => Positioned(

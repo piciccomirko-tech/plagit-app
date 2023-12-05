@@ -29,7 +29,7 @@ extension BoolApiFormat on bool {
 }
 
 extension DatetimeFormat on DateTime {
-  String get EdMMMy => DateFormat('E, d MMM ,y').format(this).toString();
+  String get EdMMMy => DateFormat('E, d MMM y').format(this).toString();
 
   String get dMMMy => DateFormat('d MMM yy').format(this).toString();
 

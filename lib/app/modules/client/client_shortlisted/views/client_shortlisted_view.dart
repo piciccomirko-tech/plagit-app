@@ -221,9 +221,9 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
         ),
         Container(
             margin: const EdgeInsets.only(bottom: 20.0),
-            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            padding: const EdgeInsets.symmetric(horizontal: 5.0),
             height: 30.h,
-            width: 250.w,
+            width: 280.w,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(0.0)
                     .copyWith(bottomLeft: const Radius.circular(10.0), bottomRight: const Radius.circular(10.0)),

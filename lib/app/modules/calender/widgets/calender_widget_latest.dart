@@ -39,7 +39,8 @@ class CalenderWidgetLatest extends GetWidget<CalenderController> {
               onPageChanged: controller.onPageChanged,
               itemCount: 2,
               itemBuilder: (context, index) {
-                final DateTime month = DateTime.now().add(Duration(days: index * 30));
+                final DateTime now = DateTime.now();
+                final DateTime month = DateTime(now.year, now.month + index, now.day);
                 return CalenderMonthWidget(month: month, controller: controller);
               },
             ),

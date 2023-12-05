@@ -1,5 +1,3 @@
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-
 import '../../modules/employee/employee_home/controllers/employee_home_controller.dart';
 import '../utils/exports.dart';
 
@@ -8,7 +6,7 @@ class  CustomBreakTime {
     int hour = 0;
     int min = 0;
 
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(

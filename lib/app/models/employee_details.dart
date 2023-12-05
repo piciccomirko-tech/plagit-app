@@ -23,27 +23,31 @@ class EmployeeDetails {
 
   bool? hasUniform;
 
-  EmployeeDetails({
-    this.employeeId,
-    this.name,
-    this.positionId,
-    this.positionName,
-    this.presentAddress,
-    this.permanentAddress,
-    this.employeeExperience,
-    this.rating,
-    this.totalWorkingHour,
-    this.hourlyRate,
-    this.contractorHourlyRate,
-    this.sId,
-    this.profilePicture,
-    this.restaurantName,
-    this.restaurantAddress,
-    this.fromDate,
-    this.toDate,
-    this.certified,
-    this.hasUniform
-  });
+  String? countryName;
+  String? nationality;
+
+  EmployeeDetails(
+      {this.employeeId,
+      this.name,
+      this.positionId,
+      this.positionName,
+      this.presentAddress,
+      this.permanentAddress,
+      this.employeeExperience,
+      this.rating,
+      this.totalWorkingHour,
+      this.hourlyRate,
+      this.contractorHourlyRate,
+      this.sId,
+      this.profilePicture,
+      this.restaurantName,
+      this.restaurantAddress,
+      this.fromDate,
+      this.toDate,
+      this.certified,
+      this.hasUniform,
+      this.countryName,
+      this.nationality});
 
   EmployeeDetails.fromJson(Map<String, dynamic> json) {
     employeeId = json['employeeId'];
@@ -66,6 +70,8 @@ class EmployeeDetails {
     toDate = json["toDate"] == null ? null : DateTime.parse(json["toDate"]);
     certified = json["certified"];
     hasUniform = json["hasUniform"];
+    countryName = json["countryName"];
+    nationality = json["nationality"];
   }
 
   Map<String, dynamic> toJson() {
@@ -87,6 +93,8 @@ class EmployeeDetails {
     data['restaurantAddress'] = restaurantAddress;
     data['certified'] = certified;
     data['hasUniform'] = hasUniform;
+    data['countryName'] = countryName;
+    data['nationality'] = nationality;
     data['fromDate'] = fromDate?.toIso8601String();
     data['toDate'] = fromDate?.toIso8601String();
     return data;

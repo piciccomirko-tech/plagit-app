@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-
+import 'package:mh/app/modules/admin/admin_todays_employees/bindings/admin_todays_employees_binding.dart';
+import 'package:mh/app/modules/admin/admin_todays_employees/views/admin_todays_employees_view.dart';
 import '../middleware/auth_middleware.dart';
 import '../modules/admin/admin_all_clients/bindings/admin_all_clients_binding.dart';
 import '../modules/admin/admin_all_clients/views/admin_all_clients_view.dart';
@@ -384,6 +385,11 @@ class AppPages {
       name: _Paths.resetPassword,
       page: () => const ResetPasswordView(),
       binding: ResetPasswordBinding(),
+    ),
+    GetPage(
+      name: _Paths.adminTodaysEmployees,
+      page: () => const AdminTodaysEmployeesView(),
+      binding: AdminTodaysEmployeesBinding(),
     ),
   ];
 }

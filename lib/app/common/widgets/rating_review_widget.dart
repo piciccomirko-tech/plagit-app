@@ -40,15 +40,15 @@ class RatingReviewWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
                 color: MyColors.lightCard(context)),
-            height: MediaQuery.of(context).size.height*0.4,
+            height: MediaQuery.of(context).size.height * 0.4,
             child: Center(
                 child: SingleChildScrollView(
-                  child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
                   Text("Rate your working journey".toUpperCase(), style: MyColors.l111111_dwhite(context).semiBold16),
-                   SizedBox(height: 10.h),
+                  SizedBox(height: 10.h),
                   ClipOval(
                     child: CachedNetworkImage(
                       imageUrl: reviewFor == 'client'
@@ -71,13 +71,13 @@ class RatingReviewWidget extends StatelessWidget {
                           const Icon(Icons.image_not_supported_outlined), // Error widget if image fails to load
                     ),
                   ),
-                   SizedBox(height: 10.h),
+                  SizedBox(height: 10.h),
                   Text(
                       reviewFor == 'client'
                           ? reviewDialogDetailsModel.restaurantDetails?.restaurantName ?? ''
                           : reviewDialogDetailsModel.employeeDetails?.name ?? '',
                       style: MyColors.l111111_dwhite(context).semiBold15),
-                   SizedBox(height: 10.h),
+                  SizedBox(height: 10.h),
                   RatingBar.builder(
                     initialRating: 0.0,
                     minRating: 1,
@@ -90,7 +90,7 @@ class RatingReviewWidget extends StatelessWidget {
                     ),
                     onRatingUpdate: onRatingUpdate,
                   ),
-                   SizedBox(height: 10.h),
+                  SizedBox(height: 10.h),
                   TextFormField(
                     controller: tecReview,
                     keyboardType: TextInputType.multiline,
@@ -103,7 +103,7 @@ class RatingReviewWidget extends StatelessWidget {
                       label: "Comment if any (optional)",
                     ),
                   ),
-                   SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
                   CustomButtons.button(
                     height: 48,
                     margin: EdgeInsets.zero,
@@ -112,14 +112,14 @@ class RatingReviewWidget extends StatelessWidget {
                           id: reviewDialogDetailsModel.id ?? '',
                           reviewForId: reviewFor == 'client'
                               ? reviewDialogDetailsModel.restaurantDetails?.hiredBy ?? ''
-                              : reviewDialogDetailsModel.employeeDetails?.employeeId ?? '');
+                              : reviewDialogDetailsModel.employeeId ?? '');
                     },
                     text: "Submit",
                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                   ),
-              ],
-            ),
-                ))),
+                ],
+              ),
+            ))),
         Positioned.fill(
             child: Align(
           alignment: Alignment.topRight,
@@ -131,7 +131,7 @@ class RatingReviewWidget extends StatelessWidget {
                     id: reviewDialogDetailsModel.id ?? '',
                     reviewForId: reviewFor == 'client'
                         ? reviewDialogDetailsModel.restaurantDetails?.hiredBy ?? ''
-                        : reviewDialogDetailsModel.employeeDetails?.employeeId ?? '',
+                        : reviewDialogDetailsModel.employeeId ?? '',
                     manualRating: 5.0);
               },
               child: const CircleAvatar(

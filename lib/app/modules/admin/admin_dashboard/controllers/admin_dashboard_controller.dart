@@ -18,7 +18,6 @@ class AdminDashboardController extends GetxController {
   RxInt uniqueClient = 0.obs;
 
   RxBool historyLoading = true.obs;
-  RxBool clientLoading = true.obs;
 
   Rx<DateTime> dashboardDate = DateTime.now().obs;
 
@@ -28,11 +27,12 @@ class AdminDashboardController extends GetxController {
 
   RxList<CheckInCheckOutHistoryElement> history = <CheckInCheckOutHistoryElement>[].obs;
 
-  String? requestType = "CLIENT";
   String? clientId;
 
   Rx<Employees> clients = Employees().obs;
   RxList<String> restaurants = ["ALL"].obs;
+  RxBool clientLoading = true.obs;
+
 
   RxInt totalWorkingTimeInMinutes = 0.obs;
   RxDouble amount = 0.0.obs;

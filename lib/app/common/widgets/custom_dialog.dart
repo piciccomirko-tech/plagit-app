@@ -4,7 +4,6 @@ import '../utils/exports.dart';
 import 'custom_loader.dart';
 
 class CustomDialogue {
-
   static Future noInternetError({
     required BuildContext context,
     Function()? onRetry,
@@ -62,163 +61,154 @@ class CustomDialogue {
     required String logo,
     required String title,
     required String details,
-  }) => Future.delayed(
-    Duration.zero,
+  }) =>
+      Future.delayed(
+        Duration.zero,
         () {
-      return Get.dialog(
-        WillPopScope(
-          onWillPop: () async => true,
-          child: Align(
-            alignment: Alignment.center,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Container(
-                height: Get.height * .45,
-                width: Get.height * .4,
-                decoration: BoxDecoration(
-                  color: MyColors.lightCard(context),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Lottie.asset(logo),
-                        ),
-                      ),
-
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text(
-                              title,
-                              style: MyColors.l111111_dtext(context).semiBold22,
+          return Get.dialog(
+            WillPopScope(
+              onWillPop: () async => true,
+              child: Align(
+                alignment: Alignment.center,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Container(
+                    height: Get.height * .45,
+                    width: Get.height * .4,
+                    decoration: BoxDecoration(
+                      color: MyColors.lightCard(context),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Lottie.asset(logo),
                             ),
-
-                            SizedBox(height: 30.h),
-
-                            Text(
-                              details,
-                              textAlign: TextAlign.center,
-                              style: MyColors.l50555C_dtext(context).regular15,
-                            ),
-                          ],
-                        ),
-                      ),
-
-
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: CustomButtons.button(
-                            height: 50.h,
-                            text: onRetry == null ? "Close" : "Retry",
-                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                            onTap: () {
-                              CustomLoader.hide(context);
-
-                              if(onRetry == null) {
-                                CustomLoader.hide(context);
-                              } else {
-                                onRetry();
-                              }
-                            },
                           ),
-                        ),
+                          Expanded(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  title,
+                                  style: MyColors.l111111_dtext(context).semiBold22,
+                                ),
+                                SizedBox(height: 30.h),
+                                Text(
+                                  details,
+                                  textAlign: TextAlign.center,
+                                  style: MyColors.l50555C_dtext(context).regular15,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: CustomButtons.button(
+                                height: 50.h,
+                                text: onRetry == null ? "Close" : "Retry",
+                                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                                onTap: () {
+                                  CustomLoader.hide(context);
+
+                                  if (onRetry == null) {
+                                    CustomLoader.hide(context);
+                                  } else {
+                                    onRetry();
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-        barrierDismissible: false,
+            barrierDismissible: false,
+          );
+        },
       );
-    },
-  );
 
   static Future information({
     required BuildContext context,
-    required  String title,
+    required String title,
     required String description,
     Function()? onTap,
     String buttonText = "I Understand",
-  }) => Future.delayed(
-    Duration.zero,
+  }) =>
+      Future.delayed(
+        Duration.zero,
         () {
-      return Get.dialog(
-        WillPopScope(
-          onWillPop: () async => true,
-          child: Align(
-            alignment: Alignment.center,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Container(
-                height: Get.height * (description.length < 100 ? .32 : .45),
-                width: Get.height * .4,
-                decoration: BoxDecoration(
-                  color: MyColors.lightCard(context),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-
-                      SizedBox(height: 25.h),
-
-                      Text(
-                        title,
-                        textAlign: TextAlign.center,
-                        style: MyColors.l111111_dtext(context).semiBold22,
-                      ),
-
-                      SizedBox(height: 30.h),
-
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.topCenter,
-                          child: Text(
-                            description,
+          return Get.dialog(
+            WillPopScope(
+              onWillPop: () async => true,
+              child: Align(
+                alignment: Alignment.center,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Container(
+                    height: Get.height * (description.length < 100 ? .32 : .45),
+                    width: Get.height * .4,
+                    decoration: BoxDecoration(
+                      color: MyColors.lightCard(context),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(height: 25.h),
+                          Text(
+                            title,
                             textAlign: TextAlign.center,
-                            maxLines: 10,
-                            overflow: TextOverflow.ellipsis,
-                            style: MyColors.l50555C_dtext(context).regular15,
+                            style: MyColors.l111111_dtext(context).semiBold22,
                           ),
-                        ),
+                          SizedBox(height: 30.h),
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Text(
+                                description,
+                                textAlign: TextAlign.center,
+                                maxLines: 10,
+                                overflow: TextOverflow.ellipsis,
+                                style: MyColors.l50555C_dtext(context).regular15,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 15.h),
+                          CustomButtons.button(
+                            height: 50.h,
+                            text: buttonText,
+                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                            onTap: () {
+                              CustomLoader.hide(context);
+                              if (onTap != null) {
+                                onTap();
+                              }
+                            },
+                          ),
+                        ],
                       ),
-
-                      SizedBox(height: 15.h),
-
-                      CustomButtons.button(
-                        height: 50.h,
-                        text: buttonText,
-                        customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                        onTap: () {
-                          CustomLoader.hide(context);
-                          if(onTap != null) {
-                            onTap();
-                          }
-                        },
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-        barrierDismissible: false,
+            barrierDismissible: false,
+          );
+        },
       );
-    },
-  );
 
   static dynamic appExit(BuildContext context) {
     confirmation(
@@ -239,7 +229,7 @@ class CustomDialogue {
   }) {
     Future.delayed(
       Duration.zero,
-          () {
+      () {
         return Get.dialog(
           WillPopScope(
             onWillPop: () async => true,
@@ -259,17 +249,13 @@ class CustomDialogue {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-
                         SizedBox(height: 25.h),
-
                         Text(
                           title,
                           textAlign: TextAlign.center,
                           style: MyColors.l111111_dtext(context).semiBold22,
                         ),
-
                         SizedBox(height: 30.h),
-
                         Expanded(
                           child: Align(
                             alignment: Alignment.topCenter,
@@ -282,9 +268,7 @@ class CustomDialogue {
                             ),
                           ),
                         ),
-
                         SizedBox(height: 15.h),
-
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
@@ -304,8 +288,7 @@ class CustomDialogue {
                                   height: 50.h,
                                   text: confirmButtonText,
                                   margin: EdgeInsets.zero,
-                                  customButtonStyle:
-                                  CustomButtonStyle.radiusTopBottomCorner,
+                                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                                   onTap: onConfirm,
                                 ),
                               ),

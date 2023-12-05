@@ -20,15 +20,48 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
         context: context,
         title: 'My Dashboard',
       ),
-      body: Obx(
-        () => controller.loading.value
-            ? Center(child: CustomLoader.loading())
-            : controller.history.isEmpty
-                ? const NoItemFound()
-                : Column(
-                    children: [
-                      SizedBox(height: 30.h),
-                      Expanded(
+      body: Column(
+        children: [
+          const SizedBox(height: 15),
+          Center(
+            child: Container(
+              width: Get.width*0.7,
+              padding: const EdgeInsets.all(10.0),
+              decoration: const BoxDecoration(
+                color: MyColors.c_C6A34F,
+                borderRadius: BorderRadius.only(topRight: Radius.circular(10.0), bottomLeft: Radius.circular(10.0))
+              ),
+              child: GestureDetector(
+                onTap: () => _selectDate(context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(MyAssets.calender, height: 22, width: 22),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Obx(
+                          () => Text(
+                        controller.selectedDate.value.EdMMMy,
+                        style: MyColors.white.medium16,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    const Icon(Icons.arrow_drop_down, color: MyColors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 15),
+          Obx(
+            () => controller.loading.value
+                ? Center(child: CustomLoader.loading())
+                : controller.history.isEmpty
+                    ? const NoItemFound()
+                    : Expanded(
                         child: HorizontalDataTable(
                           leftHandSideColumnWidth: 90.w,
                           rightHandSideColumnWidth: 670.w,
@@ -45,8 +78,8 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
                           rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
                         ),
                       ),
-                    ],
-                  ),
+          )
+        ],
       ),
     );
   }
@@ -94,9 +127,18 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
     return Row(
       children: <Widget>[
         _cell(width: 150.w, value: dailyStatistics.restaurantName, clientUpdatedValue: dailyStatistics.restaurantName),
-        _cell(width: 100.w, value: dailyStatistics.displayCheckInTime, clientUpdatedValue: dailyStatistics.employeeCheckInTime),
-        _cell(width: 100.w, value: dailyStatistics.displayCheckOutTime, clientUpdatedValue: dailyStatistics.employeeCheckOutTime),
-        _cell(width: 100.w, value: dailyStatistics.displayBreakTime, clientUpdatedValue: dailyStatistics.employeeBreakTime),
+        _cell(
+            width: 100.w,
+            value: dailyStatistics.displayCheckInTime,
+            clientUpdatedValue: dailyStatistics.employeeCheckInTime),
+        _cell(
+            width: 100.w,
+            value: dailyStatistics.displayCheckOutTime,
+            clientUpdatedValue: dailyStatistics.employeeCheckOutTime),
+        _cell(
+            width: 100.w,
+            value: dailyStatistics.displayBreakTime,
+            clientUpdatedValue: dailyStatistics.employeeBreakTime),
         _cell(width: 100.w, value: dailyStatistics.workingHour),
         _cell(width: 120.w, value: "--", child: _action(index)),
       ],
@@ -112,25 +154,22 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
       SizedBox(
         width: width,
         height: 71.h,
-        child: child ?? Center(
-          child: Text.rich(
-            TextSpan(
-              text: value,
-              children: [
-                TextSpan(
-                  text: (clientUpdatedValue == null) || (clientUpdatedValue == value) ? "" : '\n$clientUpdatedValue',
-                  style: const TextStyle(
-                    decoration: TextDecoration.lineThrough,
-                      decorationColor: Colors.red, // Set the color here
-                      decorationThickness: 2.0
-                  )
-                ),
-              ]
+        child: child ??
+            Center(
+              child: Text.rich(
+                TextSpan(text: value, children: [
+                  TextSpan(
+                      text:
+                          (clientUpdatedValue == null) || (clientUpdatedValue == value) ? "" : '\n$clientUpdatedValue',
+                      style: const TextStyle(
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: Colors.red, // Set the color here
+                          decorationThickness: 2.0)),
+                ]),
+                textAlign: TextAlign.center,
+                style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+              ),
             ),
-            textAlign: TextAlign.center,
-            style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
-          ),
-        ),
       );
 
   Widget _action(int index) => controller.getComment(index).isEmpty
@@ -153,4 +192,16 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
             size: 22,
           ),
         );
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: controller.selectedDate.value,
+      firstDate: DateTime(2015, 8),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null && picked != controller.selectedDate.value) {
+      controller.onDatePicked(picked);
+    }
+  }
 }

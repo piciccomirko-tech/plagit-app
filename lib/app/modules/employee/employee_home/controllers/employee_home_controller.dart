@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:lottie/lottie.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
@@ -72,8 +73,8 @@ class EmployeeHomeController extends GetxController {
 
   @override
   void onReady() {
+    showHomePopUpForCalender();
     Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
-    //connectWithSocket();
     super.onReady();
   }
 
@@ -496,5 +497,78 @@ class EmployeeHomeController extends GetxController {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
           child: const CheckOutSuccessWidget()));
     }
+  }
+
+  void showHomePopUpForCalender() {
+    _apiHelper.getSkipDate().then((Either<CustomError, CommonResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError..onRetry);
+      }, (CommonResponseModel response) {
+        if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+          if (response.details?.skipDate == null ||
+              response.details!.skipDate!.isEmpty ||
+              response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
+            Get.dialog(
+                Dialog(
+              insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+              child: Container(
+                height: 350,
+                decoration:
+                    BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset(MyAssets.lottie.calenderLottie),
+                    Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomButtons.button(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            margin: EdgeInsets.zero,
+                            text: "Update",
+                            onTap: () => onCalenderUpdatePressed(tag: 'update'),
+                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                        const SizedBox(width: 20),
+                        CustomButtons.button(
+                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                            margin: EdgeInsets.zero,
+                            backgroundColor: Colors.grey.shade400,
+                            text: 'Close',
+                            onTap: () => onCalenderUpdatePressed(tag: 'close'),
+                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
+              barrierDismissible: false
+            );
+          }
+        }
+      });
+    });
+  }
+
+  void onCalenderUpdatePressed({required String tag}) {
+    CustomLoader.show(context!);
+    _apiHelper.updateSkipDate().then((Either<CustomError, CommonResponseModel> responseData) {
+      CustomLoader.hide(context!);
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (CommonResponseModel response) {
+        if (response.status == "success" && response.statusCode == 200) {
+          if (tag == 'update') {
+            Get.toNamed(Routes.calender, arguments: [appController.user.value.employee?.id ?? 0, '', null])
+                ?.then((value) => Get.back());
+          } else {
+            Get.back();
+          }
+        }
+      });
+    });
   }
 }

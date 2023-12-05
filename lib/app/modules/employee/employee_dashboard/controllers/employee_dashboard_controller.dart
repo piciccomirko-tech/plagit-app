@@ -1,3 +1,5 @@
+import 'package:dartz/dartz.dart';
+
 import '../../../../common/utils/exports.dart';
 import '../../../../models/check_in_out_histories.dart';
 import '../../../../models/custom_error.dart';
@@ -13,10 +15,12 @@ class EmployeeDashboardController extends GetxController {
   Rx<CheckInCheckOutHistory> checkInCheckOutHistory = CheckInCheckOutHistory().obs;
 
   RxList<CheckInCheckOutHistoryElement> history = <CheckInCheckOutHistoryElement>[].obs;
+  RxList<CheckInCheckOutHistoryElement> dateWiseHistoryList = <CheckInCheckOutHistoryElement>[].obs;
+  Rx<DateTime> selectedDate = DateTime.now().obs;
 
   @override
-  void onInit() {
-    _fetchCheckInOutHistory();
+  void onInit() async {
+    await _fetchCheckInOutHistory();
     super.onInit();
   }
 
@@ -26,20 +30,28 @@ class EmployeeDashboardController extends GetxController {
 
   Future<void> _fetchCheckInOutHistory() async {
     loading.value = true;
+    Either<CustomError, CheckInCheckOutHistory> response = await _apiHelper.getEmployeeCheckInOutHistory();
+    loading.value = false;
 
-    await _apiHelper.getEmployeeCheckInOutHistory().then((response) {
-
-      loading.value = false;
-
-      response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = _fetchCheckInOutHistory);
-      }, (CheckInCheckOutHistory checkInCheckOutHistory) async {
-
-        this.checkInCheckOutHistory.value = checkInCheckOutHistory;
-        history.addAll(checkInCheckOutHistory.checkInCheckOutHistory ?? []);
-
-      });
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError..onRetry = _fetchCheckInOutHistory);
+    }, (CheckInCheckOutHistory checkInCheckOutHistory) async {
+      this.checkInCheckOutHistory.value = checkInCheckOutHistory;
+      history.value = checkInCheckOutHistory.checkInCheckOutHistory ?? [];
     });
   }
 
+  void onDatePicked(DateTime dateTime) async {
+    selectedDate.value = dateTime;
+    dateWiseHistoryList.clear();
+    await _fetchCheckInOutHistory();
+    for (CheckInCheckOutHistoryElement i in history) {
+      if (i.checkInCheckOutDetails?.checkInTime.toString().split(" ").first ==
+          selectedDate.value.toString().split(" ").first) {
+        dateWiseHistoryList.add(i);
+      }
+    }
+    history.value = dateWiseHistoryList;
+    history.refresh();
+  }
 }

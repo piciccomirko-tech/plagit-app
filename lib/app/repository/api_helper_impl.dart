@@ -4,11 +4,16 @@ import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
+import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
+import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_bank_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
@@ -415,6 +420,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) {
       response = await post("short-list/create", jsonEncode(addToShortListRequestModel.toJson()));
     }
+
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},
@@ -573,17 +579,19 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<Response> updateCheckInOutByClient(Map<String, dynamic> data) async {
-    Response response = await put("current-hired-employees/update-status", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
-    if (response.statusCode == null) response = await put("current-hired-employees/update-status", jsonEncode(data));
+  EitherModel<Response> updateCheckInOutByClient({required ClientUpdateStatusModel clientUpdateStatusModel}) async {
+    String url = "current-hired-employees/update-status";
+    String requestBody = jsonEncode(clientUpdateStatusModel.toJson());
+    Response response = await put(url, requestBody);
+    if (response.statusCode == null) response = await put(url, requestBody);
+    if (response.statusCode == null) response = await put(url, requestBody);
+    if (response.statusCode == null) response = await put(url, requestBody);
 
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
-    ).fold((l) => left(l), (r) => right(r));
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 
   @override
@@ -779,7 +787,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
-
     return _convert<ClientInvoiceModel>(
       response,
       ClientInvoiceModel.fromJson,
@@ -924,11 +931,10 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<ReviewDialogModel> showReviewDialog() async {
     String url = "review/view-eligible";
 
-    var response = await get(url);
+    Response response = await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
-
     return _convert<ReviewDialogModel>(
       response,
       ReviewDialogModel.fromJson,
@@ -1187,5 +1193,100 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       PositionInfoModel.fromJson,
     ).fold((CustomError l) => left(l), (PositionInfoModel r) => right(r));
+  }
+
+  @override
+  EitherModel<TodaysEmployeesModel> getTodaysEmployees(
+      {required String startDate, required String endDate, String? employeeName, String? restaurantName}) async {
+    String url = "book-history?startDate=$startDate&endDate=$endDate&hiredStatus=ALLOW";
+    if ((employeeName ?? "").isNotEmpty && employeeName != 'All Employees') url += "&employeeName=$employeeName";
+    if ((restaurantName ?? "").isNotEmpty && restaurantName != 'All Restaurants') {
+      url += "&restaurantName=$restaurantName";
+    }
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    return _convert<TodaysEmployeesModel>(
+      response,
+      TodaysEmployeesModel.fromJson,
+    ).fold((CustomError l) => left(l), (TodaysEmployeesModel r) => right(r));
+  }
+
+  @override
+  EitherModel<ClientMyEmployeesModel> getClientMyEmployees(
+      {String? startDate, String? endDate, required String hiredBy, String? employeeId}) async {
+    String url = "book-history/client-employee?hiredBy=$hiredBy";
+    if ((startDate ?? "").isNotEmpty) url += "&startDate=$startDate";
+    if ((endDate ?? "").isNotEmpty) url += "&endDate=$endDate";
+    if ((employeeId ?? "").isNotEmpty) url += "&employeeId=$employeeId";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    return _convert<ClientMyEmployeesModel>(
+      response,
+      ClientMyEmployeesModel.fromJson,
+    ).fold((CustomError l) => left(l), (ClientMyEmployeesModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> matchEmployee({required String employeeId}) async {
+    String url =
+        "book-history/match-with-employee?employeeId=$employeeId&currentDate=${DateTime.now().toString().split(' ').first}";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> getSkipDate() async {
+    String url = "users/skip-date";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> updateSkipDate() async {
+    String url = "users/skip-date";
+    String requestBody = jsonEncode({"date": DateTime.now().toString().split(" ").first});
+    Response response = await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<ClientBankInfoModel> getBankInfo() async {
+    String url = "users/bank-info/${Get.find<AppController>().user.value.client?.id}";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<ClientBankInfoModel>(
+      response,
+      ClientBankInfoModel.fromJson,
+    ).fold((CustomError l) => left(l), (ClientBankInfoModel r) => right(r));
   }
 }

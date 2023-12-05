@@ -1,6 +1,5 @@
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/timer_wheel_widget.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import '../utils/exports.dart';
 
 class CustomHireTime {
@@ -8,7 +7,7 @@ class CustomHireTime {
     String fromTime = Utils.getCurrentTimeWithAMPM();
     String toTime = Utils.getCurrentTimeWithAMPM();
 
-    showMaterialModalBottomSheet(
+    showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
         return Container(

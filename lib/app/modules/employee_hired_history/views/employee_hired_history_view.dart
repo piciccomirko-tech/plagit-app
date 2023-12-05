@@ -9,6 +9,7 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
   const EmployeeHiredHistoryView({super.key});
   @override
   Widget build(BuildContext context) {
+    controller.context = context;
     return Scaffold(
       appBar: CustomAppbar.appbar(title: 'Hired History', context: context),
       body: Obx(() {
@@ -64,7 +65,18 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                             text: 'Details',
                             fontSize: 12,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
-                      ))
+                      )),
+                      Positioned.fill(
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: CustomButtons.button(
+                                onTap: () => controller.onPrevDateClicked(hiredBy: data.hiredBy??''),
+                                height: 35,
+                                margin: const EdgeInsets.only(right: 220),
+                                text: 'Previous Dates',
+                                fontSize: 12,
+                                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                          ))
                     ],
                   );
                 }),

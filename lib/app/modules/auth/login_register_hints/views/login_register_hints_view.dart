@@ -12,18 +12,16 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
     Utils.setStatusBarColorColor(Theme.of(context).brightness);
 
     return WillPopScope(
-      onWillPop: () => Utils.appExitConfirmation(context),
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
         body: Stack(
           children: [
-
             Image.asset(
               MyAssets.loginRegisterHintsBg,
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.fill,
             ),
-
             SizedBox(
               width: double.infinity,
               height: double.infinity,
@@ -31,19 +29,16 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
                 painter: CurvePainter(Theme.of(context).cardColor),
               ),
             ),
-
             Positioned(
               left: -65.w,
               top: -100.h,
               child: _topLeftBg(context),
             ),
-
             Positioned(
               right: 10.w,
               top: 50.h,
               child: _skipButton(context),
             ),
-
             Positioned(
               bottom: 0,
               left: 0,
@@ -63,27 +58,21 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
             width: 173.w,
             height: 155.h,
           ),
-
           SizedBox(height: 48.h),
-
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 37.0.w),
             child: HorizontalDividerWithText(
               text: MyStrings.premierStaffingSolutions.tr,
             ),
           ),
-
           SizedBox(height: 48.h),
-
           CustomButtons.button(
             text: MyStrings.login.tr,
             onTap: controller.onLoginPressed,
             height: 48,
             fontSize: 16.sp,
           ),
-
           SizedBox(height: 27.h),
-
           CustomButtons.button(
             text: MyStrings.signUp.tr,
             onTap: controller.onSignUpPressed,
@@ -92,7 +81,6 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
             fontSize: 16.sp,
             context: controller.context,
           ),
-
           SizedBox(height: 60.h),
         ],
       );

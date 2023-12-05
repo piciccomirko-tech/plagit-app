@@ -104,9 +104,9 @@ class AdminClientRequestPositionEmployeesController extends GetxController {
         response.fold((CustomError customError) {
           CustomLoader.hide(context!);
           Utils.errorDialog(context!, customError);
-        }, (r) async {
+        }, (r) {
           if ([200, 201].contains(r.statusCode)) {
-            await adminHomeController.reloadPage();
+            adminHomeController.reloadPage;
             _getEmployees();
             CustomLoader.hide(context!);
           }
@@ -147,17 +147,8 @@ class AdminClientRequestPositionEmployeesController extends GetxController {
     });
   }
 
-  void onApplyClick(
-      String selectedExp,
-      String minTotalHour,
-      String maxTotalHour,
-      String positionId,
-      String dressSize,
-      String nationality,
-      String minHeight,
-      String maxHeight,
-      String minHourlyRate,
-      String maxHourlyRate) {
+  void onApplyClick(String selectedExp, String minTotalHour, String maxTotalHour, String positionId, String dressSize,
+      String nationality, String minHeight, String maxHeight, String minHourlyRate, String maxHourlyRate) {
     _getEmployees(
         experience: selectedExp,
         minTotalHour: minTotalHour,
@@ -196,7 +187,7 @@ class AdminClientRequestPositionEmployeesController extends GetxController {
           }, (BookingHistoryModel response) async {
             if ((response.statusCode == 200 || response.statusCode == 201) && response.status == 'success') {
               _getEmployees();
-              await adminHomeController.reloadPage();
+              adminHomeController.reloadPage;
             }
           });
         });

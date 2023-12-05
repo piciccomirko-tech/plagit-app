@@ -19,7 +19,7 @@ class MyAssets {
   static const myEmployees = "assets/images/my_employees.png";
   static const invoicePayment = "assets/images/invoice_payment.png";
   static const splash = "assets/images/splash.png";
-  static const request = "assets/images/request.jpeg";
+  static const request = "assets/images/request.png";
   static const restaurant = "assets/images/restaurant.jpeg";
 
   static const emergencyCheckInCheckout = "assets/images/emergency_checin_checkout.png";
@@ -33,6 +33,9 @@ class MyAssets {
   static const license = "assets/images/license.png";
   static const height = "assets/icons/height.png";
   static const weight = "assets/icons/weight.png";
+  static const checkIn = "assets/icons/checkin.png";
+  static const checkOut = "assets/icons/checkout.png";
+  static const breakTime = "assets/icons/break_time.png";
   static const nationality = "assets/icons/nationality.png";
   static const organization = "assets/icons/organization.png";
   static const dressSize = "assets/icons/dress_size.png";
@@ -107,6 +110,7 @@ class _Lottie {
   String inputEmailLottie = "assets/lottie/input_email.json";
   String otpCheckLottie = "assets/lottie/otp_check.json";
   String resetPasswordLottie = "assets/lottie/reset_password.json";
+  String calenderLottie = "assets/lottie/calender.json";
 }
 
 class _PaymentMethod {

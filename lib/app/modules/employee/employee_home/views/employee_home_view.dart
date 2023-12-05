@@ -14,7 +14,8 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
   Widget build(BuildContext context) {
     controller.context = context;
     return WillPopScope(
-      onWillPop: () => Utils.appExitConfirmation(context),
+      onWillPop: () async =>
+          Utils.appExitConfirmation(context),
       child: Scaffold(
           appBar: CustomAppbar.appbar(
             context: context,

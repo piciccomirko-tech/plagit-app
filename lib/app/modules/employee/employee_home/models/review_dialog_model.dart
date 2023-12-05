@@ -21,13 +21,15 @@ class ReviewDialogModel {
 
 class ReviewDialogDetailsModel {
   String? id;
+  String? employeeId;
   EmployeeDetails? employeeDetails;
   RestaurantDetails? restaurantDetails;
 
-  ReviewDialogDetailsModel({this.id, this.employeeDetails, this.restaurantDetails});
+  ReviewDialogDetailsModel({this.id, this.employeeId, this.employeeDetails, this.restaurantDetails});
 
   ReviewDialogDetailsModel.fromJson(Map<String, dynamic> json) {
     id = json['_id'];
+    employeeId = json['employeeId'];
     employeeDetails = json['employeeDetails'] != null ? EmployeeDetails.fromJson(json['employeeDetails']) : null;
     restaurantDetails =
         json['restaurantDetails'] != null ? RestaurantDetails.fromJson(json['restaurantDetails']) : null;
@@ -35,14 +37,12 @@ class ReviewDialogDetailsModel {
 }
 
 class EmployeeDetails {
-  String? employeeId;
   String? name;
   String? profilePicture;
 
-  EmployeeDetails({this.employeeId, this.name, this.profilePicture});
+  EmployeeDetails({this.name, this.profilePicture});
 
   EmployeeDetails.fromJson(Map<String, dynamic> json) {
-    employeeId = json['employeeId'];
     name = json['name'];
     profilePicture = json['profilePicture'];
   }

@@ -11,7 +11,7 @@ class SplashView extends GetView<SplashController> {
     controller.context = context;
 
     return WillPopScope(
-      onWillPop: () => Utils.appExitConfirmation(context),
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
         body: Center(child: CustomLoader.loading()),
       ),
