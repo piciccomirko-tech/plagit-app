@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
+import 'package:mh/app/models/dropdown_item.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
@@ -20,28 +21,35 @@ import '../../common/shortlist_controller.dart';
 class ClientHomeController extends GetxController {
   final NotificationsController notificationsController = Get.find<NotificationsController>();
   BuildContext? context;
-
   final AppController appController = Get.find();
   final ShortlistController shortlistController = Get.find();
   final ApiHelper _apiHelper = Get.find();
-
   Rx<RequestedEmployees> requestedEmployees = RequestedEmployees().obs;
-
   Rx<ClientInvoiceModel> clientInvoice = ClientInvoiceModel().obs;
   RxBool isLoading = true.obs;
-
   // unread msg track
   RxInt unreadMsgFromEmployee = 0.obs;
   RxInt unreadMsgFromAdmin = 0.obs;
-
   RxList<Map<String, dynamic>> employeeChatDetails = <Map<String, dynamic>>[].obs;
-
   RxDouble rating = 0.0.obs;
   TextEditingController tecReview = TextEditingController();
+  TextEditingController tecSearch = TextEditingController();
+  ScrollController scrollController = ScrollController();
+  RxList<DropdownItem> positionList = <DropdownItem>[].obs;
+  RxBool showClearIcon = false.obs;
+
   @override
   void onInit() {
     homeMethods();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
+    scrollController.dispose();
+    tecSearch.dispose();
+    tecReview.dispose();
   }
 
   @override
@@ -80,7 +88,6 @@ class ClientHomeController extends GetxController {
   void onSettingsClick() {
     Get.toNamed(Routes.settings);
   }
-
 
   void chatWithAdmin() {
     Get.back(); // hide dialogue
@@ -305,4 +312,36 @@ class ClientHomeController extends GetxController {
     rating.value = rat;
   }
 
+  void onSearchChanged(String query) {
+    if (query.isNotEmpty) {
+      showClearIcon.value = true;
+      scrollController.animateTo(
+        Get.height * 0.25,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+
+      for (DropdownItem i in appController.allActivePositions) {
+        if (i.name!.toLowerCase().contains(query.toLowerCase())) {
+          positionList.add(i);
+        }
+      }
+      positionList.refresh();
+    } else {
+      clearIconTap();
+    }
+  }
+
+  void clearIconTap() {
+    tecSearch.clear();
+    showClearIcon.value = false;
+    positionList.clear();
+    Utils.unFocus();
+  }
+
+  void onSearchItemTap({required DropdownItem position}){
+    clearIconTap();
+    Get.toNamed(Routes.mhEmployeesById, arguments: {MyStrings.arg.data: position});
+
+  }
 }

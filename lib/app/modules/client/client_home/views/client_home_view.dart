@@ -1,5 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mh/app/common/style/my_decoration.dart';
+import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
+import 'package:mh/app/models/dropdown_item.dart';
+import 'package:mh/app/modules/client/client_home/widgets/position_search_field_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
 
 import '../../../../common/utils/exports.dart';
@@ -70,177 +74,211 @@ class ClientHomeView extends GetView<ClientHomeController> {
         ),
         body: SizedBox(
           height: double.infinity,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 20.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 10,
-                              child: _restaurantName(MyStrings.hiRestaurant.trParams({
-                                "restaurantName":
-                                    controller.appController.user.value.client?.restaurantName ?? "owner of the",
-                              })),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(flex: 1, child: RefreshWidget(onTap: controller.refreshPage))
-                          ],
-                        ),
-                        SizedBox(height: 20.h),
-
-                        _promotionText,
-
-                        SizedBox(height: 30.h),
-
-                        _suggestedEmployees,
-
-                        // _dueInvoice,
-
-                        Obx(
-                          () => Visibility(
-                            visible: controller.shortlistController.totalShortlisted.value > 0,
-                            child: SizedBox(
-                              height: 20.h,
-                            ),
-                          ),
-                        ),
-
-                        _employeeShortlisted,
-
-                        SizedBox(height: 30.h),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomFeatureBox(
-                                title: MyStrings.employees.tr,
-                                icon: MyAssets.mhEmployees,
-                                visibleMH: true,
-                                onTap: controller.onMhEmployeeClick,
-                              ),
-                            ),
-                            SizedBox(width: 24.w),
-                            Expanded(
-                              child: Obx(
-                                () => Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    CustomFeatureBox(
-                                      title: MyStrings.dashboard.tr,
-                                      icon: MyAssets.dashboard,
-                                      onTap: controller.onDashboardClick,
-                                    ),
-                                    Positioned(
-                                      top: 4,
-                                      right: 5,
-                                      child: Visibility(
-                                        visible: controller.unreadMsgFromEmployee.value > 0,
-                                        child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 20.h),
-
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Stack(
-                                children: [
-                                  CustomFeatureBox(
-                                    title: MyStrings.myEmployees.tr,
-                                    icon: MyAssets.myEmployees,
-                                    onTap: controller.onMyEmployeeClick,
-                                  ),
-                                  Obx(() => Stack(
-                                        children: [
-                                          CustomFeatureBox(
-                                            title: MyStrings.myEmployees.tr,
-                                            icon: MyAssets.myEmployees,
-                                            onTap: controller.onMyEmployeeClick,
-                                          ),
-                                          Positioned(
-                                            top: 4,
-                                            right: 5,
-                                            child: Visibility(
-                                              visible: controller.unreadMsgFromEmployee > 0,
-                                              child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
-                                            ),
-                                          ),
-                                        ],
-                                      ))
-                                ],
-                              ),
-                            ),
-                            SizedBox(width: 24.w),
-                            Expanded(
-                              child: Obx(
-                                () => Stack(
-                                  clipBehavior: Clip.none,
-                                  children: [
-                                    CustomFeatureBox(
-                                      title: MyStrings.invoicePayment.tr,
-                                      icon: MyAssets.invoicePayment,
-                                      onTap: controller.onInvoiceAndPaymentClick,
-                                    ),
-                                    Positioned(
-                                      top: 4,
-                                      right: 5,
-                                      child: Visibility(
-                                        visible: ((controller.clientInvoice.value.invoices ?? [])
-                                            .where((element) => element.status == "DUE")).isNotEmpty,
-                                        child: CustomBadge(((controller.clientInvoice.value.invoices ?? [])
-                                            .where((element) => element.status == "DUE")).length.toString()),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                Stack(
+          child: Stack(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Column(
                   children: [
-                    CustomHelpSupport(
-                      onTap: controller.onHelpAndSupportClick,
-                      title: MyStrings.helpSupport.tr,
-                      asset: MyAssets.helpSupport,
-                    ),
-                    Obx(
-                      () => Positioned(
-                        top: 0,
-                        right: 5,
-                        child: Visibility(
-                          visible: controller.unreadMsgFromAdmin.value != 0,
-                          child: CustomBadge(
-                            controller.unreadMsgFromAdmin.value.toString(),
-                          ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: controller.scrollController,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(height: 20.h),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 10,
+                                  child: _restaurantName(MyStrings.hiRestaurant.trParams({
+                                    "restaurantName":
+                                        controller.appController.user.value.client?.restaurantName ?? "owner of the",
+                                  })),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(flex: 1, child: RefreshWidget(onTap: controller.refreshPage))
+                              ],
+                            ),
+                            SizedBox(height: 20.h),
+
+                            _promotionText,
+
+                            SizedBox(height: 30.h),
+
+                            _suggestedEmployees,
+
+                            // _dueInvoice,
+
+                            Obx(
+                              () => Visibility(
+                                visible: controller.shortlistController.totalShortlisted.value > 0,
+                                child: SizedBox(
+                                  height: 20.h,
+                                ),
+                              ),
+                            ),
+
+                            _employeeShortlisted,
+
+                            SizedBox(height: 30.h),
+
+                            const PositionSearchFieldWidget(),
+                            SizedBox(height: 20.h),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomFeatureBox(
+                                    title: MyStrings.employees.tr,
+                                    icon: MyAssets.mhEmployees,
+                                    visibleMH: true,
+                                    onTap: controller.onMhEmployeeClick,
+                                  ),
+                                ),
+                                SizedBox(width: 24.w),
+                                Expanded(
+                                  child: Obx(
+                                    () => Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        CustomFeatureBox(
+                                          title: MyStrings.dashboard.tr,
+                                          icon: MyAssets.dashboard,
+                                          onTap: controller.onDashboardClick,
+                                        ),
+                                        Positioned(
+                                          top: 4,
+                                          right: 5,
+                                          child: Visibility(
+                                            visible: controller.unreadMsgFromEmployee.value > 0,
+                                            child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 20.h),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Stack(
+                                    children: [
+                                      CustomFeatureBox(
+                                        title: MyStrings.myEmployees.tr,
+                                        icon: MyAssets.myEmployees,
+                                        onTap: controller.onMyEmployeeClick,
+                                      ),
+                                      Obx(() => Stack(
+                                            children: [
+                                              CustomFeatureBox(
+                                                title: MyStrings.myEmployees.tr,
+                                                icon: MyAssets.myEmployees,
+                                                onTap: controller.onMyEmployeeClick,
+                                              ),
+                                              Positioned(
+                                                top: 4,
+                                                right: 5,
+                                                child: Visibility(
+                                                  visible: controller.unreadMsgFromEmployee > 0,
+                                                  child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                                                ),
+                                              ),
+                                            ],
+                                          ))
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(width: 24.w),
+                                Expanded(
+                                  child: Obx(
+                                    () => Stack(
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        CustomFeatureBox(
+                                          title: MyStrings.invoicePayment.tr,
+                                          icon: MyAssets.invoicePayment,
+                                          onTap: controller.onInvoiceAndPaymentClick,
+                                        ),
+                                        Positioned(
+                                          top: 4,
+                                          right: 5,
+                                          child: Visibility(
+                                            visible: ((controller.clientInvoice.value.invoices ?? [])
+                                                .where((element) => element.status == "DUE")).isNotEmpty,
+                                            child: CustomBadge(((controller.clientInvoice.value.invoices ?? [])
+                                                .where((element) => element.status == "DUE")).length.toString()),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ),
+                    SizedBox(height: 20.h),
+                    Stack(
+                      children: [
+                        CustomHelpSupport(
+                          onTap: controller.onHelpAndSupportClick,
+                          title: MyStrings.helpSupport.tr,
+                          asset: MyAssets.helpSupport,
+                        ),
+                        Obx(
+                          () => Positioned(
+                            top: 0,
+                            right: 5,
+                            child: Visibility(
+                              visible: controller.unreadMsgFromAdmin.value != 0,
+                              child: CustomBadge(
+                                controller.unreadMsgFromAdmin.value.toString(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
                   ],
                 ),
-                SizedBox(height: 20.h),
-              ],
-            ),
+              ),
+              Positioned.fill(
+                  child: Align(
+                      alignment: Alignment.topCenter,
+                      child: Obx(() => Visibility(
+                          visible: controller.positionList.isNotEmpty,
+                          child: Container(
+                            margin: const EdgeInsets.only(top: 80.0, left: 15.0, right: 15.0),
+                            height: MediaQuery.of(context).size.height * 0.35,
+                            decoration: MyDecoration.cardBoxDecoration(context: context),
+                            child: ListView.builder(
+                                itemCount: controller.positionList.length,
+                                shrinkWrap: true,
+                                itemBuilder: (BuildContext context, int index) {
+                                  DropdownItem position = controller.positionList[index];
+                                  return ListTile(
+                                    onTap: ()=>controller.onSearchItemTap(position: position),
+                                    leading: SizedBox(
+                                      width: 20.w,
+                                      height: 20.w,
+                                      child: CustomNetworkImage(url: (position.logo ?? '').uniformImageUrl),
+                                    ),
+                                    title:
+                                        Text(position.name ?? '', style: MyColors.l111111_dwhite(context).semiBold16),
+                                    trailing: const Icon(CupertinoIcons.arrow_up_left, color: MyColors.c_C6A34F),
+                                  );
+                                }),
+                          )))))
+            ],
           ),
         ),
       ),
