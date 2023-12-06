@@ -29,6 +29,7 @@ import '../../../../models/custom_error.dart';
 import '../../../../models/employee_daily_statistics.dart';
 import '../../../../repository/api_helper.dart';
 import '../../../../routes/app_pages.dart';
+import 'package:socket_io_client/socket_io_client.dart' as i_o;
 import '../models/today_check_in_out_details.dart';
 
 class EmployeeHomeController extends GetxController {
@@ -65,6 +66,8 @@ class EmployeeHomeController extends GetxController {
 
   RxList<HiredHistoryModel> hiredHistoryList = <HiredHistoryModel>[].obs;
   RxBool hiredHistoryDataLoaded = false.obs;
+
+  i_o.Socket? socket;
   @override
   void onInit() async {
     await homeMethods();
@@ -510,43 +513,42 @@ class EmployeeHomeController extends GetxController {
               response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
             Get.dialog(
                 Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-              child: Container(
-                height: 350,
-                decoration:
-                    BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Lottie.asset(MyAssets.lottie.calenderLottie),
-                    Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
-                    Row(
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                  child: Container(
+                    height: 350,
+                    decoration:
+                        BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomButtons.button(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                            margin: EdgeInsets.zero,
-                            text: "Update",
-                            onTap: () => onCalenderUpdatePressed(tag: 'update'),
-                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
-                        const SizedBox(width: 20),
-                        CustomButtons.button(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                            margin: EdgeInsets.zero,
-                            backgroundColor: Colors.grey.shade400,
-                            text: 'Close',
-                            onTap: () => onCalenderUpdatePressed(tag: 'close'),
-                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                        Lottie.asset(MyAssets.lottie.calenderLottie),
+                        Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomButtons.button(
+                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                margin: EdgeInsets.zero,
+                                text: "Update",
+                                onTap: () => onCalenderUpdatePressed(tag: 'update'),
+                                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                            const SizedBox(width: 20),
+                            CustomButtons.button(
+                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                margin: EdgeInsets.zero,
+                                backgroundColor: Colors.grey.shade400,
+                                text: 'Close',
+                                onTap: () => onCalenderUpdatePressed(tag: 'close'),
+                                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                          ],
+                        )
                       ],
-                    )
-                  ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-              barrierDismissible: false
-            );
+                barrierDismissible: false);
           }
         }
       });
@@ -571,4 +573,5 @@ class EmployeeHomeController extends GetxController {
       });
     });
   }
+
 }
