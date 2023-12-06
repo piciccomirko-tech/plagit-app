@@ -61,8 +61,6 @@ dependencies:
 
   lottie: ^2.7.0
 
-  socket_io_client: ^2.0.3+1
-
   another_xlider: ^3.0.2
 
   badges: ^3.1.2
