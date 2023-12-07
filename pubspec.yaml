@@ -48,6 +48,8 @@ dependencies:
   # check token expire or not
   jwt_decoder: ^2.0.1
 
+  socket_io_client: ^2.0.3+1
+
   webview_flutter: ^4.4.2
 
   expandable_page_view: ^1.0.17
@@ -62,6 +64,8 @@ dependencies:
   lottie: ^2.7.0
 
   another_xlider: ^3.0.2
+
+  flutter_polyline_points: ^2.0.0
 
   badges: ^3.1.2
 

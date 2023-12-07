@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
@@ -10,6 +12,7 @@ import 'package:mh/app/modules/employee/employee_home/models/employee_hired_hist
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/booking_history_model.dart';
+import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/check_out_success_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/slide_action_widget.dart';
@@ -30,6 +33,7 @@ import '../../../../models/employee_daily_statistics.dart';
 import '../../../../repository/api_helper.dart';
 import '../../../../routes/app_pages.dart';
 import '../models/today_check_in_out_details.dart';
+import 'package:socket_io_client/socket_io_client.dart' as i_o;
 
 class EmployeeHomeController extends GetxController {
   final NotificationsController notificationsController = Get.find<NotificationsController>();
@@ -65,10 +69,19 @@ class EmployeeHomeController extends GetxController {
 
   RxList<HiredHistoryModel> hiredHistoryList = <HiredHistoryModel>[].obs;
   RxBool hiredHistoryDataLoaded = false.obs;
+
+  i_o.Socket? socket;
   @override
   void onInit() async {
     await homeMethods();
+    shareCurrentLocation();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    socket?.dispose();
+    super.onClose();
   }
 
   @override
@@ -510,43 +523,42 @@ class EmployeeHomeController extends GetxController {
               response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
             Get.dialog(
                 Dialog(
-              insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
-              child: Container(
-                height: 350,
-                decoration:
-                    BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Lottie.asset(MyAssets.lottie.calenderLottie),
-                    Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
-                    Row(
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                  child: Container(
+                    height: 350,
+                    decoration:
+                        BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomButtons.button(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                            margin: EdgeInsets.zero,
-                            text: "Update",
-                            onTap: () => onCalenderUpdatePressed(tag: 'update'),
-                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
-                        const SizedBox(width: 20),
-                        CustomButtons.button(
-                            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                            margin: EdgeInsets.zero,
-                            backgroundColor: Colors.grey.shade400,
-                            text: 'Close',
-                            onTap: () => onCalenderUpdatePressed(tag: 'close'),
-                            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                        Lottie.asset(MyAssets.lottie.calenderLottie),
+                        Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomButtons.button(
+                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                margin: EdgeInsets.zero,
+                                text: "Update",
+                                onTap: () => onCalenderUpdatePressed(tag: 'update'),
+                                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                            const SizedBox(width: 20),
+                            CustomButtons.button(
+                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                margin: EdgeInsets.zero,
+                                backgroundColor: Colors.grey.shade400,
+                                text: 'Close',
+                                onTap: () => onCalenderUpdatePressed(tag: 'close'),
+                                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                          ],
+                        )
                       ],
-                    )
-                  ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-              barrierDismissible: false
-            );
+                barrierDismissible: false);
           }
         }
       });
@@ -569,6 +581,37 @@ class EmployeeHomeController extends GetxController {
           }
         }
       });
+    });
+  }
+
+  void shareCurrentLocation() {
+    if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null) {
+      if (locationFetchError.value.isEmpty &&
+          restaurantDistanceFromEmployee(
+                  targetLat: double.parse(
+                      todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.lat ?? "0.0"),
+                  targetLng: double.parse(
+                      todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? "0.0")) >
+              200) {
+
+        connectWithSocket();
+      }
+    }
+  }
+
+  void connectWithSocket() {
+    socket = i_o.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+    socket?.connect();
+    socket?.onConnect((data) {
+      SocketLocationModel socketLocationModel = SocketLocationModel(
+          sender: appController.user.value.employee?.id ?? "",
+          receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
+          cords: Cords(latitude: currentLocation?.latitude, longitude: currentLocation?.longitude));
+
+      socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
     });
   }
 }

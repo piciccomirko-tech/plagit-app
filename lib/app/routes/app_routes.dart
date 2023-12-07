@@ -58,6 +58,7 @@ abstract class Routes {
   static const otp = _Paths.otp;
   static const resetPassword = _Paths.resetPassword;
   static const adminTodaysEmployees = _Paths.adminTodaysEmployees;
+  static const liveLocation =  _Paths.liveLocation;
 }
 
 abstract class _Paths {
@@ -120,4 +121,5 @@ abstract class _Paths {
   static const otp = '/otp';
   static const resetPassword = '/reset-password';
   static const adminTodaysEmployees = '/admin-todays-employees';
+  static const liveLocation = '/live-location';
 }

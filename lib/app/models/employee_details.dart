@@ -25,6 +25,7 @@ class EmployeeDetails {
 
   String? countryName;
   String? nationality;
+  String? distance;
 
   EmployeeDetails(
       {this.employeeId,
@@ -47,7 +48,8 @@ class EmployeeDetails {
       this.certified,
       this.hasUniform,
       this.countryName,
-      this.nationality});
+      this.nationality,
+      this.distance});
 
   EmployeeDetails.fromJson(Map<String, dynamic> json) {
     employeeId = json['employeeId'];

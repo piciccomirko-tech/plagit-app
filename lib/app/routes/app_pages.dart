@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mh/app/modules/admin/admin_todays_employees/bindings/admin_todays_employees_binding.dart';
-import 'package:mh/app/modules/admin/admin_todays_employees/views/admin_todays_employees_view.dart';
+
 import '../middleware/auth_middleware.dart';
 import '../modules/admin/admin_all_clients/bindings/admin_all_clients_binding.dart';
 import '../modules/admin/admin_all_clients/views/admin_all_clients_view.dart';
@@ -16,6 +15,8 @@ import '../modules/admin/admin_dashboard/bindings/admin_dashboard_binding.dart';
 import '../modules/admin/admin_dashboard/views/admin_dashboard_view.dart';
 import '../modules/admin/admin_home/bindings/admin_home_binding.dart';
 import '../modules/admin/admin_home/views/admin_home_view.dart';
+import '../modules/admin/admin_todays_employees/bindings/admin_todays_employees_binding.dart';
+import '../modules/admin/admin_todays_employees/views/admin_todays_employees_view.dart';
 import '../modules/auth/login/bindings/login_binding.dart';
 import '../modules/auth/login/views/login_view.dart';
 import '../modules/auth/login_register_hints/bindings/login_register_hints_binding.dart';
@@ -52,6 +53,8 @@ import '../modules/client/hire_status/bindings/hire_status_binding.dart';
 import '../modules/client/hire_status/views/hire_status_view.dart';
 import '../modules/client/invoice_pdf/bindings/invoice_pdf_binding.dart';
 import '../modules/client/invoice_pdf/views/invoice_pdf_view.dart';
+import '../modules/client/live_location/bindings/live_location_binding.dart';
+import '../modules/client/live_location/views/live_location_view.dart';
 import '../modules/client/mh_employees/bindings/mh_employees_binding.dart';
 import '../modules/client/mh_employees/views/mh_employees_view.dart';
 import '../modules/client/mh_employees_by_id/bindings/mh_employees_by_id_binding.dart';
@@ -390,6 +393,11 @@ class AppPages {
       name: _Paths.adminTodaysEmployees,
       page: () => const AdminTodaysEmployeesView(),
       binding: AdminTodaysEmployeesBinding(),
+    ),
+    GetPage(
+      name: _Paths.liveLocation,
+      page: () => const LiveLocationView(),
+      binding: LiveLocationBinding(),
     ),
   ];
 }

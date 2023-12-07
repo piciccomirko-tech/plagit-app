@@ -35,6 +35,9 @@ class MyAssets {
   static const weight = "assets/icons/weight.png";
   static const checkIn = "assets/icons/checkin.png";
   static const checkOut = "assets/icons/checkout.png";
+  static const maps = "assets/icons/maps.png";
+  static const distance = "assets/icons/distance.png";
+  static const employeeMarker = "assets/icons/employee_marker.png";
   static const breakTime = "assets/icons/break_time.png";
   static const nationality = "assets/icons/nationality.png";
   static const organization = "assets/icons/organization.png";
