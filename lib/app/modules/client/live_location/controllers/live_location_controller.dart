@@ -6,6 +6,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mh/app/common/app_info/app_credentials.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/location_controller.dart';
 import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/modules/client/live_location/models/location_argument_model.dart';
@@ -17,6 +18,7 @@ import 'dart:ui' as ui;
 class LiveLocationController extends GetxController {
   Rx<LocationArgumentModel> locationData = LocationArgumentModel().obs;
   Rx<SocketLocationModel> socketLocationData = SocketLocationModel().obs;
+  AppController appController = Get.find<AppController>();
 
   late io.Socket socket;
   GoogleMapController? mapController;

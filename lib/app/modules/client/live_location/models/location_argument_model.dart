@@ -6,6 +6,7 @@ class LocationArgumentModel {
   String? distance;
   String? clientId;
   String? employeePicture;
+  String? employeeName;
 
   LocationArgumentModel(
       {this.clientLat,
@@ -14,5 +15,5 @@ class LocationArgumentModel {
       this.employeeLng,
       this.distance,
       this.clientId,
-      this.employeePicture});
+      this.employeePicture, this.employeeName});
 }

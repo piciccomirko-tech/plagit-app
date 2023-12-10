@@ -96,6 +96,8 @@ class _Lottie {
   String check = "assets/lottie/check.json";
 
   String doneLottie = "assets/lottie/done.json";
+
+  String directionLottie = "assets/lottie/direction.json";
   String error = "assets/lottie/error.json";
   String error404 = "assets/lottie/error_404.json";
   String noWifi = "assets/lottie/no_wifi.json";

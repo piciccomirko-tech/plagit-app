@@ -176,6 +176,19 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(hiredHistory.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}"),
                         ],
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          _detailsItem(MyAssets.distance, 'Distance:', hiredHistory.employeeDetails?.distance ?? ""),
+                          InkWell(
+                              onTap: () => controller.onMapsPressed(
+                                  employeeName: hiredHistory.employeeDetails?.name ?? "",
+                                  distance: hiredHistory.employeeDetails?.distance ?? "",
+                                  employeePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl),
+                              child: Image.asset(MyAssets.maps, height: 22, width: 22)),
+                          SizedBox(width: 8.w)
+                        ],
+                      ),
                       SizedBox(height: 5.h),
                       Obx(() => Visibility(
                           visible: controller.startDate.value == DateTime.now().toString().split(" ").first,
@@ -185,7 +198,10 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               _detailsItem(
                                   MyAssets.distance, 'Distance:', hiredHistory.employeeDetails?.distance ?? ""),
                               InkWell(
-                                  onTap: () => controller.onMapsPressed(distance: hiredHistory.employeeDetails?.distance??"", employeePicture: (hiredHistory.employeeDetails?.profilePicture??"").imageUrl),
+                                  onTap: () => controller.onMapsPressed(
+                                      employeeName: hiredHistory.employeeDetails?.name ?? "",
+                                      distance: hiredHistory.employeeDetails?.distance ?? "",
+                                      employeePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl),
                                   child: Image.asset(MyAssets.maps, height: 22, width: 22)),
                               SizedBox(width: 8.w)
                             ],

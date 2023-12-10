@@ -191,11 +191,10 @@ class ClientMyEmployeeController extends GetxController {
           employees.refresh();
         });
       });
-    } catch (_) {
-    }
+    } catch (_) {}
   }
 
-  void onMapsPressed({required String distance, required String employeePicture}) {
+  void onMapsPressed({required String distance, required String employeePicture, required String employeeName}) {
     socket.disconnect();
     socket.dispose();
     LocationArgumentModel locationArgumentModel = LocationArgumentModel(
@@ -204,6 +203,7 @@ class ClientMyEmployeeController extends GetxController {
         employeeLat: socketLocationModel.value.cords?.latitude ?? 0.0,
         employeeLng: socketLocationModel.value.cords?.longitude ?? 0.0,
         distance: distance,
+        employeeName: employeeName,
         employeePicture: employeePicture,
         clientId: appController.user.value.client?.id ?? "");
     Get.toNamed(Routes.liveLocation, arguments: locationArgumentModel);
