@@ -316,7 +316,7 @@ class ClientHomeController extends GetxController {
     if (query.isNotEmpty) {
       showClearIcon.value = true;
       scrollController.animateTo(
-        Get.height * 0.25,
+        130,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
@@ -339,9 +339,8 @@ class ClientHomeController extends GetxController {
     Utils.unFocus();
   }
 
-  void onSearchItemTap({required DropdownItem position}){
+  void onSearchItemTap({required DropdownItem position}) {
     clearIconTap();
     Get.toNamed(Routes.mhEmployeesById, arguments: {MyStrings.arg.data: position});
-
   }
 }
