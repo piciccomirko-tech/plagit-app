@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -50,7 +51,8 @@ class LiveLocationController extends GetxController {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         AppCredentials.googleMapKey,
-        PointLatLng(locationData.value.clientLat ?? 0.0, locationData.value.clientLng ?? 0.0),
+        PointLatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
+            double.parse(appController.user.value.client?.long ?? "0.0")),
         PointLatLng(locationData.value.employeeLat ?? 0.0, locationData.value.employeeLng ?? 0.0));
     if (result.points.isNotEmpty) {
       for (var point in result.points) {
@@ -77,9 +79,17 @@ class LiveLocationController extends GetxController {
       socket.onConnect((_) {
         socket.on('location:move', (data) async {
           socketLocationData.value = SocketLocationModel.fromJson(data);
-          if (locationData.value.clientId == socketLocationData.value.receiver) {
+          if (appController.user.value.client?.id == socketLocationData.value.receiver) {
             locationData.value.employeeLat = socketLocationData.value.cords?.latitude ?? 0.0;
             locationData.value.employeeLng = socketLocationData.value.cords?.longitude ?? 0.0;
+            locationData.value.distance =
+                "${(LocationController.calculateDistance(targetLat: locationData.value.employeeLat ?? 0.0, targetLong: locationData.value.employeeLng ?? 0.0, currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
+                    //23.795455885215837,
+                    currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
+                    //90.40503904223443
+                    ) / 1609).toStringAsFixed(2)} miles away";
+            locationData.value.currentPosition = await LocationController.getAddressFromLatLngForGoogle(
+                lat: locationData.value.employeeLat ?? 0.0, lng: locationData.value.employeeLng ?? 0.0);
             locationData.refresh();
             await getPolyPoints();
           }
@@ -96,7 +106,8 @@ class LiveLocationController extends GetxController {
         infoWindow: const InfoWindow(title: "Welcome Back!", snippet: 'Move this marker to your desired location'),
         icon: BitmapDescriptor.fromBytes(locationIcon.value),
         markerId: const MarkerId('0'),
-        position: LatLng(locationData.value.clientLat ?? 0.0, locationData.value.clientLng ?? 0.0),
+        position: LatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
+            double.parse(appController.user.value.client?.long ?? "0.0")),
       ),
     );
 
@@ -126,7 +137,9 @@ class LiveLocationController extends GetxController {
   Future<BitmapDescriptor> _resizeImage(Uint8List imageUrl, double width, double height) async {
     final Completer<BitmapDescriptor> completer = Completer();
 
-    ui.instantiateImageCodec(Uint8List.view(imageUrl.buffer), targetWidth: width.toInt(), targetHeight: height.toInt())
+    ui
+        .instantiateImageCodec(Uint8List.view(imageUrl.buffer),
+            targetWidth: width.toInt(), targetHeight: height.toInt())
         .then((ui.Codec codec) {
       codec.getNextFrame().then((ui.FrameInfo frameInfo) async {
         final ByteData? byteData = await frameInfo.image.toByteData(format: ui.ImageByteFormat.png);

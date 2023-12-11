@@ -1009,6 +1009,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
+
     return _convert<TodayWorkScheduleModel>(
       response,
       TodayWorkScheduleModel.fromJson,

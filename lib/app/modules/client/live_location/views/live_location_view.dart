@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lottie/lottie.dart' as lottie;
 import 'package:mh/app/common/values/my_assets.dart';
-import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/modules/client/live_location/widgets/location_info_widget.dart';
 import '../controllers/live_location_controller.dart';
 import '../widgets/location_back_button_widget.dart';
@@ -21,9 +19,9 @@ class LiveLocationView extends GetView<LiveLocationController> {
                   Obx(() => GoogleMap(
                         mapType: MapType.normal,
                         initialCameraPosition: CameraPosition(
-                          target: LatLng(controller.locationData.value.clientLat ?? 0.0,
-                              controller.locationData.value.clientLng ?? 0.0),
-                          zoom: 15.50,
+                          target: LatLng(double.parse(controller.appController.user.value.client?.lat ?? "0.0"),
+                              double.parse(controller.appController.user.value.client?.long ?? "0.0")),
+                          zoom: double.parse((controller.locationData.value.distance??"0.0").split(" ").first) > 0.11 ? 15.50 : 17.00,
                         ),
                         polylines: {
                           Polyline(

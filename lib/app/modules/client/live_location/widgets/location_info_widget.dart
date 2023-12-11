@@ -1,10 +1,5 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mh/app/common/utils/exports.dart';
-import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/modules/client/live_location/controllers/live_location_controller.dart';
 
 class LocationInfoWidget extends GetWidget<LiveLocationController> {
@@ -14,7 +9,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(15.0),
-      height: Get.width * 0.75,
+      height: Get.width * 0.8,
       decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(topRight: Radius.circular(10.0), topLeft: Radius.circular(10.0))),
@@ -26,8 +21,21 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text("Will arrive approximately within",
-                    style: MyColors.l111111_dwhite(context).semiBold16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(MyAssets.distance, height: 20, width: 20),
+                        SizedBox(width: 5.w),
+                        Obx(() => Text(controller.locationData.value.distance??"", style: MyColors.l111111_dwhite(context).semiBold16)),
+                      ],
+                    ),
+                    SizedBox(height: 5.h),
+                    Text("Will arrive approximately within",
+                        style: MyColors.l111111_dwhite(context).medium12),
+                  ],
+                ),
                 Container(
                   padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                   decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: MyColors.c_C6A34F),
@@ -40,10 +48,51 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                 )
               ],
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 20.h),
+             Row(
+               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.blueGrey.shade50,
+                      child: const Icon(Icons.chat, color: Colors.teal),
+
+                    ),
+                    SizedBox(height: 5.h),
+                    Text("Live Chat", style: MyColors.l111111_dwhite(context).semiBold12)
+                  ],
+                ),
+                Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.blueGrey.shade50,
+                      child: const Icon(Icons.spatial_audio, color: Colors.blue),
+
+                    ),
+                    SizedBox(height: 5.h),
+                    Text("Audio", style: MyColors.l111111_dwhite(context).semiBold12)
+                  ],
+                ),
+                Column(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Colors.blueGrey.shade50,
+                      child: const Icon(Icons.phone, color: Colors.orange),
+
+                    ),
+                    SizedBox(height: 5.h),
+                    Text("Free Call", style: MyColors.l111111_dwhite(context).semiBold12)
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
             Row(
               children: [
-                Visibility(
+                Expanded(
+                  flex: 1,
+                    child: Visibility(
                   visible: controller.locationData.value.employeePicture != null &&
                       (controller.locationData.value.employeePicture ?? "").isNotEmpty,
                   child: CircleAvatar(
@@ -54,17 +103,22 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                       backgroundImage: NetworkImage(controller.locationData.value.employeePicture ?? ""),
                     ),
                   ),
-                ),
+                )),
                 SizedBox(width: 10.w),
-                Column(
+                Expanded(
+                  flex: 7,
+                    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text("${controller.locationData.value.employeeName}",
                         style: MyColors.l111111_dwhite(context).semiBold12),
-                    Text("3rd kemal ataturk avenue, Banani, Dhaka, Bangladesh",
-                        style: MyColors.l111111_dwhite(context).medium11)
+                    Obx(() => Text(controller.locationData.value.currentPosition??"",
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: MyColors.l111111_dwhite(context).medium12)),
+
                   ],
-                )
+                ))
               ],
             ),
              Lottie.asset(MyAssets.lottie.directionLottie, height: 30, width: 35),
@@ -90,7 +144,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                 )
               ],
             ),
-            SizedBox(height: 10.h),
+          /*  SizedBox(height: 10.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -124,7 +178,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                 ),
               )
             ],
-          )
+          )*/
           ],
         ),
       ),

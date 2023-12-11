@@ -74,7 +74,7 @@ class EmployeeHomeController extends GetxController {
   @override
   void onInit() async {
     await homeMethods();
-    shareCurrentLocation();
+    _shareCurrentLocation();
     super.onInit();
   }
 
@@ -584,7 +584,7 @@ class EmployeeHomeController extends GetxController {
     });
   }
 
-  void shareCurrentLocation() {
+  void _shareCurrentLocation() {
     if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null) {
       if (locationFetchError.value.isEmpty &&
           restaurantDistanceFromEmployee(
@@ -593,13 +593,12 @@ class EmployeeHomeController extends GetxController {
                   targetLng: double.parse(
                       todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? "0.0")) >
               200) {
-
         connectWithSocket();
       }
     }
   }
 
-  void connectWithSocket() {
+  /*void connectWithSocket() {
     socket = i_o.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,
@@ -610,6 +609,36 @@ class EmployeeHomeController extends GetxController {
           sender: appController.user.value.employee?.id ?? "",
           receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
           cords: Cords(latitude: currentLocation?.latitude, longitude: currentLocation?.longitude));
+
+      socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
+    });
+  }*/
+
+  void connectWithSocket() {
+    socket = i_o.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+    socket?.connect();
+
+    // Get the current location
+    Geolocator.getCurrentPosition().then((Position position) {
+      updateSocketLocation(position: position); // Update socket location with the initial position
+
+      // Listen for location changes
+      Geolocator.getPositionStream().listen((Position position) {
+        updateSocketLocation(position: position); // Update socket location on each change
+      });
+    });
+  }
+
+  void updateSocketLocation({required Position position}) {
+    socket?.onConnect((data) {
+      SocketLocationModel socketLocationModel = SocketLocationModel(
+        sender: appController.user.value.employee?.id ?? "",
+        receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
+        cords: Cords(latitude: position.latitude, longitude: position.longitude),
+      );
 
       socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
     });

@@ -198,14 +198,11 @@ class ClientMyEmployeeController extends GetxController {
     socket.disconnect();
     socket.dispose();
     LocationArgumentModel locationArgumentModel = LocationArgumentModel(
-        clientLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
-        clientLng: double.parse(appController.user.value.client?.long ?? "0.0"),
         employeeLat: socketLocationModel.value.cords?.latitude ?? 0.0,
         employeeLng: socketLocationModel.value.cords?.longitude ?? 0.0,
         distance: distance,
         employeeName: employeeName,
-        employeePicture: employeePicture,
-        clientId: appController.user.value.client?.id ?? "");
+        employeePicture: employeePicture);
     Get.toNamed(Routes.liveLocation, arguments: locationArgumentModel);
   }
 }
