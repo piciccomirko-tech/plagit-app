@@ -5,7 +5,6 @@ import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
-import 'package:mh/app/modules/client/live_location/models/location_argument_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
 import 'package:mh/app/modules/employee_hired_history/widgets/employee_hired_history_details_widget.dart';
@@ -21,7 +20,6 @@ class ClientMyEmployeeController extends GetxController {
   BuildContext? context;
 
   Rx<SocketLocationModel> socketLocationModel = SocketLocationModel().obs;
-
   final ApiHelper _apiHelper = Get.find();
   final ShortlistController shortlistController = Get.find();
   final AppController appController = Get.find<AppController>();
@@ -174,35 +172,33 @@ class ClientMyEmployeeController extends GetxController {
       });
       socket.connect();
       socket.onConnect((_) {
-        socket.on('location:move', (data) {
+        socket.on('location:move', (data) async {
           socketLocationModel.value = SocketLocationModel.fromJson(data);
-
           for (EmployeeModel i in employees) {
             if (i.employeeId == socketLocationModel.value.sender) {
               i.employeeDetails?.distance =
-                  "${(LocationController.calculateDistance(targetLat: socketLocationModel.value.cords?.latitude ?? 0.0, targetLong: socketLocationModel.value.cords?.longitude ?? 0.0, currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
+                  (LocationController.calculateDistance(targetLat: socketLocationModel.value.cords?.latitude ?? 0.0, targetLong: socketLocationModel.value.cords?.longitude ?? 0.0, currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
                       //23.795455885215837,
                       currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
                       //90.40503904223443
-                      ) / 1609).toStringAsFixed(2)} miles away";
+                      ) / 1609).toStringAsFixed(2);
+
+              socketLocationModel.value.distance = i.employeeDetails?.distance;
+              socketLocationModel.value.employeeName = i.employeeDetails?.name ?? "";
+              socketLocationModel.value.employeePicture = (i.employeeDetails?.profilePicture ?? "").uniformImageUrl;
+              socketLocationModel.value.currentPosition = await LocationController.getAddressFromLatLngForGoogle(
+                  lat: socketLocationModel.value.cords?.latitude ?? 0.0,
+                  lng: socketLocationModel.value.cords?.longitude ?? 0.0);
             }
           }
-
           employees.refresh();
+          socketLocationModel.refresh();
         });
       });
     } catch (_) {}
   }
 
   void onMapsPressed({required String distance, required String employeePicture, required String employeeName}) {
-    socket.disconnect();
-    socket.dispose();
-    LocationArgumentModel locationArgumentModel = LocationArgumentModel(
-        employeeLat: socketLocationModel.value.cords?.latitude ?? 0.0,
-        employeeLng: socketLocationModel.value.cords?.longitude ?? 0.0,
-        distance: distance,
-        employeeName: employeeName,
-        employeePicture: employeePicture);
-    Get.toNamed(Routes.liveLocation, arguments: locationArgumentModel);
+    Get.toNamed(Routes.liveLocation);
   }
 }

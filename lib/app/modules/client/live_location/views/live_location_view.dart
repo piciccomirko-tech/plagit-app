@@ -11,6 +11,7 @@ class LiveLocationView extends GetView<LiveLocationController> {
   const LiveLocationView({super.key});
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
         body: Obx(() => controller.mapLoaded.value == false
             ? Center(child: lottie.Lottie.asset(MyAssets.lottie.mapLoading))
@@ -21,7 +22,7 @@ class LiveLocationView extends GetView<LiveLocationController> {
                         initialCameraPosition: CameraPosition(
                           target: LatLng(double.parse(controller.appController.user.value.client?.lat ?? "0.0"),
                               double.parse(controller.appController.user.value.client?.long ?? "0.0")),
-                          zoom: double.parse((controller.locationData.value.distance??"0.0").split(" ").first) > 0.11 ? 15.50 : 17.00,
+                          zoom: 15.50,
                         ),
                         polylines: {
                           Polyline(

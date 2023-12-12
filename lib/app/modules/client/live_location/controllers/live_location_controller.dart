@@ -10,18 +10,18 @@ import 'package:mh/app/common/app_info/app_credentials.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/location_controller.dart';
 import 'package:mh/app/common/values/my_assets.dart';
-import 'package:mh/app/modules/client/live_location/models/location_argument_model.dart';
-import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
-import 'package:socket_io_client/socket_io_client.dart' as io;
+import 'package:mh/app/common/values/my_strings.dart';
+import 'package:mh/app/modules/client/client_my_employee/controllers/client_my_employee_controller.dart';
 import 'package:http/http.dart' as http;
 import 'dart:ui' as ui;
 
-class LiveLocationController extends GetxController {
-  Rx<LocationArgumentModel> locationData = LocationArgumentModel().obs;
-  Rx<SocketLocationModel> socketLocationData = SocketLocationModel().obs;
-  AppController appController = Get.find<AppController>();
+import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
+import 'package:mh/app/routes/app_pages.dart';
 
-  late io.Socket socket;
+class LiveLocationController extends GetxController {
+  final AppController appController = Get.find<AppController>();
+  final ClientMyEmployeeController clientMyEmployeeController = Get.find<ClientMyEmployeeController>();
+
   GoogleMapController? mapController;
   RxList<LatLng> polylineCoordinates = <LatLng>[].obs;
   RxBool mapLoaded = false.obs;
@@ -30,18 +30,17 @@ class LiveLocationController extends GetxController {
 
   @override
   void onInit() async {
-    locationData.value = Get.arguments;
     Uint8List val = await LocationController.getBytesFromAsset(MyAssets.locationPin, Platform.isAndroid ? 80 : 85);
     locationIcon.value = val;
     await getPolyPoints();
-    connectWithSocket();
+    clientMyEmployeeController.socketLocationModel.listen((SocketLocationModel socket) async {
+      await getPolyPoints();
+    });
     super.onInit();
   }
 
   @override
   void onClose() {
-    socket.disconnect();
-    socket.dispose();
     mapController?.dispose();
     super.onClose();
   }
@@ -53,12 +52,14 @@ class LiveLocationController extends GetxController {
         AppCredentials.googleMapKey,
         PointLatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
             double.parse(appController.user.value.client?.long ?? "0.0")),
-        PointLatLng(locationData.value.employeeLat ?? 0.0, locationData.value.employeeLng ?? 0.0));
+        PointLatLng(clientMyEmployeeController.socketLocationModel.value.cords?.latitude ?? 0.0,
+            clientMyEmployeeController.socketLocationModel.value.cords?.longitude ?? 0.0));
     if (result.points.isNotEmpty) {
       for (var point in result.points) {
         polylineCoordinates.add(LatLng(point.latitude, point.longitude));
       }
       polylineCoordinates.refresh();
+      await calculateTotalEta();
       loadMarkers();
     }
   }
@@ -69,41 +70,13 @@ class LiveLocationController extends GetxController {
     mapController?.setMapStyle(value);
   }
 
-  void connectWithSocket() {
-    try {
-      socket = io.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
-        "transports": ["websocket"],
-        "autoConnect": false,
-      });
-      socket.connect();
-      socket.onConnect((_) {
-        socket.on('location:move', (data) async {
-          socketLocationData.value = SocketLocationModel.fromJson(data);
-          if (appController.user.value.client?.id == socketLocationData.value.receiver) {
-            locationData.value.employeeLat = socketLocationData.value.cords?.latitude ?? 0.0;
-            locationData.value.employeeLng = socketLocationData.value.cords?.longitude ?? 0.0;
-            locationData.value.distance =
-                "${(LocationController.calculateDistance(targetLat: locationData.value.employeeLat ?? 0.0, targetLong: locationData.value.employeeLng ?? 0.0, currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
-                    //23.795455885215837,
-                    currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
-                    //90.40503904223443
-                    ) / 1609).toStringAsFixed(2)} miles away";
-            locationData.value.currentPosition = await LocationController.getAddressFromLatLngForGoogle(
-                lat: locationData.value.employeeLat ?? 0.0, lng: locationData.value.employeeLng ?? 0.0);
-            locationData.refresh();
-            await getPolyPoints();
-          }
-        });
-      });
-    } catch (_) {}
-  }
-
   void loadMarkers() async {
-    Uint8List employeeProfilePicture = await _getImageBytes(imageUrl: locationData.value.employeePicture ?? "");
+    Uint8List employeeProfilePicture =
+        await _getImageBytes(imageUrl: clientMyEmployeeController.socketLocationModel.value.employeePicture ?? "");
 
     markersList.add(
       Marker(
-        infoWindow: const InfoWindow(title: "Welcome Back!", snippet: 'Move this marker to your desired location'),
+        infoWindow: const InfoWindow(title: "Your Location", snippet: 'Keep patience until arriving the employee'),
         icon: BitmapDescriptor.fromBytes(locationIcon.value),
         markerId: const MarkerId('0'),
         position: LatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
@@ -113,10 +86,11 @@ class LiveLocationController extends GetxController {
 
     markersList.add(
       Marker(
-        infoWindow: const InfoWindow(title: "Employee Location", snippet: 'Move this marker to your desired location'),
+        infoWindow: const InfoWindow(title: "Employee Location", snippet: 'Track his live location'),
         icon: await _resizeImage(employeeProfilePicture, 100, 100),
         markerId: const MarkerId('employeeLocation'),
-        position: LatLng(locationData.value.employeeLat ?? 0.0, locationData.value.employeeLng ?? 0.0),
+        position: LatLng(clientMyEmployeeController.socketLocationModel.value.cords?.latitude ?? 0.0,
+            clientMyEmployeeController.socketLocationModel.value.cords?.longitude ?? 0.0),
       ),
     );
     markersList.refresh();
@@ -156,4 +130,45 @@ class LiveLocationController extends GetxController {
 
     return completer.future;
   }
+
+  Future<void> calculateTotalEta() async {
+    clientMyEmployeeController.socketLocationModel.value.totalEta = await calculateETA();
+    clientMyEmployeeController.socketLocationModel.refresh();
+  }
+
+  Future<int> calculateETA() async {
+    const String apiKey = AppCredentials.googleMapKey; // Replace with your API key
+    final String origin = "${polylineCoordinates.first.latitude},${polylineCoordinates.first.longitude}";
+    final String destination = "${polylineCoordinates.last.latitude},${polylineCoordinates.last.longitude}";
+    final url =
+        'https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&mode=driving&key=$apiKey';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      final List<dynamic> routes = data['routes'];
+      if (routes.isNotEmpty) {
+        final Map<String, dynamic> route = routes[0];
+        final Map<String, dynamic> leg = route['legs'][0];
+
+        final int durationInSeconds = leg['duration']['value'];
+        final int durationInMinutes = (durationInSeconds / 60).round();
+
+        return durationInMinutes;
+      } else {
+        return 0;
+      }
+    } else {
+      return 0;
+    }
+  }
+
+  void onLiveChatPressed() => Get.toNamed(Routes.clientEmployeeChat, arguments: {
+        MyStrings.arg.receiverName: clientMyEmployeeController.socketLocationModel.value.employeeName,
+        MyStrings.arg.fromId: appController.user.value.client?.id,
+        MyStrings.arg.toId: clientMyEmployeeController.socketLocationModel.value.sender,
+        MyStrings.arg.clientId: appController.user.value.client?.id,
+        MyStrings.arg.employeeId: clientMyEmployeeController.socketLocationModel.value.sender,
+      });
 }

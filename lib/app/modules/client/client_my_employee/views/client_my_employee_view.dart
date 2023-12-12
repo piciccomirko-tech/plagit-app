@@ -177,17 +177,23 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       ),
                       SizedBox(height: 5.h),
                       Obx(() => Visibility(
-                          visible: controller.startDate.value == DateTime.now().toString().split(" ").first,
+                          visible: controller.startDate.value == DateTime.now().toString().split(" ").first &&
+                              (hiredHistory.employeeDetails?.distance ?? "").isNotEmpty,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               _detailsItem(
-                                  MyAssets.distance, 'Distance:', hiredHistory.employeeDetails?.distance ?? ""),
+                                  MyAssets.distance,
+                                  'Distance:',
+                                  double.parse(hiredHistory.employeeDetails?.distance ?? "0.0") > 0.124274
+                                      ? "${hiredHistory.employeeDetails?.distance ?? ""} miles away"
+                                      : "Arrived"),
                               InkWell(
                                   onTap: () => controller.onMapsPressed(
                                       employeeName: hiredHistory.employeeDetails?.name ?? "",
                                       distance: hiredHistory.employeeDetails?.distance ?? "",
-                                      employeePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").uniformImageUrl),
+                                      employeePicture:
+                                          (hiredHistory.employeeDetails?.profilePicture ?? "").uniformImageUrl),
                                   child: Image.asset(MyAssets.maps, height: 22, width: 22)),
                               SizedBox(width: 8.w)
                             ],
@@ -324,9 +330,10 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                 right: -5.w,
                 child: Obx(
                   () {
-                    var result = controller.clientHomeController.employeeChatDetails.where((data) =>
-                        data["employeeId"] == employeeId &&
-                        data["${controller.appController.user.value.userId}_unread"] > 0);
+                    Iterable<Map<String, dynamic>> result = controller.clientHomeController.employeeChatDetails.where(
+                        (data) =>
+                            data["employeeId"] == employeeId &&
+                            data["${controller.appController.user.value.userId}_unread"] > 0);
 
                     if (result.isEmpty) return Container();
                     return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());
