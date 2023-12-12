@@ -316,7 +316,7 @@ class ClientHomeController extends GetxController {
     if (query.isNotEmpty) {
       showClearIcon.value = true;
       scrollController.animateTo(
-        Get.height * 0.25,
+        100,
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );

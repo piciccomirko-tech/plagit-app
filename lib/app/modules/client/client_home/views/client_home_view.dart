@@ -106,7 +106,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                             _promotionText,
 
                             SizedBox(height: 30.h),
-
+                            const PositionSearchFieldWidget(),
                             _suggestedEmployees,
 
                             // _dueInvoice,
@@ -123,9 +123,6 @@ class ClientHomeView extends GetView<ClientHomeController> {
                             _employeeShortlisted,
 
                             SizedBox(height: 30.h),
-
-                            const PositionSearchFieldWidget(),
-                            SizedBox(height: 20.h),
                             Row(
                               children: [
                                 Expanded(
@@ -266,7 +263,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                 itemBuilder: (BuildContext context, int index) {
                                   DropdownItem position = controller.positionList[index];
                                   return ListTile(
-                                    onTap: ()=>controller.onSearchItemTap(position: position),
+                                    onTap: () => controller.onSearchItemTap(position: position),
                                     leading: SizedBox(
                                       width: 20.w,
                                       height: 20.w,
