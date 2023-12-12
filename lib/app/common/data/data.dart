@@ -40,33 +40,40 @@ class Data {
         DropdownItem(id: "Mixologist", name: "Mixologist"),
       ];
 
-
   static List<DropdownItem> get positions => [
-    DropdownItem(id: "63ea4ee911aef3765b25190d", name: "Manager", logo: MyAssets.manager),
-    DropdownItem(id: "63eb91bfb306c20a75248a0a", name: "Barista", logo: MyAssets.barista),
-    DropdownItem(id: "63ea4f5611aef3765b251917", name: "Chef", logo: MyAssets.chef),
-    DropdownItem(id: "63ec995ecd1d636c8208f1c2", name: "Chef De Partie", logo: MyAssets.chefDePartie),
-    DropdownItem(id: "63edf848cd1d636c8208f3ad", name: "Commis chef", logo: MyAssets.commisChef),
-    DropdownItem(id: "63edf873cd1d636c8208f3b1", name: "Commis pizza chef", logo: MyAssets.commisPizzaChef),
-    DropdownItem(id: "63edf888cd1d636c8208f3b5", name: "Commis waiter", logo: MyAssets.commisWaiter),
-    DropdownItem(id: "63edf898cd1d636c8208f3b9", name: "Food runner", logo: MyAssets.foodRunner),
-    DropdownItem(id: "63edf8a9cd1d636c8208f3bd", name: "Kp", logo: MyAssets.kitchenPorter),
-    DropdownItem(id: "63edf8b8cd1d636c8208f3c1", name: "Pizza chef", logo: MyAssets.pizzaChef),
-    DropdownItem(id: "63edf8cacd1d636c8208f3c5", name: "Room made", logo: MyAssets.roomMaid),
-    DropdownItem(id: "63edf8d7cd1d636c8208f3c9", name: "Runner", logo: MyAssets.runner),
-    DropdownItem(id: "63edf8e1cd1d636c8208f3cd", name: "Security", logo: MyAssets.security),
-    DropdownItem(id: "63edf8f1cd1d636c8208f3d1", name: "Toilet assistant", logo: MyAssets.toiletAssistant),
-    DropdownItem(id: "63edf8ffcd1d636c8208f3d5", name: "Waiter", logo: MyAssets.waiter),
-    DropdownItem(id: "63edf90ccd1d636c8208f3d9", name: "Bartender", logo: MyAssets.bartender),
-    DropdownItem(id: "63edf91acd1d636c8208f3dd", name: "Bar back", logo: MyAssets.barBack),
-    DropdownItem(id: "63edf928cd1d636c8208f3e1", name: "Mixologist", logo: MyAssets.mixologist),
-    DropdownItem(id: "64ad577f71001ecc2f6eab31", name: "Pastry Chef", logo: MyAssets.pastryChef),
-    DropdownItem(id: "64b019e971001ecc2f6f292e", name: "Receptionist", logo: MyAssets.receptionist),
-    DropdownItem(id: "64b569d6c04b3b501b00bbfd", name: "Sous Chef", logo: MyAssets.sousChef),
-    DropdownItem(id: "64b65cb0784a99a8fb8844f7", name: "Assistant Manager", logo: MyAssets.assistantManager),
-  ];
+        DropdownItem(id: "63ea4ee911aef3765b25190d", name: "Manager", logo: MyAssets.manager),
+        DropdownItem(id: "63eb91bfb306c20a75248a0a", name: "Barista", logo: MyAssets.barista),
+        DropdownItem(id: "63ea4f5611aef3765b251917", name: "Chef", logo: MyAssets.chef),
+        DropdownItem(id: "63ec995ecd1d636c8208f1c2", name: "Chef De Partie", logo: MyAssets.chefDePartie),
+        DropdownItem(id: "63edf848cd1d636c8208f3ad", name: "Commis chef", logo: MyAssets.commisChef),
+        DropdownItem(id: "63edf873cd1d636c8208f3b1", name: "Commis pizza chef", logo: MyAssets.commisPizzaChef),
+        DropdownItem(id: "63edf888cd1d636c8208f3b5", name: "Commis waiter", logo: MyAssets.commisWaiter),
+        DropdownItem(id: "63edf898cd1d636c8208f3b9", name: "Food runner", logo: MyAssets.foodRunner),
+        DropdownItem(id: "63edf8a9cd1d636c8208f3bd", name: "Kp", logo: MyAssets.kitchenPorter),
+        DropdownItem(id: "63edf8b8cd1d636c8208f3c1", name: "Pizza chef", logo: MyAssets.pizzaChef),
+        DropdownItem(id: "63edf8cacd1d636c8208f3c5", name: "Room made", logo: MyAssets.roomMaid),
+        DropdownItem(id: "63edf8d7cd1d636c8208f3c9", name: "Runner", logo: MyAssets.runner),
+        DropdownItem(id: "63edf8e1cd1d636c8208f3cd", name: "Security", logo: MyAssets.security),
+        DropdownItem(id: "63edf8f1cd1d636c8208f3d1", name: "Toilet assistant", logo: MyAssets.toiletAssistant),
+        DropdownItem(id: "63edf8ffcd1d636c8208f3d5", name: "Waiter", logo: MyAssets.waiter),
+        DropdownItem(id: "63edf90ccd1d636c8208f3d9", name: "Bartender", logo: MyAssets.bartender),
+        DropdownItem(id: "63edf91acd1d636c8208f3dd", name: "Bar back", logo: MyAssets.barBack),
+        DropdownItem(id: "63edf928cd1d636c8208f3e1", name: "Mixologist", logo: MyAssets.mixologist),
+        DropdownItem(id: "64ad577f71001ecc2f6eab31", name: "Pastry Chef", logo: MyAssets.pastryChef),
+        DropdownItem(id: "64b019e971001ecc2f6f292e", name: "Receptionist", logo: MyAssets.receptionist),
+        DropdownItem(id: "64b569d6c04b3b501b00bbfd", name: "Sous Chef", logo: MyAssets.sousChef),
+        DropdownItem(id: "64b65cb0784a99a8fb8844f7", name: "Assistant Manager", logo: MyAssets.assistantManager),
+      ];
 
   static final List<Map<String, String>> _countryPickerItemList = [
+    {"name": "United Arab Emirates", "dial_code": "+971", "code": "AE", "postCodeRegex": ""},
+    {
+      "name": "United Kingdom",
+      "dial_code": "+44",
+      "code": "GB",
+      "postCodeRegex": "^[A-Z]{1,2}[0-9R][0-9A-Z]?\\s*[0-9][A-Z-[CIKMOV]]{2}"
+    },
+/*
     {
       "name": "Afghanistan",
       "dial_code": "+93",
@@ -1338,7 +1345,7 @@ class Data {
       "code": "ZM",
       "postCodeRegex": "^\\d{5}\$"
     },
-    {"name": "Zimbabwe", "dial_code": "+263", "code": "ZW", "postCodeRegex": ""}
+    {"name": "Zimbabwe", "dial_code": "+263", "code": "ZW", "postCodeRegex": ""}*/
   ];
 
   static List<CountryCode> get getAllCountry => _countryPickerItemList
