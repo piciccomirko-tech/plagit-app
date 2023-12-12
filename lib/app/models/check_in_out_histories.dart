@@ -33,12 +33,13 @@ class CheckInCheckOutHistory {
         message: json["message"],
         total: json["total"],
         count: json["count"],
-        checkInCheckOutHistory: Get.isRegistered<EmployeeHomeController>() == true
+        checkInCheckOutHistory: /*Get.isRegistered<EmployeeHomeController>() == true
             ? json["checkInCheckOutHistory"] == null
                 ? []
                 : List<CheckInCheckOutHistoryElement>.from(
                     json["checkInCheckOutHistory"]!.map((x) => CheckInCheckOutHistoryElement.fromJson(x)))
-            : json["result"] == null
+            :*/
+            json["result"] == null
                 ? []
                 : List<CheckInCheckOutHistoryElement>.from(
                     json["result"]!.map((x) => CheckInCheckOutHistoryElement.fromJson(x))),

@@ -16,7 +16,8 @@ class EmployeeDashboardController extends GetxController {
 
   RxList<CheckInCheckOutHistoryElement> history = <CheckInCheckOutHistoryElement>[].obs;
   RxList<CheckInCheckOutHistoryElement> dateWiseHistoryList = <CheckInCheckOutHistoryElement>[].obs;
-  Rx<DateTime> selectedDate = DateTime.now().obs;
+  Rx<DateTime> selectedStartDate = DateTime.now().obs;
+  Rx<DateTime> selectedEndDate = DateTime.now().add(const Duration(days: 1)).obs;
 
   @override
   void onInit() async {
@@ -28,9 +29,10 @@ class EmployeeDashboardController extends GetxController {
     return history[index].checkInCheckOutDetails?.clientComment ?? "";
   }
 
-  Future<void> _fetchCheckInOutHistory() async {
+  Future<void> _fetchCheckInOutHistory({String? startDate, String? endDate}) async {
     loading.value = true;
-    Either<CustomError, CheckInCheckOutHistory> response = await _apiHelper.getEmployeeCheckInOutHistory();
+    Either<CustomError, CheckInCheckOutHistory> response =
+        await _apiHelper.getEmployeeCheckInOutHistory(startDate: startDate, endDate: endDate);
     loading.value = false;
 
     response.fold((CustomError customError) {
@@ -41,17 +43,8 @@ class EmployeeDashboardController extends GetxController {
     });
   }
 
-  void onDatePicked(DateTime dateTime) async {
-    selectedDate.value = dateTime;
-    dateWiseHistoryList.clear();
-    await _fetchCheckInOutHistory();
-    for (CheckInCheckOutHistoryElement i in history) {
-      if (i.checkInCheckOutDetails?.checkInTime.toString().split(" ").first ==
-          selectedDate.value.toString().split(" ").first) {
-        dateWiseHistoryList.add(i);
-      }
-    }
-    history.value = dateWiseHistoryList;
-    history.refresh();
+  void onDateRangePicked(DateTimeRange dateTime) async {
+    _fetchCheckInOutHistory(
+        startDate: dateTime.start.toString().split(" ").first, endDate: dateTime.end.toString().split(" ").first);
   }
 }

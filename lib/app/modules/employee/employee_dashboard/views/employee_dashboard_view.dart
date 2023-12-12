@@ -16,46 +16,17 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
     controller.context = context;
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: ()=>_selectDateRange(context),
+        backgroundColor: MyColors.c_C6A34F,
+        child: Image.asset(MyAssets.calender1, height: 40, width: 40),
+      ),
       appBar: CustomAppbar.appbar(
         context: context,
         title: 'My Dashboard',
       ),
       body: Column(
         children: [
-          const SizedBox(height: 15),
-          Center(
-            child: Container(
-              width: Get.width*0.7,
-              padding: const EdgeInsets.all(10.0),
-              decoration: const BoxDecoration(
-                color: MyColors.c_C6A34F,
-                borderRadius: BorderRadius.only(topRight: Radius.circular(10.0), bottomLeft: Radius.circular(10.0))
-              ),
-              child: GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(MyAssets.calender, height: 22, width: 22),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Obx(
-                          () => Text(
-                        controller.selectedDate.value.EdMMMy,
-                        style: MyColors.white.medium16,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Icon(Icons.arrow_drop_down, color: MyColors.white),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 15),
           Obx(
             () => controller.loading.value
                 ? Center(child: CustomLoader.loading())
@@ -193,15 +164,20 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
           ),
         );
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  Future<void> _selectDateRange(BuildContext context) async {
+    DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: controller.selectedDate.value,
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
+      initialDateRange: DateTimeRange(
+        start: controller.selectedStartDate.value,
+        end: controller.selectedEndDate.value,
+      ),
     );
-    if (picked != null && picked != controller.selectedDate.value) {
-      controller.onDatePicked(picked);
+
+    if (picked != null &&
+        (picked.start != controller.selectedStartDate.value || picked.end != controller.selectedEndDate.value)) {
+      controller.onDateRangePicked(picked);
     }
   }
 }
