@@ -28,7 +28,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                       children: [
                         Image.asset(MyAssets.distance, height: 20, width: 20),
                         SizedBox(width: 5.w),
-                        Obx(() => Text(controller.clientMyEmployeeController.socketLocationModel.value.distance ?? "",
+                        Obx(() => Text("${controller.clientMyEmployeeController.socketLocationModel.value.distance ?? ""} miles away",
                             style: MyColors.l111111_dwhite(context).semiBold16)),
                       ],
                     ),

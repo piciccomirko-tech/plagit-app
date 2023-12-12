@@ -185,7 +185,7 @@ class ClientMyEmployeeController extends GetxController {
 
               socketLocationModel.value.distance = i.employeeDetails?.distance;
               socketLocationModel.value.employeeName = i.employeeDetails?.name ?? "";
-              socketLocationModel.value.employeePicture = (i.employeeDetails?.profilePicture ?? "").uniformImageUrl;
+              socketLocationModel.value.employeePicture = (i.employeeDetails?.profilePicture ?? "").imageUrl;
               socketLocationModel.value.currentPosition = await LocationController.getAddressFromLatLngForGoogle(
                   lat: socketLocationModel.value.cords?.latitude ?? 0.0,
                   lng: socketLocationModel.value.cords?.longitude ?? 0.0);
@@ -198,7 +198,7 @@ class ClientMyEmployeeController extends GetxController {
     } catch (_) {}
   }
 
-  void onMapsPressed({required String distance, required String employeePicture, required String employeeName}) {
+  void onMapsPressed() {
     Get.toNamed(Routes.liveLocation);
   }
 }

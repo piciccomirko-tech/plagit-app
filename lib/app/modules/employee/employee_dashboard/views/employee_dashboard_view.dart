@@ -1,6 +1,5 @@
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/custom_dialog.dart';

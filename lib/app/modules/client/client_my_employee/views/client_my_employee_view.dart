@@ -120,7 +120,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
             ),
             Row(
               children: [
-                _image((hiredHistory.employeeDetails?.profilePicture ?? "").uniformImageUrl),
+                _image((hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl),
                 Expanded(
                   child: Column(
                     children: [
@@ -189,11 +189,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                                       ? "${hiredHistory.employeeDetails?.distance ?? ""} miles away"
                                       : "Arrived"),
                               InkWell(
-                                  onTap: () => controller.onMapsPressed(
-                                      employeeName: hiredHistory.employeeDetails?.name ?? "",
-                                      distance: hiredHistory.employeeDetails?.distance ?? "",
-                                      employeePicture:
-                                          (hiredHistory.employeeDetails?.profilePicture ?? "").uniformImageUrl),
+                                  onTap: controller.onMapsPressed,
                                   child: Image.asset(MyAssets.maps, height: 22, width: 22)),
                               SizedBox(width: 8.w)
                             ],
