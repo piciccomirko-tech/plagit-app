@@ -30,23 +30,21 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
             ? Center(child: CustomLoader.loading())
             : controller.history.isEmpty
                 ? const Center(child: NoItemFound())
-                : Expanded(
-                    child: HorizontalDataTable(
-                      leftHandSideColumnWidth: 90.w,
-                      rightHandSideColumnWidth: 670.w,
-                      isFixedHeader: true,
-                      headerWidgets: _getTitleWidget(),
-                      leftSideItemBuilder: _generateFirstColumnRow,
-                      rightSideItemBuilder: _generateRightHandSideColumnRow,
-                      itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
-                      rowSeparatorWidget: Container(
-                        height: 6.h,
-                        color: MyColors.lFAFAFA_dframeBg(context),
-                      ),
-                      leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                      rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                    ),
+                : HorizontalDataTable(
+                  leftHandSideColumnWidth: 90.w,
+                  rightHandSideColumnWidth: 670.w,
+                  isFixedHeader: true,
+                  headerWidgets: _getTitleWidget(),
+                  leftSideItemBuilder: _generateFirstColumnRow,
+                  rightSideItemBuilder: _generateRightHandSideColumnRow,
+                  itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
+                  rowSeparatorWidget: Container(
+                    height: 6.h,
+                    color: MyColors.lFAFAFA_dframeBg(context),
                   ),
+                  leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                  rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                ),
       ),
     );
   }
