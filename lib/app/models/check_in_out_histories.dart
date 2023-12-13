@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
-import 'package:mh/app/modules/employee/employee_home/controllers/employee_home_controller.dart';
 import 'package:mh/app/modules/employee/employee_home/models/today_check_in_out_details.dart';
 import 'check_in_check_out_details.dart';
 import 'employee_details.dart';

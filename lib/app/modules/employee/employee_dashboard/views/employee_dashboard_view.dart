@@ -25,32 +25,28 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
         context: context,
         title: 'My Dashboard',
       ),
-      body: Column(
-        children: [
-          Obx(
-            () => controller.loading.value
-                ? Center(child: CustomLoader.loading())
-                : controller.history.isEmpty
-                    ? const NoItemFound()
-                    : Expanded(
-                        child: HorizontalDataTable(
-                          leftHandSideColumnWidth: 90.w,
-                          rightHandSideColumnWidth: 670.w,
-                          isFixedHeader: true,
-                          headerWidgets: _getTitleWidget(),
-                          leftSideItemBuilder: _generateFirstColumnRow,
-                          rightSideItemBuilder: _generateRightHandSideColumnRow,
-                          itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
-                          rowSeparatorWidget: Container(
-                            height: 6.h,
-                            color: MyColors.lFAFAFA_dframeBg(context),
-                          ),
-                          leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                          rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                        ),
+      body: Obx(
+        () => controller.loading.value
+            ? Center(child: CustomLoader.loading())
+            : controller.history.isEmpty
+                ? const Center(child: NoItemFound())
+                : Expanded(
+                    child: HorizontalDataTable(
+                      leftHandSideColumnWidth: 90.w,
+                      rightHandSideColumnWidth: 670.w,
+                      isFixedHeader: true,
+                      headerWidgets: _getTitleWidget(),
+                      leftSideItemBuilder: _generateFirstColumnRow,
+                      rightSideItemBuilder: _generateRightHandSideColumnRow,
+                      itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
+                      rowSeparatorWidget: Container(
+                        height: 6.h,
+                        color: MyColors.lFAFAFA_dframeBg(context),
                       ),
-          )
-        ],
+                      leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                      rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                    ),
+                  ),
       ),
     );
   }
