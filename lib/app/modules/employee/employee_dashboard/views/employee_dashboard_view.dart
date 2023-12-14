@@ -15,11 +15,6 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
     controller.context = context;
 
     return Scaffold(
-      /*    floatingActionButton: FloatingActionButton(
-        onPressed: () => _selectDateRange(context),
-        backgroundColor: MyColors.c_C6A34F,
-        child: Image.asset(MyAssets.calender1, height: 40, width: 40),
-      ),*/
       appBar: CustomAppbar.appbar(
         context: context,
         title: 'My Dashboard',
@@ -29,22 +24,17 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
           SizedBox(height: 15.h),
           InkWell(
             onTap: () => _selectDateRange(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-              width: 250,
-              decoration: const BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0))),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Obx(() => Text(
-                      "Today is: ${controller.selectedStartDate.value.dMMMy}",
-                      style: MyColors.white.semiBold18)),
-                  Image.asset(MyAssets.calender, height: 25, width: 25)
-                ],
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Obx(() => Text(
+                    controller.isInitial.value == true
+                        ? "FILTER BY DATE RANGE"
+                        : "${controller.selectedStartDate.value.dMMMy} - ${controller.selectedEndDate.value.dMMMy}",
+                    style: Colors.blue.semiBold18)),
+                SizedBox(width: 15.w),
+                Image.asset(MyAssets.calender, height: 30, width: 30)
+              ],
             ),
           ),
           SizedBox(height: 15.h),
@@ -54,22 +44,55 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
                 : controller.history.isEmpty
                     ? const Center(child: NoItemFound())
                     : Expanded(
-                      child: HorizontalDataTable(
-                        leftHandSideColumnWidth: 90.w,
-                        rightHandSideColumnWidth: 670.w,
-                        isFixedHeader: true,
-                        headerWidgets: _getTitleWidget(),
-                        leftSideItemBuilder: _generateFirstColumnRow,
-                        rightSideItemBuilder: _generateRightHandSideColumnRow,
-                        itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
-                        rowSeparatorWidget: Container(
-                          height: 6.h,
-                          color: MyColors.lFAFAFA_dframeBg(context),
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification scrollInfo) {
+                            if (scrollInfo is ScrollEndNotification &&
+                                scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+                              controller.loadMoreData();
+                            }
+                            return false;
+                          },
+                          child: CustomMultiChildLayout(
+                            delegate: MyCustomMultiChildLayout(),
+                            children: [
+                              LayoutId(
+                                id: 'dataTable',
+                                child: Container(
+                                  constraints: const BoxConstraints.expand(),
+                                  child: PageView.builder(
+                                    physics: controller.stopScrolling.value == false
+                                        ? const BouncingScrollPhysics()
+                                        : const NeverScrollableScrollPhysics(),
+                                    controller: controller.pageController,
+                                    itemCount: (controller.history.length / controller.pageSize.value).ceil(),
+                                    itemBuilder: (BuildContext context, int pageIndex) {
+                                      // Build your HorizontalDataTable for each page
+                                      return HorizontalDataTable(
+                                        leftHandSideColumnWidth: 90.w,
+                                        rightHandSideColumnWidth: 670.w,
+                                        isFixedHeader: true,
+                                        headerWidgets: _getTitleWidget(),
+                                        leftSideItemBuilder: (context, index) => _generateFirstColumnRow(
+                                            context, index + pageIndex * controller.pageSize.value),
+                                        rightSideItemBuilder: (context, index) => _generateRightHandSideColumnRow(
+                                            context, index + pageIndex * controller.pageSize.value),
+                                        itemCount: (controller.history.length / controller.pageSize.value).ceil() *
+                                            controller.pageSize.value,
+                                        rowSeparatorWidget: Container(
+                                          height: 6.h,
+                                          color: MyColors.lFAFAFA_dframeBg(context),
+                                        ),
+                                        leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                                        rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                        rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
                       ),
-                    ),
           ),
         ],
       ),
@@ -104,37 +127,51 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
   }
 
   Widget _generateFirstColumnRow(BuildContext context, int index) {
-    UserDailyStatistics dailyStatistics = Utils.checkInOutToStatistics(controller.history[index]);
+    if (index < controller.history.length) {
+      UserDailyStatistics dailyStatistics = Utils.checkInOutToStatistics(controller.history[index]);
 
-    return SizedBox(
-      width: 90.w,
-      height: 71.h,
-      child: _cell(width: 90.w, value: dailyStatistics.date),
-    );
+      return SizedBox(
+        width: 90.w,
+        height: 71.h,
+        child: _cell(width: 90.w, value: dailyStatistics.date),
+      );
+    } else {
+      // Return an empty or placeholder widget when the index is out of bounds
+      return const SizedBox.shrink();
+    }
   }
 
   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
-    UserDailyStatistics dailyStatistics = Utils.checkInOutToStatistics(controller.history[index]);
+    if (index < controller.history.length) {
+      UserDailyStatistics dailyStatistics = Utils.checkInOutToStatistics(controller.history[index]);
 
-    return Row(
-      children: <Widget>[
-        _cell(width: 150.w, value: dailyStatistics.restaurantName, clientUpdatedValue: dailyStatistics.restaurantName),
-        _cell(
+      return Row(
+        children: <Widget>[
+          _cell(
+              width: 150.w, value: dailyStatistics.restaurantName, clientUpdatedValue: dailyStatistics.restaurantName),
+          _cell(
             width: 100.w,
             value: dailyStatistics.displayCheckInTime,
-            clientUpdatedValue: dailyStatistics.employeeCheckInTime),
-        _cell(
+            clientUpdatedValue: dailyStatistics.employeeCheckInTime,
+          ),
+          _cell(
             width: 100.w,
             value: dailyStatistics.displayCheckOutTime,
-            clientUpdatedValue: dailyStatistics.employeeCheckOutTime),
-        _cell(
+            clientUpdatedValue: dailyStatistics.employeeCheckOutTime,
+          ),
+          _cell(
             width: 100.w,
             value: dailyStatistics.displayBreakTime,
-            clientUpdatedValue: dailyStatistics.employeeBreakTime),
-        _cell(width: 100.w, value: dailyStatistics.workingHour),
-        _cell(width: 120.w, value: "--", child: _action(index)),
-      ],
-    );
+            clientUpdatedValue: dailyStatistics.employeeBreakTime,
+          ),
+          _cell(width: 100.w, value: dailyStatistics.workingHour),
+          _cell(width: 120.w, value: "--", child: _action(index)),
+        ],
+      );
+    } else {
+      // Return an empty or placeholder widget when the index is out of bounds
+      return const SizedBox.shrink();
+    }
   }
 
   Widget _cell({
@@ -202,19 +239,19 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
           // Use white colors for light theme and dark colors for dark theme
           data: isDarkMode
               ? ThemeData.dark().copyWith(
-            // Adjust the dark mode colors as needed
-            primaryColor: Colors.grey[800], // Dark primary color
-            hintColor: Colors.grey[600], // Dark accent color
-            dialogBackgroundColor: Colors.grey[900], // Dark background color
-            // Add other color adjustments if needed
-          )
+                  // Adjust the dark mode colors as needed
+                  primaryColor: Colors.grey[800], // Dark primary color
+                  hintColor: Colors.grey[600], // Dark accent color
+                  dialogBackgroundColor: Colors.grey[900], // Dark background color
+                  // Add other color adjustments if needed
+                )
               : ThemeData.light().copyWith(
-            // Adjust the light mode colors as needed
-            primaryColor: Colors.blue, // Light primary color
-            hintColor: Colors.blueAccent, // Light accent color
-            dialogBackgroundColor: Colors.white, // Light background color
-            // Add other color adjustments if needed
-          ),
+                  // Adjust the light mode colors as needed
+                  primaryColor: Colors.blue, // Light primary color
+                  hintColor: Colors.blueAccent, // Light accent color
+                  dialogBackgroundColor: Colors.white, // Light background color
+                  // Add other color adjustments if needed
+                ),
           child: child!,
         );
       },
@@ -224,5 +261,19 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
         (picked.start != controller.selectedStartDate.value || picked.end != controller.selectedEndDate.value)) {
       controller.onDateRangePicked(picked);
     }
+  }
+}
+
+// MyCustomMultiChildLayout
+class MyCustomMultiChildLayout extends MultiChildLayoutDelegate {
+  @override
+  void performLayout(Size size) {
+    layoutChild('dataTable', BoxConstraints.tightFor(width: size.width, height: size.height));
+    positionChild('dataTable', const Offset(0, 0));
+  }
+
+  @override
+  bool shouldRelayout(covariant MultiChildLayoutDelegate oldDelegate) {
+    return false;
   }
 }

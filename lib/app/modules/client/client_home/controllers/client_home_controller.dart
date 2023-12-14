@@ -313,6 +313,8 @@ class ClientHomeController extends GetxController {
   }
 
   void onSearchChanged(String query) {
+    positionList.clear();
+
     if (query.isNotEmpty) {
       showClearIcon.value = true;
       scrollController.animateTo(
@@ -321,11 +323,10 @@ class ClientHomeController extends GetxController {
         curve: Curves.easeInOut,
       );
 
-      for (DropdownItem i in appController.allActivePositions) {
-        if (i.name!.toLowerCase().contains(query.toLowerCase())) {
-          positionList.add(i);
-        }
-      }
+      // Use the where method for a concise filtering
+      positionList.addAll(
+          appController.allActivePositions.where((item) => item.name!.toLowerCase().contains(query.toLowerCase())));
+
       positionList.refresh();
     } else {
       clearIconTap();

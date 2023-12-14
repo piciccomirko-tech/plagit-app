@@ -143,7 +143,7 @@ abstract class ApiHelper {
     String? employeeId,
   });
 
-  EitherModel<CheckInCheckOutHistory> getEmployeeCheckInOutHistory({String? startDate, String? endDate});
+  EitherModel<CheckInCheckOutHistory> getEmployeeCheckInOutHistory({String? startDate, String? endDate, int? page, int? limit});
 
   EitherModel<Response> clientRequestForEmployee(Map<String, dynamic> data);
 

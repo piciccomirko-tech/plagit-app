@@ -13,6 +13,7 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
   @override
   Widget build(BuildContext context) {
     controller.context = context;
+    print('EmployeeHomeView.build: ${controller.appController.user.value.employee?.id??""}');
     return WillPopScope(
       onWillPop: () async =>
           Utils.appExitConfirmation(context),

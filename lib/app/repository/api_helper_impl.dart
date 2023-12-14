@@ -662,10 +662,13 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<CheckInCheckOutHistory> getEmployeeCheckInOutHistory({String? startDate, String? endDate}) async {
+  EitherModel<CheckInCheckOutHistory> getEmployeeCheckInOutHistory(
+      {String? startDate, String? endDate, int? page, int? limit}) async {
     String url = "check-in-check-out-histories?employeeId=${Get.find<AppController>().user.value.employee?.id}";
     if ((startDate ?? "").isNotEmpty) url += "&startDate=$startDate";
     if ((endDate ?? "").isNotEmpty) url += "&endDate=$endDate";
+    if (page != null) url += "&page=$page";
+    if (limit != null) url += "&limit=$limit";
     Response response = await get(url);
 
     if (response.statusCode == null) response = await get(url);
