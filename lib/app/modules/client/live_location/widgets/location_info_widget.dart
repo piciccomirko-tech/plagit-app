@@ -10,9 +10,9 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
     return Container(
       padding: const EdgeInsets.all(15.0),
       height: 250,
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(topRight: Radius.circular(10.0), topLeft: Radius.circular(10.0))),
+      decoration:  BoxDecoration(
+          color: MyColors.lightCard(context),
+          borderRadius: const BorderRadius.only(topRight: Radius.circular(10.0), topLeft: Radius.circular(10.0))),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

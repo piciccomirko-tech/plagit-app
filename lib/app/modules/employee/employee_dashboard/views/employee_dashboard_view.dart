@@ -15,69 +15,62 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
     controller.context = context;
 
     return Scaffold(
+      /*    floatingActionButton: FloatingActionButton(
+        onPressed: () => _selectDateRange(context),
+        backgroundColor: MyColors.c_C6A34F,
+        child: Image.asset(MyAssets.calender1, height: 40, width: 40),
+      ),*/
       appBar: CustomAppbar.appbar(
         context: context,
         title: 'My Dashboard',
       ),
       body: Column(
         children: [
-          const SizedBox(height: 15),
-          Center(
+          SizedBox(height: 15.h),
+          InkWell(
+            onTap: () => _selectDateRange(context),
             child: Container(
-              width: Get.width*0.7,
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              width: 250,
               decoration: const BoxDecoration(
-                color: MyColors.c_C6A34F,
-                borderRadius: BorderRadius.only(topRight: Radius.circular(10.0), bottomLeft: Radius.circular(10.0))
-              ),
-              child: GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(MyAssets.calender, height: 22, width: 22),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Obx(
-                          () => Text(
-                        controller.selectedDate.value.EdMMMy,
-                        style: MyColors.white.medium16,
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    const Icon(Icons.arrow_drop_down, color: MyColors.white),
-                  ],
-                ),
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Obx(() => Text(
+                      "Today is: ${controller.selectedStartDate.value.dMMMy}",
+                      style: MyColors.white.semiBold18)),
+                  Image.asset(MyAssets.calender, height: 25, width: 25)
+                ],
               ),
             ),
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 15.h),
           Obx(
             () => controller.loading.value
                 ? Center(child: CustomLoader.loading())
                 : controller.history.isEmpty
-                    ? const NoItemFound()
+                    ? const Center(child: NoItemFound())
                     : Expanded(
-                        child: HorizontalDataTable(
-                          leftHandSideColumnWidth: 90.w,
-                          rightHandSideColumnWidth: 670.w,
-                          isFixedHeader: true,
-                          headerWidgets: _getTitleWidget(),
-                          leftSideItemBuilder: _generateFirstColumnRow,
-                          rightSideItemBuilder: _generateRightHandSideColumnRow,
-                          itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
-                          rowSeparatorWidget: Container(
-                            height: 6.h,
-                            color: MyColors.lFAFAFA_dframeBg(context),
-                          ),
-                          leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                          rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                      child: HorizontalDataTable(
+                        leftHandSideColumnWidth: 90.w,
+                        rightHandSideColumnWidth: 670.w,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidget(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder: _generateRightHandSideColumnRow,
+                        itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
+                        rowSeparatorWidget: Container(
+                          height: 6.h,
+                          color: MyColors.lFAFAFA_dframeBg(context),
                         ),
+                        leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                        rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
                       ),
-          )
+                    ),
+          ),
         ],
       ),
     );
@@ -192,15 +185,44 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
           ),
         );
 
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
+  Future<void> _selectDateRange(BuildContext context) async {
+    DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      initialDate: controller.selectedDate.value,
       firstDate: DateTime(2015, 8),
       lastDate: DateTime(2101),
+      initialDateRange: DateTimeRange(
+        start: controller.selectedStartDate.value,
+        end: controller.selectedEndDate.value,
+      ),
+      builder: (BuildContext context, Widget? child) {
+        // Check the current theme mode
+        bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+        return Theme(
+          // Use white colors for light theme and dark colors for dark theme
+          data: isDarkMode
+              ? ThemeData.dark().copyWith(
+            // Adjust the dark mode colors as needed
+            primaryColor: Colors.grey[800], // Dark primary color
+            hintColor: Colors.grey[600], // Dark accent color
+            dialogBackgroundColor: Colors.grey[900], // Dark background color
+            // Add other color adjustments if needed
+          )
+              : ThemeData.light().copyWith(
+            // Adjust the light mode colors as needed
+            primaryColor: Colors.blue, // Light primary color
+            hintColor: Colors.blueAccent, // Light accent color
+            dialogBackgroundColor: Colors.white, // Light background color
+            // Add other color adjustments if needed
+          ),
+          child: child!,
+        );
+      },
     );
-    if (picked != null && picked != controller.selectedDate.value) {
-      controller.onDatePicked(picked);
+
+    if (picked != null &&
+        (picked.start != controller.selectedStartDate.value || picked.end != controller.selectedEndDate.value)) {
+      controller.onDateRangePicked(picked);
     }
   }
 }

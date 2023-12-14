@@ -21,7 +21,7 @@ class EmployeeNameWidget extends GetWidget<EmployeeHomeController> {
                   Text(controller.appController.user.value.employee?.name ?? "-",
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: MyColors.l111111_dwhite(controller.context!).semiBold18),
+                      style: MyColors.l111111_dwhite(context).semiBold18),
                   if (controller.appController.user.value.employee?.certified != null && controller.appController.user.value.employee?.certified == true)
                     Image.asset(MyAssets.certified, height: 40, width: 40)
                 ],

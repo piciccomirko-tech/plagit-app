@@ -1,5 +1,5 @@
 name: mh
-version: 2.4.8+48
+version: 2.5.0+50
 publish_to: none
 description: A new Flutter project.
 environment:

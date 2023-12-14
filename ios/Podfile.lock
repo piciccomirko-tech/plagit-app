@@ -1013,10 +1013,17 @@ SPEC CHECKSUMS:
   DKPhotoGallery: fdfad5125a9fdda9cc57df834d49df790dbb4179
   file_picker: 15fd9539e4eb735dc54bae8c0534a7a9511a03de
   Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
+<<<<<<< HEAD
   firebase_core: 0af4a2b24f62071f9bf283691c0ee41556dcb3f5
   firebase_crashlytics: 55714f63ae0973c54b3a721c451ae5f815086c1f
   firebase_in_app_messaging: 1aefd295a4e79d55cb317f5dd6ad42f12f7661a6
   firebase_messaging: d4e4603f091c7b716b3f6c55550b2fa5dbf62ffd
+=======
+  firebase_core: f802c5c1f6caff9b8d38b591a36e7b25f8878936
+  firebase_crashlytics: 0db78a5b6badc630f21a833d0c9ab20ab5d81948
+  firebase_in_app_messaging: 5fe3329169cde4893f404fd60d0d6564b3115633
+  firebase_messaging: ca2fc59ddd52ef032d80f1a717d12eae8fa0e994
+>>>>>>> main
   FirebaseABTesting: bfa3b384b68cee10a89183649c64cd7998a37a12
   FirebaseAppCheckInterop: 37884781f3e16a1ba47e7ec80a1e805f987788e3
   FirebaseCore: 2322423314d92f946219c8791674d2f3345b598f
