@@ -16,35 +16,63 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
     controller.context = context;
 
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: ()=>_selectDateRange(context),
+      /*    floatingActionButton: FloatingActionButton(
+        onPressed: () => _selectDateRange(context),
         backgroundColor: MyColors.c_C6A34F,
         child: Image.asset(MyAssets.calender1, height: 40, width: 40),
-      ),
+      ),*/
       appBar: CustomAppbar.appbar(
         context: context,
         title: 'My Dashboard',
       ),
-      body: Obx(
-        () => controller.loading.value
-            ? Center(child: CustomLoader.loading())
-            : controller.history.isEmpty
-                ? const Center(child: NoItemFound())
-                : HorizontalDataTable(
-                  leftHandSideColumnWidth: 90.w,
-                  rightHandSideColumnWidth: 670.w,
-                  isFixedHeader: true,
-                  headerWidgets: _getTitleWidget(),
-                  leftSideItemBuilder: _generateFirstColumnRow,
-                  rightSideItemBuilder: _generateRightHandSideColumnRow,
-                  itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
-                  rowSeparatorWidget: Container(
-                    height: 6.h,
-                    color: MyColors.lFAFAFA_dframeBg(context),
-                  ),
-                  leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                  rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
-                ),
+      body: Column(
+        children: [
+          SizedBox(height: 15.h),
+          InkWell(
+            onTap: () => _selectDateRange(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              width: 250,
+              decoration: const BoxDecoration(
+                  color: Colors.blue,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0), bottomRight: Radius.circular(10.0))),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Obx(() => Text(
+                      "Today is: ${controller.selectedStartDate.value.dMMMy}",
+                      style: MyColors.white.semiBold18)),
+                  Image.asset(MyAssets.calender, height: 25, width: 25)
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: 15.h),
+          Obx(
+            () => controller.loading.value
+                ? Center(child: CustomLoader.loading())
+                : controller.history.isEmpty
+                    ? const Center(child: NoItemFound())
+                    : Expanded(
+                      child: HorizontalDataTable(
+                        leftHandSideColumnWidth: 90.w,
+                        rightHandSideColumnWidth: 670.w,
+                        isFixedHeader: true,
+                        headerWidgets: _getTitleWidget(),
+                        leftSideItemBuilder: _generateFirstColumnRow,
+                        rightSideItemBuilder: _generateRightHandSideColumnRow,
+                        itemCount: (controller.checkInCheckOutHistory.value.checkInCheckOutHistory ?? []).length,
+                        rowSeparatorWidget: Container(
+                          height: 6.h,
+                          color: MyColors.lFAFAFA_dframeBg(context),
+                        ),
+                        leftHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                        rightHandSideColBackgroundColor: MyColors.lffffff_dbox(context),
+                      ),
+                    ),
+          ),
+        ],
       ),
     );
   }
@@ -167,6 +195,30 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
         start: controller.selectedStartDate.value,
         end: controller.selectedEndDate.value,
       ),
+      builder: (BuildContext context, Widget? child) {
+        // Check the current theme mode
+        bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
+        return Theme(
+          // Use white colors for light theme and dark colors for dark theme
+          data: isDarkMode
+              ? ThemeData.dark().copyWith(
+            // Adjust the dark mode colors as needed
+            primaryColor: Colors.grey[800], // Dark primary color
+            hintColor: Colors.grey[600], // Dark accent color
+            dialogBackgroundColor: Colors.grey[900], // Dark background color
+            // Add other color adjustments if needed
+          )
+              : ThemeData.light().copyWith(
+            // Adjust the light mode colors as needed
+            primaryColor: Colors.blue, // Light primary color
+            hintColor: Colors.blueAccent, // Light accent color
+            dialogBackgroundColor: Colors.white, // Light background color
+            // Add other color adjustments if needed
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null &&
