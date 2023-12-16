@@ -15,6 +15,10 @@ dependencies:
   # state management, routing
   get: ^4.6.6
 
+  chewie: ^1.7.4
+
+  video_player: ^2.8.1
+
   # local storage
   get_storage: ^2.1.1
 

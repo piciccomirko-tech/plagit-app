@@ -12,7 +12,7 @@ class MyAssets {
   static const logo = "assets/images/logo.png";
 
   static const somethingWrong = "assets/images/something_wrong.png";
-
+  static const videoThumbnail = "assets/images/video_thumbnail.jpeg";
   // client dashboard
   static const mhEmployees = "assets/images/mh_employees.png";
   static const dashboard = "assets/images/dashboard.png";

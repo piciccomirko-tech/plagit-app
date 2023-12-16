@@ -1,3 +1,5 @@
+import 'package:mh/app/modules/client/employee_details/widgets/vlog_carsousel_slider.dart';
+
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -11,7 +13,6 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
   @override
   Widget build(BuildContext context) {
     controller.context = context;
-
     return Scaffold(
       backgroundColor: MyColors.lFAFAFA_dframeBg(context),
       appBar: CustomAppbar.appbar(title: "My Profile", context: context),
@@ -41,7 +42,8 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                       ],
                     ))),
-                SizedBox(height: 40.h),
+                SizedBox(height: 10.h),
+                Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
                 Row(
                   children: [
                     Expanded(
@@ -289,4 +291,3 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
     );
   }
 }
-

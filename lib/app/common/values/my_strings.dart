@@ -132,6 +132,8 @@ class _Arguements {
   String chatWith = "chatWith";
   String receiverId = "receiverId";
 
+  String employeeAvailableDays = "available";
+
 
   String receiverName = "receiverName";
   String fromId = "fromId";

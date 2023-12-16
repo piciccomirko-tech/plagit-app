@@ -762,6 +762,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
 
+    print('ApiHelperImpl.employeeFullDetails: ${response.bodyString}');
     return _convert<EmployeeFullDetails>(
       response,
       EmployeeFullDetails.fromJson,

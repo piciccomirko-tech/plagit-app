@@ -9,9 +9,6 @@ import '../../../../repository/api_helper.dart';
 
 class EmployeeSelfProfileController extends GetxController {
   BuildContext? context;
-
-  Rx<EmployeeFullDetails> employee = EmployeeFullDetails().obs;
-
   final AppController appController = Get.find();
   final ApiHelper _apiHelper = Get.find();
 
@@ -29,6 +26,7 @@ class EmployeeSelfProfileController extends GetxController {
 
   RxString selectedCountry = "United Kingdom".obs;
 
+  Rx<EmployeeFullDetails> employee = EmployeeFullDetails().obs;
   RxBool loading = false.obs;
 
   RxString rating = ''.obs;

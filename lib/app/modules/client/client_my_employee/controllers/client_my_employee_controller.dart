@@ -31,7 +31,7 @@ class ClientMyEmployeeController extends GetxController {
   Rx<DateTime> selectedDate = DateTime.now().obs;
   RxList<RequestDateModel> prevDateList = <RequestDateModel>[].obs;
 
-  late io.Socket socket;
+  io.Socket? socket;
   @override
   void onInit() async {
     await _getAllHiredEmployees();
@@ -41,8 +41,8 @@ class ClientMyEmployeeController extends GetxController {
 
   @override
   void onClose() async {
-    socket.disconnect();
-    socket.dispose();
+    socket?.disconnect();
+    socket?.dispose();
     super.onInit();
   }
 
@@ -170,9 +170,9 @@ class ClientMyEmployeeController extends GetxController {
         "transports": ["websocket"],
         "autoConnect": false,
       });
-      socket.connect();
-      socket.onConnect((_) {
-        socket.on('location:move', (data) async {
+      socket?.connect();
+      socket?.onConnect((_) {
+        socket?.on('location:move', (data) async {
           socketLocationModel.value = SocketLocationModel.fromJson(data);
           for (EmployeeModel i in employees) {
             if (i.employeeId == socketLocationModel.value.sender) {

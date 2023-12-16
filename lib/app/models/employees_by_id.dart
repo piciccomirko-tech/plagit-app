@@ -101,6 +101,7 @@ class Employee {
       this.clientDiscount,
       this.lat,
       this.long,
+      this.vlogs,
       this.pushNotificationDetails,
       this.isSuggested,
       this.available,
@@ -176,79 +177,82 @@ class Employee {
   final String? weight;
   final String? nationality;
   final bool? hasUniform;
+  final List<VlogModel>? vlogs;
 
   factory Employee.fromRawJson(String str) => Employee.fromJson(json.decode(str));
 
   String toRawJson() => json.encode(toJson());
 
   factory Employee.fromJson(Map<String, dynamic> json) => Employee(
-      id: json["_id"],
-      certified: json["certified"],
-      available: json["available"],
-      unAvailableDateList: json["unavailableDate"] == null
-          ? []
-          : List<CalenderDataModel>.from(json["unavailableDate"]!.map((x) => CalenderDataModel.fromJson(x))),
-      firstName: json["firstName"],
-      lastName: json["lastName"],
-      positionId: json["positionId"],
-      positionName: json["positionName"],
-      gender: json["gender"],
-      dateOfBirth: json["dateOfBirth"] == null ? null : DateTime.parse(json["dateOfBirth"]),
-      userIdNumber: json["userIdNumber"],
-      email: json["email"],
-      phoneNumber: json["phoneNumber"],
-      presentAddress: json["presentAddress"],
-      permanentAddress: json["permanentAddress"],
-      languages: json["languages"] == null ? [] : List<String>.from(json["languages"]!.map((x) => x)),
-      higherEducation: json["higherEducation"],
-      licensesNo: json["licensesNo"],
-      emmergencyContact: json["emmergencyContact"],
-      skills: json["skills"] == null ? [] : List<Skill>.from(json["skills"]!.map((x) => Skill.fromJson(x))),
-      countryName: json["countryName"],
-      sourceId: json["sourceId"],
-      sourceName: json["sourceName"],
-      emailVerified: json["emailVerified"],
-      phoneNumberVerified: json["phoneNumberVerified"],
-      employee: json["employee"],
-      client: json["client"],
-      admin: json["admin"],
-      hr: json["hr"],
-      marketing: json["marketing"],
-      role: json["role"],
-      active: json["active"],
-      isReferPerson: json["isReferPerson"],
-      isMhEmployee: json["isMhEmployee"],
-      isHired: json["isHired"],
-      verified: json["verified"],
-      contractorHourlyRate:
-          json["contractorHourlyRate"] == null ? 0.0 : double.parse(json["contractorHourlyRate"].toString()),
-      noOfEmployee: json["noOfEmployee"],
-      employeeExperience: json["employeeExperience"],
-      rating: json["rating"] == null ? 0.0 : double.parse(json["rating"].toString()),
-      totalRating: json["totalRating"],
-      totalWorkingHour: json["totalWorkingHour"].toString(),
-      hourlyRate: json["hourlyRate"] == null ? 0.0 : double.parse(json["hourlyRate"].toString()),
-      certificates: json["certificates"] == null ? [] : List<dynamic>.from(json["certificates"]!.map((x) => x)),
-      createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-      updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
-      v: json["__v"],
-      cv: json["cv"],
-      profilePicture: json["profilePicture"],
-      restaurantName: json["restaurantName"],
-      restaurantAddress: json["restaurantAddress"],
-      clientDiscount: json["clientDiscount"],
-      lat: json["lat"],
-      long: json["long"],
-      currentOrganisation: json["currentOrganisation"],
-      nationality: json["nationality"],
-      height: json["height"].toString(),
-      weight: json["weight"].toString(),
-      dressSize: json["dressSize"],
-      hasUniform: json["hasUniform"],
-      pushNotificationDetails: json["pushNotificationDetails"] == null
-          ? null
-          : PushNotificationDetails.fromJson(json["pushNotificationDetails"]),
-      isSuggested: json['isSuggested']);
+        id: json["_id"],
+        certified: json["certified"],
+        available: json["available"],
+        unAvailableDateList: json["unavailableDate"] == null
+            ? []
+            : List<CalenderDataModel>.from(json["unavailableDate"]!.map((x) => CalenderDataModel.fromJson(x))),
+        firstName: json["firstName"],
+        lastName: json["lastName"],
+        positionId: json["positionId"],
+        positionName: json["positionName"],
+        gender: json["gender"],
+        dateOfBirth: json["dateOfBirth"] == null ? null : DateTime.parse(json["dateOfBirth"]),
+        userIdNumber: json["userIdNumber"],
+        email: json["email"],
+        phoneNumber: json["phoneNumber"],
+        presentAddress: json["presentAddress"],
+        permanentAddress: json["permanentAddress"],
+        languages: json["languages"] == null ? [] : List<String>.from(json["languages"]!.map((x) => x)),
+        higherEducation: json["higherEducation"],
+        licensesNo: json["licensesNo"],
+        emmergencyContact: json["emmergencyContact"],
+        skills: json["skills"] == null ? [] : List<Skill>.from(json["skills"]!.map((x) => Skill.fromJson(x))),
+        countryName: json["countryName"],
+        sourceId: json["sourceId"],
+        sourceName: json["sourceName"],
+        emailVerified: json["emailVerified"],
+        phoneNumberVerified: json["phoneNumberVerified"],
+        employee: json["employee"],
+        client: json["client"],
+        admin: json["admin"],
+        hr: json["hr"],
+        marketing: json["marketing"],
+        role: json["role"],
+        active: json["active"],
+        isReferPerson: json["isReferPerson"],
+        isMhEmployee: json["isMhEmployee"],
+        isHired: json["isHired"],
+        verified: json["verified"],
+        contractorHourlyRate:
+            json["contractorHourlyRate"] == null ? 0.0 : double.parse(json["contractorHourlyRate"].toString()),
+        noOfEmployee: json["noOfEmployee"],
+        employeeExperience: json["employeeExperience"],
+        rating: json["rating"] == null ? 0.0 : double.parse(json["rating"].toString()),
+        totalRating: json["totalRating"],
+        totalWorkingHour: json["totalWorkingHour"].toString(),
+        hourlyRate: json["hourlyRate"] == null ? 0.0 : double.parse(json["hourlyRate"].toString()),
+        certificates: json["certificates"] == null ? [] : List<dynamic>.from(json["certificates"]!.map((x) => x)),
+        createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
+        updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
+        v: json["__v"],
+        cv: json["cv"],
+        profilePicture: json["profilePicture"],
+        restaurantName: json["restaurantName"],
+        restaurantAddress: json["restaurantAddress"],
+        clientDiscount: json["clientDiscount"],
+        lat: json["lat"],
+        long: json["long"],
+        currentOrganisation: json["currentOrganisation"],
+        nationality: json["nationality"],
+        height: json["height"].toString(),
+        weight: json["weight"].toString(),
+        dressSize: json["dressSize"],
+        hasUniform: json["hasUniform"],
+        pushNotificationDetails: json["pushNotificationDetails"] == null
+            ? null
+            : PushNotificationDetails.fromJson(json["pushNotificationDetails"]),
+        isSuggested: json['isSuggested'],
+        vlogs: json["vlogs"] == null ? [] : List<VlogModel>.from(json["vlogs"].map((x) => VlogModel.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
         "_id": id,
@@ -310,7 +314,8 @@ class Employee {
         "height": height,
         "weight": weight,
         "dressSize": dressSize,
-        "hasUniform": hasUniform
+        "hasUniform": hasUniform,
+        "vlogs": vlogs == null ? [] : List<dynamic>.from(vlogs!.map((x) => x.toJson())),
       };
 }
 
@@ -339,5 +344,41 @@ class Skill {
         "skillId": skillId,
         "skillName": skillName,
         "_id": id,
+      };
+}
+
+class VlogModel {
+  final String? id;
+  final String? title;
+  final String? link;
+  final String? type;
+  final String? user;
+
+  VlogModel({
+    this.id,
+    this.title,
+    this.link,
+    this.type,
+    this.user
+  });
+
+  factory VlogModel.fromRawJson(String str) => VlogModel.fromJson(json.decode(str));
+
+  String toRawJson() => json.encode(toJson());
+
+  factory VlogModel.fromJson(Map<String, dynamic> json) => VlogModel(
+        id: json["_id"],
+        title: json["title"],
+        link: json["link"],
+        type: json["type"],
+        user: json["user"]
+      );
+
+  Map<String, dynamic> toJson() => {
+        "_id": id,
+        "title": title,
+        "link": link,
+        "type": type,
+        "user": user
       };
 }
