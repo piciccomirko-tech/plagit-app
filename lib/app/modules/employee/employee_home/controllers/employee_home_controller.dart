@@ -594,7 +594,6 @@ class EmployeeHomeController extends GetxController {
                   targetLng: double.parse(
                       todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? "0.0")) >
               200) {
-        print('EmployeeHomeController._shareCurrentLocation');
         connectWithSocket();
       }
     }
@@ -643,7 +642,6 @@ class EmployeeHomeController extends GetxController {
       );
 
       socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
-      print('EmployeeHomeController.updateSocketLocation');
     });
   }
 }
