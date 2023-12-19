@@ -24,7 +24,7 @@ class CustomDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 58.h,
+      height: 48.h,
       child: Padding(
         padding: padding ?? EdgeInsets.symmetric(horizontal: 18.w),
         child: DropdownButtonFormField(

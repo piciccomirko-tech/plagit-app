@@ -48,12 +48,15 @@ class MyAssets {
   static const language = "assets/images/language.png";
 
   static const skill = "assets/icons/skills.png";
+  static const intersect = "assets/icons/intersect.png";
+  static const camera = "assets/icons/camera.png";
   static const uniform = "assets/icons/uniform.png";
+  static const jobRequest = "assets/icons/job_request.png";
+  static const createPost = "assets/icons/create_post.png";
+
   static const certified = "assets/images/certified.png";
   static const calender = "assets/images/calender.png";
-
   static const clientFixedLogo = "assets/images/client_fixed_logo.png";
-
   //Custom Map Style
   static const customMapStyle = 'assets/map_style/custom_map_style.txt';
 

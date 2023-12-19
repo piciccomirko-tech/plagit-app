@@ -47,6 +47,8 @@ import '../modules/client/client_suggested_employees/bindings/client_suggested_e
 import '../modules/client/client_suggested_employees/views/client_suggested_employees_view.dart';
 import '../modules/client/client_terms_condition_for_hire/bindings/client_terms_condition_for_hire_binding.dart';
 import '../modules/client/client_terms_condition_for_hire/views/client_terms_condition_for_hire_view.dart';
+import '../modules/client/create_job_post/bindings/create_job_post_binding.dart';
+import '../modules/client/create_job_post/views/create_job_post_view.dart';
 import '../modules/client/employee_details/bindings/employee_details_binding.dart';
 import '../modules/client/employee_details/views/employee_details_view.dart';
 import '../modules/client/hire_status/bindings/hire_status_binding.dart';
@@ -398,6 +400,11 @@ class AppPages {
       name: _Paths.liveLocation,
       page: () => const LiveLocationView(),
       binding: LiveLocationBinding(),
+    ),
+    GetPage(
+      name: _Paths.createJobPost,
+      page: () => const CreateJobPostView(),
+      binding: CreateJobPostBinding(),
     ),
   ];
 }

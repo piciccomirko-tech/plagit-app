@@ -1,0 +1,54 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:mh/app/common/data/data.dart';
+import 'package:mh/app/common/extensions/extensions.dart';
+import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
+import 'package:mh/app/common/widgets/custom_dropdown.dart';
+import 'package:mh/app/modules/client/create_job_post/controllers/create_job_post_controller.dart';
+
+class LanguageDropDownWidget extends GetWidget<CreateJobPostController> {
+  const LanguageDropDownWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        CustomDropdown(
+          prefixIcon: Icons.supervised_user_circle_outlined,
+          hints: MyStrings.language.tr,
+          value: '',
+          items: Data.language.toList(),
+          onChange: controller.onLanguageChange,
+        ),
+        SizedBox(height: 10.h),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 18.w),
+          child: Obx(() => Wrap(
+                children: List.generate(controller.languages.length, (int index) {
+                  String skill = controller.languages[index];
+                  return Container(
+                    margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
+                    padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                        color: MyColors.c_C6A34F.withOpacity(0.5), borderRadius: BorderRadius.circular(5.0)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(skill, style: MyColors.black.medium14),
+                        SizedBox(width: 5.w),
+                        InkWell(
+                            onTap: () => controller.onLanguageClearClick(index: index),
+                            child: const Icon(Icons.clear, color: MyColors.black, size: 18))
+                      ],
+                    ),
+                  );
+                }),
+              )),
+        )
+      ],
+    );
+  }
+}

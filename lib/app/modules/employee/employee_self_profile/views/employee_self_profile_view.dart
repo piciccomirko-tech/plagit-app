@@ -1,5 +1,3 @@
-import 'package:mh/app/modules/client/employee_details/widgets/vlog_carsousel_slider.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -42,8 +40,8 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                             style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
                       ],
                     ))),
-                SizedBox(height: 10.h),
-                Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
+                SizedBox(height: 30.h),
+                //  Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
                 Row(
                   children: [
                     Expanded(
@@ -181,21 +179,33 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Spacer(),
-          Container(
-            width: 130.h,
-            height: 130.h,
-            decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  width: 2.5,
-                  color: MyColors.c_C6A34F,
-                )),
-            child: Obx(
-              () => CustomNetworkImage(
-                url: (controller.employee.value.details?.profilePicture ?? "").imageUrl,
-                radius: 130,
+          Stack(
+            children: [
+              Container(
+                width: 150.h,
+                height: 150.h,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      width: 2.5,
+                      color: MyColors.c_C6A34F,
+                    )),
+                child: Obx(
+                  () =>
+                  CustomNetworkImage(
+                          url: (controller.employee.value.details?.profilePicture ?? "").imageUrl,
+                          radius: 130,
+                        ),
+                ),
               ),
-            ),
+              Positioned.fill(
+                  child: Align(alignment: Alignment.bottomCenter, child: Image.asset(MyAssets.intersect, width: 90))),
+              Positioned.fill(
+                  bottom: 5,
+                  child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Image.asset(MyAssets.camera, width: 30, height: 30, color: MyColors.white))),
+            ],
           ),
           const Spacer(),
         ],

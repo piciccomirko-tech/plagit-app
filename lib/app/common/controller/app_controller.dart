@@ -19,6 +19,7 @@ class AppController extends GetxService {
   Rx<Commons>? commons = Commons().obs;
 
   RxList<DropdownItem> allActivePositions = <DropdownItem>[].obs;
+  RxList<DropdownItem> skills = <DropdownItem>[].obs;
 
   // i dont know why MediaQuery.of(context).viewInsets.bottom not work in bottom sheet on this project
   // that's why store MediaQuery.of(context).viewInsets.bottom (basically keyboard height) in a observable variable
@@ -121,6 +122,9 @@ class AppController extends GetxService {
 
     allActivePositions.value = commons.positions ?? [];
     allActivePositions.refresh();
+
+    skills.value = commons.skills??[];
+    skills.refresh();
   }
 
   /// call when

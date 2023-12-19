@@ -14,8 +14,7 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
   Widget build(BuildContext context) {
     controller.context = context;
     return WillPopScope(
-      onWillPop: () async =>
-          Utils.appExitConfirmation(context),
+      onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
           appBar: CustomAppbar.appbar(
             context: context,
@@ -25,17 +24,13 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
             actions: [
               Obx(() => controller.notificationsController.unreadCount.value == 0
                   ? IconButton(
-                      onPressed: () {
-                        Get.toNamed(Routes.notifications,
-                            arguments: controller.appController.user.value.employee?.id ?? '');
-                      },
+                      onPressed: () => Get.toNamed(Routes.notifications,
+                          arguments: controller.appController.user.value.employee?.id ?? ''),
                       icon: const Icon(CupertinoIcons.bell))
                   : InkWell(
-                      onTap: () {
-                        Get.toNamed(Routes.notifications);
-                      },
+                      onTap: () => Get.toNamed(Routes.notifications),
                       child: Padding(
-                        padding: EdgeInsets.only(top: 15.h, right: 15.w),
+                        padding: EdgeInsets.only(right: 15.w),
                         child: Badge(
                           backgroundColor: MyColors.c_C92C1A,
                           label: Obx(() {

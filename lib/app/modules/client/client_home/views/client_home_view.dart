@@ -127,6 +127,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                               children: [
                                 Expanded(
                                   child: CustomFeatureBox(
+                                    height: 130.h,
+                                    iconHeight: 50.h,
                                     title: MyStrings.employees.tr,
                                     icon: MyAssets.mhEmployees,
                                     visibleMH: true,
@@ -140,6 +142,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                       clipBehavior: Clip.none,
                                       children: [
                                         CustomFeatureBox(
+                                          height: 130.h,
+                                          iconHeight: 50.h,
                                           title: MyStrings.dashboard.tr,
                                           icon: MyAssets.dashboard,
                                           onTap: controller.onDashboardClick,
@@ -167,6 +171,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                   child: Stack(
                                     children: [
                                       CustomFeatureBox(
+                                        height: 130.h,
+                                        iconHeight: 50.h,
                                         title: MyStrings.myEmployees.tr,
                                         icon: MyAssets.myEmployees,
                                         onTap: controller.onMyEmployeeClick,
@@ -174,6 +180,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                       Obx(() => Stack(
                                             children: [
                                               CustomFeatureBox(
+                                                height: 130.h,
+                                                iconHeight: 50.h,
                                                 title: MyStrings.myEmployees.tr,
                                                 icon: MyAssets.myEmployees,
                                                 onTap: controller.onMyEmployeeClick,
@@ -198,6 +206,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                       clipBehavior: Clip.none,
                                       children: [
                                         CustomFeatureBox(
+                                          height: 130.h,
+                                          iconHeight: 50.h,
                                           title: MyStrings.invoicePayment.tr,
                                           icon: MyAssets.invoicePayment,
                                           onTap: controller.onInvoiceAndPaymentClick,
@@ -218,6 +228,44 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                 ),
                               ],
                             ),
+                            SizedBox(height: 20.h),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: CustomFeatureBox(
+                                    height: 130.h,
+                                    iconHeight: 50.h,
+                                    title: MyStrings.createJobPost,
+                                    icon: MyAssets.createPost,
+                                    onTap: controller.onCreateJobPostClick,
+                                  ),
+                                ),
+                                SizedBox(width: 24.w),
+                                Expanded(
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      CustomFeatureBox(
+                                        height: 130.h,
+                                        iconHeight: 50.h,
+                                        title: MyStrings.jobRequests,
+                                        icon: MyAssets.jobRequest,
+                                        onTap: controller.onCreateJobPostClick,
+                                      ),
+                                      /* Positioned(
+                                          top: 4,
+                                          right: 5,
+                                          child: Visibility(
+                                            visible: controller.unreadMsgFromEmployee.value > 0,
+                                            child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                                          ),
+                                        ),*/
+                                    ],
+                                  )
+                                ),
+                              ],
+                            )
                           ],
                         ),
                       ),

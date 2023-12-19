@@ -1,7 +1,6 @@
+import 'dart:io';
 import 'package:dartz/dartz.dart';
-
 import 'package:mh/app/models/custom_error.dart';
-
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/employee_full_details.dart';
@@ -30,6 +29,7 @@ class EmployeeSelfProfileController extends GetxController {
   RxBool loading = false.obs;
 
   RxString rating = ''.obs;
+  final Rx<File?> pickedImage = Rx<File?>(null);
 
   @override
   void onInit() {
@@ -72,4 +72,6 @@ class EmployeeSelfProfileController extends GetxController {
       });
     });
   }
+
+
 }

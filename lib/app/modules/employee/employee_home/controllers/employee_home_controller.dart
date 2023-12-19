@@ -75,7 +75,6 @@ class EmployeeHomeController extends GetxController {
   void onInit() async {
     await homeMethods();
     _shareCurrentLocation();
-
     super.onInit();
   }
 

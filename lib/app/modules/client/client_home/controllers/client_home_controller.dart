@@ -74,6 +74,11 @@ class ClientHomeController extends GetxController {
     Get.toNamed(Routes.clientPaymentAndInvoice);
   }
 
+  void onCreateJobPostClick() => Get.toNamed(Routes.createJobPost);
+
+  void onJobRequestsClick() => Get.toNamed(Routes.createJobPost);
+
+
   void onHelpAndSupportClick() {
     ClientHelpOption.show(
       context!,

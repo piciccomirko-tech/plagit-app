@@ -29,6 +29,7 @@ class MyStrings {
   static const String submit = "Submit";
   static const String signUp = "signUp";
   static const String welcomeBack = "welcomeBack";
+  static const String nationality = "Nationality";
   static const String userNameEmailId = "userNameEmailId";
   static const String password = "password";
   static const String newPassword = "New Password";
@@ -80,6 +81,8 @@ class MyStrings {
   static const String exploreTheFeaturesOfMhAppBelow = "exploreTheFeaturesOfMhAppBelow";
   static const String mh = "mh";
   static const String employees = "employees";
+  static const String createJobPost = "Create Job Post";
+  static const String jobRequests = "Job Requests";
   static const String dashboard = "dashboard";
   static const String myEmployees = "myEmployees";
   static const String invoicePayment = "invoicePayment";
