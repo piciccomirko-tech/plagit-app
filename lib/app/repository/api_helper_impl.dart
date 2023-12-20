@@ -18,6 +18,8 @@ import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_suggested_employees/models/short_list_request_model.dart';
+import 'package:mh/app/modules/client/create_job_post/controllers/create_job_post_controller.dart';
+import 'package:mh/app/modules/client/create_job_post/models/create_job_post_request_model.dart';
 import 'package:mh/app/modules/email_input/models/forget_password_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
@@ -1297,5 +1299,20 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       ClientBankInfoModel.fromJson,
     ).fold((CustomError l) => left(l), (ClientBankInfoModel r) => right(r));
+  }
+
+  @override
+  EitherModel<Response> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel}) async {
+    String url = "job/create";
+    String requestBody = createJobPostRequestModel.toRawJson();
+    Response response = await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    return _convert<Response>(
+      response,
+          (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 }

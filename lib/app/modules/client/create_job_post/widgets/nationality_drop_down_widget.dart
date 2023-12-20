@@ -12,42 +12,41 @@ class NationalityDropDownWidget extends GetWidget<CreateJobPostController> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomDropdown(
-          prefixIcon: Icons.flag,
-          hints: MyStrings.nationality,
-          value: '',
-          items: controller.nationalityList.map((e) => e.nationality ?? "").toList(),
-          onChange: controller.onNationalityChange,
-        ),
-        SizedBox(height: 10.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.w),
-          child: Obx(() => Wrap(
-                children: List.generate(controller.nationalities.length, (int index) {
-                  String skill = controller.nationalities[index];
-                  return Container(
-                    margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
-                    padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),
-                    decoration: BoxDecoration(
-                        color: MyColors.c_C6A34F.withOpacity(0.5), borderRadius: BorderRadius.circular(5.0)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(skill, style: MyColors.black.medium14),
-                        SizedBox(width: 5.w),
-                        InkWell(
-                            onTap: () => controller.onNationalityClearClick(index: index),
-                            child: const Icon(Icons.clear, color: MyColors.black, size: 18))
-                      ],
-                    ),
-                  );
-                }),
-              )),
-        )
-      ],
-    );
+    return Obx(() => Column(
+          children: [
+            CustomDropdown(
+              prefixIcon: Icons.flag,
+              hints: MyStrings.nationality,
+              value: '',
+              items: controller.nationalityList.map((e) => e.nationality ?? "").toList(),
+              onChange: controller.onNationalityChange,
+            ),
+            SizedBox(height: 10.h),
+            Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18.w),
+                child: Wrap(
+                  children: List.generate(controller.nationalities.length, (int index) {
+                    String skill = controller.nationalities[index];
+                    return Container(
+                      margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
+                      padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                          color: MyColors.c_C6A34F.withOpacity(0.5), borderRadius: BorderRadius.circular(5.0)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(skill, style: MyColors.black.medium14),
+                          SizedBox(width: 5.w),
+                          InkWell(
+                              onTap: () => controller.onNationalityClearClick(index: index),
+                              child: const Icon(Icons.clear, color: MyColors.black, size: 18))
+                        ],
+                      ),
+                    );
+                  }),
+                ))
+          ],
+        ));
   }
 }

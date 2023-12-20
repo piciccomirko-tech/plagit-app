@@ -59,7 +59,8 @@ abstract class Routes {
   static const resetPassword = _Paths.resetPassword;
   static const adminTodaysEmployees = _Paths.adminTodaysEmployees;
   static const liveLocation = _Paths.liveLocation;
-  static const createJobPost =  _Paths.createJobPost;
+  static const createJobPost = _Paths.createJobPost;
+  static const jobRequests = _Paths.jobRequests;
 }
 
 abstract class _Paths {
@@ -124,4 +125,5 @@ abstract class _Paths {
   static const adminTodaysEmployees = '/admin-todays-employees';
   static const liveLocation = '/live-location';
   static const createJobPost = '/create-job-post';
+  static const jobRequests = '/job-requests';
 }

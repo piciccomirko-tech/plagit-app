@@ -279,14 +279,18 @@ class CalenderController extends GetxController {
     if (rangeStartDate.value == null) {
       sameAsStartDate.value = false;
       rangeStartDate.value = currentDate;
-    } else if (inValidRange(currentDate: currentDate) == true) {
+    }
+    else if (inValidRange(currentDate: currentDate) == true) {
       Utils.showSnackBar(message: 'You cannot select this range', isTrue: false);
-    } else if (rangeStartDate.value != null && currentDate.isBefore(rangeStartDate.value!)) {
+    }
+    else if (rangeStartDate.value != null && currentDate.isBefore(rangeStartDate.value!)) {
       rangeEndDate.value = rangeStartDate.value;
       rangeStartDate.value = currentDate;
-    } else if (rangeEndDate.value == null) {
+    }
+    else if (rangeEndDate.value == null) {
       rangeEndDate.value = currentDate;
-    } else {}
+    }
+    else {}
 
     //totalDateList.clear();
     loadSelectedDates(currentDate: currentDate);

@@ -13,21 +13,22 @@ class LanguageDropDownWidget extends GetWidget<CreateJobPostController> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomDropdown(
-          prefixIcon: Icons.supervised_user_circle_outlined,
-          hints: MyStrings.language.tr,
-          value: '',
-          items: Data.language.toList(),
-          onChange: controller.onLanguageChange,
-        ),
-        SizedBox(height: 10.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.w),
-          child: Obx(() => Wrap(
-                children: List.generate(controller.languages.length, (int index) {
-                  String skill = controller.languages[index];
+    return Obx(() => Column(
+          children: [
+            CustomDropdown(
+              prefixIcon: Icons.supervised_user_circle_outlined,
+              hints: MyStrings.language.tr,
+              value: '',
+              items: Data.language.toList(),
+              onChange: controller.onLanguageChange,
+            ),
+            SizedBox(height: 10.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18.w),
+              child: Wrap(
+                children:
+                    List.generate((controller.createJobPostRequestModel.value.languages ?? []).length, (int index) {
+                  String skill = (controller.createJobPostRequestModel.value.languages ?? [])[index];
                   return Container(
                     margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
                     padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),
@@ -46,9 +47,9 @@ class LanguageDropDownWidget extends GetWidget<CreateJobPostController> {
                     ),
                   );
                 }),
-              )),
-        )
-      ],
-    );
+              ),
+            )
+          ],
+        ));
   }
 }

@@ -66,6 +66,7 @@ class MyStrings {
   static const String firstName = "firstName";
   static const String lastName = "lastName";
   static const String position = "position";
+  static const String vacancy = "Vacancy";
   static const String gender = "gender";
   static const String dateOfBirth = "dateOfBirth";
   static const String country = "country";

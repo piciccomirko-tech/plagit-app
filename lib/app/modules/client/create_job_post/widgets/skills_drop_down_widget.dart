@@ -7,25 +7,26 @@ class SkillsDropDownWidget extends GetWidget<CreateJobPostController> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        CustomDropdown(
-          prefixIcon: Icons.supervised_user_circle_outlined,
-          hints: MyStrings.skills.tr,
-          value: '',
-          items: controller.appController.skills.map((e) => e.name!).toList(),
-          onChange: controller.onSkillsChange,
-        ),
-        SizedBox(height: 10.h),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 18.w),
-          child: Obx(() => Wrap(
-                children: List.generate(controller.skills.length, (int index) {
-                  String skill = controller.skills[index];
+    return Obx(() => Column(
+          children: [
+            CustomDropdown(
+              prefixIcon: Icons.supervised_user_circle_outlined,
+              hints: MyStrings.skills.tr,
+              value: '',
+              items: controller.appController.skills.map((e) => e.name!).toList(),
+              onChange: controller.onSkillsChange,
+            ),
+            SizedBox(height: 10.h),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18.w),
+              child: Wrap(
+                children: List.generate((controller.createJobPostRequestModel.value.skills ?? []).length, (int index) {
+                  String skill = (controller.createJobPostRequestModel.value.skills ?? [])[index];
                   return Container(
                     margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
                     padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),
-                    decoration: BoxDecoration(color: MyColors.c_C6A34F.withOpacity(0.5), borderRadius: BorderRadius.circular(5.0)),
+                    decoration: BoxDecoration(
+                        color: MyColors.c_C6A34F.withOpacity(0.5), borderRadius: BorderRadius.circular(5.0)),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -39,9 +40,9 @@ class SkillsDropDownWidget extends GetWidget<CreateJobPostController> {
                     ),
                   );
                 }),
-              )),
-        )
-      ],
-    );
+              ),
+            )
+          ],
+        ));
   }
 }

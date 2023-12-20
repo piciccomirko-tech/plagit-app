@@ -251,7 +251,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                         iconHeight: 50.h,
                                         title: MyStrings.jobRequests,
                                         icon: MyAssets.jobRequest,
-                                        onTap: controller.onCreateJobPostClick,
+                                        onTap: controller.onJobRequestsClick,
                                       ),
                                       /* Positioned(
                                           top: 4,

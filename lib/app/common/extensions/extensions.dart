@@ -138,6 +138,21 @@ extension DateRangeExtension on List<CalenderDataModel> {
   }
 }
 
+extension DateRangeExtensionForCreateJob on List<RequestDateModel> {
+  bool containsThisDate(DateTime date) {
+    for (final RequestDateModel range in this) {
+      final fromDate = DateTime.parse(range.startDate ?? '');
+      final toDate = DateTime.parse(range.endDate ?? '');
+
+      if (date.isAfter(fromDate.subtract(const Duration(days: 1))) &&
+          date.isBefore(toDate.add(const Duration(days: 1)))) {
+        return true;
+      }
+    }
+    return false;
+  }
+}
+
 extension DateExtension on DateTime {
   int daysUntil(DateTime other) {
     // Calculate the difference in days

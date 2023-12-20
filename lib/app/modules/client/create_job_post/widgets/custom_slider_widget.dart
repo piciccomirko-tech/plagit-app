@@ -8,14 +8,14 @@ import 'package:another_xlider/models/tooltip/tooltip_box.dart';
 import 'package:another_xlider/models/tooltip/tooltip_position_offset.dart';
 import 'package:another_xlider/models/trackbar.dart';
 import 'package:mh/app/common/utils/exports.dart';
-import 'package:mh/app/modules/client/create_job_post/models/custom_slider_model.dart';
+import 'package:mh/app/modules/client/create_job_post/controllers/create_job_post_controller.dart';
 
-class CustomSliderWidget extends StatelessWidget {
-  final CustomSliderModel customSliderModel;
-  const CustomSliderWidget({super.key, required this.customSliderModel});
+class CustomSliderWidget extends GetWidget<CreateJobPostController> {
+  const CustomSliderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    print('CustomSliderWidget.build: ${controller.customSliderModel.value.minValue}');
     return Container(
       height: 250.h,
       decoration: const BoxDecoration(
@@ -27,15 +27,18 @@ class CustomSliderWidget extends StatelessWidget {
             children: [
               SizedBox(height: 20.h),
               FlutterSlider(
-                min: customSliderModel.minValue,
-                max: customSliderModel.maxValue,
+                min: controller.customSliderModel.value.minValue,
+                max: controller.customSliderModel.value.maxValue,
                 rangeSlider: true,
-                values: [customSliderModel.minValue, customSliderModel.maxValue],
+                values: [
+                  controller.customSliderModel.value.minValue ?? 0.0,
+                  controller.customSliderModel.value.maxValue ?? 0.0
+                ],
                 selectByTap: false,
                 step: const FlutterSliderStep(step: 1),
                 onDragCompleted: (int handlerIndex, lowerValue, upperValue) {
-                  customSliderModel.minValue = lowerValue;
-                  customSliderModel.maxValue = upperValue;
+                  controller.customSliderModel.value.minValue = lowerValue;
+                  controller.customSliderModel.value.maxValue = upperValue;
                 },
                 tooltip: FlutterSliderTooltip(
                   alwaysShowTooltip: true,
@@ -81,16 +84,18 @@ class CustomSliderWidget extends StatelessWidget {
                   labelsDistanceFromTrackBar: 40,
                   labels: [
                     FlutterSliderHatchMarkLabel(
-                        percent: 0, label: _sliderHatchMarkLabel(context, "${customSliderModel.minValue}")),
+                        percent: 0,
+                        label: _sliderHatchMarkLabel(context, "${controller.customSliderModel.value.minValue}")),
                     FlutterSliderHatchMarkLabel(
-                        percent: 100, label: _sliderHatchMarkLabel(context, "${customSliderModel.maxValue}")),
+                        percent: 100,
+                        label: _sliderHatchMarkLabel(context, "${controller.customSliderModel.value.maxValue}")),
                   ],
                 ),
               ),
               SizedBox(height: 40.h),
               CustomButtons.button(
                   text: 'Submit',
-                  onTap: customSliderModel.onTap,
+                  onTap: controller.customSliderModel.value.onTap,
                   margin: EdgeInsets.zero,
                   customButtonStyle: CustomButtonStyle.radiusTopBottomCorner)
             ],

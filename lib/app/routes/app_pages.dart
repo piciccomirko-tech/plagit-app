@@ -55,6 +55,8 @@ import '../modules/client/hire_status/bindings/hire_status_binding.dart';
 import '../modules/client/hire_status/views/hire_status_view.dart';
 import '../modules/client/invoice_pdf/bindings/invoice_pdf_binding.dart';
 import '../modules/client/invoice_pdf/views/invoice_pdf_view.dart';
+import '../modules/client/job_requests/bindings/job_requests_binding.dart';
+import '../modules/client/job_requests/views/job_requests_view.dart';
 import '../modules/client/live_location/bindings/live_location_binding.dart';
 import '../modules/client/live_location/views/live_location_view.dart';
 import '../modules/client/mh_employees/bindings/mh_employees_binding.dart';
@@ -405,6 +407,11 @@ class AppPages {
       name: _Paths.createJobPost,
       page: () => const CreateJobPostView(),
       binding: CreateJobPostBinding(),
+    ),
+    GetPage(
+      name: _Paths.jobRequests,
+      page: () => const JobRequestsView(),
+      binding: JobRequestsBinding(),
     ),
   ];
 }
