@@ -33,9 +33,9 @@ class EmployeeHiredHistoryDetailsWidget extends StatelessWidget {
                         color: MyColors.c_C6A34F),
                     child: RichText(
                         text: TextSpan(children: [
-                      TextSpan(text: 'You have been booked for ', style: MyColors.white.semiBold15),
+                      TextSpan(text: 'Total Work Schedule For ', style: MyColors.white.semiBold15),
                       TextSpan(text: '${requestDateList.calculateTotalDays()}', style: MyColors.white.semiBold24),
-                      TextSpan(text: ' days', style: MyColors.white.semiBold15),
+                      TextSpan(text: ' Days', style: MyColors.white.semiBold15),
                     ])),
                   ),
                   SizedBox(

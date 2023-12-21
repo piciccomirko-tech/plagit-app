@@ -40,6 +40,7 @@ class MyStrings {
   static const String register = "register";
   static const String client = "client";
   static const String employee = "employee";
+  static const String calendar = "Calendar";
   static const String restaurantName = "restaurantName";
   static const String restaurantAddress = "restaurantAddress";
   static const String emailAddress = "emailAddress";
@@ -93,7 +94,6 @@ class MyStrings {
   static const String myDashboard = "My Dashboard";
   static const String paymentHistory = "Payment History";
   static const String bookedHistory = "Booked History";
-  static const String calendar = "Calendar";
   static const String hiredHistory = "Hired History";
   static const String areShowing = "areShowing";
   static const String exp = "exp";
@@ -121,7 +121,8 @@ class MyStrings {
   static const String education = "education";
   static const String certificate = "certificate";
   static const String countPosition = "countPosition";
-  static const String selectDateRangeForThisEmployeeToBookAllOfThemAtOnce = "selectDateRangeForThisEmployeeToBookAllOfThemAtOnce";
+  static const String selectDateRangeForThisEmployeeToBookAllOfThemAtOnce =
+      "selectDateRangeForThisEmployeeToBookAllOfThemAtOnce";
   static const String dateRange = "dateRange";
   static const String bookAll = "bookAll";
   static const String selectDateRange = "selectDateRange";
@@ -137,7 +138,6 @@ class _Arguements {
   String receiverId = "receiverId";
 
   String employeeAvailableDays = "available";
-
 
   String receiverName = "receiverName";
   String fromId = "fromId";

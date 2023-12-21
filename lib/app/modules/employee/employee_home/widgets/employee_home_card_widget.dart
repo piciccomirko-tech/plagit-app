@@ -21,9 +21,20 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
               Row(
                 children: [
                   Expanded(
+                    child: CustomFeatureBox(
+                        height: 120,
+                        iconHeight: 40,
+                        title: MyStrings.myDashboard,
+                        icon: MyAssets.mhEmployees,
+                        onTap: controller.onDashboardClick),
+                  ),
+                  SizedBox(width: 15.w),
+                  Expanded(
                     child: Stack(
                       children: [
                         CustomFeatureBox(
+                            height: 120,
+                            iconHeight: 40,
                             title: MyStrings.bookedHistory,
                             icon: MyAssets.bookedHistory,
                             onTap: controller.onBookedHistoryClick),
@@ -42,11 +53,13 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 24.w),
+                  SizedBox(width: 15.w),
                   Expanded(
                     child: Stack(
                       children: [
                         CustomFeatureBox(
+                            height: 120,
+                            iconHeight: 40,
                             title: MyStrings.hiredHistory,
                             icon: MyAssets.hiredHistory,
                             onTap: controller.onHiredHistoryClick),
@@ -64,7 +77,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                         ),
                       ],
                     ),
-                  ),
+                  )
                 ],
               ),
               SizedBox(height: 15.h),
@@ -72,29 +85,26 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                 children: [
                   Expanded(
                     child: CustomFeatureBox(
-                        title: MyStrings.myDashboard, icon: MyAssets.mhEmployees, onTap: controller.onDashboardClick),
-                  ),
-                  SizedBox(width: 24.w),
-                  Expanded(
-                    child: CustomFeatureBox(
+                        height: 120,
+                        iconHeight: 40,
                         title: MyStrings.calendar, icon: MyAssets.calender2, onTap: controller.onCalenderClick),
                   ),
-                ],
-              ),
-              SizedBox(height: 15.h),
-              Row(
-                children: [
+                  SizedBox(width: 15.w),
                   Expanded(
                     child: CustomFeatureBox(
+                        height: 120,
+                        iconHeight: 40,
                         title: MyStrings.paymentHistory.tr,
                         icon: MyAssets.invoicePayment,
                         onTap: controller.onPaymentHistoryClick),
                   ),
-                  SizedBox(width: 24.w),
+                  SizedBox(width: 15.w),
                   Expanded(
                     child: Stack(
                       children: [
                         CustomFeatureBox(
+                            height: 120,
+                            iconHeight: 40,
                             title: MyStrings.helpSupport.tr,
                             icon: MyAssets.helpSupport,
                             onTap: controller.onHelpAndSupportClick),

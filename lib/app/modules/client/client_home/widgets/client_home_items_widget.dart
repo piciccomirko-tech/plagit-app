@@ -14,7 +14,7 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() => controller.jobPostDataLoading.value == true
-        ? ShimmerWidget.employeeHomeShimmerWidget()
+        ? ShimmerWidget.clientHomeShimmerWidget()
         : Column(
             children: [
               Row(

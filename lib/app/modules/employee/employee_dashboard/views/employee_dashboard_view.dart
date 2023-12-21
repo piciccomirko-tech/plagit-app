@@ -33,7 +33,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
                         : "${controller.selectedStartDate.value.dMMMy} - ${controller.selectedEndDate.value.dMMMy}",
                     style: Colors.blue.semiBold18)),
                 SizedBox(width: 15.w),
-                Image.asset(MyAssets.calender, height: 30, width: 30)
+                Image.asset(MyAssets.calendar, height: 30, width: 30)
               ],
             ),
           ),

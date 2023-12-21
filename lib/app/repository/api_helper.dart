@@ -23,6 +23,7 @@ import 'package:mh/app/modules/employee/employee_home/models/review_request_mode
 import 'package:mh/app/modules/employee/employee_home/models/booking_history_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/single_booking_details_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
+import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
 import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
@@ -218,6 +219,7 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> updateSkipDate();
   EitherModel<ClientBankInfoModel> getBankInfo();
   EitherModel<Response> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
-  EitherModel<JobPostRequestModel> getJobRequests({String? clientId});
+  EitherModel<JobPostRequestModel> getJobRequests({String? clientId, String? status});
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
+  EitherModel<CommonResponseModel> interested({required InterestedRequestModel interestedRequestModel});
 }

@@ -33,6 +33,7 @@ class MyAssets {
   static const license = "assets/images/license.png";
   static const height = "assets/icons/height.png";
   static const weight = "assets/icons/weight.png";
+  static const job = "assets/icons/job.png";
   static const checkIn = "assets/icons/checkin.png";
   static const checkOut = "assets/icons/checkout.png";
   static const maps = "assets/icons/maps.png";
@@ -55,7 +56,7 @@ class MyAssets {
   static const createPost = "assets/icons/create_post.png";
 
   static const certified = "assets/images/certified.png";
-  static const calender = "assets/images/calender.png";
+  static const calendar = "assets/images/calender.png";
   static const clientFixedLogo = "assets/images/client_fixed_logo.png";
   //Custom Map Style
   static const customMapStyle = 'assets/map_style/custom_map_style.txt';

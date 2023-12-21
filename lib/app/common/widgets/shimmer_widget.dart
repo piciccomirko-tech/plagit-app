@@ -2,6 +2,43 @@ import 'package:mh/app/common/utils/exports.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ShimmerWidget {
+  static Widget clientHomeShimmerWidget() {
+    return Shimmer.fromColors(
+      baseColor: MyColors.shimmerColor,
+      highlightColor: Get.context!.theme.scaffoldBackgroundColor,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130)),
+                SizedBox(width: 24.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130))
+              ],
+            ),
+            SizedBox(height: 15.h),
+            Row(
+              children: [
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130)),
+                SizedBox(width: 24.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130))
+              ],
+            ),
+            SizedBox(height: 15.h),
+            Row(
+              children: [
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130)),
+                SizedBox(width: 24.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130))
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   static Widget employeeHomeShimmerWidget() {
     return Shimmer.fromColors(
       baseColor: MyColors.shimmerColor,
@@ -12,27 +49,24 @@ class ShimmerWidget {
           children: [
             Row(
               children: [
-                Expanded(child: _customFeatureBoxShimmerWidget()),
-                SizedBox(width: 24.w),
-                Expanded(child: _customFeatureBoxShimmerWidget())
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 120)),
+                SizedBox(width: 15.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 120)),
+                SizedBox(width: 15.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 120)),
               ],
             ),
             SizedBox(height: 15.h),
             Row(
               children: [
-                Expanded(child: _customFeatureBoxShimmerWidget()),
-                SizedBox(width: 24.w),
-                Expanded(child: _customFeatureBoxShimmerWidget())
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 120)),
+                SizedBox(width: 15.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 120)),
+                SizedBox(width: 15.w),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 120))
               ],
             ),
-            SizedBox(height: 15.h),
-            Row(
-              children: [
-                Expanded(child: _customFeatureBoxShimmerWidget()),
-                SizedBox(width: 24.w),
-                Expanded(child: _customFeatureBoxShimmerWidget())
-              ],
-            ),
+            SizedBox(height: 15.h)
           ],
         ),
       ),
@@ -75,22 +109,44 @@ class ShimmerWidget {
         ));
   }
 
-  static Widget clientMyEmployeesShimmerWidget({required double height}){
+  static Widget clientMyEmployeesShimmerWidget({required double height}) {
     return Shimmer.fromColors(
       baseColor: MyColors.shimmerColor,
       highlightColor: Get.context!.theme.scaffoldBackgroundColor,
       child: SingleChildScrollView(
         child: Column(
-          children: List.generate(10, (index) => _customContainerShimmerWidget(height: height, width: double.infinity, borderRadius: 10.0, margin: 15)),
+          children: List.generate(
+              10,
+              (index) => _customContainerShimmerWidget(
+                  height: height, width: double.infinity, borderRadius: 10.0, margin: 15)),
+        ),
+      ),
+    );
+  }
+
+  static Widget employeeJobPostsShimmerWidget({required double height, required double width}) {
+    return Shimmer.fromColors(
+      baseColor: MyColors.shimmerColor,
+      highlightColor: Get.context!.theme.scaffoldBackgroundColor,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: List.generate(
+              3,
+              (index) => Padding(
+                    padding: const EdgeInsets.only(right: 15.0),
+                    child:
+                        _customContainerShimmerWidget(height: height, width: width, borderRadius: 10.0, margin: 15.0),
+                  )),
         ),
       ),
     );
   }
 }
 
-Widget _customFeatureBoxShimmerWidget() {
+Widget _customFeatureBoxShimmerWidget({required double height}) {
   return Container(
-    height: 130,
+    height: height,
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: MyColors.shimmerColor),
   );
 }

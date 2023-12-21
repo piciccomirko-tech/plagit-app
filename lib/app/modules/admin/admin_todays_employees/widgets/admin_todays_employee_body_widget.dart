@@ -75,7 +75,7 @@ class AdminTodaysEmployeeBodyWidget extends GetWidget<AdminTodaysEmployeesContro
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(MyAssets.calender, height: 20, width: 20),
+                    Image.asset(MyAssets.calendar, height: 20, width: 20),
                     const SizedBox(width: 10),
                     GestureDetector(
                       onTap: () => _selectDate(context),

@@ -73,6 +73,8 @@ import '../modules/employee/employee_dashboard/bindings/employee_dashboard_bindi
 import '../modules/employee/employee_dashboard/views/employee_dashboard_view.dart';
 import '../modules/employee/employee_home/bindings/employee_home_binding.dart';
 import '../modules/employee/employee_home/views/employee_home_view.dart';
+import '../modules/employee/employee_job_posts_details/bindings/employee_job_posts_details_binding.dart';
+import '../modules/employee/employee_job_posts_details/views/employee_job_posts_details_view.dart';
 import '../modules/employee/employee_payment_history/bindings/employee_payment_history_binding.dart';
 import '../modules/employee/employee_payment_history/views/employee_payment_history_view.dart';
 import '../modules/employee/employee_register_success/bindings/employee_register_success_binding.dart';
@@ -419,6 +421,11 @@ class AppPages {
       name: _Paths.jobRequestDetails,
       page: () => const JobRequestDetailsView(),
       binding: JobRequestDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.employeeJobPostDetails,
+      page: () => const EmployeeJobPostsDetailsView(),
+      binding: EmployeeJobPostsDetailsBinding(),
     ),
   ];
 }

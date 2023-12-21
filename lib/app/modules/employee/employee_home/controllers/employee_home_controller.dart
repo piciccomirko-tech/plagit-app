@@ -5,6 +5,7 @@ import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
+import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_out_request_model.dart';
@@ -14,6 +15,7 @@ import 'package:mh/app/modules/employee/employee_home/models/review_request_mode
 import 'package:mh/app/modules/employee/employee_home/models/booking_history_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
+import 'package:mh/app/modules/employee/employee_home/views/employee_job_posts_view_all_view.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/check_out_success_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/slide_action_widget.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
@@ -70,10 +72,13 @@ class EmployeeHomeController extends GetxController {
   RxList<HiredHistoryModel> hiredHistoryList = <HiredHistoryModel>[].obs;
   RxBool hiredHistoryDataLoaded = false.obs;
 
+  Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
+  RxBool jobPostDataLoading = false.obs;
+
   i_o.Socket? socket;
   @override
-  void onInit() async {
-    await homeMethods();
+  void onInit() {
+    homeMethods();
     _shareCurrentLocation();
     super.onInit();
   }
@@ -91,14 +96,15 @@ class EmployeeHomeController extends GetxController {
     super.onReady();
   }
 
-  Future<void> homeMethods() async {
+  void homeMethods() {
     notificationsController.getNotificationList;
-    await _getCurrentLocation();
-    await _getTodayWorkSchedule();
-    await _getTodayCheckInOutDetails();
-    await getBookingHistory();
-    await _getHiredHistory();
+    _getCurrentLocation();
+    _getTodayWorkSchedule();
+    _getTodayCheckInOutDetails();
+    getBookingHistory();
+    _getHiredHistory();
     _trackUnreadMsg();
+    _getJobRequests();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -141,7 +147,7 @@ class EmployeeHomeController extends GetxController {
     });
   }
 
-  Future<void> getBookingHistory() async {
+  void getBookingHistory() async {
     Either<CustomError, BookingHistoryModel> responseData = await _apiHelper.getBookingHistory();
 
     responseData.fold((CustomError customError) {
@@ -155,7 +161,7 @@ class EmployeeHomeController extends GetxController {
     });
   }
 
-  Future<void> _getHiredHistory() async {
+  void _getHiredHistory() async {
     Either<CustomError, EmployeeHiredHistoryModel> responseData = await _apiHelper.getHiredHistory();
 
     responseData.fold((CustomError customError) {
@@ -220,15 +226,15 @@ class EmployeeHomeController extends GetxController {
         checkInCheckOutDetails: todayCheckInOutDetails.value.details?.checkInCheckOutDetails,
       ));
 
-  Future<void> onCheckInCheckOut() async {
+  void onCheckInCheckOut() {
     if (!checkIn.value && !checkOut.value) {
-      await _onCheckIn();
+      _onCheckIn();
     } else {
       _onCheckout();
     }
   }
 
-  Future<void> onBreakTimePickDone(int hour, int min) async {
+  void onBreakTimePickDone(int hour, int min) async {
     CustomLoader.show(context!);
     EmployeeCheckOutRequestModel employeeCheckOutRequestModel = EmployeeCheckOutRequestModel(
         id: todayCheckInOutDetails.value.details?.id ?? '',
@@ -257,7 +263,7 @@ class EmployeeHomeController extends GetxController {
     });
   }
 
-  Future<void> _onCheckIn() async {
+  void _onCheckIn() async {
     CustomLoader.show(context!);
 
     EmployeeCheckInRequestModel employeeCheckInRequestModel = EmployeeCheckInRequestModel(
@@ -283,8 +289,8 @@ class EmployeeHomeController extends GetxController {
         title: "Failed to CheckIn",
         description: customError.msg,
       );
-    }, (CommonResponseModel clients) async {
-      await _afterCheckInCheckout();
+    }, (CommonResponseModel clients) {
+      _afterCheckInCheckout();
     });
   }
 
@@ -296,7 +302,7 @@ class EmployeeHomeController extends GetxController {
     key.currentState?.reset();
   }
 
-  void refreshPage() async {
+  void refreshPage() {
     locationFetchError.value = "";
     todayWorkScheduleDataLoading.value = true;
     todayCheckInCheckOutDetailsDataLoading.value = true;
@@ -305,7 +311,7 @@ class EmployeeHomeController extends GetxController {
     bookingHistoryDataLoaded.value = false;
     hiredHistoryDataLoaded.value = false;
 
-    await homeMethods();
+    homeMethods();
 
     Utils.showSnackBar(message: 'This page has been refreshed', isTrue: true);
   }
@@ -495,7 +501,7 @@ class EmployeeHomeController extends GetxController {
         checkIn.value == false;
   }
 
-  Future<void> _afterCheckInCheckout() async {
+  void _afterCheckInCheckout() async {
     todayWorkScheduleDataLoading.value = true;
     todayCheckInCheckOutDetailsDataLoading.value = true;
 
@@ -643,4 +649,24 @@ class EmployeeHomeController extends GetxController {
       socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
     });
   }
+
+  void _getJobRequests() async {
+    jobPostDataLoading.value = true;
+    Either<CustomError, JobPostRequestModel> responseData = await _apiHelper.getJobRequests(status: "PUBLISHED");
+    jobPostDataLoading.value = false;
+
+    responseData.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError..onRetry = _getJobRequests);
+    }, (JobPostRequestModel response) {
+      if (response.status == "success" && response.statusCode == 200) {
+        jobPostRequest.value = response;
+        jobPostRequest.refresh();
+      }
+    });
+  }
+
+  void onFullViewClick({required Job jobPostDetails}) =>
+      Get.toNamed(Routes.employeeJobPostDetails, arguments: jobPostDetails);
+
+  void onViewAllClick() => Get.to(() => EmployeeJobPostsViewAllView(jobPostList: (jobPostRequest.value.jobs ?? [])));
 }
