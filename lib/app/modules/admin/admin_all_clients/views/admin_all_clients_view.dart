@@ -27,7 +27,7 @@ class AdminAllClientsView extends GetView<AdminAllClientsController> {
             ? controller.clientsDataLoading.value
                 ? Padding(
                     padding: EdgeInsets.only(top: 50.h, left: 15.w, right: 15.w),
-                    child: ShimmerWidget.clientMyEmployeesShimmerWidget(),
+                    child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 130),
                   )
                 : const NoItemFound()
             : Column(

@@ -75,13 +75,13 @@ class ShimmerWidget {
         ));
   }
 
-  static Widget clientMyEmployeesShimmerWidget(){
+  static Widget clientMyEmployeesShimmerWidget({required double height}){
     return Shimmer.fromColors(
       baseColor: MyColors.shimmerColor,
       highlightColor: Get.context!.theme.scaffoldBackgroundColor,
       child: SingleChildScrollView(
         child: Column(
-          children: List.generate(10, (index) => _customContainerShimmerWidget(height: 125, width: double.infinity, borderRadius: 10.0, margin: 15)),
+          children: List.generate(10, (index) => _customContainerShimmerWidget(height: height, width: double.infinity, borderRadius: 10.0, margin: 15)),
         ),
       ),
     );
@@ -90,7 +90,7 @@ class ShimmerWidget {
 
 Widget _customFeatureBoxShimmerWidget() {
   return Container(
-    height: 150,
+    height: 130,
     decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0), color: MyColors.shimmerColor),
   );
 }

@@ -28,7 +28,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
             ? controller.employeeDataLoading.value
                 ? Padding(
                     padding: EdgeInsets.only(left: 15.w, right: 15.w, top: 70.h),
-                    child: Center(child: ShimmerWidget.clientMyEmployeesShimmerWidget()),
+                    child: Center(child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 130)),
                   )
                 : Column(
                     children: [

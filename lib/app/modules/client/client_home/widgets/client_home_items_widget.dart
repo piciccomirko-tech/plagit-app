@@ -1,0 +1,162 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:mh/app/common/values/my_assets.dart';
+import 'package:mh/app/common/values/my_strings.dart';
+import 'package:mh/app/common/widgets/custom_badge.dart';
+import 'package:mh/app/common/widgets/custom_feature_box.dart';
+import 'package:mh/app/common/widgets/shimmer_widget.dart';
+import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
+
+class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
+  const ClientHomeItemsWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(() => controller.jobPostDataLoading.value == true
+        ? ShimmerWidget.employeeHomeShimmerWidget()
+        : Column(
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFeatureBox(
+                      height: 130.h,
+                      iconHeight: 50.h,
+                      title: MyStrings.employees.tr,
+                      icon: MyAssets.mhEmployees,
+                      visibleMH: true,
+                      onTap: controller.onMhEmployeeClick,
+                    ),
+                  ),
+                  SizedBox(width: 24.w),
+                  Expanded(
+                    child: Obx(
+                      () => Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CustomFeatureBox(
+                            height: 130.h,
+                            iconHeight: 50.h,
+                            title: MyStrings.dashboard.tr,
+                            icon: MyAssets.dashboard,
+                            onTap: controller.onDashboardClick,
+                          ),
+                          Positioned(
+                            top: 4,
+                            right: 5,
+                            child: Visibility(
+                              visible: controller.unreadMsgFromEmployee.value > 0,
+                              child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        CustomFeatureBox(
+                          height: 130.h,
+                          iconHeight: 50.h,
+                          title: MyStrings.myEmployees.tr,
+                          icon: MyAssets.myEmployees,
+                          onTap: controller.onMyEmployeeClick,
+                        ),
+                        Obx(() => Stack(
+                              children: [
+                                CustomFeatureBox(
+                                  height: 130.h,
+                                  iconHeight: 50.h,
+                                  title: MyStrings.myEmployees.tr,
+                                  icon: MyAssets.myEmployees,
+                                  onTap: controller.onMyEmployeeClick,
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 5,
+                                  child: Visibility(
+                                    visible: controller.unreadMsgFromEmployee > 0,
+                                    child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                                  ),
+                                ),
+                              ],
+                            ))
+                      ],
+                    ),
+                  ),
+                  SizedBox(width: 24.w),
+                  Expanded(
+                    child: Obx(
+                      () => Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          CustomFeatureBox(
+                            height: 130.h,
+                            iconHeight: 50.h,
+                            title: MyStrings.invoicePayment.tr,
+                            icon: MyAssets.invoicePayment,
+                            onTap: controller.onInvoiceAndPaymentClick,
+                          ),
+                          Positioned(
+                            top: 4,
+                            right: 5,
+                            child: Visibility(
+                              visible: ((controller.clientInvoice.value.invoices ?? [])
+                                  .where((element) => element.status == "DUE")).isNotEmpty,
+                              child: CustomBadge(((controller.clientInvoice.value.invoices ?? [])
+                                  .where((element) => element.status == "DUE")).length.toString()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFeatureBox(
+                      height: 130.h,
+                      iconHeight: 50.h,
+                      title: MyStrings.createJobPost,
+                      icon: MyAssets.createPost,
+                      onTap: controller.onCreateJobPostClick,
+                    ),
+                  ),
+                  SizedBox(width: 24.w),
+                  Expanded(
+                      child: Obx(() => Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              CustomFeatureBox(
+                                height: 130.h,
+                                iconHeight: 50.h,
+                                title: MyStrings.jobRequests,
+                                icon: MyAssets.jobRequest,
+                                onTap: controller.onJobRequestsClick,
+                              ),
+                              Positioned(
+                                top: 4,
+                                right: 5,
+                                child: Visibility(
+                                  visible: (controller.jobPostRequest.value.jobs ?? []).isNotEmpty,
+                                  child: CustomBadge((controller.jobPostRequest.value.jobs??[]).length.toString()),
+                                ),
+                              ),
+                            ],
+                          ))),
+                ],
+              )
+            ],
+          ));
+  }
+}

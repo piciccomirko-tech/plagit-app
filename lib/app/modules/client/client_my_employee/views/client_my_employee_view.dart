@@ -65,7 +65,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
 
   Widget get _loading => Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Center(child: ShimmerWidget.clientMyEmployeesShimmerWidget()),
+        child: Center(child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 130)),
       );
 
   Widget get _showEmployeeList => ListView.builder(

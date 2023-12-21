@@ -26,7 +26,6 @@ class VideoController extends GetxController {
 
   void initializePlayer({required String videoUrl}) async {
     try {
-      print('VideoController.initializePlayer: $videoUrl');
       videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
       await Future.wait([videoPlayerController.initialize()]);
       chewieController = ChewieController(

@@ -15,7 +15,6 @@ class CustomSliderWidget extends GetWidget<CreateJobPostController> {
 
   @override
   Widget build(BuildContext context) {
-    print('CustomSliderWidget.build: ${controller.customSliderModel.value.minValue}');
     return Container(
       height: 250.h,
       decoration: const BoxDecoration(

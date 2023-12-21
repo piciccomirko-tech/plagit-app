@@ -61,6 +61,7 @@ abstract class Routes {
   static const liveLocation = _Paths.liveLocation;
   static const createJobPost = _Paths.createJobPost;
   static const jobRequests = _Paths.jobRequests;
+  static const jobRequestDetails = _Paths.jobRequestDetails;
 }
 
 abstract class _Paths {
@@ -126,4 +127,5 @@ abstract class _Paths {
   static const liveLocation = '/live-location';
   static const createJobPost = '/create-job-post';
   static const jobRequests = '/job-requests';
+  static const jobRequestDetails = '/job-request-details';
 }

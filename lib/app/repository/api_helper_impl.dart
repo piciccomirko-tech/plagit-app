@@ -18,8 +18,8 @@ import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_suggested_employees/models/short_list_request_model.dart';
-import 'package:mh/app/modules/client/create_job_post/controllers/create_job_post_controller.dart';
 import 'package:mh/app/modules/client/create_job_post/models/create_job_post_request_model.dart';
+import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/email_input/models/forget_password_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
@@ -1311,8 +1311,39 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await post(url, requestBody);
     return _convert<Response>(
       response,
-          (Map<String, dynamic> data) {},
+      (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
+  EitherModel<JobPostRequestModel> getJobRequests({String? clientId}) async {
+    String url = "job";
+    if ((clientId ?? "").isNotEmpty) url += "?clientId=$clientId";
+
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<JobPostRequestModel>(
+      response,
+      JobPostRequestModel.fromJson,
+    ).fold((CustomError l) => left(l), (JobPostRequestModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> deleteJobPost({required String jobId}) async {
+    String url = "job/$jobId";
+
+    Response response = await delete(url);
+    if (response.statusCode == null) await delete(url);
+    if (response.statusCode == null) await delete(url);
+    if (response.statusCode == null) await delete(url);
+
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
   }
 }

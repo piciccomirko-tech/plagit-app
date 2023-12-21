@@ -55,8 +55,8 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
             ? controller.isLoading.value
                 ? Center(
                     child: Padding(
-                      padding: EdgeInsets.only(left: 15.w, right: 15.w, top: 70.h),
-                      child: ShimmerWidget.clientMyEmployeesShimmerWidget(),
+                      padding: EdgeInsets.only(left: 15.w, right: 15.w, top: 55.h),
+                      child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 135),
                     ),
                   )
                 : const NoItemFound()

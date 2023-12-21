@@ -11,8 +11,8 @@ import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist
 import 'package:mh/app/modules/client/client_shortlisted/models/position_info_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/update_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/client_suggested_employees/models/short_list_request_model.dart';
-import 'package:mh/app/modules/client/create_job_post/controllers/create_job_post_controller.dart';
 import 'package:mh/app/modules/client/create_job_post/models/create_job_post_request_model.dart';
+import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/email_input/models/forget_password_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
@@ -218,4 +218,6 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> updateSkipDate();
   EitherModel<ClientBankInfoModel> getBankInfo();
   EitherModel<Response> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
+  EitherModel<JobPostRequestModel> getJobRequests({String? clientId});
+  EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
 }

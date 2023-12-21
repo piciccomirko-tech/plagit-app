@@ -26,7 +26,7 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
             ? controller.isLoading.value
                 ? Padding(
                     padding: EdgeInsets.only(top: 70.h, left: 15.w, right: 15.w),
-                    child: ShimmerWidget.clientMyEmployeesShimmerWidget(),
+                    child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 130),
                   )
                 : Column(
                     children: [

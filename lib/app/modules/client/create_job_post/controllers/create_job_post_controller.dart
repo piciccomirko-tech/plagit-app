@@ -1,14 +1,7 @@
 import 'dart:collection';
-
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/exports.dart';
-import 'package:mh/app/common/utils/type_def.dart';
-import 'package:mh/app/common/utils/utils.dart';
-import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/timer_wheel_widget.dart';
@@ -239,7 +232,6 @@ class CreateJobPostController extends GetxController {
   }
 
   void onDateClick({required DateTime currentDate}) {
-    print('CreateJobPostController.onDateClick');
     if (rangeStartDate.value == null) {
       sameAsStartDate.value = false;
       rangeStartDate.value = currentDate;
@@ -289,7 +281,6 @@ class CreateJobPostController extends GetxController {
       rangeStartDate.value = null;
       rangeEndDate.value = null;
     }
-    print('CreateJobPostController.loadRequestedDateList: ${requestDateList.length}');
     requestDateList.refresh();
   }
 
@@ -426,9 +417,7 @@ class CreateJobPostController extends GetxController {
     response.fold((l) {
       Logcat.msg(l.msg);
     }, (Response r) {
-      print('CreateJobPostController.onPostJobClick: ${r.statusCode}');
       if ([200, 201].contains(r.statusCode) == true) {
-        print('CreateJobPostController.onPostJobClick hey');
         Get.back();
         Utils.showSnackBar(message: "Job has been created successfully", isTrue: true);
       } else {

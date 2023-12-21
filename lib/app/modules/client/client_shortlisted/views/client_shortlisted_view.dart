@@ -28,7 +28,7 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
             ? Center(
                 child: Padding(
                 padding: EdgeInsets.only(left: 15.w, right: 15.w, top: 70.h),
-                child: ShimmerWidget.clientMyEmployeesShimmerWidget(),
+                child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 130),
               ))
             : controller.shortlistController.shortList.isEmpty
                 ? const NoItemFound()

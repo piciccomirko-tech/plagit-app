@@ -8,14 +8,14 @@ class CustomBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(5.0),
-      decoration: const BoxDecoration(
+      padding: const EdgeInsets.all(8.0),
+      decoration:  BoxDecoration(
         shape: BoxShape.circle,
-        color: MyColors.c_C6A34F,
+        color: MyColors.c_00C92C,
       ),
       child: Text(
         text,
-        style: MyColors.white.medium14,
+        style: MyColors.white.semiBold15,
       ),
     );
   }

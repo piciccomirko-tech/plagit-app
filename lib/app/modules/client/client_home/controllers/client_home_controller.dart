@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/models/dropdown_item.dart';
+import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
@@ -37,6 +38,9 @@ class ClientHomeController extends GetxController {
   ScrollController scrollController = ScrollController();
   RxList<DropdownItem> positionList = <DropdownItem>[].obs;
   RxBool showClearIcon = false.obs;
+
+  Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
+  RxBool jobPostDataLoading = false.obs;
 
   @override
   void onInit() {
@@ -78,7 +82,6 @@ class ClientHomeController extends GetxController {
 
   void onJobRequestsClick() => Get.toNamed(Routes.jobRequests);
 
-
   void onHelpAndSupportClick() {
     ClientHelpOption.show(
       context!,
@@ -117,6 +120,22 @@ class ClientHomeController extends GetxController {
 
   void onSuggestedEmployeesClick() {
     Get.toNamed(Routes.clientSuggestedEmployees);
+  }
+
+  void _getJobRequests() async {
+    jobPostDataLoading.value = true;
+    Either<CustomError, JobPostRequestModel> responseData =
+        await _apiHelper.getJobRequests(clientId: appController.user.value.client?.id ?? "");
+    jobPostDataLoading.value = false;
+
+    responseData.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError..onRetry = _getJobRequests);
+    }, (JobPostRequestModel response) {
+      if (response.status == "success" && response.statusCode == 200) {
+        jobPostRequest.value = response;
+        jobPostRequest.refresh();
+      }
+    });
   }
 
   void fetchRequestEmployees() {
@@ -238,6 +257,7 @@ class ClientHomeController extends GetxController {
     getClientInvoice();
     _trackUnreadMsg();
     fetchRequestEmployees();
+    _getJobRequests();
   }
 
   void refreshPage() {
