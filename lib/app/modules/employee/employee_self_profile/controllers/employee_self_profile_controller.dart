@@ -1,6 +1,9 @@
-import 'dart:io';
+import 'dart:io' as i;
 import 'package:dartz/dartz.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:mh/app/common/utils/image_handler.dart';
 import 'package:mh/app/models/custom_error.dart';
+import 'package:mh/app/repository/server_urls.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/employee_full_details.dart';
@@ -29,7 +32,9 @@ class EmployeeSelfProfileController extends GetxController {
   RxBool loading = false.obs;
 
   RxString rating = ''.obs;
-  final Rx<File?> pickedImage = Rx<File?>(null);
+
+  Rx<i.File?> pickedImage = Rx<i.File?>(null);
+  final ImageHandler imageHandler = ImageHandler();
 
   @override
   void onInit() {
@@ -73,5 +78,56 @@ class EmployeeSelfProfileController extends GetxController {
     });
   }
 
+  void handleImageResult(CroppedFile? imageFile) {
+    if (imageFile != null) {
+      pickedImage.value = i.File(imageFile.path);
+      _uploadImage(pickedImage.value!);
+    } else {
+      print('Image picking or cropping canceled.');
+    }
+  }
 
+  void _uploadImage(i.File imageFile) async {
+    String? imageUrl = await imageHandler.uploadImage(imageFile, '${ServerUrls.serverLiveUrlUser}users/update-profile-image');
+    if (imageUrl != null) {
+      print('Image uploaded. URL: $imageUrl');
+    } else {
+      print('Image upload failed.');
+    }
+  }
+
+  void showImagePickerBottomSheet(BuildContext context) {
+    Get.bottomSheet(
+      Container(
+        height: Get.width,
+        decoration: BoxDecoration(
+            color: MyColors.lightCard(context),
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera),
+              title: const Text('Take Photo'),
+              onTap: () async {
+                Get.back(); // Close the bottom sheet
+
+                CroppedFile? pickedAndCroppedImage = await imageHandler.pickAndCropImage(source: "camera");
+                handleImageResult(pickedAndCroppedImage);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.image),
+              title: const Text('Choose from Gallery'),
+              onTap: () async {
+                Get.back(); // Close the bottom sheet
+
+                CroppedFile? pickedAndCroppedImage = await imageHandler.pickAndCropImage(source: "gallery");
+                handleImageResult(pickedAndCroppedImage);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

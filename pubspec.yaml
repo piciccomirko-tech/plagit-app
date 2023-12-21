@@ -14,6 +14,7 @@ dependencies:
 
   # state management, routing
   get: ^4.6.6
+  path: ^1.8.3
 
   chewie: ^1.7.4
 

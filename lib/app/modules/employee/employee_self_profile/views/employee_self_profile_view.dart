@@ -1,3 +1,5 @@
+import 'package:mh/app/modules/employee/employee_self_profile/widgets/employee_profile_image_widget.dart';
+
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -23,7 +25,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
             child: Column(
               children: [
                 SizedBox(height: 20.h),
-                _backButtonImageBookmark,
+                const EmployeeProfileImageWidget(),
                 SizedBox(height: 10.h),
                 Obx(() => Container(
                     width: 100,
@@ -173,43 +175,6 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
       ),
     );
   }
-
-  Widget get _backButtonImageBookmark => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Spacer(),
-          Stack(
-            children: [
-              Container(
-                width: 150.h,
-                height: 150.h,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      width: 2.5,
-                      color: MyColors.c_C6A34F,
-                    )),
-                child: Obx(
-                  () =>
-                  CustomNetworkImage(
-                          url: (controller.employee.value.details?.profilePicture ?? "").imageUrl,
-                          radius: 130,
-                        ),
-                ),
-              ),
-              Positioned.fill(
-                  child: Align(alignment: Alignment.bottomCenter, child: Image.asset(MyAssets.intersect, width: 90))),
-              Positioned.fill(
-                  bottom: 5,
-                  child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Image.asset(MyAssets.camera, width: 30, height: 30, color: MyColors.white))),
-            ],
-          ),
-          const Spacer(),
-        ],
-      );
 
   Widget _item({
     required IconData logo,
