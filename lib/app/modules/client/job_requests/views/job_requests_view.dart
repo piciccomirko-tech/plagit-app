@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
-import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/client/job_requests/widgets/job_request_widget.dart';
 

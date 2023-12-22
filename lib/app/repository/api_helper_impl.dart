@@ -1303,18 +1303,18 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<Response> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel}) async {
+  EitherModel<CommonResponseModel> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel}) async {
     String url = "job/create";
-    String requestBody = createJobPostRequestModel.toRawJson();
+    String requestBody = createJobPostRequestModel.toRawJson(type: "create");
     Response response = await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
-    return _convert<Response>(
+
+    return _convert<CommonResponseModel>(
       response,
-      (Map<String, dynamic> data) {},
-      onlyErrorCheck: true,
-    ).fold((CustomError l) => left(l), (Response r) => right(r));
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
   }
 
   @override
@@ -1357,6 +1357,21 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> editJobPost({required CreateJobPostRequestModel createJobPostRequestModel}) async {
+    String url = "job/update";
+    String requestBody = createJobPostRequestModel.toRawJson(type: "update");
+    Response response = await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+
     return _convert<CommonResponseModel>(
       response,
       CommonResponseModel.fromJson,

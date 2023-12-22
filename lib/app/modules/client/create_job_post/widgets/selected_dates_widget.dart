@@ -12,7 +12,7 @@ class SelectedDatesWidget extends GetWidget<CreateJobPostController> {
   Widget build(BuildContext context) {
     return Obx(
       () => CustomTextInputField(
-        controller: controller.tecPublishDate.value,
+        controller: controller.tecSelectedDates.value,
         label: "Select Days",
         prefixIcon: Icons.calendar_month,
         readOnly: true,

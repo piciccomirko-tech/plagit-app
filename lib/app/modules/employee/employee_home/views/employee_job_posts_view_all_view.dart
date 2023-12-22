@@ -20,6 +20,7 @@ class EmployeeJobPostsViewAllView extends StatelessWidget {
         child: GridView.count(
             crossAxisCount: 2,
             crossAxisSpacing: 0.0,
+            mainAxisSpacing: 10.0,
             shrinkWrap: true,
             physics: const BouncingScrollPhysics(),
             childAspectRatio: 0.75,

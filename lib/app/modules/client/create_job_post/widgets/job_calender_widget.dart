@@ -3,10 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/widgets/custom_buttons.dart';
 import 'package:mh/app/modules/client/create_job_post/controllers/create_job_post_controller.dart';
 import 'package:mh/app/modules/client/create_job_post/widgets/month_widget.dart';
 import 'package:mh/app/modules/client/create_job_post/widgets/time_range_for_create_job.dart';
-import 'package:mh/app/modules/client/create_job_post/widgets/total_days_count_widget.dart';
 
 class JobCalenderWidget extends GetWidget<CreateJobPostController> {
   const JobCalenderWidget({super.key});
@@ -91,7 +91,10 @@ class JobCalenderWidget extends GetWidget<CreateJobPostController> {
             SizedBox(height: 20.h),
             const TimeRangeForCreateJob(),
             SizedBox(height: 20.h),
-            const TotalDaysCountWidget()
+            Obx(() =>  Visibility(
+                visible: controller.requestDateList.hasNullAttributes() == false,
+                child: CustomButtons.button(text: "SUBMIT", onTap: controller.onDateSubmitClick)))
+            //const TotalDaysCountWidget()
           ],
         ),
       ),

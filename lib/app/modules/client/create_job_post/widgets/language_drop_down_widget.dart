@@ -27,8 +27,8 @@ class LanguageDropDownWidget extends GetWidget<CreateJobPostController> {
               padding: EdgeInsets.symmetric(horizontal: 18.w),
               child: Wrap(
                 children:
-                    List.generate((controller.createJobPostRequestModel.value.languages ?? []).length, (int index) {
-                  String skill = (controller.createJobPostRequestModel.value.languages ?? [])[index];
+                    List.generate(controller.languageList.length, (int index) {
+                  String skill = controller.languageList[index];
                   return Container(
                     margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
                     padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),

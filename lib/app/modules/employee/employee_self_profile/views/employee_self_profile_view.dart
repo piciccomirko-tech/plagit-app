@@ -4,7 +4,6 @@ import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/custom_bottombar.dart';
-import '../../../../common/widgets/custom_network_image.dart';
 import '../controllers/employee_self_profile_controller.dart';
 
 class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {

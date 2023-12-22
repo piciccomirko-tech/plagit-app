@@ -218,7 +218,8 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> getSkipDate();
   EitherModel<CommonResponseModel> updateSkipDate();
   EitherModel<ClientBankInfoModel> getBankInfo();
-  EitherModel<Response> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
+  EitherModel<CommonResponseModel> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
+  EitherModel<CommonResponseModel> editJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
   EitherModel<JobPostRequestModel> getJobRequests({String? clientId, String? status});
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
   EitherModel<CommonResponseModel> interested({required InterestedRequestModel interestedRequestModel});

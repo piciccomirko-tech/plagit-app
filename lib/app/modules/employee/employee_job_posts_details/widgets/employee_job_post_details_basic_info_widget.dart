@@ -71,7 +71,8 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
                                 //overflow: TextOverflow.ellipsis,
                                 style: MyColors.l111111_dwhite(context).medium13))),
                   ),
-                )),
+                )
+            ),
             SizedBox(height: 10.h),
             DetailsItemWidget(
                 icon: MyAssets.language,

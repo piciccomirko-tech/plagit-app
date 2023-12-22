@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 
 class CreateJobPostRequestModel {
+  String? id;
   String? positionId;
   String? clientId;
   double? minRatePerHour;
@@ -21,6 +22,7 @@ class CreateJobPostRequestModel {
   int? maxAge;
 
   CreateJobPostRequestModel({
+    this.id,
     this.positionId,
     this.clientId,
     this.minRatePerHour = 5.0,
@@ -28,7 +30,7 @@ class CreateJobPostRequestModel {
     this.vacancy,
     this.dates,
     this.nationalities,
-    this.skills,
+    this.skills = const [],
     this.minExperience = 0,
     this.maxExperience = 20,
     this.languages,
@@ -39,9 +41,10 @@ class CreateJobPostRequestModel {
     this.maxAge = 60,
   });
 
-  String toRawJson() => json.encode(toJson());
+  String toRawJson({required String type}) => json.encode(toJson(type: type));
 
-  Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson({required String type}) => {
+        if (type == "update") "id": id,
         "positionId": positionId,
         "clientId": clientId,
         "minRatePerHour": minRatePerHour,

@@ -83,16 +83,13 @@ class EmployeeSelfProfileController extends GetxController {
       pickedImage.value = i.File(imageFile.path);
       _uploadImage(pickedImage.value!);
     } else {
-      print('Image picking or cropping canceled.');
     }
   }
 
   void _uploadImage(i.File imageFile) async {
     String? imageUrl = await imageHandler.uploadImage(imageFile, '${ServerUrls.serverLiveUrlUser}users/update-profile-image');
     if (imageUrl != null) {
-      print('Image uploaded. URL: $imageUrl');
     } else {
-      print('Image upload failed.');
     }
   }
 

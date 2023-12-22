@@ -15,7 +15,7 @@ class EmployeeJobPostsWidget extends GetWidget<EmployeeHomeController> {
             visible: (controller.jobPostRequest.value.jobs ?? []).isNotEmpty,
             child: Column(
               children: [
-                SizedBox(height: 15.h),
+                SizedBox(height: 5.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -45,7 +45,7 @@ class EmployeeJobPostsWidget extends GetWidget<EmployeeHomeController> {
                         return JobPostWidget(jobPost: (controller.jobPostRequest.value.jobs ?? [])[index]);
                       }),
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: 30.h),
               ],
             )));
   }

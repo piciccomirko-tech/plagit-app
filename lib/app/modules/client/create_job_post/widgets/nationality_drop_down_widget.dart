@@ -18,15 +18,16 @@ class NationalityDropDownWidget extends GetWidget<CreateJobPostController> {
               prefixIcon: Icons.flag,
               hints: MyStrings.nationality,
               value: '',
-              items: controller.nationalityList.map((e) => e.nationality ?? "").toList(),
+              items: controller.nationalities.map((e) => e.nationality ?? "").toList(),
               onChange: controller.onNationalityChange,
             ),
             SizedBox(height: 10.h),
             Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18.w),
                 child: Wrap(
-                  children: List.generate(controller.nationalities.length, (int index) {
-                    String skill = controller.nationalities[index];
+                  children: List.generate(controller.nationalityList.length,
+                      (int index) {
+                    String skill = controller.nationalityList[index];
                     return Container(
                       margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
                       padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),

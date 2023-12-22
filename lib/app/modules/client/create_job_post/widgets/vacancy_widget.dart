@@ -9,12 +9,12 @@ class VacancyWidget extends GetWidget<CreateJobPostController> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown(
+    return Obx(() => CustomDropdown(
       prefixIcon: Icons.business_center,
       hints: MyStrings.vacancy,
-      value: '',
+      value: controller.selectedVacancy.value,
       items: controller.vacancyList,
       onChange: controller.onVacancyChange,
-    );
+    ));
   }
 }

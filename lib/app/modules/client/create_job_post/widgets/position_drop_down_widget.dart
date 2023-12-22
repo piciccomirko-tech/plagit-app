@@ -9,12 +9,12 @@ class PositionDropDownWidget extends GetWidget<CreateJobPostController> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown(
+    return Obx(() => CustomDropdown(
       prefixIcon: Icons.business_center,
       hints: MyStrings.position.tr,
-      value: '',
+      value: controller.selectedPositionName.value,
       items: controller.appController.allActivePositions.map((e) => e.name!).toList(),
       onChange: controller.onPositionChange,
-    );
+    ));
   }
 }

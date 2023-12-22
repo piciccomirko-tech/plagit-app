@@ -23,7 +23,7 @@ class CreateJobPostView extends GetView<CreateJobPostController> {
 
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: MyStrings.createJobPost,
+        title: controller.type == "create" ? MyStrings.createJobPost : MyStrings.updateJobPost,
         centerTitle: true,
         context: context,
       ),
@@ -31,9 +31,9 @@ class CreateJobPostView extends GetView<CreateJobPostController> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: 15.h),
+            SizedBox(height: 20.h),
             const PositionDropDownWidget(),
-            SizedBox(height: 15.h),
+            SizedBox(height: 20.h),
             const HourlyRateWidget(),
             SizedBox(height: 15.h),
             const SkillsDropDownWidget(),

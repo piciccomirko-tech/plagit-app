@@ -14,23 +14,24 @@ class CommentWidget extends GetWidget<CreateJobPostController> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 18.0.w),
-      child: TextFormField(
-        controller: controller.tecDescription,
-        keyboardType: TextInputType.multiline,
-        minLines: 2,
-        maxLines: null,
-        cursorColor: MyColors.c_C6A34F,
-        style: MyColors.l111111_dwhite(context).regular14,
-        decoration: MyDecoration.inputFieldDecoration(
-          context: context,
-          label: "Description",
-        ),
-        validator: (String? value) => Validators.emptyValidator(
-          value?.trim(),
-          MyStrings.required.tr,
-        ),
-      ),
-    );
+        padding: EdgeInsets.symmetric(horizontal: 18.0.w),
+        child: Obx(
+          () => TextFormField(
+            controller: controller.tecDescription.value,
+            keyboardType: TextInputType.multiline,
+            minLines: 2,
+            maxLines: null,
+            cursorColor: MyColors.c_C6A34F,
+            style: MyColors.l111111_dwhite(context).regular14,
+            decoration: MyDecoration.inputFieldDecoration(
+              context: context,
+              label: "Description",
+            ),
+            validator: (String? value) => Validators.emptyValidator(
+              value?.trim(),
+              MyStrings.required.tr,
+            ),
+          ),
+        ));
   }
 }

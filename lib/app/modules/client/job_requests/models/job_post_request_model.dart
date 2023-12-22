@@ -26,8 +26,8 @@ class Job {
   final String? id;
   final PositionId? positionId;
   final ClientId? clientId;
-  final int? minRatePerHour;
-  final int? maxRatePerHour;
+  final double? minRatePerHour;
+  final double? maxRatePerHour;
   final int? vacancy;
   final List<RequestDateModel>? dates;
   final List<String>? nationalities;
@@ -81,8 +81,8 @@ class Job {
         id: json["_id"],
         positionId: json["positionId"] == null ? null : PositionId.fromJson(json["positionId"]),
         clientId: json["clientId"] == null ? null : ClientId.fromJson(json["clientId"]),
-        minRatePerHour: json["minRatePerHour"],
-        maxRatePerHour: json["maxRatePerHour"],
+        minRatePerHour: json["minRatePerHour"] == null ? 0.0 : double.parse(json["minRatePerHour"].toString()),
+        maxRatePerHour: json["maxRatePerHour"] == null ? 0.0 : double.parse(json["maxRatePerHour"].toString()),
         vacancy: json["vacancy"],
         dates: json["dates"] == null
             ? []

@@ -33,8 +33,8 @@ class JobPostWidget extends StatelessWidget {
                 context),
             _detailsItem(
                 MyAssets.exp, MyStrings.exp.tr, "${jobPost.minExperience} - ${jobPost.maxExperience} years", context),
-            _detailsItem(
-                MyAssets.nationality, "${MyStrings.nationality.tr}:", jobPost.nationalities?.first ?? "", context),
+            _detailsItem(MyAssets.nationality, "${MyStrings.nationality.tr}:",
+                (jobPost.nationalities ?? []).isEmpty ? "TBA" : (jobPost.nationalities ?? []).first, context),
             _detailsItem(
                 MyAssets.calendar,
                 "",

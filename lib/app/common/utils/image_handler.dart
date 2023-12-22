@@ -25,7 +25,6 @@ class ImageHandler {
 
       return await cropImage(File(pickedFile.path));
     } catch (e) {
-      print('Error picking and cropping image: $e');
       return null;
     }
   }
@@ -63,7 +62,6 @@ class ImageHandler {
 
       return croppedFile;
     } catch (e) {
-      print('Error cropping image: $e');
       return null;
     }
   }
@@ -78,40 +76,29 @@ class ImageHandler {
 
       return result;
     } catch (e) {
-      print('Error compressing image: $e');
       return null;
     }
   }
 
   Future<String?> uploadImage(File file, String uploadUrl) async {
     try {
-      String fileExtension = path.extension(file.path).toLowerCase();
+     // String fileExtension = path.extension(file.path).toLowerCase();
       // Check the file extension
       if (!file.path.toLowerCase().endsWith('.png')) {
-        print('Invalid file type. Only PNG files are allowed!');
         return null;
       }
-      print('Extension: $fileExtension');
       http.MultipartRequest request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
       request.headers['Authorization'] = "Bearer ${StorageHelper.getToken}";
       request.headers['Content-Type'] = 'multipart/form-data';
       request.files.add(await http.MultipartFile.fromPath('file', file.path));
 
       http.StreamedResponse response = await request.send();
-      print('ImageHandler.uploadImage response : ${await response.stream.bytesToString()}');
-      print('ImageHandler.uploadImage uploadUrl : $uploadUrl');
-      print('ImageHandler.uploadImage: ${response.statusCode}');
-
-      print('ImageHandler.uploadImage: ${response.statusCode}');
       if ([200, 201].contains(response.statusCode)) {
-        print('ImageHandler.uploadImage: ${response.statusCode}');
         return response.reasonPhrase;
       } else {
-        print('Failed to upload image: ${response.reasonPhrase}');
         return null;
       }
     } catch (e) {
-      print('Error uploading image: $e');
       return null;
     }
   }

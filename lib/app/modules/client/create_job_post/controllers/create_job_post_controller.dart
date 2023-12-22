@@ -7,12 +7,16 @@ import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/timer_wheel_widget.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/client/create_job_post/models/create_job_post_request_model.dart';
 import 'package:mh/app/modules/client/create_job_post/models/custom_slider_model.dart';
 import 'package:mh/app/modules/client/create_job_post/widgets/custom_slider_widget.dart';
 import 'package:mh/app/modules/client/create_job_post/widgets/job_calender_widget.dart';
+import 'package:mh/app/modules/client/job_requests/controllers/job_requests_controller.dart';
+import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/repository/api_helper.dart';
+import 'package:mh/app/routes/app_pages.dart';
 
 class CreateJobPostController extends GetxController {
   BuildContext? context;
@@ -21,13 +25,16 @@ class CreateJobPostController extends GetxController {
 
   Rx<CreateJobPostRequestModel> createJobPostRequestModel = CreateJobPostRequestModel().obs;
   Rx<CustomSliderModel> customSliderModel = CustomSliderModel().obs;
+  RxList<String> skillList = <String>[].obs;
+  RxList<String> nationalityList = <String>[].obs;
+  RxList<String> languageList = <String>[].obs;
+  Rx<String> selectedPositionName = 'Manager'.obs;
   Rx<TextEditingController> tecRatePerHour = TextEditingController().obs;
-  RxList<String> nationalities = <String>[].obs;
-  RxList<NationalityDetailsModel> nationalityList = <NationalityDetailsModel>[].obs;
+  RxList<NationalityDetailsModel> nationalities = <NationalityDetailsModel>[].obs;
 
   Rx<TextEditingController> tecExperience = TextEditingController().obs;
   Rx<TextEditingController> tecAge = TextEditingController().obs;
-  TextEditingController tecDescription = TextEditingController();
+  Rx<TextEditingController> tecDescription = TextEditingController().obs;
 
   Rx<TextEditingController> tecPublishDate = TextEditingController().obs;
   Rx<TextEditingController> tecEndDate = TextEditingController().obs;
@@ -66,6 +73,8 @@ class CreateJobPostController extends GetxController {
     "30"
   ];
 
+  Rx<String> selectedVacancy = "2".obs;
+
   DateTime selectedDate = DateTime.now();
 
   final List<String> dayNames = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
@@ -75,9 +84,11 @@ class CreateJobPostController extends GetxController {
   Rx<DateTime?> rangeStartDate = Rx<DateTime?>(null);
   Rx<DateTime?> rangeEndDate = Rx<DateTime?>(null);
   RxBool sameAsStartDate = false.obs;
+  String type = "create";
 
   @override
   void onInit() {
+    _loadUpdateData();
     _getNationalityList();
     pageController = PageController(initialPage: currentPageIndex.value);
     super.onInit();
@@ -90,7 +101,8 @@ class CreateJobPostController extends GetxController {
   }
 
   void onPositionChange(String? position) {
-    createJobPostRequestModel.value.positionId = Utils.getPositionId(position ?? '');
+    selectedPositionName.value = position ?? "";
+    createJobPostRequestModel.value.positionId = Utils.getPositionId(selectedPositionName.value);
     createJobPostRequestModel.refresh();
   }
 
@@ -105,15 +117,15 @@ class CreateJobPostController extends GetxController {
   }
 
   void onSkillsChange(String? skill) {
-    createJobPostRequestModel.value.skills?.add(skill ?? "");
-    LinkedHashSet<String> uniqueSet = LinkedHashSet<String>.from(createJobPostRequestModel.value.skills ?? []);
-    createJobPostRequestModel.value.skills = uniqueSet.toList();
-    createJobPostRequestModel.refresh();
+    skillList.add(skill ?? "");
+    LinkedHashSet<String> uniqueSet = LinkedHashSet<String>.from(skillList);
+    skillList.value = uniqueSet.toList();
+    skillList.refresh();
   }
 
   void onSkillClearClick({required int index}) {
-    createJobPostRequestModel.value.skills?.removeAt(index);
-    createJobPostRequestModel.refresh();
+    skillList.removeAt(index);
+    skillList.refresh();
   }
 
   Future<void> _getNationalityList() async {
@@ -122,33 +134,33 @@ class CreateJobPostController extends GetxController {
       Utils.errorDialog(context!, customError);
     }, (NationalityModel responseData) {
       if (responseData.status == "success") {
-        nationalityList.value = responseData.nationalities ?? [];
+        nationalities.value = responseData.nationalities ?? [];
       }
     });
   }
 
   void onNationalityChange(String? nationality) {
-    nationalities.add(nationality ?? "");
-    LinkedHashSet<String> uniqueSet = LinkedHashSet<String>.from(nationalities);
-    nationalities.value = uniqueSet.toList();
-    nationalities.refresh();
+    nationalityList.add(nationality ?? "");
+    LinkedHashSet<String> uniqueSet = LinkedHashSet<String>.from((nationalityList));
+    nationalityList.value = uniqueSet.toList();
+    nationalityList.refresh();
   }
 
   void onNationalityClearClick({required int index}) {
-    nationalities.removeAt(index);
-    nationalities.refresh();
+    nationalityList.removeAt(index);
+    nationalityList.refresh();
   }
 
   void onLanguageChange(String? language) {
-    createJobPostRequestModel.value.languages?.add(language ?? "");
-    LinkedHashSet<String> uniqueSet = LinkedHashSet<String>.from(createJobPostRequestModel.value.languages ?? []);
-    createJobPostRequestModel.value.languages = uniqueSet.toList();
-    createJobPostRequestModel.refresh();
+    languageList.add(language ?? "");
+    LinkedHashSet<String> uniqueSet = LinkedHashSet<String>.from(languageList);
+    languageList.value = uniqueSet.toList();
+    languageList.refresh();
   }
 
   void onLanguageClearClick({required int index}) {
-    createJobPostRequestModel.value.languages?.removeAt(index);
-    createJobPostRequestModel.refresh();
+    languageList.removeAt(index);
+    languageList.refresh();
   }
 
   void onCustomSliderClick(
@@ -188,6 +200,7 @@ class CreateJobPostController extends GetxController {
   }
 
   void onVacancyChange(String? vac) {
+    selectedVacancy.value = vac ?? "";
     createJobPostRequestModel.value.vacancy = int.parse(vac ?? "");
     createJobPostRequestModel.refresh();
   }
@@ -386,6 +399,11 @@ class CreateJobPostController extends GetxController {
     });
   }
 
+  void onDateSubmitClick() {
+    tecSelectedDates.value.text = "${requestDateList.calculateTotalDays()} days selected";
+    Get.back();
+  }
+
   static Widget _title(BuildContext context, String text) => Row(
         children: [
           _divider(context),
@@ -406,23 +424,99 @@ class CreateJobPostController extends GetxController {
       );
 
   void onPostJobClick() async {
+    if (tecRatePerHour.value.text.isEmpty) {
+      Utils.showSnackBar(message: "Hourly Rate range is required", isTrue: false);
+    } else if (skillList.isEmpty) {
+      Utils.showSnackBar(message: "Skills are required", isTrue: false);
+    } else if (tecSelectedDates.value.text.isEmpty) {
+      Utils.showSnackBar(message: "Dates are required ", isTrue: false);
+    } else if (nationalityList.isEmpty) {
+      Utils.showSnackBar(message: "Nationalities are required ", isTrue: false);
+    } else if (tecExperience.value.text.isEmpty) {
+      Utils.showSnackBar(message: "Experience range is required ", isTrue: false);
+    } else if (languageList.isEmpty) {
+      Utils.showSnackBar(message: "Languages are required ", isTrue: false);
+    } else if (tecAge.value.text.isEmpty) {
+      Utils.showSnackBar(message: "Age range is required ", isTrue: false);
+    } else if (tecPublishDate.value.text.isEmpty) {
+      Utils.showSnackBar(message: "Publish date is required ", isTrue: false);
+    } else if (tecEndDate.value.text.isEmpty) {
+      Utils.showSnackBar(message: "End date is required ", isTrue: false);
+    } else if (tecDescription.value.text.isEmpty) {
+      Utils.showSnackBar(message: "Description is required ", isTrue: false);
+    } else {
+      CustomLoader.show(context!);
+
+      createJobPostRequestModel.value.vacancy = int.parse(selectedVacancy.value);
+      createJobPostRequestModel.value.positionId = Utils.getPositionId(selectedPositionName.value);
+      createJobPostRequestModel.value.clientId = appController.user.value.client?.id;
+      createJobPostRequestModel.value.description = tecDescription.value.text;
+      createJobPostRequestModel.value.dates = requestDateList;
+      createJobPostRequestModel.value.skills = skillList;
+      createJobPostRequestModel.value.nationalities = nationalityList;
+      createJobPostRequestModel.value.languages = languageList;
+
+      Either<CustomError, CommonResponseModel> response =
+          await _apiHelper.createJobPost(createJobPostRequestModel: createJobPostRequestModel.value);
+      Get.back();
+      response.fold((l) {
+        Logcat.msg(l.msg);
+      }, (CommonResponseModel r) {
+        if ([200, 201].contains(r.statusCode) == true && r.status == "success") {
+          Get.find<ClientHomeController>().getJobRequests();
+          Get.offNamed(Routes.clientHome);
+          Utils.showSnackBar(message: (r.message) ?? "Job has been created successfully", isTrue: true);
+        } else {
+          Utils.showSnackBar(message: (r.message) ?? 'Job post creation failed', isTrue: false);
+        }
+      });
+    }
+  }
+
+  void onUpdateJobClick() async {
     CustomLoader.show(context!);
 
-    createJobPostRequestModel.value.description = tecDescription.text;
+    createJobPostRequestModel.value.description = tecDescription.value.text;
     createJobPostRequestModel.value.dates = requestDateList;
+    createJobPostRequestModel.value.skills = skillList;
+    createJobPostRequestModel.value.nationalities = nationalityList;
+    createJobPostRequestModel.value.languages = languageList;
 
-    Either<CustomError, Response> response =
-        await _apiHelper.createJobPost(createJobPostRequestModel: createJobPostRequestModel.value);
+    Either<CustomError, CommonResponseModel> response =
+        await _apiHelper.editJobPost(createJobPostRequestModel: createJobPostRequestModel.value);
     Get.back();
     response.fold((l) {
       Logcat.msg(l.msg);
-    }, (Response r) {
-      if ([200, 201].contains(r.statusCode) == true) {
+    }, (CommonResponseModel r) {
+      if ([200, 201].contains(r.statusCode) == true && r.status == "success") {
+        Get.find<JobRequestsController>().getJobRequests();
         Get.back();
-        Utils.showSnackBar(message: "Job has been created successfully", isTrue: true);
+        Utils.showSnackBar(message: (r.message) ?? "Job has been updated successfully", isTrue: true);
       } else {
-        Utils.showSnackBar(message: 'Job post creation failed', isTrue: false);
+        Utils.showSnackBar(message: (r.message) ?? 'Job post update failed', isTrue: false);
       }
     });
+  }
+
+  void _loadUpdateData() {
+    if (Get.arguments != null) {
+      createJobPostRequestModel.value = Get.arguments;
+      type = "update";
+      requestDateList.value = createJobPostRequestModel.value.dates ?? [];
+      selectedPositionName.value = Utils.getPositionName(createJobPostRequestModel.value.positionId ?? "");
+      tecExperience.value.text =
+          "${createJobPostRequestModel.value.minExperience} - ${createJobPostRequestModel.value.maxExperience} years";
+      tecRatePerHour.value.text =
+          "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${createJobPostRequestModel.value.minRatePerHour} - ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${createJobPostRequestModel.value.maxRatePerHour}";
+      tecSelectedDates.value.text = "${(createJobPostRequestModel.value.dates ?? []).calculateTotalDays()} days";
+      tecAge.value.text = "${createJobPostRequestModel.value.minAge} - ${createJobPostRequestModel.value.maxAge} years";
+      selectedVacancy.value = (createJobPostRequestModel.value.vacancy ?? 2).toString();
+      tecPublishDate.value.text = (createJobPostRequestModel.value.publishedDate ?? DateTime.now()).dMMMy;
+      tecEndDate.value.text = (createJobPostRequestModel.value.publishedDate ?? DateTime.now()).dMMMy;
+      tecDescription.value.text = createJobPostRequestModel.value.description ?? "";
+      skillList.value = createJobPostRequestModel.value.skills ?? [];
+      nationalityList.value = createJobPostRequestModel.value.nationalities ?? [];
+      languageList.value = createJobPostRequestModel.value.languages ?? [];
+    }
   }
 }

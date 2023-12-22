@@ -10,7 +10,6 @@ import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/custom_badge.dart';
-import '../../../../common/widgets/custom_feature_box.dart';
 import '../../../../common/widgets/custom_help_support.dart';
 import '../../../../common/widgets/custom_menu.dart';
 import '../controllers/client_home_controller.dart';

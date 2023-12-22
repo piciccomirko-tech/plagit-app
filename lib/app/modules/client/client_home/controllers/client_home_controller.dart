@@ -122,14 +122,14 @@ class ClientHomeController extends GetxController {
     Get.toNamed(Routes.clientSuggestedEmployees);
   }
 
-  void _getJobRequests() async {
+  void getJobRequests() async {
     jobPostDataLoading.value = true;
     Either<CustomError, JobPostRequestModel> responseData =
         await _apiHelper.getJobRequests(clientId: appController.user.value.client?.id ?? "");
     jobPostDataLoading.value = false;
 
     responseData.fold((CustomError customError) {
-      Utils.errorDialog(context!, customError..onRetry = _getJobRequests);
+      Utils.errorDialog(context!, customError..onRetry = getJobRequests);
     }, (JobPostRequestModel response) {
       if (response.status == "success" && response.statusCode == 200) {
         jobPostRequest.value = response;
@@ -257,7 +257,7 @@ class ClientHomeController extends GetxController {
     getClientInvoice();
     _trackUnreadMsg();
     fetchRequestEmployees();
-    _getJobRequests();
+    getJobRequests();
   }
 
   void refreshPage() {

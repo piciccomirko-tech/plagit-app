@@ -20,8 +20,8 @@ class SkillsDropDownWidget extends GetWidget<CreateJobPostController> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 18.w),
               child: Wrap(
-                children: List.generate((controller.createJobPostRequestModel.value.skills ?? []).length, (int index) {
-                  String skill = (controller.createJobPostRequestModel.value.skills ?? [])[index];
+                children: List.generate(controller.skillList.length, (int index) {
+                  String skill = controller.skillList[index];
                   return Container(
                     margin: EdgeInsets.only(right: 10.w, bottom: 10.h),
                     padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 8.h),

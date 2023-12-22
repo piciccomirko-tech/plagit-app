@@ -84,6 +84,7 @@ class MyStrings {
   static const String mh = "mh";
   static const String employees = "employees";
   static const String createJobPost = "Create Job Post";
+  static const String updateJobPost = "Update Job Post";
   static const String jobRequests = "Job Requests";
   static const String dashboard = "dashboard";
   static const String myEmployees = "myEmployees";
