@@ -18,6 +18,7 @@ class HourlyRateWidget extends GetWidget<CreateJobPostController> {
         readOnly: true,
         onTap: () => controller.onCustomSliderClick(
             context: context,
+            typeName: "Hourly Rate",
             minValue: controller.createJobPostRequestModel.value.minRatePerHour?.toInt() ?? 0,
             maxValue: controller.createJobPostRequestModel.value.maxRatePerHour?.toInt() ?? 0,
             onTap: controller.onHourlyRateSubmitClick),

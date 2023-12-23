@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -82,15 +83,10 @@ class ImageHandler {
 
   Future<String?> uploadImage(File file, String uploadUrl) async {
     try {
-     // String fileExtension = path.extension(file.path).toLowerCase();
-      // Check the file extension
-      if (!file.path.toLowerCase().endsWith('.png')) {
-        return null;
-      }
       http.MultipartRequest request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
       request.headers['Authorization'] = "Bearer ${StorageHelper.getToken}";
       request.headers['Content-Type'] = 'multipart/form-data';
-      request.files.add(await http.MultipartFile.fromPath('file', file.path));
+      request.files.add(await http.MultipartFile.fromPath('file', file.path, contentType: MediaType('image', 'jpeg')));
 
       http.StreamedResponse response = await request.send();
       if ([200, 201].contains(response.statusCode)) {

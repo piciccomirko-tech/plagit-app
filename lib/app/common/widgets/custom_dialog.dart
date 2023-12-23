@@ -25,7 +25,7 @@ class CustomDialogue {
       _errorDialog(
         context: context,
         onRetry: onRetry,
-        logo: MyAssets.lottie.serverError,
+        logo: MyAssets.lottie.warning,
         title: "Error $errorCode",
         details: msg ?? "Something happen with our server. Please try again or keep patient for some time",
       );
@@ -86,7 +86,7 @@ class CustomDialogue {
                           Expanded(
                             child: Align(
                               alignment: Alignment.topCenter,
-                              child: Lottie.asset(logo),
+                              child: Lottie.asset(logo, height: 120, width: 120),
                             ),
                           ),
                           Expanded(
@@ -94,6 +94,7 @@ class CustomDialogue {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                if(onRetry != null)
                                 Text(
                                   title,
                                   style: MyColors.l111111_dtext(context).semiBold22,
@@ -102,7 +103,7 @@ class CustomDialogue {
                                 Text(
                                   details,
                                   textAlign: TextAlign.center,
-                                  style: MyColors.l50555C_dtext(context).regular15,
+                                  style: MyColors.l50555C_dtext(context).medium15,
                                 ),
                               ],
                             ),

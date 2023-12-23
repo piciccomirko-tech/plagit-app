@@ -55,7 +55,7 @@ class MhEmployeesByIdController extends GetxController {
 
   void onEmployeeClick(Employee employee) {
     Get.toNamed(Routes.employeeDetails, arguments: {
-      MyStrings.arg.employeeAvailableDays: employee.available,
+      MyStrings.arg.employeeAvailableDays: employee.available??"",
       MyStrings.arg.data: employee.id,
       MyStrings.arg.showAsAdmin: false,
       MyStrings.arg.fromWhere: MyStrings.arg.mhEmployeeViewByIdText

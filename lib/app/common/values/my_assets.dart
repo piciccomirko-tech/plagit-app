@@ -37,6 +37,8 @@ class MyAssets {
   static const checkIn = "assets/icons/checkin.png";
   static const checkOut = "assets/icons/checkout.png";
   static const maps = "assets/icons/maps.png";
+  static const liveCamera = "assets/icons/live_camera.png";
+  static const gallery = "assets/icons/gallery.png";
   static const distance = "assets/icons/distance.png";
   static const employeeMarker = "assets/icons/employee_marker.png";
   static const breakTime = "assets/icons/break_time.png";
@@ -107,6 +109,7 @@ class _Lottie {
   String noWifi = "assets/lottie/no_wifi.json";
   String registrationDone = "assets/lottie/registration_done.json";
   String serverError = "assets/lottie/server_error.json";
+  String warning = "assets/lottie/warning.json";
   String hireSuccess = "assets/lottie/hire_success.json";
   String hireFailed = "assets/lottie/hire_failed.json";
   String notFound = "assets/lottie/not_found.json";

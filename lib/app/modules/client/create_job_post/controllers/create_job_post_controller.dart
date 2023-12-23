@@ -164,10 +164,15 @@ class CreateJobPostController extends GetxController {
   }
 
   void onCustomSliderClick(
-      {required BuildContext context, required int minValue, required int maxValue, required Function() onTap}) {
+      {required BuildContext context,
+      required int minValue,
+      required int maxValue,
+      required Function() onTap,
+      required String typeName}) {
     customSliderModel.value.minValue = minValue.toDouble();
     customSliderModel.value.maxValue = maxValue.toDouble();
     customSliderModel.value.onTap = onTap;
+    customSliderModel.value.typeName = typeName;
     customSliderModel.refresh();
 
     showModalBottomSheet(
@@ -208,9 +213,10 @@ class CreateJobPostController extends GetxController {
   Future<void> selectDate({required BuildContext context, required String dateType}) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2015, 8),
+      initialDate: dateType == "publish" ? DateTime.now() : DateTime.now().add(const Duration(days: 1)),
+      firstDate: dateType == "publish" ? DateTime.now() : DateTime.now().add(const Duration(days: 1)),
       lastDate: DateTime(2101),
+      helpText: dateType == "publish" ? "Select Publish Date".toUpperCase() : "Select End Date".toUpperCase(),
     );
     if (picked != null) {
       if (dateType == 'publish') {

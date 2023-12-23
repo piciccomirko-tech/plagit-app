@@ -20,6 +20,7 @@ class AgeWidget extends GetWidget<CreateJobPostController> {
         readOnly: true,
         onTap: () => controller.onCustomSliderClick(
             context: context,
+            typeName: "Age",
             minValue: controller.createJobPostRequestModel.value.minAge ?? 0,
             maxValue: controller.createJobPostRequestModel.value.maxAge ?? 0,
             onTap: controller.onAgeSubmitClick),

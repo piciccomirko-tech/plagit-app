@@ -46,7 +46,8 @@ class AdminAllEmployeesController extends GetxController {
 
   void onEmployeeClick(Employee employee) {
     Get.toNamed(Routes.employeeDetails, arguments: {
-      MyStrings.arg.data: employee,
+      MyStrings.arg.employeeAvailableDays: employee.available??"",
+      MyStrings.arg.data: employee.id,
       MyStrings.arg.showAsAdmin: true,
       MyStrings.arg.fromWhere: 'admin_home_view'
     });

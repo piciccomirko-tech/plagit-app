@@ -1,14 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
-import 'package:mh/app/common/extensions/extensions.dart';
-import 'package:mh/app/common/values/my_assets.dart';
-import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_network_image.dart';
-import 'package:mh/app/modules/employee/employee_self_profile/controllers/employee_self_profile_controller.dart';
+import 'package:mh/app/modules/client/client_self_profile/controllers/client_self_profile_controller.dart';
 
-class EmployeeProfileImageWidget extends GetWidget<EmployeeSelfProfileController> {
-  const EmployeeProfileImageWidget({super.key});
+class ClientProfilePictureWidget extends GetWidget<ClientSelfProfileController> {
+  const ClientProfilePictureWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +30,12 @@ class EmployeeProfileImageWidget extends GetWidget<EmployeeSelfProfileController
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(130),
                           child: Image.file(controller.pickedImage.value!, fit: BoxFit.cover))
-                      : CustomNetworkImage(
-                          url: (controller.employee.value.details?.profilePicture ?? "").imageUrl,
-                          radius: 130,
-                        ),
+                      : (controller.employee.value.details?.profilePicture ?? "").isEmpty
+                          ? Image.asset(MyAssets.clientFixedLogo)
+                          : CustomNetworkImage(
+                              url: (controller.employee.value.details?.profilePicture ?? "").imageUrl,
+                              radius: 130,
+                            ),
                 ),
               ),
               Positioned.fill(
@@ -51,6 +48,17 @@ class EmployeeProfileImageWidget extends GetWidget<EmployeeSelfProfileController
             ],
           ),
         ),
+        /*Container(
+          width: 130.h,
+          height: 130.h,
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 2.5,
+                color: MyColors.c_C6A34F,
+              )),
+          child: Image.asset(MyAssets.clientFixedLogo),
+        )*/
         const Spacer(),
       ],
     );

@@ -36,7 +36,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                       Get.toNamed(Routes.notifications);
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(top: 15.h, right: 15.w),
+                      padding: EdgeInsets.only(right: 15.w),
                       child: Badge(
                         backgroundColor: MyColors.c_C92C1A,
                         label: Obx(() {
@@ -55,7 +55,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                 CustomMenu.accountMenu(context);
               },
               icon: const Icon(
-                Icons.person_outline_rounded,
+                CupertinoIcons.person,
               ),
             ),
           ],

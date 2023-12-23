@@ -83,7 +83,7 @@ class JobRequestWidget extends StatelessWidget {
                     SizedBox(width: 5.w),
                   ],
                 ),
-                SizedBox(height: 15.h),
+                SizedBox(height: 40.h),
               ],
             )),
         Positioned(
@@ -96,6 +96,26 @@ class JobRequestWidget extends StatelessWidget {
                 height: 28,
                 text: ("View Job Details"),
                 margin: EdgeInsets.zero,
+                fontSize: 12,
+                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                onTap: () => Get.find<JobRequestsController>().onJobDetailsClick(jobDetails: jobRequest),
+              ),
+            )),
+        Positioned(
+            bottom: 0,
+            left: 0,
+            child: Visibility(
+              visible: (jobRequest.users ?? []).isNotEmpty,
+              child: CustomButtons.button(
+                backgroundColor: (jobRequest.status ?? "") == "closed".toUpperCase()
+                    ? Colors.red
+                    : (jobRequest.status ?? "") == "published".toUpperCase()
+                        ? Colors.green
+                        : Colors.amber.shade800,
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                height: 28,
+                text: (jobRequest.status ?? ""),
+                margin: EdgeInsets.only(bottom: 15.0.h),
                 fontSize: 12,
                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                 onTap: () => Get.find<JobRequestsController>().onJobDetailsClick(jobDetails: jobRequest),

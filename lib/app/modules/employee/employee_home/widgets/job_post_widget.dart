@@ -29,7 +29,7 @@ class JobPostWidget extends StatelessWidget {
             _detailsItem(
                 MyAssets.rate,
                 "${MyStrings.rate.tr}:",
-                "${Utils.getCurrencySymbol(Get.find<EmployeeHomeController>().appController.user.value.employee?.countryName ?? "")}${jobPost.minRatePerHour}/hour - ${Utils.getCurrencySymbol(Get.find<EmployeeHomeController>().appController.user.value.employee?.countryName ?? "")}${jobPost.maxRatePerHour}/hour",
+                "${Utils.getCurrencySymbol(Get.find<EmployeeHomeController>().appController.user.value.employee?.countryName ?? "")}${jobPost.minRatePerHour} - ${Utils.getCurrencySymbol(Get.find<EmployeeHomeController>().appController.user.value.employee?.countryName ?? "")}${jobPost.maxRatePerHour}/hour",
                 context),
             _detailsItem(
                 MyAssets.exp, MyStrings.exp.tr, "${jobPost.minExperience} - ${jobPost.maxExperience} years", context),

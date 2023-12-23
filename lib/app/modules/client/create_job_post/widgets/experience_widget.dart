@@ -20,6 +20,7 @@ class ExperienceWidget extends GetWidget<CreateJobPostController> {
         readOnly: true,
         onTap: () => controller.onCustomSliderClick(
             context: context,
+            typeName: "Experience",
             minValue: controller.createJobPostRequestModel.value.minExperience ?? 0,
             maxValue: controller.createJobPostRequestModel.value.maxExperience ?? 0,
             onTap: controller.onExperienceSubmitClick),

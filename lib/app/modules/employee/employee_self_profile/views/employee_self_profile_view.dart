@@ -1,3 +1,4 @@
+import 'package:mh/app/modules/client/employee_details/widgets/vlog_carsousel_slider.dart';
 import 'package:mh/app/modules/employee/employee_self_profile/widgets/employee_profile_image_widget.dart';
 
 import '../../../../common/utils/exports.dart';
@@ -42,7 +43,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       ],
                     ))),
                 SizedBox(height: 30.h),
-                //  Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
+                Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
                 Row(
                   children: [
                     Expanded(

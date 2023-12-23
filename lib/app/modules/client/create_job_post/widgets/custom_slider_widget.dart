@@ -16,15 +16,19 @@ class CustomSliderWidget extends GetWidget<CreateJobPostController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 250.h,
-      decoration: const BoxDecoration(
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+      height: Get.width * 0.7,
+      decoration: BoxDecoration(
+          color: MyColors.lightCard(context),
+          borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              SizedBox(height: 20.h),
+              SizedBox(height: 10.h),
+              Text("Select Range for ${controller.customSliderModel.value.typeName ?? ""}".toUpperCase(),
+                  style: MyColors.l111111_dwhite(context).semiBold18),
+              SizedBox(height: 40.h),
               FlutterSlider(
                 min: controller.customSliderModel.value.minValue,
                 max: controller.customSliderModel.value.maxValue,
