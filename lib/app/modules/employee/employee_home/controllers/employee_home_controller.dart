@@ -104,7 +104,7 @@ class EmployeeHomeController extends GetxController {
     getBookingHistory();
     _getHiredHistory();
     _trackUnreadMsg();
-    _getJobRequests();
+    getJobRequests();
   }
 
   Future<void> _getCurrentLocation() async {
@@ -650,13 +650,13 @@ class EmployeeHomeController extends GetxController {
     });
   }
 
-  void _getJobRequests() async {
+  void getJobRequests() async {
     jobPostDataLoading.value = true;
     Either<CustomError, JobPostRequestModel> responseData = await _apiHelper.getJobRequests(status: "PUBLISHED");
     jobPostDataLoading.value = false;
 
     responseData.fold((CustomError customError) {
-      Utils.errorDialog(context!, customError..onRetry = _getJobRequests);
+      Utils.errorDialog(context!, customError..onRetry = getJobRequests);
     }, (JobPostRequestModel response) {
       if (response.status == "success" && response.statusCode == 200) {
         jobPostRequest.value = response;

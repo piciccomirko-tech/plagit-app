@@ -51,6 +51,7 @@ class CustomHireTime {
                 SizedBox(height: 30.h),
                 CustomButtons.button(
                   text: "Done",
+                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                   onTap: () {
                     if (fromTime == toTime) {
                       CustomDialogue.information(

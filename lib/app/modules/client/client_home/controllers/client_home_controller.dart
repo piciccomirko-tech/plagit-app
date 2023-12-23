@@ -125,7 +125,7 @@ class ClientHomeController extends GetxController {
   void getJobRequests() async {
     jobPostDataLoading.value = true;
     Either<CustomError, JobPostRequestModel> responseData =
-        await _apiHelper.getJobRequests(clientId: appController.user.value.client?.id ?? "");
+        await _apiHelper.getJobRequests(userType: "CLIENT", clientId: appController.user.value.client?.id ?? "");
     jobPostDataLoading.value = false;
 
     responseData.fold((CustomError customError) {

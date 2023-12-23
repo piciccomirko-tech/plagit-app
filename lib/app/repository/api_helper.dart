@@ -220,7 +220,7 @@ abstract class ApiHelper {
   EitherModel<ClientBankInfoModel> getBankInfo();
   EitherModel<CommonResponseModel> createJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
   EitherModel<CommonResponseModel> editJobPost({required CreateJobPostRequestModel createJobPostRequestModel});
-  EitherModel<JobPostRequestModel> getJobRequests({String? clientId, String? status});
+  EitherModel<JobPostRequestModel> getJobRequests({String? userType, String? clientId, String? status});
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
-  EitherModel<CommonResponseModel> interested({required InterestedRequestModel interestedRequestModel});
+  EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel});
 }

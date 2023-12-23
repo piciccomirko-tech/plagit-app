@@ -1,5 +1,5 @@
 name: mh
-version: 2.5.1+51
+version: 2.5.2+52
 publish_to: none
 description: A new Flutter project.
 environment:
@@ -14,7 +14,8 @@ dependencies:
 
   # state management, routing
   get: ^4.6.6
-  path: ^1.8.3
+
+  flutter_widget_from_html: ^0.14.9
 
   chewie: ^1.7.4
 

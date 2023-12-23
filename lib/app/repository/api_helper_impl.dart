@@ -1318,9 +1318,9 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<JobPostRequestModel> getJobRequests({String? clientId, String? status}) async {
+  EitherModel<JobPostRequestModel> getJobRequests({String? userType, String? clientId, String? status}) async {
     String url = "job";
-    if ((clientId ?? "").isNotEmpty) url += "?clientId=$clientId";
+    if ((userType ?? "").isNotEmpty && (clientId ?? "").isNotEmpty) url += "?userType=$userType&clientId=$clientId";
     if ((status ?? "").isNotEmpty) url += "?status=$status";
 
     Response response = await get(url);
@@ -1350,17 +1350,19 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<CommonResponseModel> interested({required InterestedRequestModel interestedRequestModel}) async {
+  EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel}) async {
     String url = "job/add-interest";
     String requestBody = interestedRequestModel.toRawJson();
     Response response = await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
-    return _convert<CommonResponseModel>(
+
+    return _convert<Response>(
       response,
-      CommonResponseModel.fromJson,
-    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+      (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 
   @override

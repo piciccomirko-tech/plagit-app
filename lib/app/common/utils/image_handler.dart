@@ -6,7 +6,6 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:mh/app/common/local_storage/storage_helper.dart';
-import 'package:path/path.dart' as path;
 
 class ImageHandler {
   final ImagePicker _imagePicker = ImagePicker();

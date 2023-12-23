@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
-import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/controllers/employee_job_posts_details_controller.dart';
 
@@ -28,14 +28,8 @@ class EmployeeJobPostDetailsCommentInfoWidget extends GetWidget<EmployeeJobPosts
               color: MyColors.c_A6A6A6,
             ),
             SizedBox(height: 10.h),
-            Row(
-              children: [
-                 Image.asset(MyAssets.chefDePartie, height: 18, width: 18),
-                Text("  ${controller.jobPostDetails.description??""}",
-                    maxLines: null,
-                    style: MyColors.l111111_dwhite(context).medium13)
-              ],
-            )
+            HtmlWidget("  ${controller.jobPostDetails.description ?? ""}",
+                textStyle: MyColors.l111111_dwhite(context).medium13),
           ],
         ));
   }

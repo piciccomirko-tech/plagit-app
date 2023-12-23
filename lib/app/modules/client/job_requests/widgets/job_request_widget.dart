@@ -104,22 +104,19 @@ class JobRequestWidget extends StatelessWidget {
         Positioned(
             bottom: 0,
             left: 0,
-            child: Visibility(
-              visible: (jobRequest.users ?? []).isNotEmpty,
-              child: CustomButtons.button(
-                backgroundColor: (jobRequest.status ?? "") == "closed".toUpperCase()
-                    ? Colors.red
-                    : (jobRequest.status ?? "") == "published".toUpperCase()
-                        ? Colors.green
-                        : Colors.amber.shade800,
-                padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                height: 28,
-                text: (jobRequest.status ?? ""),
-                margin: EdgeInsets.only(bottom: 15.0.h),
-                fontSize: 12,
-                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                onTap: () => Get.find<JobRequestsController>().onJobDetailsClick(jobDetails: jobRequest),
-              ),
+            child: CustomButtons.button(
+              backgroundColor: (jobRequest.status ?? "") == "closed".toUpperCase()
+                  ? Colors.red
+                  : (jobRequest.status ?? "") == "published".toUpperCase()
+                      ? Colors.green
+                      : Colors.amber.shade800,
+              padding: const EdgeInsets.symmetric(horizontal: 15.0),
+              height: 28,
+              text: (jobRequest.status ?? ""),
+              margin: EdgeInsets.only(bottom: 15.0.h),
+              fontSize: 12,
+              customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+              onTap: () => Get.find<JobRequestsController>().onJobDetailsClick(jobDetails: jobRequest),
             ))
       ],
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/common/widgets/custom_bottombar.dart';
 import 'package:mh/app/common/widgets/custom_buttons.dart';
 import 'package:mh/app/enums/custom_button_style.dart';
@@ -10,14 +11,33 @@ class EmployeeJobPostDetailsBottomNavBar extends GetWidget<EmployeeJobPostsDetai
 
   @override
   Widget build(BuildContext context) {
-    return Visibility(
+    return Obx(() => Visibility(
       visible: controller.showInterestedButton,
       child: CustomBottomBar(
         child: CustomButtons.button(
+            backgroundColor: (controller.jobPostDetails.users ?? [])
+                .map((e) => e.id ?? "")
+                .toList()
+                .contains(controller.appController.user.value.employee?.id ?? "") ==
+                true
+                ? Colors.teal
+                : MyColors.c_C6A34F,
             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-            text: "I'm Interested".toUpperCase(),
-            onTap: () => controller.showInterest(context: context)),
+            text: (controller.jobPostDetails.users ?? [])
+                .map((e) => e.id ?? "")
+                .toList()
+                .contains(controller.appController.user.value.employee?.id ?? "") ==
+                true
+                ? "Already Applied".toUpperCase()
+                : "I'm Interested".toUpperCase(),
+            onTap: () => (controller.jobPostDetails.users ?? [])
+                .map((e) => e.id ?? "")
+                .toList()
+                .contains(controller.appController.user.value.employee?.id ?? "") ==
+                true
+                ? null
+                : controller.showInterest(context: context)),
       ),
-    );
+    ));
   }
 }

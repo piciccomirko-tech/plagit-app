@@ -41,7 +41,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                       Get.toNamed(Routes.notifications);
                     },
                     child: Padding(
-                      padding: EdgeInsets.only(top: 15.h, right: 15.w),
+                      padding: EdgeInsets.only(top: 10.h, right: 15.w),
                       child: Badge(
                         backgroundColor: MyColors.c_C92C1A,
                         label: Obx(() {

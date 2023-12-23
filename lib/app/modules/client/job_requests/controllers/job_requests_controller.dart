@@ -29,7 +29,7 @@ class JobRequestsController extends GetxController {
   void getJobRequests() async {
     jobPostDataLoading.value = true;
     Either<CustomError, JobPostRequestModel> responseData =
-        await _apiHelper.getJobRequests(clientId: _appController.user.value.client?.id ?? "");
+        await _apiHelper.getJobRequests(userType: "CLIENT", clientId: _appController.user.value.client?.id ?? "");
     jobPostDataLoading.value = false;
 
     responseData.fold((CustomError customError) {

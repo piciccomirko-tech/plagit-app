@@ -1,7 +1,7 @@
 import '../../modules/employee/employee_home/controllers/employee_home_controller.dart';
 import '../utils/exports.dart';
 
-class  CustomBreakTime {
+class CustomBreakTime {
   static void show(BuildContext context, Function(int hour, int min) onBreakTimePickDone) {
     int hour = 0;
     int min = 0;
@@ -17,7 +17,6 @@ class  CustomBreakTime {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(height: 19.h),
-
                 Center(
                   child: Container(
                     height: 4.h,
@@ -27,26 +26,19 @@ class  CustomBreakTime {
                     ),
                   ),
                 ),
-
                 SizedBox(height: 19.h),
-
                 Row(
                   children: [
                     _divider(context),
-
                     SizedBox(width: 10.w),
-
                     Text(
                       "Break Time",
                       style: MyColors.l7B7B7B_dtext(context).semiBold16,
                     ),
-
                     SizedBox(width: 10.w),
-
                     _divider(context),
                   ],
                 ),
-
                 SizedBox(
                   height: 300,
                   child: Row(
@@ -71,7 +63,6 @@ class  CustomBreakTime {
                           ),
                         ),
                       ),
-
                       Transform.translate(
                         offset: const Offset(0, -13),
                         child: Text(
@@ -79,7 +70,6 @@ class  CustomBreakTime {
                           style: MyColors.l111111_dwhite(context).regular14,
                         ),
                       ),
-
                       SizedBox(
                         width: 70,
                         child: Center(
@@ -99,7 +89,6 @@ class  CustomBreakTime {
                           ),
                         ),
                       ),
-
                       Transform.translate(
                         offset: const Offset(0, -13),
                         child: Text(
@@ -110,16 +99,15 @@ class  CustomBreakTime {
                     ],
                   ),
                 ),
-
                 CustomButtons.button(
                   text: "Done",
-                  onTap: (){
+                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                  onTap: () {
                     Navigator.pop(context); // hide modal
                     onBreakTimePickDone(hour, min);
                   },
                   margin: const EdgeInsets.symmetric(horizontal: 18),
                 ),
-
                 SizedBox(height: 11.h),
               ],
             ),

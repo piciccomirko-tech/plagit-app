@@ -43,6 +43,7 @@ class CreateJobPostController extends GetxController {
 
   final RxSet<DateTime> selectedDates = <DateTime>{}.obs;
   List<String> vacancyList = <String>[
+    "1",
     "2",
     "3",
     "4",
@@ -471,7 +472,32 @@ class CreateJobPostController extends GetxController {
         if ([200, 201].contains(r.statusCode) == true && r.status == "success") {
           Get.find<ClientHomeController>().getJobRequests();
           Get.offNamed(Routes.clientHome);
-          Utils.showSnackBar(message: (r.message) ?? "Job has been created successfully", isTrue: true);
+          Get.dialog(
+              Dialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+                surfaceTintColor: Colors.transparent,
+                backgroundColor: MyColors.lightCard(context!),
+                insetPadding: EdgeInsets.symmetric(horizontal: 20.0.w),
+                child: Container(
+                  padding: const EdgeInsets.all(20.0),
+                  //height: 150.h,
+                  //decoration: BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Your Job Offer has been Posted", style: MyColors.l111111_dwhite(context!).semiBold18),
+                      SizedBox(height: 40.h),
+                      CustomButtons.button(
+                          text: "Okay",
+                          onTap: () => Get.back(),
+                          margin: EdgeInsets.symmetric(horizontal: 100.0.w),
+                          customButtonStyle: CustomButtonStyle.radiusTopBottomCorner)
+                    ],
+                  ),
+                ),
+              ),
+              barrierColor: MyColors.black.withOpacity(0.98));
         } else {
           Utils.showSnackBar(message: (r.message) ?? 'Job post creation failed', isTrue: false);
         }

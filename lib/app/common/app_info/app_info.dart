@@ -6,7 +6,7 @@ class AppInfo {
 
   static const String appName = "MH Premier Staffing Solutions";
 
-  static const String version = "2.5.1";
+  static const String version = "2.5.2";
 
   /// it must change [releaseMode] when release
   static const ReleaseMode releaseMode = ReleaseMode.release;
