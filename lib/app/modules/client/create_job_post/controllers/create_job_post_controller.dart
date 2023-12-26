@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:dartz/dartz.dart';
+import 'package:html/parser.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
@@ -17,6 +18,7 @@ import 'package:mh/app/modules/client/job_requests/controllers/job_requests_cont
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/repository/api_helper.dart';
 import 'package:mh/app/routes/app_pages.dart';
+import 'package:html/dom.dart' as dom;
 
 class CreateJobPostController extends GetxController {
   BuildContext? context;
@@ -545,10 +547,17 @@ class CreateJobPostController extends GetxController {
       selectedVacancy.value = (createJobPostRequestModel.value.vacancy ?? 2).toString();
       tecPublishDate.value.text = (createJobPostRequestModel.value.publishedDate ?? DateTime.now()).dMMMy;
       tecEndDate.value.text = (createJobPostRequestModel.value.publishedDate ?? DateTime.now()).dMMMy;
-      tecDescription.value.text = createJobPostRequestModel.value.description ?? "";
+      tecDescription.value.text = convertHtmlToPlainText(createJobPostRequestModel.value.description ?? "");
       skillList.value = createJobPostRequestModel.value.skills ?? [];
       nationalityList.value = createJobPostRequestModel.value.nationalities ?? [];
       languageList.value = createJobPostRequestModel.value.languages ?? [];
     }
   }
+
+  String convertHtmlToPlainText(String htmlString) {
+    dom.Document document = parse(htmlString);
+    String plainText = parse(document.body!.text).documentElement!.text;
+    return plainText;
+  }
+
 }

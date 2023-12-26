@@ -1,5 +1,5 @@
 name: mh
-version: 2.5.2+52
+version: 2.5.3+53
 publish_to: none
 description: A new Flutter project.
 environment:
@@ -8,6 +8,8 @@ environment:
 dependencies:
 
   cupertino_icons: ^1.0.6
+
+  html: ^0.15.4
 
   # better error handle helper
   dartz: ^0.10.1
