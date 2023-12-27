@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'dart:io' as i;
 import 'dart:io';
 import 'dart:isolate';
 import 'package:dartz/dartz.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/countries.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_dialog.dart';
@@ -405,10 +409,10 @@ class RegisterController extends GetxController implements RegisterInterface {
     }
   }
 
-  Future<void> onProfileImageClick() async {
-    final picker = ImagePicker();
+  /*Future<void> onProfileImageClick() async {
+    final ImagePicker picker = ImagePicker();
 
-    final pickedFile = await picker.pickImage(
+    final XFile? pickedFile = await picker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 100,
     );
@@ -420,6 +424,136 @@ class RegisterController extends GetxController implements RegisterInterface {
     } else {
       profileImage.clear();
     }
+  }*/
+
+  Widget _imageSourceWidget({required String imageSource}) => InkResponse(
+        onTap: () => _clickToPickImage(imageSource: imageSource),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(imageSource == "Camera" ? MyAssets.liveCamera : MyAssets.gallery, height: 30, width: 30),
+            SizedBox(height: 10.h),
+            Text(imageSource, style: MyColors.l111111_dwhite(context!).medium16)
+          ],
+        ),
+      );
+
+  void showImagePickerBottomSheet() {
+    Get.bottomSheet(
+      Container(
+        height: Get.width * 0.5,
+        decoration: BoxDecoration(
+            color: MyColors.lightCard(context!),
+            borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text("Take a picture from".toUpperCase(), style: MyColors.c_C6A34F.semiBold18),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [_imageSourceWidget(imageSource: "Camera"), _imageSourceWidget(imageSource: "Gallery")],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _clickToPickImage({required String imageSource}) async {
+    Get.back();
+
+    final XFile? pickedFile = await ImagePicker().pickImage(
+      source: imageSource == "Camera" ? ImageSource.camera : ImageSource.gallery,
+      imageQuality: 100,
+    );
+
+    if (pickedFile != null) {
+      File pickedImage = i.File(pickedFile.path);
+      _cropImage(imageFile: pickedImage);
+    } else {
+      Utils.showSnackBar(message: "Failed to take profile picture", isTrue: false);
+    }
+  }
+
+  Future<void> _cropImage({required i.File imageFile}) async {
+    try {
+      CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: imageFile.path,
+        compressQuality: 100,
+        maxWidth: 500,
+        maxHeight: 600,
+        compressFormat: ImageCompressFormat.png,
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio16x9
+              ]
+            : [
+                CropAspectRatioPreset.original,
+                CropAspectRatioPreset.square,
+                CropAspectRatioPreset.ratio3x2,
+                CropAspectRatioPreset.ratio4x3,
+                CropAspectRatioPreset.ratio5x3,
+                CropAspectRatioPreset.ratio5x4,
+                CropAspectRatioPreset.ratio7x5,
+                CropAspectRatioPreset.ratio16x9
+              ],
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Image',
+            toolbarColor: MyColors.c_C6A34F,
+            toolbarWidgetColor: Colors.white,
+            statusBarColor: MyColors.c_C6A34F,
+            backgroundColor: Colors.white,
+          ),
+          IOSUiSettings(
+            title: 'Crop Image',
+            cancelButtonTitle: 'Cancel',
+            doneButtonTitle: 'Done',
+            rectX: 0,
+            rectY: 0,
+            rectWidth: 500,
+            rectHeight: 600,
+            aspectRatioLockEnabled: true,
+            aspectRatioPickerButtonHidden: true,
+            resetButtonHidden: false,
+          ),
+        ],
+      );
+
+      if (croppedFile != null) {
+        _compressImage(imageFile: imageFile);
+      } else {
+        Utils.showSnackBar(message: "Failed to crop profile image", isTrue: false);
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _compressImage({required i.File imageFile}) async {
+    try {
+      final Directory tempDir = await getTemporaryDirectory();
+      final String tempPath = tempDir.path;
+      final String targetPath = '$tempPath/compressed_image.jpg';
+
+      final XFile? compressedImage = await FlutterImageCompress.compressAndGetFile(
+          imageFile.path, targetPath, // Use a different target path for the compressed image
+          quality: 100,
+          minHeight: 500,
+          minWidth: 600);
+
+      if (compressedImage != null) {
+        profileImage
+          ..clear()
+          ..add(File(imageFile.path));
+      } else {
+        Utils.showSnackBar(message: "Failed to compress profile image", isTrue: false);
+      }
+    } catch (_) {}
   }
 
   Future<void> _fetchSourceAndRefers() async {
@@ -457,7 +591,7 @@ class RegisterController extends GetxController implements RegisterInterface {
     });
   }
 
-  Future<void> uploadExtraFile({required File file, required String fileName, required String label}) async {
+  Future<void> uploadExtraFile({required i.File file, required String fileName, required String label}) async {
     String response = await ApiHelperImplementWithFileUpload.uploadExtraFile(file: file, fileName: fileName);
     if (response.isNotEmpty) {
       for (var i in extraFieldList) {

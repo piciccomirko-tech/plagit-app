@@ -1,9 +1,13 @@
 import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
+import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_invoice_model.dart';
 import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_model.dart';
+import 'package:mh/app/repository/server_urls.dart';
 import 'package:pdf/pdf.dart';
 import '../../enums/error_from.dart';
 import '../../models/check_in_out_histories.dart';
@@ -358,7 +362,8 @@ class Utils {
     return sFile;
   }
 
-  static Future<File> generatePdfWithImageAndTextForUk({required InvoiceModel invoice, required String companyName}) async {
+  static Future<File> generatePdfWithImageAndTextForUk(
+      {required InvoiceModel invoice, required String companyName}) async {
     final pw.Document pdf = pw.Document();
     pw.MemoryImage? image;
     File file;
@@ -430,10 +435,13 @@ class Utils {
                     child: pw.Column(
                         mainAxisAlignment: pw.MainAxisAlignment.start,
                         crossAxisAlignment: pw.CrossAxisAlignment.start,
-                        children: [pw.Text('To:', style: const pw.TextStyle(
-                          color: PdfColors.black, // Set the text color to blue.
-                          fontSize: 20,
-                        ))]),
+                        children: [
+                          pw.Text('To:',
+                              style: const pw.TextStyle(
+                                color: PdfColors.black, // Set the text color to blue.
+                                fontSize: 20,
+                              ))
+                        ]),
                   ),
                   pw.Expanded(
                       flex: 5,
@@ -506,7 +514,8 @@ class Utils {
                     decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
                     child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
                       pw.Text(
-                          'TOTAL: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.totalAmount?.toStringAsFixed(2)} ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15)),
+                          'TOTAL: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.totalAmount?.toStringAsFixed(2)} ',
+                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15)),
                     ])),
                 pw.Divider(color: PdfColors.grey400, height: 0.0),
                 pw.SizedBox(height: 20),
@@ -516,7 +525,7 @@ class Utils {
                       child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.center, children: [
                         pw.Expanded(
                           flex: 2,
-                          child: pw.Text('Bank Transfer:', style: const pw.TextStyle( fontSize: 20)),
+                          child: pw.Text('Bank Transfer:', style: const pw.TextStyle(fontSize: 20)),
                         ),
                         pw.Expanded(
                             flex: 5,
@@ -537,7 +546,7 @@ class Utils {
                 pw.SizedBox(height: 10),
                 pw.Center(
                     child: pw.Container(
-                      width: double.infinity,
+                        width: double.infinity,
                         padding: const pw.EdgeInsets.symmetric(vertical: 10.0),
                         decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
                         child: pw.Column(
@@ -602,5 +611,25 @@ class Utils {
         message: message,
         backgroundColor: isTrue == true ? MyColors.c_C6A34F : Colors.red,
         borderRadius: 10.0);
+  }
+
+  static Future<String?> uploadProfileImage({required File imageFile}) async {
+    try {
+      http.MultipartRequest request =
+          http.MultipartRequest('PUT', Uri.parse("${ServerUrls.serverLiveUrlUser}users/update-profile-image"));
+      request.headers['Authorization'] = "Bearer ${StorageHelper.getToken}";
+      request.headers['Content-Type'] = 'multipart/form-data';
+      request.files
+          .add(await http.MultipartFile.fromPath('file', imageFile.path, contentType: MediaType('image', 'jpeg')));
+
+      http.StreamedResponse response = await request.send();
+      if ([200, 201].contains(response.statusCode)) {
+        return response.reasonPhrase;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
   }
 }

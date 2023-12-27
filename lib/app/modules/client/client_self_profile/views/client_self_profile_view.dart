@@ -1,5 +1,5 @@
 import 'package:mh/app/common/widgets/custom_loader.dart';
-import 'package:mh/app/modules/client/client_self_profile/widgets/client_profile_picture_widget.dart';
+import 'package:mh/app/common/widgets/profile_picture_widget.dart';
 
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
@@ -29,8 +29,8 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
                     children: [
                       SizedBox(height: 40.h),
 
-                      const ClientProfilePictureWidget(),
-
+                      ProfilePictureWidget(
+                          profilePictureUrl: (controller.employee.value.details?.profilePicture ?? "").imageUrl),
                       SizedBox(height: 40.h),
 
                       _item(

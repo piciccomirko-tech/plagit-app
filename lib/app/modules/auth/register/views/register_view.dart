@@ -642,7 +642,7 @@ class RegisterView extends GetView<RegisterController> {
   // }
 
   Widget get _profileImage => GestureDetector(
-        onTap: controller.onProfileImageClick,
+        onTap: controller.showImagePickerBottomSheet,
         child: DottedBorder(
           borderType: BorderType.Circle,
           dashPattern: const [11],

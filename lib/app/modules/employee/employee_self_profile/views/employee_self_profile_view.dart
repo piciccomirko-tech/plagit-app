@@ -1,5 +1,6 @@
+import 'package:mh/app/common/widgets/custom_loader.dart';
+import 'package:mh/app/common/widgets/profile_picture_widget.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/vlog_carsousel_slider.dart';
-import 'package:mh/app/modules/employee/employee_self_profile/widgets/employee_profile_image_widget.dart';
 
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
@@ -17,81 +18,85 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
       backgroundColor: MyColors.lFAFAFA_dframeBg(context),
       appBar: CustomAppbar.appbar(title: "My Profile", context: context),
       // bottomNavigationBar: _bottomBar(context),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(21, 0, 21, 20),
-          child: Form(
-            key: controller.formKeyClient,
-            child: Column(
-              children: [
-                SizedBox(height: 20.h),
-                const EmployeeProfileImageWidget(),
-                SizedBox(height: 10.h),
-                Obx(() => Container(
-                    width: 100,
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                    decoration: const BoxDecoration(
-                        color: MyColors.c_C6A34F,
-                        borderRadius:
-                            BorderRadius.only(topRight: Radius.circular(10.0), bottomLeft: Radius.circular(10.0))),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(Icons.star, color: Colors.white, size: 15),
-                        Text(controller.rating.value,
-                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                      ],
-                    ))),
-                SizedBox(height: 30.h),
-                Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _item(
+      body: Obx(() => controller.loading.value == true
+          ? Center(child: CustomLoader.loading())
+          : SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(21, 0, 21, 20),
+                child: Form(
+                  key: controller.formKeyClient,
+                  child: Column(
+                    children: [
+                      SizedBox(height: 20.h),
+                      // const EmployeeProfileImageWidget(),
+                      ProfilePictureWidget(
+                          profilePictureUrl: (controller.employee.value.details?.profilePicture ?? "").imageUrl),
+                      SizedBox(height: 10.h),
+                      Obx(() => Container(
+                          width: 100,
+                          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                          decoration: const BoxDecoration(
+                              color: MyColors.c_C6A34F,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(10.0), bottomLeft: Radius.circular(10.0))),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.star, color: Colors.white, size: 15),
+                              Text(controller.rating.value,
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                            ],
+                          ))),
+                      SizedBox(height: 30.h),
+                      Obx(() => VlogCarouselSlider(vlogs: controller.employee.value.details?.vlogs ?? [], height: 200)),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _item(
+                              logo: Icons.person,
+                              fieldName: "First Name",
+                              textEditingController: controller.tecFirstName,
+                              validator: (String? value) => Validators.emptyValidator(
+                                controller.tecFirstName.text,
+                                MyStrings.required.tr,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 20.w),
+                          Expanded(
+                            child: _item(
+                              logo: Icons.person,
+                              fieldName: "Last Name",
+                              textEditingController: controller.tecLastName,
+                              validator: (String? value) => Validators.emptyValidator(
+                                controller.tecLastName.text,
+                                MyStrings.required.tr,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20.h),
+                      _item(
                         logo: Icons.person,
-                        fieldName: "First Name",
-                        textEditingController: controller.tecFirstName,
+                        fieldName: "Date of Birth",
+                        textEditingController: controller.tecDob,
                         validator: (String? value) => Validators.emptyValidator(
-                          controller.tecFirstName.text,
+                          controller.tecDob.text,
                           MyStrings.required.tr,
                         ),
                       ),
-                    ),
-                    SizedBox(width: 20.w),
-                    Expanded(
-                      child: _item(
-                        logo: Icons.person,
-                        fieldName: "Last Name",
-                        textEditingController: controller.tecLastName,
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: Icons.flag,
+                        fieldName: "Country",
+                        textEditingController: controller.tecCountry,
                         validator: (String? value) => Validators.emptyValidator(
-                          controller.tecLastName.text,
+                          controller.tecCountry.text,
                           MyStrings.required.tr,
                         ),
                       ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.person,
-                  fieldName: "Date of Birth",
-                  textEditingController: controller.tecDob,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecDob.text,
-                    MyStrings.required.tr,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.flag,
-                  fieldName: "Country",
-                  textEditingController: controller.tecCountry,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecCountry.text,
-                    MyStrings.required.tr,
-                  ),
-                ),
-                /*_item(
+                      /*_item(
                   logo: Icons.flag,
                   fieldName: "Country",
                   child: DropdownButtonFormField(
@@ -117,62 +122,62 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                   ),
                 ),*/
 
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.phone_android_rounded,
-                  fieldName: "Phone Number",
-                  textEditingController: controller.tecPhoneNumber,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecPhoneNumber.text,
-                    MyStrings.required.tr,
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: Icons.phone_android_rounded,
+                        fieldName: "Phone Number",
+                        textEditingController: controller.tecPhoneNumber,
+                        validator: (String? value) => Validators.emptyValidator(
+                          controller.tecPhoneNumber.text,
+                          MyStrings.required.tr,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: Icons.email_rounded,
+                        fieldName: "Email",
+                        textEditingController: controller.tecEmail,
+                        validator: (String? value) => Validators.emptyValidator(
+                          controller.tecEmail.text,
+                          MyStrings.required.tr,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: Icons.location_on_rounded,
+                        fieldName: "Present Address",
+                        textEditingController: controller.tecPresentAddress,
+                        validator: (String? value) => Validators.emptyValidator(
+                          controller.tecPresentAddress.text,
+                          MyStrings.required.tr,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: Icons.location_on_rounded,
+                        fieldName: "Permanent Address",
+                        textEditingController: controller.tecPermanentAddress,
+                        validator: (String? value) => Validators.emptyValidator(
+                          controller.tecPermanentAddress.text,
+                          MyStrings.required.tr,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: Icons.phone_android_rounded,
+                        fieldName: "Emergency Contact",
+                        textEditingController: controller.tecEmergencyContact,
+                        validator: (String? value) => Validators.emptyValidator(
+                          controller.tecEmergencyContact.text,
+                          MyStrings.required.tr,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                    ],
                   ),
                 ),
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.email_rounded,
-                  fieldName: "Email",
-                  textEditingController: controller.tecEmail,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecEmail.text,
-                    MyStrings.required.tr,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.location_on_rounded,
-                  fieldName: "Present Address",
-                  textEditingController: controller.tecPresentAddress,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecPresentAddress.text,
-                    MyStrings.required.tr,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.location_on_rounded,
-                  fieldName: "Permanent Address",
-                  textEditingController: controller.tecPermanentAddress,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecPermanentAddress.text,
-                    MyStrings.required.tr,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                _item(
-                  logo: Icons.phone_android_rounded,
-                  fieldName: "Emergency Contact",
-                  textEditingController: controller.tecEmergencyContact,
-                  validator: (String? value) => Validators.emptyValidator(
-                    controller.tecEmergencyContact.text,
-                    MyStrings.required.tr,
-                  ),
-                ),
-                SizedBox(height: 20.h),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            )),
     );
   }
 
