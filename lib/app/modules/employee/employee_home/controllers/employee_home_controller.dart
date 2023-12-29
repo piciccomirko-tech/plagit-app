@@ -10,6 +10,7 @@ import 'package:mh/app/modules/employee/employee_home/models/common_response_mod
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_out_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_hired_history_model.dart';
+import 'package:mh/app/modules/employee/employee_home/models/employee_location_update_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/booking_history_model.dart';
@@ -86,6 +87,7 @@ class EmployeeHomeController extends GetxController {
   @override
   void onClose() {
     socket?.dispose();
+    updateLocation();
     super.onClose();
   }
 
@@ -113,6 +115,7 @@ class EmployeeHomeController extends GetxController {
       locationFetchError.value = l.msg;
     }, (Position position) {
       currentLocation = position;
+      updateLocation();
     });
   }
 
@@ -629,21 +632,23 @@ class EmployeeHomeController extends GetxController {
 
     // Get the current location
     Geolocator.getCurrentPosition().then((Position position) {
-      updateSocketLocation(position: position); // Update socket location with the initial position
+      currentLocation = position;
+      updateSocketLocation(); // Update socket location with the initial position
 
       // Listen for location changes
       Geolocator.getPositionStream().listen((Position position) {
-        updateSocketLocation(position: position); // Update socket location on each change
+        currentLocation = position;
+        updateSocketLocation(); // Update socket location on each change
       });
     });
   }
 
-  void updateSocketLocation({required Position position}) {
+  void updateSocketLocation() {
     socket?.onConnect((data) {
       SocketLocationModel socketLocationModel = SocketLocationModel(
         sender: appController.user.value.employee?.id ?? "",
         receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
-        cords: Cords(latitude: position.latitude, longitude: position.longitude),
+        cords: Cords(latitude: currentLocation?.latitude ?? 0.0, longitude: currentLocation?.longitude ?? 0.0),
       );
 
       socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
@@ -669,4 +674,13 @@ class EmployeeHomeController extends GetxController {
       Get.toNamed(Routes.employeeJobPostDetails, arguments: jobPostDetails);
 
   void onViewAllClick() => Get.to(() => EmployeeJobPostsViewAllView(jobPostList: (jobPostRequest.value.jobs ?? [])));
+
+  void updateLocation() async {
+    EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel = EmployeeLocationUpdateRequestModel(
+        id: appController.user.value.employee?.id ?? "",
+        lat: (currentLocation?.latitude ?? 0.0).toString(),
+        long: (currentLocation?.longitude ?? 0.0).toString());
+
+    await _apiHelper.updateLocation(employeeLocationUpdateRequestModel: employeeLocationUpdateRequestModel);
+  }
 }

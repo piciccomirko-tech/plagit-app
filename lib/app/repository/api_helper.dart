@@ -18,6 +18,7 @@ import 'package:mh/app/modules/employee/employee_home/models/common_response_mod
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_out_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_hired_history_model.dart';
+import 'package:mh/app/modules/employee/employee_home/models/employee_location_update_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/booking_history_model.dart';
@@ -223,4 +224,5 @@ abstract class ApiHelper {
   EitherModel<JobPostRequestModel> getJobRequests({String? userType, String? clientId, String? status});
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
   EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel});
+  EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
 }

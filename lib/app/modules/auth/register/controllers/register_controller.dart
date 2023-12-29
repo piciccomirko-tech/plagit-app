@@ -501,7 +501,7 @@ class RegisterController extends GetxController implements RegisterInterface {
                 CropAspectRatioPreset.ratio5x3,
                 CropAspectRatioPreset.ratio5x4,
                 CropAspectRatioPreset.ratio7x5,
-                CropAspectRatioPreset.ratio16x9
+                CropAspectRatioPreset.ratio16x9,
               ],
         uiSettings: [
           AndroidUiSettings(

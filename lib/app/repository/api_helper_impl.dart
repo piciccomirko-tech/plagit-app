@@ -25,6 +25,7 @@ import 'package:mh/app/modules/employee/employee_home/models/common_response_mod
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_in_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_check_out_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/employee_hired_history_model.dart';
+import 'package:mh/app/modules/employee/employee_home/models/employee_location_update_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/booking_history_model.dart';
@@ -1378,5 +1379,24 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       CommonResponseModel.fromJson,
     ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel}) async {
+    String url = "users/update-location";
+    String requestBody = employeeLocationUpdateRequestModel.toRawJson();
+    Response response = await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+    if (response.statusCode == null) await put(url, requestBody);
+
+    print('ApiHelperImpl.updateLocation: ${response.bodyString}');
+    print('ApiHelperImpl.updateLocation request: $requestBody');
+
+    return _convert<Response>(
+      response,
+          (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 }

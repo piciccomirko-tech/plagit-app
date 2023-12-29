@@ -168,7 +168,7 @@ class ClientMyEmployeeController extends GetxController {
     try {
       socket = io.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
         "transports": ["websocket"],
-        "autoConnect": false,
+        "autoConnect": false
       });
       socket?.connect();
       socket?.onConnect((_) {
@@ -176,12 +176,16 @@ class ClientMyEmployeeController extends GetxController {
           socketLocationModel.value = SocketLocationModel.fromJson(data);
           for (EmployeeModel i in employees) {
             if (i.employeeId == socketLocationModel.value.sender) {
-              i.employeeDetails?.distance =
-                  (LocationController.calculateDistance(targetLat: socketLocationModel.value.cords?.latitude ?? 0.0, targetLong: socketLocationModel.value.cords?.longitude ?? 0.0, currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
-                      //23.795455885215837,
-                      currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
-                      //90.40503904223443
-                      ) / 1609).toStringAsFixed(2);
+              i.employeeDetails?.distance = (LocationController.calculateDistance(
+                          targetLat: socketLocationModel.value.cords?.latitude ?? 0.0,
+                          targetLong: socketLocationModel.value.cords?.longitude ?? 0.0,
+                          currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
+                          //23.795455885215837,
+                          currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
+                          //90.40503904223443
+                          ) /
+                      1609)
+                  .toStringAsFixed(2);
 
               socketLocationModel.value.distance = i.employeeDetails?.distance;
               socketLocationModel.value.employeeName = i.employeeDetails?.name ?? "";

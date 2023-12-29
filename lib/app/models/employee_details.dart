@@ -18,14 +18,13 @@ class EmployeeDetails {
   // for ShortlistedEmployees
   DateTime? fromDate;
   DateTime? toDate;
-
   bool? certified;
-
   bool? hasUniform;
-
   String? countryName;
   String? nationality;
   String? distance;
+  String? lat;
+  String? long;
 
   EmployeeDetails(
       {this.employeeId,
@@ -49,7 +48,9 @@ class EmployeeDetails {
       this.hasUniform,
       this.countryName,
       this.nationality,
-      this.distance});
+      this.distance,
+      this.lat,
+      this.long});
 
   EmployeeDetails.fromJson(Map<String, dynamic> json) {
     employeeId = json['employeeId'];
@@ -74,6 +75,8 @@ class EmployeeDetails {
     hasUniform = json["hasUniform"];
     countryName = json["countryName"];
     nationality = json["nationality"];
+    lat = json["lat"];
+    long = json["long"];
   }
 
   Map<String, dynamic> toJson() {
@@ -97,6 +100,8 @@ class EmployeeDetails {
     data['hasUniform'] = hasUniform;
     data['countryName'] = countryName;
     data['nationality'] = nationality;
+    data['lat'] = lat;
+    data['long'] = long;
     data['fromDate'] = fromDate?.toIso8601String();
     data['toDate'] = fromDate?.toIso8601String();
     return data;
