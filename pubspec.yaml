@@ -17,7 +17,7 @@ dependencies:
   # state management, routing
   get: ^4.6.6
 
-  flutter_widget_from_html: ^0.14.9
+  flutter_widget_from_html: ^0.14.10+1
 
   chewie: ^1.7.4
 

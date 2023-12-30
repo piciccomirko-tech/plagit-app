@@ -135,7 +135,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                                 Row(
                                   children: [
                                     Flexible(
-                                        flex: hiredHistory.employeeDetails!.rating! > 0.0 ? 3 : 4,
+                                        flex: (hiredHistory.employeeDetails?.rating ?? 0.0) > 0.0 ? 3 : 4,
                                         child: _name(hiredHistory.employeeDetails?.name ?? "-")),
                                     if (hiredHistory.employeeDetails?.certified != null &&
                                         hiredHistory.employeeDetails?.certified == true)
@@ -188,9 +188,11 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                                   double.parse(hiredHistory.employeeDetails?.distance ?? "0.0") > 0.124274
                                       ? "${hiredHistory.employeeDetails?.distance ?? ""} miles away"
                                       : "Arrived"),
-                              InkWell(
-                                  onTap: controller.onMapsPressed,
-                                  child: Image.asset(MyAssets.maps, height: 22, width: 22)),
+                              Visibility(
+                                  visible: double.parse(hiredHistory.employeeDetails?.distance ?? "0.0") > 0.124274,
+                                  child: InkWell(
+                                      onTap: controller.onMapsPressed,
+                                      child: Image.asset(MyAssets.maps, height: 22, width: 22))),
                               SizedBox(width: 8.w)
                             ],
                           ))),

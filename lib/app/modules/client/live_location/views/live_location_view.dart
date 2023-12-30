@@ -29,7 +29,7 @@ class LiveLocationView extends GetView<LiveLocationController> {
                               polylineId: const PolylineId('route'),
                               color: Colors.white,
                               width: 6,
-                              points: controller.polylineCoordinates)
+                              points: controller.clientMyEmployeeController.polylineCoordinates)
                         },
                         markers: controller.markersList,
                         onMapCreated: controller.onMapCreated,
