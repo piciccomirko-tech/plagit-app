@@ -1390,8 +1390,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
 
-    print('ApiHelperImpl.updateLocation: ${response.bodyString}');
-    print('ApiHelperImpl.updateLocation request: $requestBody');
 
     return _convert<Response>(
       response,

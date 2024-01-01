@@ -467,12 +467,14 @@ class EmployeeHomeController extends GetxController {
 
   double restaurantDistanceFromEmployee({required double targetLat, required double targetLng}) {
     if (currentLocation != null) {
+      print('Employee Origin: ${currentLocation?.latitude}, ${currentLocation?.longitude}');
+      print('Employee Target: $targetLat, $targetLng');
       return LocationController.calculateDistance(
           targetLat: targetLat,
           targetLong: targetLng,
-          currentLat: currentLocation!.latitude,
+          currentLat: currentLocation?.latitude ?? 0.0,
           //23.795455885215837,
-          currentLong: currentLocation!.longitude
+          currentLong: currentLocation?.longitude ?? 0.0
           //90.40503904223443
           );
     }
