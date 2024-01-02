@@ -30,7 +30,7 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
                     children: [
                       Container(
                         margin: const EdgeInsets.only(top: 15.0),
-                        height: MediaQuery.of(context).size.height * 0.13,
+                        height: 130,
                         width: double.infinity,
                         padding: const EdgeInsets.only(left: 15, right: 15, bottom: 30),
                         decoration: BoxDecoration(

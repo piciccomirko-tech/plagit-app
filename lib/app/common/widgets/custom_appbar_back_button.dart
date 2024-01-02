@@ -8,8 +8,8 @@ class CustomAppbarBackButton extends StatelessWidget {
     return GestureDetector(
       onTap: Get.back,
       child: Container(
-        height: 24.h,
-        width: 24.h,
+        height: 25,
+        width: 25,
         decoration: BoxDecoration(
           color: MyColors.c_DDBD68,
           borderRadius: BorderRadius.circular(3.86),

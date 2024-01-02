@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
@@ -36,10 +37,10 @@ import '../../../../models/employee_daily_statistics.dart';
 import '../../../../repository/api_helper.dart';
 import '../../../../routes/app_pages.dart';
 import '../models/today_check_in_out_details.dart';
-import 'package:socket_io_client/socket_io_client.dart' as i_o;
 
 class EmployeeHomeController extends GetxController {
   final NotificationsController notificationsController = Get.find<NotificationsController>();
+  final SocketController socketController = Get.find<SocketController>();
   BuildContext? context;
 
   final AppController appController = Get.find();
@@ -76,17 +77,14 @@ class EmployeeHomeController extends GetxController {
   Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
   RxBool jobPostDataLoading = false.obs;
 
-  i_o.Socket? socket;
   @override
   void onInit() {
-    homeMethods();
-    _shareCurrentLocation();
+    _getCurrentLocation();
     super.onInit();
   }
 
   @override
   void onClose() {
-    socket?.dispose();
     updateLocation();
     super.onClose();
   }
@@ -100,7 +98,6 @@ class EmployeeHomeController extends GetxController {
 
   void homeMethods() {
     notificationsController.getNotificationList;
-    _getCurrentLocation();
     _getTodayWorkSchedule();
     _getTodayCheckInOutDetails();
     getBookingHistory();
@@ -109,14 +106,19 @@ class EmployeeHomeController extends GetxController {
     getJobRequests();
   }
 
-  Future<void> _getCurrentLocation() async {
+  void _getCurrentLocation() async {
     Either<CustomError, Position> response = await LocationController.determinePosition();
-    response.fold((l) {
-      locationFetchError.value = l.msg;
-    }, (Position position) {
-      currentLocation = position;
-      updateLocation();
-    });
+    response.fold(
+      (CustomError error) async {
+        locationFetchError.value = error.msg;
+        showLocationEnableDialog();
+      },
+      (Position position) {
+        currentLocation = position;
+        updateLocation();
+        homeMethods();
+      },
+    );
   }
 
   Future<void> _getTodayWorkSchedule() async {
@@ -128,6 +130,7 @@ class EmployeeHomeController extends GetxController {
       if (todayWorkScheduleInfo.status == 'success' && todayWorkScheduleInfo.todayWorkScheduleDetailsModel != null) {
         todayWorkSchedule.value = todayWorkScheduleInfo;
         todayWorkSchedule.refresh();
+        _shareCurrentLocation();
       }
     });
   }
@@ -467,8 +470,6 @@ class EmployeeHomeController extends GetxController {
 
   double restaurantDistanceFromEmployee({required double targetLat, required double targetLng}) {
     if (currentLocation != null) {
-      print('Employee Origin: ${currentLocation?.latitude}, ${currentLocation?.longitude}');
-      print('Employee Target: $targetLat, $targetLng');
       return LocationController.calculateDistance(
           targetLat: targetLat,
           targetLong: targetLng,
@@ -604,35 +605,22 @@ class EmployeeHomeController extends GetxController {
                   targetLng: double.parse(
                       todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? "0.0")) >
               200) {
-        connectWithSocket();
+        sendDataThroughSocket();
       }
     }
   }
 
-  /*void connectWithSocket() {
-    socket = i_o.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
-      "transports": ["websocket"],
-      "autoConnect": false,
-    });
-    socket?.connect();
-    socket?.onConnect((data) {
-      SocketLocationModel socketLocationModel = SocketLocationModel(
-          sender: appController.user.value.employee?.id ?? "",
-          receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
-          cords: Cords(latitude: currentLocation?.latitude, longitude: currentLocation?.longitude));
+  void sendDataThroughSocket() {
+    socketController.connectToSocket();
+    print('EmployeeHomeController.sendDataThroughSocket ${socketController.socket?.connected}');
+    SocketLocationModel socketLocationModel = SocketLocationModel(
+      sender: appController.user.value.employee?.id ?? "",
+      receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
+      cords: Cords(latitude: 20.67, longitude: 90.65),
+    );
+    socketController.socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
 
-      socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
-    });
-  }*/
-
-  void connectWithSocket() {
-    socket = i_o.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
-      "transports": ["websocket"],
-      "autoConnect": false,
-    });
-    socket?.connect();
-
-    // Get the current location
+    /* // Get the current location
     Geolocator.getCurrentPosition().then((Position position) {
       currentLocation = position;
       updateSocketLocation(); // Update socket location with the initial position
@@ -642,10 +630,10 @@ class EmployeeHomeController extends GetxController {
         currentLocation = position;
         updateSocketLocation(); // Update socket location on each change
       });
-    });
+    });*/
   }
 
-  void updateSocketLocation() {
+/*  void updateSocketLocation() {
     socket?.onConnect((data) {
       SocketLocationModel socketLocationModel = SocketLocationModel(
         sender: appController.user.value.employee?.id ?? "",
@@ -655,7 +643,7 @@ class EmployeeHomeController extends GetxController {
 
       socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
     });
-  }
+  }*/
 
   void getJobRequests() async {
     jobPostDataLoading.value = true;
@@ -684,5 +672,15 @@ class EmployeeHomeController extends GetxController {
         long: (currentLocation?.longitude ?? 0.0).toString());
 
     await _apiHelper.updateLocation(employeeLocationUpdateRequestModel: employeeLocationUpdateRequestModel);
+  }
+
+  void showLocationEnableDialog() {
+    CustomDialogue.information(
+        context: context!,
+        title: "Warning!",
+        description: "For better user experience you have to enable your device's location",
+        onTap: () async {
+          await Geolocator.openLocationSettings();
+        });
   }
 }

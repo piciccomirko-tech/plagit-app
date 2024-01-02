@@ -40,7 +40,7 @@ class RatingReviewWidget extends StatelessWidget {
             decoration: BoxDecoration(
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(10.0), topRight: Radius.circular(10.0)),
                 color: MyColors.lightCard(context)),
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: 350,
             child: Center(
                 child: SingleChildScrollView(
               child: Column(

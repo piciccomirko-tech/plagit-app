@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mh/app/common/controller/app_error_controller.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 import '../../repository/api_helper.dart';
 import '../../repository/api_helper_impl.dart';
 import '../controller/app_controller.dart';
@@ -55,6 +56,7 @@ class Initializer {
 
       Get.put(AppController());
       Get.put(AppLifecycleController());
+      Get.put(SocketController());
 
     } catch (err) {
       rethrow;
@@ -71,7 +73,6 @@ class Initializer {
   Future<void> _initStorage() async {
     await GetStorage.init();
   }
-
 }
 
 class InitialBindings extends Bindings {

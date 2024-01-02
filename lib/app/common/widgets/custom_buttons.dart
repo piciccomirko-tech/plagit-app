@@ -19,7 +19,7 @@ class CustomButtons {
     BuildContext? context,
   }) =>
       Container(
-        height: height?.h ?? 48.h,
+        height: height ?? 48,
         margin: margin ?? EdgeInsets.symmetric(horizontal: 37.0.w),
         padding: padding,
         decoration: _getButtonStyle(customButtonStyle, context, onTap != null, color: backgroundColor),

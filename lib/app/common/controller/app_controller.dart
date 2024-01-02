@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/admin.dart';
 import 'package:mh/app/repository/api_helper.dart';
@@ -123,7 +124,7 @@ class AppController extends GetxService {
     allActivePositions.value = commons.positions ?? [];
     allActivePositions.refresh();
 
-    skills.value = commons.skills??[];
+    skills.value = commons.skills ?? [];
     skills.refresh();
   }
 
@@ -147,6 +148,9 @@ class AppController extends GetxService {
 
   Future<void> onLogoutClick() async {
     CustomLoader.show(Get.context!);
+
+/*    Get.find<SocketController>().socket?.disconnected;
+    Get.find<SocketController>().socket?.dispose();*/
 
     if (Get.isRegistered<ShortlistController>()) {
       Get.find<ShortlistController>().removeAllSelected();
