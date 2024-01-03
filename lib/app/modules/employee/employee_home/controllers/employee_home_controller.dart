@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
@@ -24,6 +22,7 @@ import 'package:mh/app/modules/notifications/controllers/notifications_controlle
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
+import 'package:socket_io_client/socket_io_client.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/controller/location_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -598,52 +597,32 @@ class EmployeeHomeController extends GetxController {
 
   void _shareCurrentLocation() {
     if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null) {
-      if (locationFetchError.value.isEmpty &&
-          restaurantDistanceFromEmployee(
-                  targetLat: double.parse(
-                      todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.lat ?? "0.0"),
-                  targetLng: double.parse(
-                      todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? "0.0")) >
-              200) {
-        sendDataThroughSocket();
-      }
+      Geolocator.getPositionStream().listen((Position position) {
+        currentLocation = position;
+        if (locationFetchError.value.isEmpty &&
+            restaurantDistanceFromEmployee(
+                    targetLat: double.parse(
+                        todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.lat ?? "0.0"),
+                    targetLng: double.parse(
+                        todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? "0.0")) >
+                200) {
+          sendDataThroughSocket();
+        } // Update socket location on each change
+      });
     }
   }
 
   void sendDataThroughSocket() {
     socketController.connectToSocket();
-    print('EmployeeHomeController.sendDataThroughSocket ${socketController.socket?.connected}');
     SocketLocationModel socketLocationModel = SocketLocationModel(
       sender: appController.user.value.employee?.id ?? "",
       receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
-      cords: Cords(latitude: 20.67, longitude: 90.65),
+      cords: Cords(latitude: currentLocation?.latitude, longitude: currentLocation?.longitude),
     );
-    socketController.socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
-
-    /* // Get the current location
-    Geolocator.getCurrentPosition().then((Position position) {
-      currentLocation = position;
-      updateSocketLocation(); // Update socket location with the initial position
-
-      // Listen for location changes
-      Geolocator.getPositionStream().listen((Position position) {
-        currentLocation = position;
-        updateSocketLocation(); // Update socket location on each change
-      });
-    });*/
-  }
-
-/*  void updateSocketLocation() {
-    socket?.onConnect((data) {
-      SocketLocationModel socketLocationModel = SocketLocationModel(
-        sender: appController.user.value.employee?.id ?? "",
-        receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
-        cords: Cords(latitude: currentLocation?.latitude ?? 0.0, longitude: currentLocation?.longitude ?? 0.0),
-      );
-
-      socket?.emit('location:move', jsonEncode(socketLocationModel.toJson()));
+    socketController.socket?.onConnect((_) {
+      socketController.socket?.emit('location:move', socketLocationModel.toJson());
     });
-  }*/
+  }
 
   void getJobRequests() async {
     jobPostDataLoading.value = true;

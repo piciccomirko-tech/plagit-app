@@ -182,7 +182,6 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
           minHeight: 500,
           minWidth: 600);
 
-      print('_ProfilePictureWidgetState._compressImage: $compressedImage');
       if (compressedImage != null) {
         pickedImage = File(compressedImage.path);
         _uploadImage();

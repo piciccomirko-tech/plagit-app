@@ -73,11 +73,11 @@ class CustomDialogue {
                 child: Material(
                   type: MaterialType.transparency,
                   child: Container(
-                    height: Get.height * .45,
-                    width: Get.height * .4,
+                    height: 350,
+                    width: 340,
                     decoration: BoxDecoration(
                       color: MyColors.lightCard(context),
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -90,22 +90,24 @@ class CustomDialogue {
                             ),
                           ),
                           Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                if(onRetry != null)
-                                Text(
-                                  title,
-                                  style: MyColors.l111111_dtext(context).semiBold22,
-                                ),
-                                SizedBox(height: 30.h),
-                                Text(
-                                  details,
-                                  textAlign: TextAlign.center,
-                                  style: MyColors.l50555C_dtext(context).medium15,
-                                ),
-                              ],
+                            child: SingleChildScrollView(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  if(onRetry != null)
+                                  Text(
+                                    title,
+                                    style: MyColors.l111111_dtext(context).semiBold22,
+                                  ),
+                                  const SizedBox(height: 30),
+                                  Text(
+                                    details,
+                                    textAlign: TextAlign.center,
+                                    style: MyColors.l50555C_dtext(context).medium15,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Expanded(
