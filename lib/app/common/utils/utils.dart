@@ -312,7 +312,7 @@ class Utils {
                       flex: 1,
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
                         pw.Text('Invoice N: ${invoice.invoiceNumber}'),
-                        pw.Text('Invoice date: ${DateFormat('d MMMM, y').format(invoice.invoiceDate!)}')
+                        pw.Text('Invoice date: ${DateFormat('d MMMM, y').format(invoice.createdAt!)}')
                       ]))
                 ]),
                 pw.SizedBox(height: 50),
@@ -456,7 +456,7 @@ class Utils {
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
                         pw.Text('Invoice No: ${invoice.invoiceNumber}'),
                         pw.SizedBox(height: 10),
-                        pw.Text('Date: ${DateFormat('d MMM y').format(invoice.invoiceDate!)}')
+                        pw.Text('Date: ${DateFormat('d MMM y').format(invoice.createdAt!)}')
                       ]))
                 ]),
                 pw.SizedBox(height: 30),

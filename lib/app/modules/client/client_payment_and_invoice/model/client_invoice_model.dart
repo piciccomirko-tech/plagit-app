@@ -28,6 +28,7 @@ class InvoiceModel {
   DateTime? fromWeekDate;
   DateTime? toWeekDate;
   DateTime? invoiceDate;
+  DateTime? createdAt;
   String? restaurantName;
   String? restaurantAddress;
   String? restaurantEmail;
@@ -47,6 +48,7 @@ class InvoiceModel {
       this.fromWeekDate,
       this.toWeekDate,
       this.invoiceDate,
+      this.createdAt,
       this.restaurantName,
       this.restaurantAddress,
       this.restaurantEmail,
@@ -66,6 +68,7 @@ class InvoiceModel {
     fromWeekDate = json["fromWeekDate"] == null ? null : DateTime.parse(json["fromWeekDate"]);
     toWeekDate = json["toWeekDate"] == null ? null : DateTime.parse(json["toWeekDate"]);
     invoiceDate = json["invoiceDate"] == null ? null : DateTime.parse(json["invoiceDate"]);
+    createdAt = json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]);
     restaurantName = json['restaurantName'];
     restaurantAddress = json['restaurantAddress'];
     restaurantEmail = json['restaurantEmail'];
