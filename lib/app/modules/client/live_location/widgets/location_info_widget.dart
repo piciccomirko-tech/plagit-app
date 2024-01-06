@@ -11,7 +11,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
     return Container(
       padding: const EdgeInsets.all(15.0),
       height: 300,
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
           color: MyColors.lightCard(context),
           borderRadius: const BorderRadius.only(topRight: Radius.circular(10.0), topLeft: Radius.circular(10.0))),
       child: SingleChildScrollView(
@@ -31,7 +31,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                       children: [
                         Image.asset(MyAssets.distance, height: 20, width: 20),
                         SizedBox(width: 5.w),
-                        Obx(() => Text("${controller.clientMyEmployeeController.socketLocationModel.value.distance ?? ""} miles away",
+                        Obx(() => Text("${controller.socketLocationModel.value.distance ?? ""} miles away",
                             style: MyColors.l111111_dwhite(context).semiBold16)),
                       ],
                     ),
@@ -45,9 +45,9 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                   child: Column(
                     children: [
                       Obx(() => Text(
-                          controller.clientMyEmployeeController.socketLocationModel.value.totalEta == null
+                          controller.socketLocationModel.value.totalEta == null
                               ? ""
-                              : "${controller.clientMyEmployeeController.socketLocationModel.value.totalEta}",
+                              : "${controller.socketLocationModel.value.totalEta}",
                           style: MyColors.white.semiBold20)),
                       Text("min", style: MyColors.white.medium12),
                     ],
@@ -61,17 +61,13 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                 Expanded(
                     flex: 1,
                     child: Visibility(
-                      visible:
-                          controller.clientMyEmployeeController.socketLocationModel.value.employeePicture != null &&
-                              (controller.clientMyEmployeeController.socketLocationModel.value.employeePicture ?? "")
-                                  .isNotEmpty,
+                      visible: (controller.employeeInfo.employeeDetails?.profilePicture ?? "").isNotEmpty,
                       child: CircleAvatar(
                         radius: 20,
                         backgroundColor: MyColors.c_C6A34F,
                         child: CircleAvatar(
                           radius: 18.0,
-                          backgroundImage: NetworkImage(
-                              controller.clientMyEmployeeController.socketLocationModel.value.employeePicture ?? ""),
+                          backgroundImage: NetworkImage((controller.employeeInfo.employeeDetails?.profilePicture ?? "").imageUrl),
                         ),
                       ),
                     )),
@@ -81,25 +77,24 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("${controller.clientMyEmployeeController.socketLocationModel.value.employeeName}",
+                        Text(controller.employeeInfo.employeeDetails?.name ?? "",
                             style: MyColors.l111111_dwhite(context).semiBold12),
-                        Obx(() => Text(
-                            controller.clientMyEmployeeController.socketLocationModel.value.currentPosition ?? "",
+                        Obx(() => Text(controller.socketLocationModel.value.currentPosition ?? "",
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: MyColors.l111111_dwhite(context).medium12)),
+                            style: MyColors.l111111_dwhite(context).medium11)),
                       ],
                     )),
                 Expanded(
-                  flex: 1,
-                    child:  InkWell(
-                  onTap: controller.onLiveChatPressed,
-                  child: CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.blueGrey.shade50,
-                    child: const Icon(Icons.chat, color: MyColors.c_C6A34F, size: 20),
-                  ),
-                ))
+                    flex: 1,
+                    child: InkWell(
+                      onTap: controller.onLiveChatPressed,
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundColor: Colors.blueGrey.shade50,
+                        child: const Icon(Icons.chat, color: MyColors.c_C6A34F, size: 20),
+                      ),
+                    ))
               ],
             ),
             Lottie.asset(MyAssets.lottie.directionLottie, height: 30, width: 35),

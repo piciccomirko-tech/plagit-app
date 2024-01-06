@@ -9,11 +9,13 @@ class TravelModeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkResponse(
-      onTap: () => Get.find<LiveLocationController>().onTravelModeTap(title: travelMode.title),
+      onTap: () => Get.find<LiveLocationController>().onTravelModeTap(mode: travelMode.title),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 15.0),
         margin: const EdgeInsets.only(right: 10),
-        decoration: BoxDecoration(color: Colors.blueGrey.shade50, borderRadius: BorderRadius.circular(20.0)),
+        decoration: BoxDecoration(
+            color: travelMode.isSelected == true ? Colors.blue : Colors.blueGrey.shade50,
+            borderRadius: BorderRadius.circular(20.0)),
         child: Row(
           children: [
             Image.asset(travelMode.icon, height: 20, width: 20),

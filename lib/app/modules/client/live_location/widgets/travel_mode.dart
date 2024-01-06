@@ -11,10 +11,10 @@ class TravelMode extends GetWidget<LiveLocationController> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children:
-            List.generate(travelModeList.length, (index) => TravelModeWidget(travelMode: travelModeList[index])),
-      ),
+      child: Obx(() => Row(
+            children: List.generate(
+                travelModeList.length, (int index) => TravelModeWidget(travelMode: travelModeList[index])),
+          )),
     );
   }
 }

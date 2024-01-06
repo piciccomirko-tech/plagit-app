@@ -3,8 +3,6 @@ class SocketLocationModel {
   String? receiver;
   Cords? cords;
   String? distance;
-  String? employeePicture;
-  String? employeeName;
   String? currentPosition;
   int? totalEta;
   double? zoom;
@@ -14,8 +12,6 @@ class SocketLocationModel {
       this.receiver,
       this.cords,
       this.distance,
-      this.employeePicture,
-      this.employeeName,
       this.totalEta,
       this.currentPosition,
       this.zoom = 15.50});

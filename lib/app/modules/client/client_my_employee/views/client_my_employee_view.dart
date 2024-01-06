@@ -191,7 +191,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                               Visibility(
                                   visible: double.parse(hiredHistory.employeeDetails?.distance ?? "0.0") > 0.124274,
                                   child: InkWell(
-                                      onTap: controller.onMapsPressed,
+                                      onTap: () => controller.onMapsPressed(employeeInfo: hiredHistory),
                                       child: Image.asset(MyAssets.maps, height: 22, width: 22))),
                               SizedBox(width: 8.w)
                             ],
