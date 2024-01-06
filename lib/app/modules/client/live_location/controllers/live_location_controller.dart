@@ -173,9 +173,11 @@ class LiveLocationController extends GetxController {
     for (var i in travelModeList) {
       if (i.title == mode) {
         i.isSelected = true;
-        return;
+      } else {
+        i.isSelected = false;
       }
     }
+    // Refresh the UI to reflect the changes
     travelModeList.refresh();
   }
 
@@ -205,27 +207,28 @@ class LiveLocationController extends GetxController {
 
   void calculatePolylinePoints(
       {required PointLatLng origin, required PointLatLng destination, required TravelMode travelMode}) async {
-    polylineCoordinates.clear();
+    try {
+      polylineCoordinates.clear();
 
-    PolylinePoints polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints
-        .getRouteBetweenCoordinates(AppCredentials.googleMapKey, origin, destination, travelMode: travelMode);
-    socketLocationModel.value.currentPosition = result.startAddress;
-    socketLocationModel.value.totalEta = parseDurationInMinutes(durationText: result.duration ?? "");
+      PolylinePoints polylinePoints = PolylinePoints();
+      PolylineResult result = await polylinePoints
+          .getRouteBetweenCoordinates(AppCredentials.googleMapKey, origin, destination, travelMode: travelMode);
+      socketLocationModel.value.currentPosition = result.startAddress;
+      socketLocationModel.value.totalEta = parseDurationInMinutes(durationText: result.duration ?? "");
 
-    if (result.points.isNotEmpty) {
-      for (var point in result.points) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+      if (result.points.isNotEmpty) {
+        for (var point in result.points) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        }
       }
+      socketLocationModel.refresh();
+      polylineCoordinates.refresh();
+    } catch (_) {
+      Utils.showSnackBar(message: "No route for ${travelMode.toString().split('.').last} between these points", isTrue: false);
     }
-    socketLocationModel.refresh();
-    polylineCoordinates.refresh();
-
-    print('LiveLocationController.calculatePolylinePoints');
   }
 
   void calculateInitialPolyline({required TravelMode travelMode}) {
-    print('LiveLocationController.calculatePolylinePoints');
     calculatePolylinePoints(
         origin: PointLatLng(double.parse(employeeInfo.employeeDetails?.lat ?? "0.0"),
             double.parse(employeeInfo.employeeDetails?.long ?? "0.0")),
