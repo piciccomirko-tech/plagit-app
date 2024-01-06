@@ -45,110 +45,112 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                 SliverToBoxAdapter(
                     child: Obx(() => controller.bookingDetailsDataLoading.value == true
                         ? Center(child: ShimmerWidget.bookingDetailsShimmerWidget())
-                        : Column(
-                            children: [
-                              Container(
-                                  width: Get.width * 0.8,
-                                  padding: const EdgeInsets.all(10.0),
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30.0), color: MyColors.c_C6A34F),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text('You have been booked for ', style: MyColors.white.semiBold15),
-                                      Text('${controller.bookingDetails.value.requestDateList?.calculateTotalDays()}',
-                                          style: MyColors.white.semiBold24),
-                                      Text(' days', style: MyColors.white.semiBold15),
-                                    ],
-                                  )),
-                              CarouselSlider(
-                                options: CarouselOptions(
-                                  height: 120,
-                                  autoPlay: controller.bookingDetails.value.requestDateList!.length > 1 ? true : false,
-                                  viewportFraction: 1.0,
-                                ),
-                                items: controller.bookingDetails.value.requestDateList!.map((RequestDateModel url) {
-                                  return Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                    child: TimeRangeWidget(
-                                        requestDate: url,
-                                        hasDeleteOption: true,
-                                        onTap: () => controller.updateRequestDate(rejectedDate: url)),
-                                  );
-                                }).toList(),
-                              ),
-                              const SizedBox(height: 20),
-                              Material(
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  minVerticalPadding: 0.0,
-                                  minLeadingWidth: 0.0,
-                                  isThreeLine: true,
-                                  leading: const CircleAvatar(
-                                    backgroundColor: Colors.orange,
-                                    child: Icon(Icons.notifications_active_outlined, color: MyColors.white),
+                        : SingleChildScrollView(
+                          child: Column(
+                              children: [
+                                Container(
+                                    width: Get.width * 0.8,
+                                    padding: const EdgeInsets.all(10.0),
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(30.0), color: MyColors.c_C6A34F),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text('You have been booked for ', style: MyColors.white.semiBold15),
+                                        Text('${controller.bookingDetails.value.requestDateList?.calculateTotalDays()}',
+                                            style: MyColors.white.semiBold24),
+                                        Text(' days', style: MyColors.white.semiBold15),
+                                      ],
+                                    )),
+                                CarouselSlider(
+                                  options: CarouselOptions(
+                                    height: 120,
+                                    autoPlay: controller.bookingDetails.value.requestDateList!.length > 1 ? true : false,
+                                    viewportFraction: 1.0,
                                   ),
-                                  title: Text('${controller.bookingDetails.value.text}',
-                                      style: MyColors.l111111_dwhite(context).semiBold15),
-                                  subtitle: Padding(
-                                    padding: const EdgeInsets.only(top: 5),
-                                    child: Text(controller.bookingDetails.value.restaurantAddress ?? '',
-                                        style: MyColors.c_A6A6A6.semiBold13),
-                                  ),
+                                  items: controller.bookingDetails.value.requestDateList!.map((RequestDateModel url) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                      child: TimeRangeWidget(
+                                          requestDate: url,
+                                          hasDeleteOption: true,
+                                          onTap: () => controller.updateRequestDate(rejectedDate: url)),
+                                    );
+                                  }).toList(),
                                 ),
-                              ),
-                              const SizedBox(height: 10),
-                              Material(
-                                color: Colors.transparent,
-                                child: ListTile(
+                                const SizedBox(height: 20),
+                                Material(
+                                  color: Colors.transparent,
+                                  child: ListTile(
                                     minVerticalPadding: 0.0,
                                     minLeadingWidth: 0.0,
+                                    isThreeLine: true,
                                     leading: const CircleAvatar(
-                                      backgroundColor: Colors.teal,
-                                      child: Icon(Icons.location_city, color: MyColors.white),
+                                      backgroundColor: Colors.orange,
+                                      child: Icon(Icons.notifications_active_outlined, color: MyColors.white),
                                     ),
-                                    title: Text(
-                                        'This restaurant is situated at a distance of ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609).toStringAsFixed(2)} miles from your location',
-                                        style: MyColors.l111111_dwhite(context).semiBold15)),
-                              ),
-                              const SizedBox(height: 10),
-                              if(controller.bookingDetails.value.uniformMandatory == true)
-                              Material(
-                                color: Colors.transparent,
-                                child: ListTile(
-                                    minVerticalPadding: 0.0,
-                                    minLeadingWidth: 0.0,
-                                    trailing: InkWell(
-                                      onTap: controller.onViewUniformClick,
-                                      child: const CircleAvatar(
-                                        backgroundColor: Colors.transparent,
-                                        child: Icon(Icons.remove_red_eye, color: MyColors.c_C6A34F),
-                                      ),
+                                    title: Text('${controller.bookingDetails.value.text}',
+                                        style: MyColors.l111111_dwhite(context).semiBold15),
+                                    subtitle: Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Text(controller.bookingDetails.value.restaurantAddress ?? '',
+                                          style: MyColors.c_A6A6A6.semiBold13),
                                     ),
-                                    leading:  CircleAvatar(
-                                      backgroundColor: Colors.purple,
-                                      child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
-                                    ),
-                                    title: Text(
-                                      "Restaurant will provide you uniforms, view uniforms",
-                                        style: MyColors.l111111_dwhite(context).semiBold15)),
-                              )
-                              else
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
                                 Material(
                                   color: Colors.transparent,
                                   child: ListTile(
                                       minVerticalPadding: 0.0,
                                       minLeadingWidth: 0.0,
+                                      leading: const CircleAvatar(
+                                        backgroundColor: Colors.teal,
+                                        child: Icon(Icons.location_city, color: MyColors.white),
+                                      ),
+                                      title: Text(
+                                          'This restaurant is situated at a distance of ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609.34).toStringAsFixed(2)} miles from your location',
+                                          style: MyColors.l111111_dwhite(context).semiBold15)),
+                                ),
+                                const SizedBox(height: 10),
+                                if(controller.bookingDetails.value.uniformMandatory == true)
+                                Material(
+                                  color: Colors.transparent,
+                                  child: ListTile(
+                                      minVerticalPadding: 0.0,
+                                      minLeadingWidth: 0.0,
+                                      trailing: InkWell(
+                                        onTap: controller.onViewUniformClick,
+                                        child: const CircleAvatar(
+                                          backgroundColor: Colors.transparent,
+                                          child: Icon(Icons.remove_red_eye, color: MyColors.c_C6A34F),
+                                        ),
+                                      ),
                                       leading:  CircleAvatar(
                                         backgroundColor: Colors.purple,
                                         child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
                                       ),
                                       title: Text(
-                                          "No uniform has been selected",
+                                        "Restaurant will provide you uniforms, view uniforms",
                                           style: MyColors.l111111_dwhite(context).semiBold15)),
                                 )
-                            ],
-                          )))
+                                else
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: ListTile(
+                                        minVerticalPadding: 0.0,
+                                        minLeadingWidth: 0.0,
+                                        leading:  CircleAvatar(
+                                          backgroundColor: Colors.purple,
+                                          child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
+                                        ),
+                                        title: Text(
+                                            "No uniform has been selected",
+                                            style: MyColors.l111111_dwhite(context).semiBold15)),
+                                  )
+                              ],
+                            ),
+                        )))
               ],
             ),
             Positioned.fill(

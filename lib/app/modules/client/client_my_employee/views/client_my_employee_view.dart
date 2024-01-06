@@ -189,8 +189,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                                       ? "${hiredHistory.employeeDetails?.distance ?? ""} miles away"
                                       : "Arrived"),
                               Visibility(
-                                  visible: double.parse(hiredHistory.employeeDetails?.distance ?? "0.0") > 0.124274 &&
-                                      controller.showMapButton.value == true,
+                                  visible: double.parse(hiredHistory.employeeDetails?.distance ?? "0.0") > 0.124274,
                                   child: InkWell(
                                       onTap: controller.onMapsPressed,
                                       child: Image.asset(MyAssets.maps, height: 22, width: 22))),

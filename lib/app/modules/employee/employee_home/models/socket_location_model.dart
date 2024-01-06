@@ -7,6 +7,7 @@ class SocketLocationModel {
   String? employeeName;
   String? currentPosition;
   int? totalEta;
+  double? zoom;
 
   SocketLocationModel(
       {this.sender,
@@ -16,7 +17,8 @@ class SocketLocationModel {
       this.employeePicture,
       this.employeeName,
       this.totalEta,
-      this.currentPosition});
+      this.currentPosition,
+      this.zoom = 15.50});
 
   SocketLocationModel.fromJson(Map<String, dynamic> json) {
     sender = json['sender'];

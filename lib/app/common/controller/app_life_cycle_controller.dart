@@ -2,14 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 
 import '../../modules/chat/client_employee_chat/controllers/client_employee_chat_controller.dart';
 import '../../modules/chat/support_chat/controllers/support_chat_controller.dart';
 import 'app_controller.dart';
 
-
 class AppLifecycleController extends GetxController with WidgetsBindingObserver {
-
   final AppController _appController = Get.find();
 
   @override
@@ -33,10 +32,9 @@ class AppLifecycleController extends GetxController with WidgetsBindingObserver 
           print('App resumed');
         }
 
-        if(Get.isRegistered<ClientEmployeeChatController>()) {
+        if (Get.isRegistered<ClientEmployeeChatController>()) {
           _updateActiveStatus(true);
-        }
-        else if(Get.isRegistered<SupportChatController>()) {
+        } else if (Get.isRegistered<SupportChatController>()) {
           _updateActiveStatus(true);
         }
 
@@ -64,14 +62,14 @@ class AppLifecycleController extends GetxController with WidgetsBindingObserver 
         }
         break;
       case AppLifecycleState.hidden:
-        // TODO: Handle this case.
+      // TODO: Handle this case.
     }
   }
 
   void _updateActiveStatus(bool active) {
-    if((_appController.user.value.userId).isNotEmpty) {
+    if ((_appController.user.value.userId).isNotEmpty) {
       FirebaseFirestore.instance.collection('onChatScreen').doc(_appController.user.value.userId).set({
-        "active" : active,
+        "active": active,
       });
     }
   }

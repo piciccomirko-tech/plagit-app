@@ -16,11 +16,12 @@ import '../model/login_response.dart';
 
 class LoginController extends GetxController implements LoginViewInterface {
   BuildContext? context;
+  final SocketController socketController = Get.find<SocketController>();
 
   final ApiHelper _apiHelper = Get.find();
   final AppController _appController = Get.find();
 
-  final formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   Rx<TextEditingController> tecUserId = TextEditingController().obs;
   Rx<TextEditingController> tecPassword = TextEditingController().obs;
@@ -101,7 +102,6 @@ class LoginController extends GetxController implements LoginViewInterface {
   }
 
   Future<void> _goToNextRoute(String token) async {
-    Get.find<SocketController>().connectToSocket();
     await _appController.afterSuccessLogin(token);
   }
 

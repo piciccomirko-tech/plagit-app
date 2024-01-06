@@ -22,7 +22,7 @@ class LiveLocationView extends GetView<LiveLocationController> {
                         initialCameraPosition: CameraPosition(
                           target: LatLng(double.parse(controller.appController.user.value.client?.lat ?? "0.0"),
                               double.parse(controller.appController.user.value.client?.long ?? "0.0")),
-                          zoom: 15.50,
+                          zoom: controller.clientMyEmployeeController.socketLocationModel.value.zoom??15.50,
                         ),
                         polylines: {
                           Polyline(

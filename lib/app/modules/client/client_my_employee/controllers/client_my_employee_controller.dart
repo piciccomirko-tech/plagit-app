@@ -14,8 +14,6 @@ import 'package:mh/app/modules/employee/employee_home/models/common_response_mod
 import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
 import 'package:mh/app/modules/employee_hired_history/widgets/employee_hired_history_details_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
-import 'package:socket_io_client/socket_io_client.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../models/custom_error.dart';
 import '../../../../repository/api_helper.dart';
@@ -37,7 +35,6 @@ class ClientMyEmployeeController extends GetxController {
   Rx<DateTime> selectedDate = DateTime.now().obs;
   RxList<RequestDateModel> prevDateList = <RequestDateModel>[].obs;
   RxList<LatLng> polylineCoordinates = <LatLng>[].obs;
-  RxBool showMapButton = false.obs;
   @override
   void onInit() async {
     await _getAllHiredEmployees();
@@ -69,7 +66,8 @@ class ClientMyEmployeeController extends GetxController {
               PointLatLng(
                   double.parse(i.employeeDetails?.lat ?? "0.0"), double.parse(i.employeeDetails?.long ?? "0.0")),
               PointLatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
-                  double.parse(appController.user.value.client?.long ?? "0.0")));
+                  double.parse(appController.user.value.client?.long ?? "0.0")),
+              travelMode: TravelMode.transit);
 
           socketLocationModel.value.distance = (LocationController.calculateDistance(
                       targetLat: double.parse(i.employeeDetails?.lat ?? "0.0"),
@@ -79,9 +77,14 @@ class ClientMyEmployeeController extends GetxController {
                       currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
                       //90.40503904223443
                       ) /
-                  1609)
+                  1609.34)
               .toStringAsFixed(2);
+          socketLocationModel.value.employeeName = i.employeeDetails?.name ?? "";
+          socketLocationModel.value.employeePicture = (i.employeeDetails?.profilePicture ?? "").imageUrl;
+
           i.employeeDetails?.distance = socketLocationModel.value.distance;
+          socketLocationModel.value.currentPosition = result.endAddress;
+          socketLocationModel.value.totalEta = parseDurationInMinutes(durationText: result.duration ?? "");
 
           if (result.points.isNotEmpty) {
             for (var point in result.points) {
@@ -196,54 +199,50 @@ class ClientMyEmployeeController extends GetxController {
 
   void getDataFromSocket() {
     try {
-      socketController.connectToSocket();
-      socketController.socket?.onConnect((_) {
-        socketController.socket?.on('location:move', (data) async {
-          socketLocationModel.value = SocketLocationModel.fromJson(data);
-          for (EmployeeModel i in employees) {
-            if (i.employeeId == socketLocationModel.value.sender) {
-              polylineCoordinates.clear();
+      socketController.socket?.on('location:move', (data) async {
+        socketLocationModel.value = SocketLocationModel.fromJson(data);
+        for (EmployeeModel i in employees) {
+          if (i.employeeId == socketLocationModel.value.sender) {
+            polylineCoordinates.clear();
 
-              PolylinePoints polylinePoints = PolylinePoints();
-              PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-                  AppCredentials.googleMapKey,
-                  PointLatLng(socketLocationModel.value.cords?.latitude ?? 0.0,
-                      socketLocationModel.value.cords?.longitude ?? 0.0),
-                  PointLatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
-                      double.parse(appController.user.value.client?.long ?? "0.0")));
+            PolylinePoints polylinePoints = PolylinePoints();
+            PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+                AppCredentials.googleMapKey,
+                PointLatLng(socketLocationModel.value.cords?.latitude ?? 0.0,
+                    socketLocationModel.value.cords?.longitude ?? 0.0),
+                PointLatLng(double.parse(appController.user.value.client?.lat ?? "0.0"),
+                    double.parse(appController.user.value.client?.long ?? "0.0")));
 
-              socketLocationModel.value.employeeName = i.employeeDetails?.name ?? "";
-              socketLocationModel.value.employeePicture = (i.employeeDetails?.profilePicture ?? "").imageUrl;
-              socketLocationModel.value.distance = (LocationController.calculateDistance(
-                          targetLat: socketLocationModel.value.cords?.latitude ?? 0.0,
-                          targetLong: socketLocationModel.value.cords?.longitude ?? 0.0,
-                          currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
-                          //23.795455885215837,
-                          currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
-                          //90.40503904223443
-                          ) /
-                      1609)
-                  .toStringAsFixed(2);
+            socketLocationModel.value.currentPosition = result.endAddress;
+            socketLocationModel.value.totalEta = parseDurationInMinutes(durationText: result.duration ?? "");
 
-              i.employeeDetails?.distance = socketLocationModel.value.distance;
-              socketLocationModel.value.currentPosition = result.endAddress;
-              socketLocationModel.value.totalEta = parseDurationInMinutes(durationText: result.duration ?? "");
-
-              if (result.points.isNotEmpty) {
-                for (var point in result.points) {
-                  polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-                }
+            if (result.points.isNotEmpty) {
+              for (var point in result.points) {
+                polylineCoordinates.add(LatLng(point.latitude, point.longitude));
               }
             }
           }
-          if (Get.isRegistered<LiveLocationController>() == true) {
-            Get.find<LiveLocationController>().loadMarkers();
-          }
-          showMapButton.value = true;
-          polylineCoordinates.refresh();
-          employees.refresh();
-          socketLocationModel.refresh();
-        });
+          socketLocationModel.value.employeeName = i.employeeDetails?.name ?? "";
+          socketLocationModel.value.employeePicture = (i.employeeDetails?.profilePicture ?? "").imageUrl;
+          socketLocationModel.value.distance = (LocationController.calculateDistance(
+                      targetLat: socketLocationModel.value.cords?.latitude ?? 0.0,
+                      targetLong: socketLocationModel.value.cords?.longitude ?? 0.0,
+                      currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
+                      //23.795455885215837,
+                      currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
+                      //90.40503904223443
+                      ) /
+                  1609.34)
+              .toStringAsFixed(2);
+
+          i.employeeDetails?.distance = socketLocationModel.value.distance;
+        }
+        if (Get.isRegistered<LiveLocationController>() == true) {
+          Get.find<LiveLocationController>().loadMarkers();
+        }
+        polylineCoordinates.refresh();
+        employees.refresh();
+        socketLocationModel.refresh();
       });
     } catch (_) {}
   }

@@ -613,7 +613,6 @@ class EmployeeHomeController extends GetxController {
   }
 
   void sendDataThroughSocket() {
-    socketController.connectToSocket();
     SocketLocationModel socketLocationModel = SocketLocationModel(
       sender: appController.user.value.employee?.id ?? "",
       receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",

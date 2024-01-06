@@ -65,7 +65,7 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                                     ? (controller.restaurantDistanceFromEmployee(
                                                 targetLat: double.parse(restaurantDetails!.lat.toString()),
                                                 targetLng: double.parse(restaurantDetails.long.toString())) /
-                                            1609)
+                                            1609.34)
                                         .toStringAsFixed(2)
                                     : 'xxx',
                                 style: MyColors.white.semiBold26,

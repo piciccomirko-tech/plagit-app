@@ -1,6 +1,7 @@
 import 'package:lottie/lottie.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/modules/client/live_location/controllers/live_location_controller.dart';
+import 'package:mh/app/modules/client/live_location/widgets/travel_mode.dart';
 
 class LocationInfoWidget extends GetWidget<LiveLocationController> {
   const LocationInfoWidget({super.key});
@@ -9,7 +10,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(15.0),
-      height: 250,
+      height: 300,
       decoration:  BoxDecoration(
           color: MyColors.lightCard(context),
           borderRadius: const BorderRadius.only(topRight: Radius.circular(10.0), topLeft: Radius.circular(10.0))),
@@ -17,6 +18,8 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const TravelMode(),
+            const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
@@ -52,7 +55,7 @@ class LocationInfoWidget extends GetWidget<LiveLocationController> {
                 )
               ],
             ),
-            SizedBox(height: 30.h),
+            const SizedBox(height: 15),
             Row(
               children: [
                 Expanded(

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/location_controller.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/modules/client/client_my_employee/controllers/client_my_employee_controller.dart';
@@ -23,13 +24,20 @@ class LiveLocationController extends GetxController {
   RxSet<Marker> markersList = <Marker>{}.obs;
   Rx<Uint8List> locationIcon = Uint8List(1).obs;
 
-
   @override
   void onInit() async {
     Uint8List val = await LocationController.getBytesFromAsset(MyAssets.locationPin, Platform.isAndroid ? 80 : 85);
     locationIcon.value = val;
     loadMarkers();
     super.onInit();
+  }
+  
+  @override
+  void onReady() {
+   Get.find<SocketController>().socket?.on("location:move", (data){
+     print('LiveLocationController.onReady: $data');
+    });
+    super.onReady();
   }
 
   @override
@@ -104,6 +112,7 @@ class LiveLocationController extends GetxController {
 
     return completer.future;
   }
+
   void onLiveChatPressed() => Get.toNamed(Routes.clientEmployeeChat, arguments: {
         MyStrings.arg.receiverName: clientMyEmployeeController.socketLocationModel.value.employeeName,
         MyStrings.arg.fromId: appController.user.value.client?.id,
@@ -111,4 +120,8 @@ class LiveLocationController extends GetxController {
         MyStrings.arg.clientId: appController.user.value.client?.id,
         MyStrings.arg.employeeId: clientMyEmployeeController.socketLocationModel.value.sender,
       });
+
+  void onTravelModeTap({required String title}){
+
+  }
 }

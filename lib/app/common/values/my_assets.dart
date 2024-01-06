@@ -96,6 +96,10 @@ class MyAssets {
   static const String calender1 = 'assets/icons/calender1.png';
   static const String calender2 = 'assets/icons/calender2.png';
   static const String clock = 'assets/icons/clock.png';
+  static const String driving = 'assets/icons/driving.png';
+  static const String biCycling = 'assets/icons/bicycling.png';
+  static const String transit = 'assets/icons/transit.png';
+  static const String walking = 'assets/icons/walking.png';
 }
 
 class _Lottie {
