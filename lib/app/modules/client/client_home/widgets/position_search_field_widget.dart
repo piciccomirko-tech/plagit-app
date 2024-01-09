@@ -10,7 +10,7 @@ class PositionSearchFieldWidget extends GetWidget<ClientHomeController> {
   Widget build(BuildContext context) {
     return Container(
       decoration: MyDecoration.cardBoxDecoration(context: context),
-      height: 50.h,
+      height: 50,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),
         child: TextFormField(

@@ -147,7 +147,8 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         title: Text(
                                             "No uniform has been selected",
                                             style: MyColors.l111111_dwhite(context).semiBold15)),
-                                  )
+                                  ),
+                                SizedBox(height: MediaQuery.sizeOf(context).width*0.2)
                               ],
                             ),
                         )))

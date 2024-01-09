@@ -12,25 +12,25 @@ class ShimmerWidget {
           children: [
             Row(
               children: [
-                Expanded(child: _customFeatureBoxShimmerWidget(height: 130)),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130.h)),
                 SizedBox(width: 24.w),
-                Expanded(child: _customFeatureBoxShimmerWidget(height: 130))
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130.h))
               ],
             ),
             SizedBox(height: 15.h),
             Row(
               children: [
-                Expanded(child: _customFeatureBoxShimmerWidget(height: 130)),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130.h)),
                 SizedBox(width: 24.w),
-                Expanded(child: _customFeatureBoxShimmerWidget(height: 130))
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130.h))
               ],
             ),
             SizedBox(height: 15.h),
             Row(
               children: [
-                Expanded(child: _customFeatureBoxShimmerWidget(height: 130)),
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130.h)),
                 SizedBox(width: 24.w),
-                Expanded(child: _customFeatureBoxShimmerWidget(height: 130))
+                Expanded(child: _customFeatureBoxShimmerWidget(height: 130.h))
               ],
             ),
           ],

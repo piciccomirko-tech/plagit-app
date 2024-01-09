@@ -22,7 +22,6 @@ import 'package:mh/app/modules/notifications/controllers/notifications_controlle
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
-import 'package:socket_io_client/socket_io_client.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/controller/location_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -618,9 +617,7 @@ class EmployeeHomeController extends GetxController {
       receiver: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
       cords: Cords(latitude: currentLocation?.latitude, longitude: currentLocation?.longitude),
     );
-    socketController.socket?.onConnect((_) {
-      socketController.socket?.emit('location:move', socketLocationModel.toJson());
-    });
+    socketController.socket?.emit('location:move', socketLocationModel.toJson());
   }
 
   void getJobRequests() async {

@@ -1,11 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/location_controller.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
+import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
 import 'package:mh/app/modules/employee_hired_history/widgets/employee_hired_history_details_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
@@ -19,6 +21,7 @@ class ClientMyEmployeeController extends GetxController {
   final ShortlistController shortlistController = Get.find();
   final AppController appController = Get.find<AppController>();
   final ClientHomeController clientHomeController = Get.find<ClientHomeController>();
+  Rx<SocketLocationModel> socketLocationModel = SocketLocationModel().obs;
   RxList<EmployeeModel> employees = <EmployeeModel>[].obs;
   RxBool isLoading = true.obs;
   RxString startDate = DateTime.now().toString().split(" ").first.obs;
@@ -29,6 +32,12 @@ class ClientMyEmployeeController extends GetxController {
   void onInit() async {
     await _getAllHiredEmployees();
     super.onInit();
+  }
+
+  @override
+  void onReady() {
+    getDistanceFromSocket();
+    super.onReady();
   }
 
   @override
@@ -167,5 +176,31 @@ class ClientMyEmployeeController extends GetxController {
 
   void onMapsPressed({required EmployeeModel employeeInfo}) {
     Get.toNamed(Routes.liveLocation, arguments: employeeInfo);
+  }
+
+  void getDistanceFromSocket() {
+    Get.find<SocketController>().socket?.on('location:move', (data) async {
+      socketLocationModel.value = SocketLocationModel.fromJson(data);
+      for (var i in employees) {
+        if (i.employeeId == socketLocationModel.value.sender) {
+          i.employeeDetails?.lat = (socketLocationModel.value.cords?.latitude ?? 0.0).toString();
+          i.employeeDetails?.long = (socketLocationModel.value.cords?.longitude ?? 0.0).toString();
+
+          i.employeeDetails?.distance = (LocationController.calculateDistance(
+                      targetLat: socketLocationModel.value.cords?.latitude ?? 0.0,
+                      targetLong: socketLocationModel.value.cords?.longitude ?? 0.0,
+                      currentLat: double.parse(appController.user.value.client?.lat ?? "0.0"),
+                      //23.795455885215837,
+                      currentLong: double.parse(appController.user.value.client?.long ?? "0.0")
+                      //90.40503904223443
+                      ) /
+                  1609.34)
+              .toStringAsFixed(2);
+
+          break;
+        }
+      }
+      employees.refresh();
+    });
   }
 }

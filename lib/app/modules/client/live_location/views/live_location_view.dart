@@ -11,29 +11,33 @@ class LiveLocationView extends GetView<LiveLocationController> {
   const LiveLocationView({super.key});
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         body: Obx(() => controller.mapLoaded.value == false
             ? Center(child: lottie.Lottie.asset(MyAssets.lottie.mapLoading))
             : Stack(
                 children: [
-                  Obx(() => GoogleMap(
-                        mapType: MapType.normal,
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(double.parse(controller.appController.user.value.client?.lat ?? "0.0"),
-                              double.parse(controller.appController.user.value.client?.long ?? "0.0")),
-                          zoom: 10.00,
-                        ),
-                        polylines: {
-                          Polyline(
-                              polylineId: const PolylineId('route'),
-                              color: Colors.white,
-                              width: 6,
-                              points: controller.polylineCoordinates)
-                        },
-                        markers: controller.markersList,
-                        onMapCreated: controller.onMapCreated,
-                      )),
+                  GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: CameraPosition(
+                      tilt: 50.0,
+                      bearing: 0,
+                      target: LatLng(
+                        double.parse(controller.employeeInfo.employeeDetails?.lat ?? "0.0"),
+                        double.parse(controller.employeeInfo.employeeDetails?.long ?? "0.0"),
+                      ),
+                      zoom: 14.50,
+                    ),
+                    polylines: {
+                      Polyline(
+                        polylineId: const PolylineId('route'),
+                        color: Colors.white,
+                        width: 10,
+                        points: controller.polylineCoordinates,
+                      ),
+                    },
+                    markers: controller.markersList,
+                    onMapCreated: controller.onMapCreated,
+                  ),
                   const Positioned.fill(
                     child: Align(alignment: Alignment.topLeft, child: LocationBackButtonWidget()),
                   ),
