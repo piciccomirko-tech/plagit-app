@@ -1,6 +1,6 @@
 import '../values/my_strings.dart';
 
-Map<String, String> en = {
+Map<String, String> english = <String, String>{
   MyStrings.required: "Required",
   MyStrings.invalidEmailAddress: "Invalid Email Address",
   MyStrings.atLeast1CharNeeded: "At least 1 character needed",

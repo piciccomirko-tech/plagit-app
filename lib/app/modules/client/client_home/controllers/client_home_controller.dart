@@ -90,10 +90,12 @@ class ClientHomeController extends GetxController {
   }
 
   void onProfileClick() {
+    Get.back();
     Get.toNamed(Routes.clientSelfProfile);
   }
 
   void onSettingsClick() {
+    Get.back();
     Get.toNamed(Routes.settings);
   }
 

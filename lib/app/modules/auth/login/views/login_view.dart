@@ -1,4 +1,6 @@
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
+import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
 
 import '../../../../common/utils/exports.dart';
@@ -33,6 +35,11 @@ class LoginView extends GetView<LoginController> {
             right: 0.w,
             bottom: 50.h,
             child: _dontHaveAnAccount,
+          ),
+          Positioned(
+            top: 50.w,
+            right: 10.w,
+            child: const LanguageDropdown(),
           ),
           _mainContent,
         ],

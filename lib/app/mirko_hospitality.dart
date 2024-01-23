@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
+import 'package:mh/app/common/translations/translations_service.dart';
 import 'common/app_info/app_info.dart';
 import 'common/controller/app_controller.dart';
-import 'common/language/translation.dart';
 import 'common/local_storage/storage_helper.dart';
 import 'common/style/theme.dart';
 import 'common/utils/initializer.dart';
@@ -12,7 +11,6 @@ import 'routes/app_pages.dart';
 
 class MirkoHospitality extends StatelessWidget {
   const MirkoHospitality({super.key});
-
 
   @override
   Widget build(BuildContext context) {
@@ -33,15 +31,16 @@ class MirkoHospitality extends StatelessWidget {
           initialBinding: InitialBindings(),
           debugShowCheckedModeBanner: false,
           defaultTransition: Transition.rightToLeft,
-          translations: Translation(),
+          translations: TranslationsService(),
           locale: Locale(StorageHelper.getLanguage),
           fallbackLocale: Locale(StorageHelper.getLanguage),
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: ThemeMode.system,
           supportedLocales: const [
-            Locale('en', 'US'), // English
-            Locale('bn', 'BD'), // Bangla
+            Locale('en', 'US'),
+            Locale('ar', 'AE'),
+            Locale('it', 'IT'), // Bangla
             // Add more supported locales
           ],
         );

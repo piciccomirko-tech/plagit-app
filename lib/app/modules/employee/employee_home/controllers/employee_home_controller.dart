@@ -192,6 +192,7 @@ class EmployeeHomeController extends GetxController {
   }
 
   void onProfileClick() {
+    Get.back();
     Get.toNamed(Routes.employeeSelfProfile);
   }
 
@@ -481,28 +482,17 @@ class EmployeeHomeController extends GetxController {
   }
 
   bool get showCheckInCheckOutWidget {
-    return todayWorkScheduleDataLoading.value == false &&
-        todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
-        locationFetchError.value.isEmpty &&
-        restaurantDistanceFromEmployee(
-                targetLat: double.parse(
-                    todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.lat ?? '0.0'),
-                targetLng: double.parse(
-                    todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? '0.0')) <
-            200 &&
-        todayCheckInCheckOutDetailsDataLoading.value == false &&
-        (checkIn.value == false || checkOut.value == false);
-  }
+    final TodayWorkScheduleDetailsModel? todaySchedule = todayWorkSchedule.value.todayWorkScheduleDetailsModel;
+    final double restaurantLat = double.parse(todaySchedule?.restaurantDetails?.lat ?? '0.0');
+    final double restaurantLng = double.parse(todaySchedule?.restaurantDetails?.long ?? '0.0');
 
-  bool get showEmergencyCheckInCheckOut {
-    return todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
-        restaurantDistanceFromEmployee(
-                targetLat: double.parse(
-                    todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.lat ?? '0.0'),
-                targetLng: double.parse(
-                    todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.long ?? '0.0')) >
-            200 &&
-        checkIn.value == false;
+    return !todayWorkScheduleDataLoading.value &&
+        (todaySchedule != null || checkIn.value) &&
+        locationFetchError.value.isEmpty &&
+        (restaurantDistanceFromEmployee(targetLat: restaurantLat, targetLng: restaurantLng) < 200 ||
+            (!todayWorkScheduleDataLoading.value && todaySchedule == null && checkIn.value)) &&
+        !todayCheckInCheckOutDetailsDataLoading.value &&
+        (checkIn.value == false || checkOut.value == false);
   }
 
   void _afterCheckInCheckout() async {
