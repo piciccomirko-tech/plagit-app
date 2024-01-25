@@ -97,5 +97,6 @@ Map<String, String> arabic = <String, String>{
   MyStrings.dateRange: "@startDate @startMonth - @endDate @endMonth (@totalDays يوم)",
   MyStrings.bookAll: "حجز الكل",
   MyStrings.selectDateRange: "حدد نطاق التاريخ",
-  MyStrings.applyRange: "تطبيق النطاق"
+  MyStrings.applyRange: "تطبيق النطاق",
+  MyStrings.rememberMeText: "تذكرنى",
 };

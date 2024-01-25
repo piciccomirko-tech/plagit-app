@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/translations/translations_service.dart';
@@ -32,6 +33,11 @@ class MirkoHospitality extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           defaultTransition: Transition.rightToLeft,
           translations: TranslationsService(),
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           locale: Locale(StorageHelper.getLanguage),
           fallbackLocale: Locale(StorageHelper.getLanguage),
           theme: AppTheme.light,

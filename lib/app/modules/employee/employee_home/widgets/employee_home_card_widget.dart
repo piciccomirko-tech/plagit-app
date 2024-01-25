@@ -24,7 +24,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                     child: CustomFeatureBox(
                         height: 120,
                         iconHeight: 40,
-                        title: MyStrings.myDashboard,
+                        title: MyStrings.myDashboard.tr,
                         icon: MyAssets.mhEmployees,
                         onTap: controller.onDashboardClick),
                   ),
@@ -35,7 +35,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                         CustomFeatureBox(
                             height: 120,
                             iconHeight: 40,
-                            title: MyStrings.bookedHistory,
+                            title: MyStrings.bookedHistory.tr,
                             icon: MyAssets.bookedHistory,
                             onTap: controller.onBookedHistoryClick),
                         Obx(
@@ -60,7 +60,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                         CustomFeatureBox(
                             height: 120,
                             iconHeight: 40,
-                            title: MyStrings.hiredHistory,
+                            title: MyStrings.hiredHistory.tr,
                             icon: MyAssets.hiredHistory,
                             onTap: controller.onHiredHistoryClick),
                         Obx(

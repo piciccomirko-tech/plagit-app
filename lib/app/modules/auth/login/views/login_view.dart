@@ -174,7 +174,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 value: controller.rememberMe.value,
                 onChanged: controller.onRememberMePressed),
-            Text(MyStrings.rememberMeText, style: MyColors.l111111_dwhite(controller.context!).semiBold15),
+            Text(MyStrings.rememberMeText.tr, style: MyColors.l111111_dwhite(controller.context!).semiBold15),
           ],
         ),
       ));

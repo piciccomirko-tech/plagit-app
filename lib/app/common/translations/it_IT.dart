@@ -1,6 +1,6 @@
 import '../values/my_strings.dart';
 
-Map<String, String> italiano = <String, String>{
+Map<String, String> italian = <String, String>{
   MyStrings.required: "Obbligatorio",
   MyStrings.invalidEmailAddress: "Indirizzo email non valido",
   MyStrings.atLeast1CharNeeded: "Almeno 1 carattere necessario",
@@ -99,4 +99,5 @@ Map<String, String> italiano = <String, String>{
   MyStrings.bookAll: "Prenota Tutto",
   MyStrings.selectDateRange: "Seleziona Intervallo di Date",
   MyStrings.applyRange: "Applica Intervallo",
+  MyStrings.rememberMeText: "Ricordati di me",
 };

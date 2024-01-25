@@ -99,4 +99,5 @@ Map<String, String> english = <String, String>{
   MyStrings.bookAll: "Book All",
   MyStrings.selectDateRange: "Select Date Range",
   MyStrings.applyRange: "Apply Range",
+  MyStrings.rememberMeText: "Remember Me",
 };

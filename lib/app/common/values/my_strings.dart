@@ -92,10 +92,10 @@ class MyStrings {
   static const String stripePayment = "Stripe Payment";
   static const String invoice = "Invoice";
   static const String helpSupport = "helpSupport";
-  static const String myDashboard = "My Dashboard";
-  static const String paymentHistory = "Payment History";
-  static const String bookedHistory = "Booked History";
-  static const String hiredHistory = "Hired History";
+  static const String myDashboard = "myDashboard";
+  static const String paymentHistory = "paymentHistory";
+  static const String bookedHistory = "bookedHistory";
+  static const String hiredHistory = "hiredHistory";
   static const String areShowing = "areShowing";
   static const String exp = "exp";
   static const String countYears = "countYears";
@@ -128,7 +128,7 @@ class MyStrings {
   static const String bookAll = "bookAll";
   static const String selectDateRange = "selectDateRange";
   static const String applyRange = "applyRange";
-  static const String rememberMeText = "Remember Me";
+  static const String rememberMeText = "rememberMe";
   static const String paymentSucessText = "Payment Successful";
 }
 

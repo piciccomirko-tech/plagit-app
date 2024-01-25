@@ -1,6 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/local_storage/storage_helper.dart';
+import 'package:mh/app/common/translations/language_model.dart';
+import 'package:mh/app/common/values/my_constant_value.dart';
 import 'package:mh/app/modules/auth/login/model/login_credentials_model.dart';
 
 import '../../../../common/controller/app_controller.dart';
@@ -123,5 +125,10 @@ class LoginController extends GetxController implements LoginViewInterface {
     savedLoginCredentials = StorageHelper.getLoginCredentials();
     tecUserId.value.text = savedLoginCredentials.username;
     tecPassword.value.text = savedLoginCredentials.password;
+  }
+
+  void onLanguageChanged(String? languageCode) {
+    Get.updateLocale(Locale(languageCode ?? "en"));
+    StorageHelper.setLanguage = languageCode ?? "en";
   }
 }

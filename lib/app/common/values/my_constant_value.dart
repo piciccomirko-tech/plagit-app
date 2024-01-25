@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:mh/app/common/translations/language_model.dart';
 
 import '../../enums/app_languages.dart';
 
@@ -13,4 +14,5 @@ class MyConstantValue {
     tabletChangePoint: 480,
     watchChangePoint: 300,
   );
+
 }
