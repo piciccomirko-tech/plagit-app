@@ -126,9 +126,4 @@ class LoginController extends GetxController implements LoginViewInterface {
     tecUserId.value.text = savedLoginCredentials.username;
     tecPassword.value.text = savedLoginCredentials.password;
   }
-
-  void onLanguageChanged(String? languageCode) {
-    Get.updateLocale(Locale(languageCode ?? "en"));
-    StorageHelper.setLanguage = languageCode ?? "en";
-  }
 }

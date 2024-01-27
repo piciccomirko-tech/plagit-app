@@ -36,11 +36,6 @@ class LoginView extends GetView<LoginController> {
             bottom: 50.h,
             child: _dontHaveAnAccount,
           ),
-          Positioned(
-            top: 50.w,
-            right: 10.w,
-            child: const LanguageDropdown(),
-          ),
           _mainContent,
         ],
       ),
@@ -76,6 +71,8 @@ class LoginView extends GetView<LoginController> {
               onTap: controller.onLoginPressed,
               margin: const EdgeInsets.symmetric(horizontal: 18),
             ),
+            SizedBox(height: 57.h),
+            const LanguageDropdown()
           ],
         ),
       );

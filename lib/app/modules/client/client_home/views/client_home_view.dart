@@ -3,6 +3,7 @@ import 'package:mh/app/common/style/my_decoration.dart';
 import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
 import 'package:mh/app/models/dropdown_item.dart';
+import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/modules/client/client_home/widgets/client_home_items_widget.dart';
 import 'package:mh/app/modules/client/client_home/widgets/position_search_field_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
@@ -30,6 +31,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
           centerTitle: false,
           visibleBack: false,
           actions: [
+            const LanguageDropdown(),
             Obx(() => controller.notificationsController.unreadCount.value == 0
                 ? IconButton(
                     onPressed: () {
