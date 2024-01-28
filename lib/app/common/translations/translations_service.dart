@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:get/get.dart';
 import 'package:mh/app/common/translations/ar_AE.dart';
 import 'package:mh/app/common/translations/en_US.dart';

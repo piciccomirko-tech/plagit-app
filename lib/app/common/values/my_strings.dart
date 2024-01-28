@@ -14,6 +14,15 @@ class MyStrings {
 
   // validation
   static const String required = "This field is required";
+  static const String requests = "requests";
+  static const String foundNothing = "foundNothing";
+  static const String todaysEmployees = "todaysEmployees";
+  static const String features = "features";
+  static const String profile = "profile";
+  static const String logOut = "logOut";
+  static const String deleteAccount = "deleteAccount";
+  static const String settings = "settings";
+  static const String searchByPositionName = "searchByPositionName";
   static const String invalidEmailAddress = "invalidEmailAddress";
   static const String atLeast1CharNeeded = "atLeast1CharNeeded";
   static const String atLeast1DigitNeeded = "atLeast1DigitNeeded";
@@ -26,7 +35,7 @@ class MyStrings {
   static const String premierStaffingSolutions = "premierStaffingSolutions";
   static const String login = "login";
 
-  static const String submit = "Submit";
+  static const String submit = "submit";
   static const String signUp = "signUp";
   static const String welcomeBack = "welcomeBack";
   static const String nationality = "Nationality";
@@ -83,9 +92,9 @@ class MyStrings {
   static const String exploreTheFeaturesOfMhAppBelow = "exploreTheFeaturesOfMhAppBelow";
   static const String mh = "mh";
   static const String employees = "employees";
-  static const String createJobPost = "Create Job Post";
-  static const String updateJobPost = "Update Job Post";
-  static const String jobRequests = "Job Requests";
+  static const String createJobPost = "createJobPost";
+  static const String updateJobPost = "updateJobPost";
+  static const String jobRequests = "jobRequests";
   static const String dashboard = "dashboard";
   static const String myEmployees = "myEmployees";
   static const String invoicePayment = "invoicePayment";
@@ -102,22 +111,35 @@ class MyStrings {
   static const String totalHours = "totalHours";
   static const String countH = "countH";
   static const String rate = "rate";
+  static const String available = "available";
   static const String ratePerHour = "ratePerHour";
   static const String bookNow = "bookNow";
+  static const String booked = "booked";
   static const String filters = "filters";
   static const String rating = "rating";
   static const String experience = "experience";
   static const String years = "years";
   static const String totalHour = "totalHour";
+  static const String total = "total";
   static const String min = "min";
   static const String max = "max";
   static const String resetData = "resetData";
   static const String apply = "apply";
   static const String ageWithYears = "ageWithYears";
-  static const String age = "Age:";
+  static const String age = "age";
+  static const String height = "height";
+  static const String dressSize = "dressSize";
+  static const String free = "free";
+  static const String currentOrganization = "currentOrganization";
   static const String review = "Review";
   static const String countTime = "countTime";
   static const String licenseNo = "licenseNo";
+  static const String viewCalendar = "viewCalendar";
+  static const String selectDateRange = "selectDateRange";
+  static const String unavailable = "unavailable";
+  static const String selected = "selected";
+  static const String pending = "pending";
+  static const String disabled = "disabled";
   static const String location = "location";
   static const String education = "education";
   static const String certificate = "certificate";
@@ -126,7 +148,6 @@ class MyStrings {
       "selectDateRangeForThisEmployeeToBookAllOfThemAtOnce";
   static const String dateRange = "dateRange";
   static const String bookAll = "bookAll";
-  static const String selectDateRange = "selectDateRange";
   static const String applyRange = "applyRange";
   static const String rememberMeText = "rememberMe";
   static const String paymentSucessText = "Payment Successful";

@@ -1,8 +1,7 @@
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/gestures.dart';
+import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_text_input_field.dart';
@@ -13,6 +12,7 @@ class LoginView extends GetView<LoginController> {
 
   @override
   Widget build(BuildContext context) {
+
     controller.context = context;
     Utils.setStatusBarColorColor(Theme.of(context).brightness);
 
@@ -47,6 +47,15 @@ class LoginView extends GetView<LoginController> {
         child: Column(
           children: [
             SizedBox(height: 60.h),
+            const Padding(
+              padding: EdgeInsets.only(right: 5.0, bottom: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  LanguageDropdown()
+                ],
+              ),
+            ),
             Image.asset(
               MyAssets.logo,
               width: 112.w,
@@ -71,8 +80,6 @@ class LoginView extends GetView<LoginController> {
               onTap: controller.onLoginPressed,
               margin: const EdgeInsets.symmetric(horizontal: 18),
             ),
-            SizedBox(height: 57.h),
-            const LanguageDropdown()
           ],
         ),
       );

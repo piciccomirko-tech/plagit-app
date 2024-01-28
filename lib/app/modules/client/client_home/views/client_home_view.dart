@@ -27,11 +27,10 @@ class ClientHomeView extends GetView<ClientHomeController> {
       child: Scaffold(
         appBar: CustomAppbar.appbar(
           context: context,
-          title: 'Feature',
+          title: MyStrings.features.tr,
           centerTitle: false,
           visibleBack: false,
           actions: [
-            const LanguageDropdown(),
             Obx(() => controller.notificationsController.unreadCount.value == 0
                 ? IconButton(
                     onPressed: () {

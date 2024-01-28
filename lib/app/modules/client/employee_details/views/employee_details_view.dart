@@ -19,7 +19,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
     return Scaffold(
       bottomNavigationBar: _bottomBar(context),
       body: Obx(() => controller.loading.value == true
-          ? Center(child: CustomLoader.loading())
+          ? const Center(child: CupertinoActivityIndicator())
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(21, 0, 21, 20),
@@ -277,7 +277,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
         phone: controller.employee.value.phoneNumber ?? '',
         position: controller.employee.value.positionName ?? "-",
         title: "${controller.employee.value.firstName ?? "-"} ${controller.employee.value.lastName ?? ""}",
-        age: 'Age: ${controller.employee.value.dateOfBirth?.calculateAge() ?? 0.0}',
+        age: '${MyStrings.age.tr}: ${controller.employee.value.dateOfBirth?.calculateAge() ?? 0.0}',
         rating: controller.employee.value.rating ?? 0.0,
         totalRating: controller.employee.value.totalRating ?? 0,
         nationality: controller.employee.value.nationality ?? '',
@@ -312,22 +312,22 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
               children: [
                 _detailsItem(MyAssets.license, MyStrings.licenseNo.tr, controller.employee.value.licensesNo ?? "-"),
                 const Spacer(),
-                _detailsItem(MyAssets.calender2, 'Free: ', controller.employee.value.available ?? "-"),
+                _detailsItem(MyAssets.calender2, "${MyStrings.free.tr}:", controller.employee.value.available ?? "-"),
               ],
             ),
             SizedBox(height: 18.h),
             Row(
               children: [
-                _detailsItem(MyAssets.height, 'Height:', controller.employee.value.height ?? "-"),
+                _detailsItem(MyAssets.height, "${MyStrings.height.tr}:", controller.employee.value.height ?? "-"),
                 const Spacer(),
-                _detailsItem(MyAssets.dressSize, 'Dress Size: ', controller.employee.value.dressSize ?? "-"),
+                _detailsItem(MyAssets.dressSize, "${MyStrings.dressSize.tr}:", controller.employee.value.dressSize ?? "-"),
               ],
             ),
             SizedBox(height: 18.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _detailsItem(MyAssets.organization, 'Current Organization:',
+                _detailsItem(MyAssets.organization, "${MyStrings.currentOrganization.tr}:",
                     controller.employee.value.currentOrganisation ?? "-"),
               ],
             ),
@@ -345,12 +345,12 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
       );
 
   Widget get _skill => _base(
-        title: 'Skills',
+        title: MyStrings.skills.tr,
         child: Column(
           children: [
             if ((controller.employee.value.skills ?? []).isEmpty)
               Text(
-                "No Data Found",
+                MyStrings.foundNothing.tr,
                 style: MyColors.l7B7B7B_dtext(controller.context!).regular12,
               )
             else
@@ -385,7 +385,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
           children: [
             if ((controller.employee.value.languages ?? []).isEmpty)
               Text(
-                "No Data Found",
+                MyStrings.foundNothing.tr,
                 style: MyColors.l7B7B7B_dtext(controller.context!).regular12,
               )
             else
@@ -409,15 +409,15 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
                 ? null
                 : controller.onBookNowClick,
             text: (controller.available.isEmpty || int.parse(controller.available.split(' ').first) <= 0)
-                ? "Booked"
-                : "Book Now",
+                ? MyStrings.booked.tr
+                :MyStrings.bookNow.tr,
             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
           ),
         )
             : CustomBottomBar(
             child: CustomButtons.button(
                 onTap: controller.onViewCalenderClick,
-                text: 'View Calender',
+                text: MyStrings.viewCalendar.tr,
                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner))));
   }
 }

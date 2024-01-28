@@ -1,3 +1,5 @@
+import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
+
 import '../utils/exports.dart';
 import 'custom_appbar_back_button.dart';
 
@@ -21,44 +23,43 @@ class CustomAppbar {
             )
           ]),
           child: AppBar(
-            backgroundColor: MyColors.lightCard(context),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(10.0),
+              backgroundColor: MyColors.lightCard(context),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(10.0),
+                ),
               ),
-            ),
-            elevation: 0,
-            leading: visibleBack
-                ? const Align(child: CustomAppbarBackButton())
-                : Container(
-                    margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                    child: Image.asset(MyAssets.logo),
+              elevation: 0,
+              leading: visibleBack
+                  ? const Align(child: CustomAppbarBackButton())
+                  : Container(
+                      margin: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                      child: Image.asset(MyAssets.logo),
+                    ),
+              title: Row(
+                mainAxisAlignment: centerTitle
+                    ? MainAxisAlignment.center
+                    : (!visibleBack || (actions ?? []).length > 1)
+                        ? MainAxisAlignment.start
+                        : MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Visibility(
+                    visible: visibleMH,
+                    child: Text(
+                      MyStrings.mh.tr,
+                      style: MyColors.c_C6A34F.semiBold18,
+                    ),
                   ),
-            title: Row(
-              mainAxisAlignment: centerTitle
-                  ? MainAxisAlignment.center
-                  : (!visibleBack || (actions ?? []).length > 1)
-                      ? MainAxisAlignment.start
-                      : MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Visibility(
-                  visible: visibleMH,
-                  child: Text(
-                    MyStrings.mh.tr,
-                    style: MyColors.c_C6A34F.semiBold18,
+                  Text(
+                    title.tr,
+                    style: MyColors.l111111_dwhite(context).semiBold18,
                   ),
-                ),
-                Text(
-                  title,
-                  style: MyColors.l111111_dwhite(context).semiBold18,
-                ),
-              ],
-            ),
-            actions: actions == null || actions.isEmpty
-                ? [SizedBox(width: 16.w)]
-                : actions,
-          ),
+                ],
+              ),
+              actions: actions == null || actions.isEmpty ? [SizedBox(width: 16.w)] : [const LanguageDropdown()]
+              //actions,
+              ),
         ),
       );
 }

@@ -6,15 +6,15 @@ class CalenderHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  const Row(
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CalenderStatusWidget(backgroundColor: Colors.blue, title: 'Unavailable'),
-            SizedBox(height: 10),
-            CalenderStatusWidget(backgroundColor: Colors.red, title: 'Booked')
+            CalenderStatusWidget(backgroundColor: Colors.blue, title: MyStrings.unavailable.tr),
+            const SizedBox(height: 10),
+            CalenderStatusWidget(backgroundColor: Colors.red, title: MyStrings.booked.tr)
           ],
         ),
         Column(
@@ -22,21 +22,21 @@ class CalenderHeaderWidget extends StatelessWidget {
           children: [
             CalenderStatusWidget(
               backgroundColor: Colors.green,
-              title: 'Available',
+              title: MyStrings.available.tr,
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             CalenderStatusWidget(
               backgroundColor: Colors.amber,
-              title: 'Pending',
+              title: MyStrings.pending.tr,
             )
           ],
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CalenderStatusWidget(backgroundColor: MyColors.c_C6A34F, title: 'Selected'),
-            SizedBox(height: 10),
-            CalenderStatusWidget(backgroundColor: Colors.grey, title: 'Disabled')
+            CalenderStatusWidget(backgroundColor: MyColors.c_C6A34F, title: MyStrings.selected.tr),
+            const SizedBox(height: 10),
+            CalenderStatusWidget(backgroundColor: Colors.grey, title: MyStrings.disabled.tr)
           ],
         ),
       ],

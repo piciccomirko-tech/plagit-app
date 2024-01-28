@@ -1,5 +1,4 @@
 import 'package:mh/app/common/widgets/custom_loader.dart';
-
 import '../../../common/utils/exports.dart';
 import '../controllers/splash_controller.dart';
 

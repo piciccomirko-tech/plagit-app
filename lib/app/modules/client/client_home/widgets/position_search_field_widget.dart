@@ -37,7 +37,7 @@ class PositionSearchFieldWidget extends GetWidget<ClientHomeController> {
               fillColor: MyColors.lightCard(context),
               contentPadding: const EdgeInsets.all(15.0),
               border: InputBorder.none,
-              hintText: 'Search by position name...',
+              hintText: MyStrings.searchByPositionName.tr,
               hintStyle: MyColors.c_7B7B7B.medium15),
           onChanged: controller.onSearchChanged,
         ),

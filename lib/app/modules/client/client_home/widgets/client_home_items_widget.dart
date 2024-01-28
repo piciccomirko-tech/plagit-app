@@ -127,7 +127,7 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                     child: CustomFeatureBox(
                       height: 130.h,
                       iconHeight: 50.h,
-                      title: MyStrings.createJobPost,
+                      title: MyStrings.createJobPost.tr,
                       icon: MyAssets.createPost,
                       onTap: controller.onCreateJobPostClick,
                     ),
@@ -140,7 +140,7 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                               CustomFeatureBox(
                                 height: 130.h,
                                 iconHeight: 50.h,
-                                title: MyStrings.jobRequests,
+                                title: MyStrings.jobRequests.tr,
                                 icon: MyAssets.jobRequest,
                                 onTap: controller.onJobRequestsClick,
                               ),

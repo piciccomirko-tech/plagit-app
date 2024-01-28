@@ -15,7 +15,7 @@ class NoItemFound extends StatelessWidget {
         children: [
           Lottie.asset(MyAssets.lottie.notFound, height: 300),
           Text(
-            "Found Nothing!",
+            MyStrings.foundNothing.tr,
             style: MyColors.l111111_dwhite(context).semiBold18,
           ),
         ],

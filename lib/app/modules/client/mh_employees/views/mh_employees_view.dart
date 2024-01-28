@@ -15,7 +15,7 @@ class MhEmployeesView extends GetView<MhEmployeesController> {
 
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: " Employees",
+        title: " ${MyStrings.employees.tr}",
         context: context,
         visibleMH: true,
         visibleBack: true,

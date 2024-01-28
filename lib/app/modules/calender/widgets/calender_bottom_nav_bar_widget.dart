@@ -16,7 +16,7 @@ class CalenderBottomNavBarWidget extends GetWidget<CalenderController> {
                   child: CustomButtons.button(
                     onTap: controller.disableSubmitButton == true ? null : controller.updateUnavailableDates,
                     backgroundColor: controller.disableSubmitButton == true ? MyColors.c_A6A6A6 : MyColors.c_C6A34F,
-                    text: "Submit",
+                    text: MyStrings.submit.tr,
                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                   ),
                 ))
@@ -24,7 +24,7 @@ class CalenderBottomNavBarWidget extends GetWidget<CalenderController> {
                   child: CustomButtons.button(
                     onTap: controller.disabledBookButton == true ? null : controller.onBookNowClick,
                     backgroundColor: controller.disabledBookButton == true ? MyColors.c_A6A6A6 : MyColors.c_C6A34F,
-                    text: "Book Now",
+                    text: MyStrings.bookNow.tr,
                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                   ),
                 ));

@@ -90,7 +90,7 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
             style: MyColors.c_C6A34F.semiBold16,
           ),
           Text(
-            " ${controller.position.name ?? "Employees"} are showing",
+            " ${controller.position.name ?? "Employees"} ${MyStrings.areShowing.tr}",
             style: MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
           const Spacer(),
@@ -202,15 +202,15 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                       ),
                       SizedBox(height: 8.h),
                       Row(children: [
-                        _detailsItem(MyAssets.rate, 'Rate:',
+                        _detailsItem(MyAssets.rate, "${MyStrings.rate.tr}:",
                             "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(user.hourlyRate ?? 0.0).toStringAsFixed(2)}"),
-                        _detailsItem(MyAssets.manager, MyStrings.age.tr, user.dateOfBirth?.calculateAge() ?? ''),
+                        _detailsItem(MyAssets.manager, "${MyStrings.age.tr}:", user.dateOfBirth?.calculateAge() ?? ''),
                       ]),
                       SizedBox(height: 8.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _detailsItem(MyAssets.calender2, 'Available:', user.available ?? ''),
+                          _detailsItem(MyAssets.calender2, "${MyStrings.available.tr}:", user.available ?? ''),
                         ],
                       ),
                       SizedBox(height: 8.h),
@@ -221,8 +221,8 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                             padding: const EdgeInsets.symmetric(horizontal: 15.0),
                             height: 23,
                             text: (user.available == null || int.parse(user.available!.split(' ').first) <= 0)
-                                ? "Booked"
-                                : "Book Now",
+                                ? MyStrings.booked.tr
+                                : MyStrings.bookNow.tr,
                             margin: EdgeInsets.zero,
                             fontSize: 12,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,

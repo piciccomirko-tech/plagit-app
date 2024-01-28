@@ -20,21 +20,27 @@ class CustomMenu {
           children: [
             _menuItem(
               context,
-              [UserType.client, UserType.employee,],
+              [
+                UserType.client,
+                UserType.employee,
+              ],
               CupertinoIcons.person,
-              "Profile",
+              MyStrings.profile.tr,
               onProfileTap ?? () {},
             ),
             const Divider(height: 1),
-            if(Get.isRegistered<ClientHomeController>() == true)
+            if (Get.isRegistered<ClientHomeController>() == true)
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _menuItem(
                     context,
-                    [UserType.client, UserType.employee,],
+                    [
+                      UserType.client,
+                      UserType.employee,
+                    ],
                     CupertinoIcons.settings,
-                    "Settings",
+                    MyStrings.settings.tr,
                     onSettingsTap ?? () {},
                   ),
                   const Divider(height: 1),
@@ -44,7 +50,7 @@ class CustomMenu {
               context,
               [UserType.client, UserType.employee, UserType.admin],
               Icons.logout,
-              "Logout",
+              MyStrings.logOut.tr,
               Get.find<AppController>().onLogoutClick,
             ),
             const Divider(height: 1),
@@ -52,7 +58,7 @@ class CustomMenu {
               context,
               [UserType.client, UserType.employee],
               Icons.remove_circle_outlined,
-              "Delete Account",
+              MyStrings.deleteAccount.tr,
               Get.isRegistered<ClientHomeController>() ? Get.find<ClientHomeController>().onAccountDeleteClick : () {},
               deleteIcon: true,
             ),
@@ -77,7 +83,7 @@ class CustomMenu {
         title: Text(
           title,
           style: deleteIcon
-              ? MyColors.l111111_dtext(context).semiBold15.copyWith(color: Colors.red)
+              ? MyColors.l111111_dtext(context).semiBold16.copyWith(color: Colors.red)
               : MyColors.l111111_dtext(context).regular16_5,
         ),
         onTap: onTap,

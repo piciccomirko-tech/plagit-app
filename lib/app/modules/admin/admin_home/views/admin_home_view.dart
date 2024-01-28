@@ -3,6 +3,7 @@ import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/custom_feature_box.dart';
 import 'package:mh/app/common/widgets/custom_help_support.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
+import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -21,7 +22,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
       child: Scaffold(
         appBar: CustomAppbar.appbar(
           context: context,
-          title: 'Feature',
+          title: MyStrings.features.tr,
           centerTitle: false,
           visibleBack: false,
           actions: [
@@ -117,7 +118,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                               clipBehavior: Clip.none,
                               children: [
                                 CustomFeatureBox(
-                                  title: "Request",
+                                  title: MyStrings.requests.tr,
                                   icon: MyAssets.request,
                                   loading: controller.loading.value,
                                   onTap: controller.onRequestClick,
@@ -166,7 +167,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                             () => Stack(
                               children: [
                                 CustomFeatureBox(
-                                  title: "Clients",
+                                  title: MyStrings.client.tr,
                                   icon: MyAssets.clientFixedLogo,
                                   onTap: controller.onClientClick,
                                 ),
@@ -195,7 +196,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                 padding: const EdgeInsets.only(bottom: 50.0, left: 15, right: 15),
                 child: CustomHelpSupport(
                   onTap: controller.onTodaysEmployeesPressed,
-                  title: "Today's Employees",
+                  title: MyStrings.todaysEmployees.tr,
                   asset: MyAssets.manager,
                 ),
               ),
