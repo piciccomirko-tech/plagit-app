@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
-import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/vlog_carsousel_slider.dart';
 import 'package:url_launcher/url_launcher.dart';
 

@@ -7,6 +7,7 @@ import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/utils/logcat.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_buttons.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
@@ -279,18 +280,14 @@ class CalenderController extends GetxController {
     if (rangeStartDate.value == null) {
       sameAsStartDate.value = false;
       rangeStartDate.value = currentDate;
-    }
-    else if (inValidRange(currentDate: currentDate) == true) {
+    } else if (inValidRange(currentDate: currentDate) == true) {
       Utils.showSnackBar(message: 'You cannot select this range', isTrue: false);
-    }
-    else if (rangeStartDate.value != null && currentDate.isBefore(rangeStartDate.value!)) {
+    } else if (rangeStartDate.value != null && currentDate.isBefore(rangeStartDate.value!)) {
       rangeEndDate.value = rangeStartDate.value;
       rangeStartDate.value = currentDate;
-    }
-    else if (rangeEndDate.value == null) {
+    } else if (rangeEndDate.value == null) {
       rangeEndDate.value = currentDate;
-    }
-    else {}
+    } else {}
 
     //totalDateList.clear();
     loadSelectedDates(currentDate: currentDate);
@@ -390,7 +387,7 @@ class CalenderController extends GetxController {
                     ),
                   ),
                   SizedBox(height: 19.h),
-                  _title(context, "From time"),
+                  _title(context, MyStrings.fromTime.tr),
                   TimerWheelWidget(
                     height: 150.h,
                     width: 300.w,
@@ -401,7 +398,7 @@ class CalenderController extends GetxController {
                     },
                   ),
                   SizedBox(height: 30.h),
-                  _title(context, "To time"),
+                  _title(context, MyStrings.toTime.tr),
                   SizedBox(height: 11.h),
                   TimerWheelWidget(
                     height: 150.h,
@@ -414,14 +411,13 @@ class CalenderController extends GetxController {
                   ),
                   SizedBox(height: 30.h),
                   CustomButtons.button(
-                    text: "Done",
+                    text: MyStrings.done.tr,
                     onTap: () {
                       if (requestDateList[index].startTime == requestDateList[index].endTime) {
                         CustomDialogue.information(
-                          context: context,
-                          title: "Invalid Time Range",
-                          description: "From-time and To-time should be same",
-                        );
+                            context: context,
+                            title: MyStrings.invalidTimeRange.tr,
+                            description: MyStrings.fromTimeToTime.tr);
                       } else {
                         Get.back(); // hide modal
                       }

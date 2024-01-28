@@ -8,19 +8,19 @@ class TranslationsService extends Translations {
   static List<LanguageModel> languageList = <LanguageModel>[
     LanguageModel(
       imageUrl: "🇺🇸",
-      languageName: 'English',
+      languageName: 'en',
       countryCode: 'US',
       languageCode: 'en',
     ),
     LanguageModel(
       imageUrl: "🇦🇪",
-      languageName: 'العربية', // Arabic
+      languageName: 'ar', // Arabic
       countryCode: 'AE',
       languageCode: 'ar',
     ),
     LanguageModel(
       imageUrl: "🇮🇹",
-      languageName: 'Italiano', // Italian
+      languageName: 'it', // Italian
       countryCode: 'IT',
       languageCode: 'it',
     ),

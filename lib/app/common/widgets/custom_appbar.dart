@@ -1,5 +1,3 @@
-import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
-
 import '../utils/exports.dart';
 import 'custom_appbar_back_button.dart';
 
@@ -57,8 +55,8 @@ class CustomAppbar {
                   ),
                 ],
               ),
-              actions: actions == null || actions.isEmpty ? [SizedBox(width: 16.w)] : [const LanguageDropdown()]
-              //actions,
+              actions: actions == null || actions.isEmpty ? [SizedBox(width: 16.w)] :
+              actions,
               ),
         ),
       );

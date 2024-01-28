@@ -3,7 +3,6 @@ import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/custom_feature_box.dart';
 import 'package:mh/app/common/widgets/custom_help_support.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
-import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';

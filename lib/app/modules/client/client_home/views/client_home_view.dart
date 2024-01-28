@@ -31,46 +31,39 @@ class ClientHomeView extends GetView<ClientHomeController> {
           centerTitle: false,
           visibleBack: false,
           actions: [
-            Obx(() => controller.notificationsController.unreadCount.value == 0
-                ? IconButton(
-                    onPressed: () {
-                      Get.toNamed(Routes.notifications);
-                    },
-                    icon: const Icon(CupertinoIcons.bell))
-                : InkWell(
-                    onTap: () {
-                      Get.toNamed(Routes.notifications);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 10.h, right: 15.w),
-                      child: Badge(
-                        backgroundColor: MyColors.c_C92C1A,
-                        label: Obx(() {
-                          return Text(
-                              controller.notificationsController.unreadCount.value == 20
-                                  ? '20+'
-                                  : controller.notificationsController.unreadCount.toString(),
-                              style: MyColors.white.semiBold12);
-                        }),
-                        child: const Icon(CupertinoIcons.bell),
-                      ),
-                    ),
-                  )),
-            IconButton(
-              onPressed: () {
+            InkResponse(
+              onTap: () {
                 CustomMenu.accountMenu(
                   context,
                   onSettingsTap: controller.onSettingsClick,
                   onProfileTap: controller.onProfileClick,
                 );
               },
-              icon: const Padding(
-                padding: EdgeInsets.only(top: 9.0),
-                child: Icon(
-                  CupertinoIcons.person,
-                ),
+              child: const Icon(
+                CupertinoIcons.person,
+                size: 20
               ),
-            )
+            ),
+            const SizedBox(width: 10),
+            Obx(() => controller.notificationsController.unreadCount.value == 0
+                ? InkResponse(onTap: () => Get.toNamed(Routes.notifications), child: const Icon(CupertinoIcons.bell))
+                : InkResponse(
+              onTap: () => Get.toNamed(Routes.notifications),
+              child: Badge(
+                backgroundColor: MyColors.c_C92C1A,
+                label: Obx(() {
+                  return Text(
+                      controller.notificationsController.unreadCount.value == 20
+                          ? '20+'
+                          : controller.notificationsController.unreadCount.toString(),
+                      style: MyColors.white.semiBold12);
+                }),
+                child: const Icon(CupertinoIcons.bell, size: 20),
+              ),
+            )),
+            const SizedBox(width: 10),
+            const LanguageDropdown(tag: 'inner'),
+            const SizedBox(width: 10),
           ],
         ),
         body: SizedBox(

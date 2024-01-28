@@ -19,7 +19,7 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
     controller.context = context;
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: "Shortlist",
+        title: MyStrings.shortList.tr,
         context: context,
       ),
       bottomNavigationBar: _bottomBar(context),
@@ -141,7 +141,7 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
                             child: Row(
                               children: [
                                 Image.asset(MyAssets.calender2, height: 20, width: 20),
-                                Text(' ${employee.requestDateList?.calculateTotalDays()} days selected',
+                                Text(' ${employee.requestDateList?.calculateTotalDays()} ${MyStrings.daysSelected.tr}',
                                     style: MyColors.black.medium12)
                               ],
                             ),
@@ -230,8 +230,8 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
                 color: MyColors.c_C6A34F),
             child: Center(
                 child: Text(
-                    employee.requestDateList!.isNotEmpty
-                        ? 'Total Estimated Amount: ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${employee.requestDateList?.calculateTotalHourlyRate(hourlyRate: employee.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}'
+                    (employee.requestDateList??[]).isNotEmpty
+                        ? '${MyStrings.totalEstimatedAmount.tr}: ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${employee.requestDateList?.calculateTotalHourlyRate(hourlyRate: employee.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}'
                         : 'Hourly Rate: ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${employee.employeeDetails?.hourlyRate!.toStringAsFixed(2) ?? '0.00'}',
                     style: MyColors.white.medium13)))
       ],
@@ -296,8 +296,8 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
               text: controller.shortlistController.selectedForHire.isEmpty ||
                       controller.shortlistController.selectedForHire.length ==
                           controller.shortlistController.totalShortlisted.value
-                  ? "Book All"
-                  : "Book (${controller.shortlistController.selectedForHire.length}) Employee",
+                  ? MyStrings.bookAll.tr
+                  : "${MyStrings.book.tr} (${controller.shortlistController.selectedForHire.length}) ${MyStrings.employee.tr}",
               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
             ),
           ),

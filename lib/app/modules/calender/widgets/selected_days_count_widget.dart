@@ -16,12 +16,12 @@ class SelectedDaysCountWidget extends GetWidget<CalenderController> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.asset(MyAssets.calender1, height: 20, width: 20),
-          Text(' Total',
+          Text(' ${MyStrings.total.tr}',
               style: MyColors.white.medium13),
           Obx(() => Text(
               ' ${Get.isRegistered<EmployeeHomeController>() == true ? controller.totalSelectedDaysForEmployee : controller.requestDateList.calculateTotalDays()}',
               style: MyColors.white.semiBold24)),
-           Text(' Days have been selected',
+           Text(' ${MyStrings.daysSelected.tr}',
               style: MyColors.white.medium13),
         ],
       ),

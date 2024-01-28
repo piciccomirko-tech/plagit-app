@@ -1,5 +1,4 @@
 import 'package:flutter/gestures.dart';
-import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
@@ -52,7 +51,7 @@ class LoginView extends GetView<LoginController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  LanguageDropdown()
+                  LanguageDropdown(tag: 'outer')
                 ],
               ),
             ),
