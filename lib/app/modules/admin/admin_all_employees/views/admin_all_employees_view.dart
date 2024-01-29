@@ -19,7 +19,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
 
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: "Employees",
+        title: MyStrings.employees.tr,
         context: context,
         centerTitle: true,
       ),
@@ -76,7 +76,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
             style: MyColors.c_C6A34F.semiBold16,
           ),
           Text(
-            " Employees are showing",
+            " ${MyStrings.employees.tr}${MyStrings.areShowing.tr}",
             style: MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
           const Spacer(),
@@ -216,7 +216,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                           _detailsItem(
                               tag: '',
                               MyAssets.flag,
-                              'Nationality:',
+                              '${MyStrings.nationality.tr}:',
                               user.nationality??'TBA'),
                         ],
                       ),

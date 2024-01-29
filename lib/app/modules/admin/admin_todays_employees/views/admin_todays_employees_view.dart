@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/widgets/admin_todays_employee_body_widget.dart';
@@ -14,7 +15,7 @@ class AdminTodaysEmployeesView extends GetView<AdminTodaysEmployeesController> {
       key: controller.scaffoldKey,
       appBar: CustomAppbar.appbar(
         context: context,
-        title: "Today's Employees"
+        title: MyStrings.todaysEmployees.tr
       ),
       body: Obx(() {
         if (controller.todaysEmployeesDataLoaded.value == false) {

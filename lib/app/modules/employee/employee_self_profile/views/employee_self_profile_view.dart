@@ -16,7 +16,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
     controller.context = context;
     return Scaffold(
       backgroundColor: MyColors.lFAFAFA_dframeBg(context),
-      appBar: CustomAppbar.appbar(title: "My Profile", context: context),
+      appBar: CustomAppbar.appbar(title: MyStrings.myProfile.tr, context: context),
       // bottomNavigationBar: _bottomBar(context),
       body: Obx(() => controller.loading.value == true
           ? Center(child: CustomLoader.loading())
@@ -54,7 +54,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                           Expanded(
                             child: _item(
                               logo: Icons.person,
-                              fieldName: "First Name",
+                              fieldName: MyStrings.firstName.tr,
                               textEditingController: controller.tecFirstName,
                               validator: (String? value) => Validators.emptyValidator(
                                 controller.tecFirstName.text,
@@ -66,7 +66,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                           Expanded(
                             child: _item(
                               logo: Icons.person,
-                              fieldName: "Last Name",
+                              fieldName: MyStrings.lastName.tr,
                               textEditingController: controller.tecLastName,
                               validator: (String? value) => Validators.emptyValidator(
                                 controller.tecLastName.text,
@@ -79,7 +79,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.person,
-                        fieldName: "Date of Birth",
+                        fieldName: MyStrings.dateOfBirth.tr,
                         textEditingController: controller.tecDob,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecDob.text,
@@ -89,7 +89,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.flag,
-                        fieldName: "Country",
+                        fieldName: MyStrings.country.tr,
                         textEditingController: controller.tecCountry,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecCountry.text,
@@ -125,7 +125,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.phone_android_rounded,
-                        fieldName: "Phone Number",
+                        fieldName: MyStrings.phoneNumber.tr,
                         textEditingController: controller.tecPhoneNumber,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecPhoneNumber.text,
@@ -135,7 +135,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.email_rounded,
-                        fieldName: "Email",
+                        fieldName: MyStrings.email.tr,
                         textEditingController: controller.tecEmail,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecEmail.text,
@@ -145,7 +145,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.location_on_rounded,
-                        fieldName: "Present Address",
+                        fieldName: MyStrings.presentAddress.tr,
                         textEditingController: controller.tecPresentAddress,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecPresentAddress.text,
@@ -155,7 +155,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.location_on_rounded,
-                        fieldName: "Permanent Address",
+                        fieldName: MyStrings.permanentAddress.tr,
                         textEditingController: controller.tecPermanentAddress,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecPermanentAddress.text,
@@ -165,7 +165,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                       SizedBox(height: 20.h),
                       _item(
                         logo: Icons.phone_android_rounded,
-                        fieldName: "Emergency Contact",
+                        fieldName: MyStrings.emergencyContact.tr,
                         textEditingController: controller.tecEmergencyContact,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecEmergencyContact.text,

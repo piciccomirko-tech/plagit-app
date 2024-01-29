@@ -74,7 +74,7 @@ class CustomFilter {
                     ],
                   ),
                   SizedBox(height: 16.h),
-                  _title(context, "Position"),
+                  _title(context, MyStrings.position.tr),
                   SizedBox(height: 4.h),
                   Visibility(
                     visible: showPositionId,
@@ -118,7 +118,7 @@ class CustomFilter {
                       positionOffset: FlutterSliderTooltipPositionOffset(top: -10),
                       format: (String value) {
                         int age = int.parse(value.split(".").first);
-                        String postfix = age > 0 ? "Years" : "Year";
+                        String postfix = age > 0 ? MyStrings.years.tr: "Year";
                         return "$age $postfix";
                       },
                     ),
@@ -150,9 +150,9 @@ class CustomFilter {
                   SizedBox(height: 15.h),
                   FlutterSlider(
                     min: 0,
-                    max: 10000,
+                    max: 1000,
                     rangeSlider: true,
-                    values: const [0, 10000],
+                    values: const [0, 1000],
                     selectByTap: false,
                     step: const FlutterSliderStep(step: 1),
                     onDragCompleted: (int handlerIndex, dynamic lowerValue, dynamic upperValue) {
@@ -203,12 +203,12 @@ class CustomFilter {
                       labelsDistanceFromTrackBar: 40,
                       labels: [
                         FlutterSliderHatchMarkLabel(percent: 0, label: _sliderHatchMarkLabel(context, "0")),
-                        FlutterSliderHatchMarkLabel(percent: 100, label: _sliderHatchMarkLabel(context, "10000")),
+                        FlutterSliderHatchMarkLabel(percent: 100, label: _sliderHatchMarkLabel(context, "1000")),
                       ],
                     ),
                   ),
                   SizedBox(height: 27.h),
-                  _title(context, 'Dress Size'),
+                  _title(context, MyStrings.dressSize.tr),
                   SizedBox(height: 15.h),
                   CustomRadioButton(
                     elevation: 0,
@@ -244,7 +244,7 @@ class CustomFilter {
                     selectedColor: MyColors.c_C6A34F,
                   ),
                   SizedBox(height: 27.h),
-                  _title(context, 'Nationality'),
+                  _title(context, MyStrings.nationality.tr),
                   SizedBox(height: 15.h),
                   StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
                     return Container(
@@ -271,7 +271,7 @@ class CustomFilter {
                     );
                   }),
                   SizedBox(height: 27.h),
-                  _title(context, 'Height (cm)'),
+                  _title(context, '${MyStrings.height.tr} (cm)'),
                   SizedBox(height: 15.h),
                   FlutterSlider(
                     min: 120,
@@ -333,7 +333,7 @@ class CustomFilter {
                     ),
                   ),
                   SizedBox(height: 27.h),
-                  _title(context, 'Hourly Rate'),
+                  _title(context, MyStrings.hourlyRate.tr),
                   SizedBox(height: 15.h),
                   FlutterSlider(
                     min: double.parse(hourlyRateDetails.min.toString()),
@@ -409,7 +409,7 @@ class CustomFilter {
                             onResetClick();
                           },
                           child: Text(
-                            "Reset Data",
+                            MyStrings.resetData.tr,
                             style: MyColors.c_FF5029.semiBold16,
                           ),
                         ),
@@ -432,7 +432,7 @@ class CustomFilter {
                                 minSelectedHourlyRate,
                                 maxSelectedHourlyRate);
                           },
-                          text: "Apply",
+                          text: MyStrings.apply.tr,
                           margin: EdgeInsets.zero,
                           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                         ),

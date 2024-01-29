@@ -32,7 +32,7 @@ class JobPostWidget extends StatelessWidget {
                 "${Utils.getCurrencySymbol(Get.find<EmployeeHomeController>().appController.user.value.employee?.countryName ?? "")}${jobPost.minRatePerHour} - ${Utils.getCurrencySymbol(Get.find<EmployeeHomeController>().appController.user.value.employee?.countryName ?? "")}${jobPost.maxRatePerHour}/hour",
                 context),
             _detailsItem(
-                MyAssets.exp, MyStrings.exp.tr, "${jobPost.minExperience} - ${jobPost.maxExperience} years", context),
+                MyAssets.exp, MyStrings.exp.tr, "${jobPost.minExperience} - ${jobPost.maxExperience} ${MyStrings.years.tr}", context),
             _detailsItem(MyAssets.nationality, "${MyStrings.nationality.tr}:",
                 (jobPost.nationalities ?? []).isEmpty ? "TBA" : (jobPost.nationalities ?? []).first, context),
             _detailsItem(
@@ -46,7 +46,7 @@ class JobPostWidget extends StatelessWidget {
                 onTap: () => Get.find<EmployeeHomeController>().onFullViewClick(jobPostDetails: jobPost),
                 margin: EdgeInsets.zero,
                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                text: "Full View"),
+                text: MyStrings.details.tr),
             SizedBox(height: 5.h),
           ],
         ));

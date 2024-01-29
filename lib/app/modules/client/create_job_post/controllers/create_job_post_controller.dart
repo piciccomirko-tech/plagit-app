@@ -560,4 +560,5 @@ class CreateJobPostController extends GetxController {
     return plainText;
   }
 
+  void onTapOutside(PointerDownEvent onTap) => Utils.unFocus();
 }

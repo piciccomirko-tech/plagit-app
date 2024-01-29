@@ -14,7 +14,7 @@ class AdminClientRequestView extends GetView<AdminClientRequestController> {
     return Scaffold(
       appBar: CustomAppbar.appbar(
         context: context,
-        title: 'Request',
+        title: MyStrings.requests.tr,
       ),
       body: Obx(
         () => (controller.adminHomeController.requestedEmployees.value.requestEmployeeList ?? []).isEmpty ||

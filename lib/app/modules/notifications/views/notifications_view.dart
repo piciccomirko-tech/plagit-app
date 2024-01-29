@@ -12,7 +12,7 @@ class NotificationsView extends GetView<NotificationsController> {
   Widget build(BuildContext context) {
     controller.context = context;
     return Scaffold(
-        appBar: CustomAppbar.appbar(title: 'Notifications', context: context, centerTitle: true),
+        appBar: CustomAppbar.appbar(title: MyStrings.notifications.tr, context: context, centerTitle: true),
         body: Obx(() {
           if (controller.notificationDataLoaded.value == false) {
             return const Center(child: CircularProgressIndicator.adaptive(backgroundColor: MyColors.c_C6A34F));

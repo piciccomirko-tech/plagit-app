@@ -71,7 +71,7 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                                 style: MyColors.white.semiBold26,
                               ),
                               TextSpan(
-                                text: ' miles away',
+                                text: ' ${MyStrings.milesAway.tr}',
                                 style: MyColors.white.medium12,
                               ),
                             ]))),
@@ -110,7 +110,7 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                                 text:
                                     '${(controller.todayWorkSchedule.value.todayWorkScheduleDetailsModel?.startTime)?.hoursDifference(controller.todayWorkSchedule.value.todayWorkScheduleDetailsModel?.endTime ?? '')}',
                                 style: MyColors.white.semiBold26),
-                            TextSpan(text: ' Hours', style: MyColors.white.medium12)
+                            TextSpan(text: ' ${MyStrings.hours.tr}', style: MyColors.white.medium12)
                           ]),
                         ))
                   ],

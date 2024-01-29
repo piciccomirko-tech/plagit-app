@@ -18,7 +18,7 @@ class AdminAllClientsView extends GetView<AdminAllClientsController> {
 
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: "Clients",
+        title: MyStrings.client.tr,
         context: context,
         centerTitle: true,
       ),
@@ -69,7 +69,7 @@ class AdminAllClientsView extends GetView<AdminAllClientsController> {
             style: MyColors.c_C6A34F.semiBold16,
           ),
           Text(
-            " Clients are showing",
+            " ${MyStrings.client.tr}${MyStrings.areShowing.tr}",
             style: MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
         ],

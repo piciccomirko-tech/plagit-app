@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/job_post_widget.dart';
@@ -13,7 +14,7 @@ class EmployeeJobPostsViewAllView extends StatelessWidget {
     return Scaffold(
       appBar: CustomAppbar.appbar(
         context: context,
-        title: 'View All Job Posts',
+        title: '${MyStrings.viewAll.tr} ${MyStrings.jobPosts.tr}',
       ),
       body: Padding(
         padding: EdgeInsets.only(left: 10.0.w, top: 15.0.w, bottom: 10.0.w),

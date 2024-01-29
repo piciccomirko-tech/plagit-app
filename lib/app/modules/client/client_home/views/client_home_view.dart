@@ -64,7 +64,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                 size: 20
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 10)
           ],
         ),
         body: SizedBox(

@@ -36,7 +36,7 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
               color: MyColors.c_A6A6A6,
             ),
             SizedBox(height: 10.h),
-            Text("Requirements:", style: MyColors.c_A6A6A6.medium13),
+            Text("${MyStrings.requirements.tr}:", style: MyColors.c_A6A6A6.medium13),
             SizedBox(height: 15.h),
             DetailsItemWidget(
                 icon: MyAssets.rate,
@@ -59,7 +59,7 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
             SizedBox(height: 10.h),
             DetailsItemWidget(
                 icon: MyAssets.flag,
-                title: "Preferred Nationality:",
+                title: "${MyStrings.preferred.tr} ${MyStrings.nationality.tr}:",
                 value: Flexible(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -76,7 +76,7 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
             SizedBox(height: 10.h),
             DetailsItemWidget(
                 icon: MyAssets.language,
-                title: "Preferred Languages:",
+                title: "${MyStrings.preferred.tr} ${MyStrings.language.tr}:",
                 value: Flexible(
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -92,16 +92,16 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
             SizedBox(height: 10.h),
             DetailsItemWidget(
                 icon: MyAssets.calendar,
-                title: "Work schedule:",
+                title: "${MyStrings.workSchedule.tr}:",
                 value: Row(
                   children: [
-                    Text(" Total ${(controller.jobPostDetails.dates ?? []).calculateTotalDays()} days   ",
+                    Text(" ${MyStrings.total.tr} ${(controller.jobPostDetails.dates ?? []).calculateTotalDays()} ${MyStrings.days.tr}   ",
                         style: MyColors.l111111_dwhite(context).medium13),
                     CustomButtons.button(
                         customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                         height: 23,
                         fontSize: 12,
-                        text: "  Details  ",
+                        text: "  ${MyStrings.details.tr}  ",
                         margin: EdgeInsets.zero,
                         onTap: controller.onDetailsClick)
                   ],

@@ -109,7 +109,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         child: Icon(Icons.location_city, color: MyColors.white),
                                       ),
                                       title: Text(
-                                          'This restaurant is situated at a distance of ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609.34).toStringAsFixed(2)} miles from your location',
+                                          '${MyStrings.restaurantDistance.tr} ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609.34).toStringAsFixed(2)} ${MyStrings.milesLocation.tr}',
                                           style: MyColors.l111111_dwhite(context).semiBold15)),
                                 ),
                                 const SizedBox(height: 10),
@@ -131,7 +131,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
                                       ),
                                       title: Text(
-                                        "Restaurant will provide you uniforms, view uniforms",
+                                        MyStrings.provideUniform.tr,
                                           style: MyColors.l111111_dwhite(context).semiBold15)),
                                 )
                                 else

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/common/values/my_color.dart';
@@ -114,7 +115,7 @@ class AdminTodaysEmployeeBodyWidget extends GetWidget<AdminTodaysEmployeesContro
                     " ${controller.todaysEmployeesList.length}",
                     style: MyColors.l111111_dwhite(context).semiBold24,
                   ),
-                  Text(' employees are working', style: MyColors.l111111_dwhite(context).semiBold15)
+                  Text(' ${MyStrings.employees.tr}${MyStrings.areShowing.tr}', style: MyColors.l111111_dwhite(context).semiBold15)
                 ],
               ),
             ),
@@ -158,14 +159,14 @@ class AdminTodaysEmployeeBodyWidget extends GetWidget<AdminTodaysEmployeesContro
   }
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget('Date', 150.w),
-      _getTitleItemWidget('Employee Name', 150.w),
-      _getTitleItemWidget('Restaurant Name', 150.w),
-      _getTitleItemWidget('Position', 150.w),
-      _getTitleItemWidget('Restaurant Rate', 100.w),
-      _getTitleItemWidget('Contractor Rate', 100.w),
-      _getTitleItemWidget('Start Time', 150.w),
-      _getTitleItemWidget('End Time', 150.w)
+      _getTitleItemWidget(MyStrings.date.tr, 150.w),
+      _getTitleItemWidget(MyStrings.employeeName.tr, 150.w),
+      _getTitleItemWidget(MyStrings.restaurantName.tr, 150.w),
+      _getTitleItemWidget(MyStrings.position.tr, 150.w),
+      _getTitleItemWidget(MyStrings.restaurantRate.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.contractor.tr} ${MyStrings.rate.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.startTime.tr, 150.w),
+      _getTitleItemWidget(MyStrings.endTime.tr, 150.w)
     ];
   }
 

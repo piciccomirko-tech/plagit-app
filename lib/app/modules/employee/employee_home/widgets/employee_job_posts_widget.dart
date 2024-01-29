@@ -14,6 +14,7 @@ class EmployeeJobPostsWidget extends GetWidget<EmployeeHomeController> {
         : Visibility(
             visible: (controller.jobPostRequest.value.jobs ?? []).isNotEmpty,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 5.h),
                 Row(
@@ -23,14 +24,14 @@ class EmployeeJobPostsWidget extends GetWidget<EmployeeHomeController> {
                       children: [
                         SizedBox(width: 5.w),
                         Image.asset(MyAssets.job, height: 25, width: 25),
-                        Text("  Job Posts", style: MyColors.l111111_dwhite(context).medium15)
+                        Text("  ${MyStrings.jobPosts.tr}", style: MyColors.l111111_dwhite(context).medium15)
                       ],
                     ),
                     Visibility(
                         visible: (controller.jobPostRequest.value.jobs ?? []).length > 1,
                         child: InkResponse(
                             onTap: controller.onViewAllClick,
-                            child: Text("View All >> ", style: MyColors.c_C6A34F.semiBold12)))
+                            child: Text("${MyStrings.viewAll.tr} >> ", style: MyColors.c_C6A34F.semiBold12)))
                   ],
                 ),
                 SizedBox(height: 10.h),

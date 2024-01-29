@@ -3,6 +3,7 @@ import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/custom_feature_box.dart';
 import 'package:mh/app/common/widgets/custom_help_support.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
+import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -25,39 +26,38 @@ class AdminHomeView extends GetView<AdminHomeController> {
           centerTitle: false,
           visibleBack: false,
           actions: [
+            const SizedBox(width: 10),
+            const LanguageDropdown(),
+            const SizedBox(width: 10),
             Obx(() => controller.notificationsController.unreadCount.value == 0
-                ? IconButton(
-                    onPressed: () {
-                      Get.toNamed(Routes.notifications);
-                    },
-                    icon: const Icon(CupertinoIcons.bell))
-                : InkWell(
-                    onTap: () {
-                      Get.toNamed(Routes.notifications);
-                    },
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 15.w),
-                      child: Badge(
-                        backgroundColor: MyColors.c_C92C1A,
-                        label: Obx(() {
-                          return Text(
-                              controller.notificationsController.unreadCount.value == 20
-                                  ? '20+'
-                                  : controller.notificationsController.unreadCount.toString(),
-                              style: MyColors.white.semiBold12);
-                        }),
-                        child: const Icon(CupertinoIcons.bell),
-                      ),
-                    ),
-                  )),
-            IconButton(
-              onPressed: () {
-                CustomMenu.accountMenu(context);
+                ? InkResponse(onTap: () => Get.toNamed(Routes.notifications), child: const Icon(CupertinoIcons.bell))
+                : InkResponse(
+              onTap: () => Get.toNamed(Routes.notifications),
+              child: Badge(
+                backgroundColor: MyColors.c_C92C1A,
+                label: Obx(() {
+                  return Text(
+                      controller.notificationsController.unreadCount.value == 20
+                          ? '20+'
+                          : controller.notificationsController.unreadCount.toString(),
+                      style: MyColors.white.semiBold12);
+                }),
+                child: const Icon(CupertinoIcons.bell, size: 20),
+              ),
+            )),
+            const SizedBox(width: 20),
+            InkResponse(
+              onTap: () {
+                CustomMenu.accountMenu(
+                  context
+                );
               },
-              icon: const Icon(
-                CupertinoIcons.person,
+              child: const Icon(
+                  CupertinoIcons.person,
+                  size: 20
               ),
             ),
+            const SizedBox(width: 10)
           ],
         ),
         body: Stack(

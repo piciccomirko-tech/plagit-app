@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_bottombar.dart';
 import 'package:mh/app/common/widgets/custom_buttons.dart';
 import 'package:mh/app/enums/custom_button_style.dart';
@@ -28,8 +29,8 @@ class EmployeeJobPostDetailsBottomNavBar extends GetWidget<EmployeeJobPostsDetai
                 .toList()
                 .contains(controller.appController.user.value.employee?.id ?? "") ==
                 true
-                ? "Already Applied".toUpperCase()
-                : "I'm Interested".toUpperCase(),
+                ? MyStrings.alreadyApplied.tr.toUpperCase()
+                : MyStrings.interested.tr.toUpperCase(),
             onTap: () => (controller.jobPostDetails.users ?? [])
                 .map((e) => e.id ?? "")
                 .toList()

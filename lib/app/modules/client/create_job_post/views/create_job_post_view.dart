@@ -23,7 +23,7 @@ class CreateJobPostView extends GetView<CreateJobPostController> {
 
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: controller.type == "create" ? MyStrings.createJobPost : MyStrings.updateJobPost,
+        title: controller.type == "create" ? MyStrings.createJobPost.tr.replaceAll("\n", " ") : MyStrings.updateJobPost.tr.replaceAll("\n", " "),
         centerTitle: true,
         context: context,
       ),

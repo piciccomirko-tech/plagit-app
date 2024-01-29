@@ -15,7 +15,7 @@ class EmployeeJobPostDetailsSkillsInfoWidget extends GetWidget<EmployeeJobPostsD
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Skills Requirements:", style: MyColors.c_A6A6A6.medium13),
+            Text("${MyStrings.skills.tr} ${MyStrings.requirements.tr}:", style: MyColors.c_A6A6A6.medium13),
             SizedBox(height: 10.h),
             const Divider(
               height: 0.0,

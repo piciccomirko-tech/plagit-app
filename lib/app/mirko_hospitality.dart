@@ -19,7 +19,6 @@ class MirkoHospitality extends StatelessWidget {
     // that's why store MediaQuery.of(context).viewInsets.bottom (basically keyboard height) in a observable variable
 
     Get.find<AppController>().bottomPadding.value = MediaQuery.of(context).viewInsets.bottom;
-
     return ScreenUtilInit(
       designSize: const Size(428, 926),
       minTextAdapt: true,

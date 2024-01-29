@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/widgets/employee_job_post_details_basic_info_widget.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/widgets/employee_job_post_details_bottom_nav_bar.dart';
@@ -16,7 +17,7 @@ class EmployeeJobPostsDetailsView extends GetView<EmployeeJobPostsDetailsControl
     return Scaffold(
       appBar: CustomAppbar.appbar(
         context: context,
-        title: 'Job Post Details',
+        title: '${MyStrings.jobPosts.tr} ${MyStrings.details.tr}',
       ),
       bottomNavigationBar: const EmployeeJobPostDetailsBottomNavBar(),
       body: const SingleChildScrollView(
