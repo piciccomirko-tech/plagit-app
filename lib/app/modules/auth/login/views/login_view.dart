@@ -51,7 +51,7 @@ class LoginView extends GetView<LoginController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  LanguageDropdown(tag: 'outer')
+                  LanguageDropdown()
                 ],
               ),
             ),

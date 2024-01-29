@@ -17,7 +17,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
     return Scaffold(
       appBar: CustomAppbar.appbar(
         context: context,
-        title: 'My Dashboard',
+        title: MyStrings.myDashboard.tr.replaceAll("\n", " "),
       ),
       body: Column(
         children: [
@@ -29,7 +29,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
               children: [
                 Obx(() => Text(
                     controller.isInitial.value == true
-                        ? "FILTER BY DATE RANGE"
+                        ? MyStrings.filterByDateRange.tr.toUpperCase()
                         : "${controller.selectedStartDate.value.dMMMy} - ${controller.selectedEndDate.value.dMMMy}",
                     style: Colors.blue.semiBold18)),
                 SizedBox(width: 15.w),
@@ -101,13 +101,13 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
 
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget('Date', 90.w),
-      _getTitleItemWidget('Restaurant Name', 150.w),
-      _getTitleItemWidget('Check In', 100.w),
-      _getTitleItemWidget('Check Out', 100.w),
-      _getTitleItemWidget('Break Time', 100.w),
-      _getTitleItemWidget('Total Hours', 100.w),
-      _getTitleItemWidget('Complain', 120.w),
+      _getTitleItemWidget(MyStrings.date.tr, 90.w),
+      _getTitleItemWidget(MyStrings.restaurantName.tr, 150.w),
+      _getTitleItemWidget(MyStrings.checkIn.tr, 100.w),
+      _getTitleItemWidget(MyStrings.checkOut.tr, 100.w),
+      _getTitleItemWidget(MyStrings.breakTime.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.total.tr} ${MyStrings.hours.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.complain.tr, 120.w),
     ];
   }
 

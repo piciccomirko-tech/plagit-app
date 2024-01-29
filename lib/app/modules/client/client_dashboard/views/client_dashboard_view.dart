@@ -53,7 +53,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                                 ),
                               ),
                               Text(
-                                "No Employee found",
+                                MyStrings.noEmployeeFound.tr,
                                 style: MyColors.c_C6A34F.semiBold16,
                               ),
                             ],

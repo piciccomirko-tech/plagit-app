@@ -13,7 +13,7 @@ class ExperienceWidget extends GetWidget<CreateJobPostController> {
     return Obx(
       () => CustomTextInputField(
         controller: controller.tecExperience.value,
-        label: "Experience",
+        label: MyStrings.experience.tr,
         prefixIcon: Icons.lock_clock,
         //isMapField: true,
         // onSuffixPressed: controller.onClientAddressPressed,

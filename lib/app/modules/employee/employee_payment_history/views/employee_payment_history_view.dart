@@ -20,7 +20,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
     controller.context = context;
     return Scaffold(
       appBar: CustomAppbar.appbar(
-        title: MyStrings.paymentHistory.tr,
+        title: MyStrings.paymentHistory.tr.replaceAll("\n", " "),
         context: context,
       ),
       body: Obx(() {
@@ -55,14 +55,14 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
 
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget('Week', 150.w),
-      _getTitleItemWidget('Employee', 100.w),
-      _getTitleItemWidget('Restaurant Name', 150.w),
-      _getTitleItemWidget('Position', 150.w),
-      _getTitleItemWidget('Contractor Per Hours Rate', 100.w),
-      _getTitleItemWidget('Total Hours', 100.w),
-      _getTitleItemWidget('Amount', 100.w),
-      _getTitleItemWidget('Status', 100.w),
+      _getTitleItemWidget(MyStrings.week.tr, 150.w),
+      _getTitleItemWidget(MyStrings.employee.tr, 100.w),
+      _getTitleItemWidget(MyStrings.restaurantName.tr, 150.w),
+      _getTitleItemWidget(MyStrings.position.tr, 150.w),
+      _getTitleItemWidget(MyStrings.contractorPerHoursRate.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.total.tr} ${MyStrings.hours.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.amount.tr, 100.w),
+      _getTitleItemWidget(MyStrings.status.tr, 100.w),
     ];
   }
 

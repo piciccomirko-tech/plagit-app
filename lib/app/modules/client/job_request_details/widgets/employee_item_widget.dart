@@ -86,7 +86,7 @@ class EmployeeItemWidget extends StatelessWidget {
                     SizedBox(height: 8.h),
                     Row(
                       children: [
-                        _detailsItem(MyAssets.exp, MyStrings.exp.tr, "${user.employeeExperience ?? 0} years", context),
+                        _detailsItem(MyAssets.exp, MyStrings.exp.tr, "${user.employeeExperience ?? 0} ${MyStrings.years.tr}", context),
                         Visibility(
                           visible: (user.nationality??"").isNotEmpty,
                             child: _detailsItem(MyAssets.flag, '', user.nationality ?? '', context)),
@@ -96,7 +96,7 @@ class EmployeeItemWidget extends StatelessWidget {
                     Row(children: [
                       _detailsItem(
                           MyAssets.rate,
-                          'Rate:',
+                          '${MyStrings.rate.tr}:',
                           "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(user.hourlyRate ?? 0.0).toStringAsFixed(2)}",
                           context),
                       // _detailsItem(MyAssets.manager, MyStrings.age.tr, user.dateOfBirth?.calculateAge() ?? '', context),
@@ -108,7 +108,7 @@ class EmployeeItemWidget extends StatelessWidget {
                         CustomButtons.button(
                           padding: const EdgeInsets.symmetric(horizontal: 15.0),
                           height: 23,
-                          text: "Book Now",
+                          text: MyStrings.bookNow.tr,
                           margin: EdgeInsets.zero,
                           fontSize: 12,
                           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,

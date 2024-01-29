@@ -31,19 +31,8 @@ class ClientHomeView extends GetView<ClientHomeController> {
           centerTitle: false,
           visibleBack: false,
           actions: [
-            InkResponse(
-              onTap: () {
-                CustomMenu.accountMenu(
-                  context,
-                  onSettingsTap: controller.onSettingsClick,
-                  onProfileTap: controller.onProfileClick,
-                );
-              },
-              child: const Icon(
-                CupertinoIcons.person,
-                size: 20
-              ),
-            ),
+            const SizedBox(width: 10),
+            const LanguageDropdown(),
             const SizedBox(width: 10),
             Obx(() => controller.notificationsController.unreadCount.value == 0
                 ? InkResponse(onTap: () => Get.toNamed(Routes.notifications), child: const Icon(CupertinoIcons.bell))
@@ -61,8 +50,20 @@ class ClientHomeView extends GetView<ClientHomeController> {
                 child: const Icon(CupertinoIcons.bell, size: 20),
               ),
             )),
-            const SizedBox(width: 10),
-            const LanguageDropdown(tag: 'inner'),
+            const SizedBox(width: 20),
+            InkResponse(
+              onTap: () {
+                CustomMenu.accountMenu(
+                  context,
+                  onSettingsTap: controller.onSettingsClick,
+                  onProfileTap: controller.onProfileClick,
+                );
+              },
+              child: const Icon(
+                CupertinoIcons.person,
+                size: 20
+              ),
+            ),
             const SizedBox(width: 10),
           ],
         ),

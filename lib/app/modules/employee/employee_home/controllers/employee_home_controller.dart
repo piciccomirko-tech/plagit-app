@@ -355,7 +355,7 @@ class EmployeeHomeController extends GetxController {
   void updateNotification({required String id, required String hiredStatus}) {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: "Confirm?",
+      title: MyStrings.confirmPassword.tr,
       msg: "Are you sure you want to $hiredStatus this booking request?",
       confirmButtonText: hiredStatus,
       onConfirm: () async {

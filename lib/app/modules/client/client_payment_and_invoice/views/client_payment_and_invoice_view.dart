@@ -23,7 +23,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             : (controller.clientHomeController.clientInvoice.value.invoices ?? []).isEmpty
                 ? Center(
                     child: Text(
-                    "No invoice found",
+                    MyStrings.noInvoiceFound.tr,
                     style: MyColors.l111111_dwhite(context).semiBold16,
                   ))
                 : HorizontalDataTable(
@@ -53,17 +53,17 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
 
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget('Week', 143.w),
-      _getTitleItemWidget('Total\nEmployee', 100.w),
-      _getTitleItemWidget('Total\nHours', 100.w),
-      _getTitleItemWidget('Amount', 100.w),
-      _getTitleItemWidget('VAT', 100.w),
-      _getTitleItemWidget('VAT\nAmount', 100.w),
-      _getTitleItemWidget('Platform\nFee', 100.w),
-      _getTitleItemWidget('Total\nAmount', 100.w),
-      _getTitleItemWidget('Invoice\nNo', 100.w),
-      _getTitleItemWidget('Status', 100.w),
-      _getTitleItemWidget('View\nInvoice', 100.w),
+      _getTitleItemWidget(MyStrings.week.tr, 143.w),
+      _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.employee.tr}', 100.w),
+      _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.hours.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.amount.tr, 100.w),
+      _getTitleItemWidget(MyStrings.vat.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.vat.tr}\n${MyStrings.amount.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.platformFee.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.amount.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.invoiceNo.tr, 100.w),
+      _getTitleItemWidget(MyStrings.status.tr, 100.w),
+      _getTitleItemWidget(MyStrings.viewInvoice.tr, 100.w),
     ];
   }
 
@@ -119,10 +119,11 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
                     children: [
                       const SizedBox(height: 10),
                       CustomButtons.button(
-                        text: "Pay",
+                        text: MyStrings.pay.tr,
                         height: 25,
                         onTap: () => controller.onPayClick(index),
                         padding: const EdgeInsets.symmetric(horizontal: 10),
+                        margin: EdgeInsets.zero,
                         customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                       ),
                     ],

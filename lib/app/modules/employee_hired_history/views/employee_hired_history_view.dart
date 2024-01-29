@@ -11,7 +11,7 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
   Widget build(BuildContext context) {
     controller.context = context;
     return Scaffold(
-      appBar: CustomAppbar.appbar(title: 'Hired History', context: context),
+      appBar: CustomAppbar.appbar(title: MyStrings.hiredHistory.tr.replaceAll("\n", " "), context: context),
       body: Obx(() {
         if (controller.employeeHomeController.hiredHistoryDataLoaded.value == false) {
           return const Center(child: CupertinoActivityIndicator());
@@ -62,7 +62,7 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                             onTap: () => controller.onDetailsClick(bookedDateList: data.bookedDate ?? []),
                             height: 35,
                             margin: const EdgeInsets.only(left: 250),
-                            text: 'Details',
+                            text: MyStrings.details.tr,
                             fontSize: 12,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                       )),
@@ -73,7 +73,7 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                                 onTap: () => controller.onPrevDateClicked(hiredBy: data.hiredBy??''),
                                 height: 35,
                                 margin: const EdgeInsets.only(right: 220),
-                                text: 'Previous Dates',
+                                text: MyStrings.previousDates.tr,
                                 fontSize: 12,
                                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                           ))

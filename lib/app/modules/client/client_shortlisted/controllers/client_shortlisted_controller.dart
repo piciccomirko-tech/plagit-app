@@ -84,7 +84,7 @@ class ClientShortlistedController extends GetxController {
       {required int index, required String shortListId, required List<RequestDateModel> requestDateList}) {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: "Confirm?",
+      title: MyStrings.confirm.tr,
       msg: "Are you sure you want to remove this range?",
       confirmButtonText: "Remove",
       onConfirm: () async {

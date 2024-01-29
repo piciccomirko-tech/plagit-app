@@ -16,7 +16,7 @@ class NationalityDropDownWidget extends GetWidget<CreateJobPostController> {
           children: [
             CustomDropdown(
               prefixIcon: Icons.flag,
-              hints: MyStrings.nationality,
+              hints: MyStrings.nationality.tr,
               value: '',
               items: controller.nationalities.map((e) => e.nationality ?? "").toList(),
               onChange: controller.onNationalityChange,

@@ -25,7 +25,7 @@ class CommentWidget extends GetWidget<CreateJobPostController> {
             style: MyColors.l111111_dwhite(context).regular14,
             decoration: MyDecoration.inputFieldDecoration(
               context: context,
-              label: "Description",
+              label: MyStrings.description.tr,
             ),
             validator: (String? value) => Validators.emptyValidator(
               value?.trim(),

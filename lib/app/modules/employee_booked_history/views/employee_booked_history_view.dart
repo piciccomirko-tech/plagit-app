@@ -11,7 +11,7 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar.appbar(title: MyStrings.bookedHistory, context: context),
+      appBar: CustomAppbar.appbar(title: MyStrings.bookedHistory.tr.replaceAll("\n", " "), context: context),
       body: Obx(() {
         if (controller.employeeHomeController.bookingHistoryDataLoaded.value == false) {
           return const Center(child: CupertinoActivityIndicator());
@@ -50,7 +50,7 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
                             onTap: ()=>controller.onDetailsClick(notificationId: bookingDetails.id??""),
                             height: 35,
                             margin: const EdgeInsets.only(left: 250),
-                            text: 'Details',
+                            text: MyStrings.details.tr,
                             fontSize: 12,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                       ))

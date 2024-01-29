@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/time_range_widget.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 
@@ -33,9 +34,9 @@ class EmployeeHiredHistoryDetailsWidget extends StatelessWidget {
                         color: MyColors.c_C6A34F),
                     child: RichText(
                         text: TextSpan(children: [
-                      TextSpan(text: 'Total Work Schedule For ', style: MyColors.white.semiBold15),
+                      TextSpan(text: '${MyStrings.totalWorkSchedule.tr} ', style: MyColors.white.semiBold15),
                       TextSpan(text: '${requestDateList.calculateTotalDays()}', style: MyColors.white.semiBold24),
-                      TextSpan(text: ' Days', style: MyColors.white.semiBold15),
+                      TextSpan(text: ' ${MyStrings.days.tr}', style: MyColors.white.semiBold15),
                     ])),
                   ),
                   SizedBox(

@@ -13,7 +13,7 @@ class EndDateWidget extends GetWidget<CreateJobPostController> {
     return Obx(
           () => CustomTextInputField(
         controller: controller.tecEndDate.value,
-        label: "End Date",
+        label: MyStrings.endDate.tr,
         prefixIcon: Icons.calendar_today_outlined,
         readOnly: true,
         onTap: () => controller.selectDate(context: context, dateType: 'end'),

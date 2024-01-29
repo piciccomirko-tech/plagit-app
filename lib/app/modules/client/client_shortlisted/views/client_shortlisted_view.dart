@@ -2,7 +2,6 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 import 'package:mh/app/routes/app_pages.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/custom_bottombar.dart';
@@ -17,6 +16,7 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
   @override
   Widget build(BuildContext context) {
     controller.context = context;
+
     return Scaffold(
       appBar: CustomAppbar.appbar(
         title: MyStrings.shortList.tr,
@@ -162,10 +162,10 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
                                   Image.asset(MyAssets.uniform, height: 18, width: 18),
                                   Obx(() => Text(
                                       controller.selectedOption.value == 'Yes'
-                                          ? ' Yes, need'
+                                          ? ' ${MyStrings.yesNeed.tr}'
                                           : controller.selectedOption.value == 'No'
-                                              ? ' No need'
-                                              : ' Uniform',
+                                              ? ' ${MyStrings.noNeed.tr}'
+                                              : ' ${MyStrings.uniform.tr}',
                                       style: MyColors.black.medium12))
                                 ],
                               ),
@@ -232,7 +232,7 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
                 child: Text(
                     (employee.requestDateList??[]).isNotEmpty
                         ? '${MyStrings.totalEstimatedAmount.tr}: ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${employee.requestDateList?.calculateTotalHourlyRate(hourlyRate: employee.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}'
-                        : 'Hourly Rate: ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${employee.employeeDetails?.hourlyRate!.toStringAsFixed(2) ?? '0.00'}',
+                        : '${MyStrings.hourlyRate.tr}: ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${employee.employeeDetails?.hourlyRate!.toStringAsFixed(2) ?? '0.00'}',
                     style: MyColors.white.medium13)))
       ],
     );

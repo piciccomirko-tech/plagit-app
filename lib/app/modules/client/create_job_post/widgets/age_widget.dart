@@ -13,7 +13,7 @@ class AgeWidget extends GetWidget<CreateJobPostController> {
     return Obx(
       () => CustomTextInputField(
         controller: controller.tecAge.value,
-        label: "Age",
+        label: MyStrings.age.tr,
         prefixIcon: Icons.person,
         //isMapField: true,
         // onSuffixPressed: controller.onClientAddressPressed,

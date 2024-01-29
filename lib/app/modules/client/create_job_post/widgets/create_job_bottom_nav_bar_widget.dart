@@ -10,7 +10,9 @@ class CreateJobBottomNavBarWidget extends GetWidget<CreateJobPostController> {
     return CustomBottomBar(
       child: CustomButtons.button(
           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-          text: controller.type == "create" ? "Post Job Offer".toUpperCase() : "Update Job Offer".toUpperCase(),
+          text: controller.type == "create"
+              ? MyStrings.postJobOffer.tr.toUpperCase()
+              : MyStrings.updateJobOffer.tr.toUpperCase(),
           onTap: controller.type == "create" ? controller.onPostJobClick : controller.onUpdateJobClick),
     );
   }

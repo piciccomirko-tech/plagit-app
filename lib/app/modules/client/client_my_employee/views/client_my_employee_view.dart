@@ -40,7 +40,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                     defaultSelected: (DateTime.now().toString().split(' ').first),
                     margin: EdgeInsets.only(right: 10.w),
                     unSelectedColor: MyColors.c_C6A34F.withOpacity(0.5),
-                    buttonLables: ["${controller.selectedDate.value.EdMMMy}" " \u25BC", 'All Employees'],
+                    buttonLables: ["${controller.selectedDate.value.EdMMMy}" " \u25BC", MyStrings.allEmployees.tr],
                     buttonValues: [(DateTime.now().toString().split(' ').first), ''],
                     buttonTextStyle: const ButtonTextStyle(
                         selectedColor: Colors.white, unSelectedColor: Colors.black, textStyle: TextStyle(fontSize: 13)),
@@ -171,7 +171,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _detailsItem(MyAssets.rate, 'Rate:',
+                          _detailsItem(MyAssets.rate, '${MyStrings.rate.tr}:',
                               "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(hiredHistory.employeeDetails?.hourlyRate ?? 0.0).toStringAsFixed(2)}"),
                         ],
                       ),
@@ -206,7 +206,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                                 width: 122.w,
                                 child: CustomButtons.button(
                                     height: 28.w,
-                                    text: "Previous Dates",
+                                    text: MyStrings.previousDates.tr,
                                     margin: EdgeInsets.zero,
                                     fontSize: 12,
                                     backgroundColor: Colors.teal,
@@ -218,7 +218,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                             width: 122.w,
                             child: CustomButtons.button(
                               height: 28.w,
-                              text: "Book Again",
+                              text: MyStrings.bookNow.tr,
                               margin: EdgeInsets.zero,
                               fontSize: 12,
                               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,

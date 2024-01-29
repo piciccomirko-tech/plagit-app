@@ -56,10 +56,10 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Text('You have been booked for ', style: MyColors.white.semiBold15),
+                                        Text('${MyStrings.bookedFor.tr} ', style: MyColors.white.semiBold15),
                                         Text('${controller.bookingDetails.value.requestDateList?.calculateTotalDays()}',
                                             style: MyColors.white.semiBold24),
-                                        Text(' days', style: MyColors.white.semiBold15),
+                                        Text(' ${MyStrings.days.tr}', style: MyColors.white.semiBold15),
                                       ],
                                     )),
                                 CarouselSlider(
@@ -145,7 +145,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                           child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
                                         ),
                                         title: Text(
-                                            "No uniform has been selected",
+                                            MyStrings.noUniform.tr,
                                             style: MyColors.l111111_dwhite(context).semiBold15)),
                                   ),
                                 SizedBox(height: MediaQuery.sizeOf(context).width*0.2)
@@ -169,7 +169,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                           child: Container(
                             color: MyColors.c_C6A34F,
                             height: 50,
-                            child: Center(child: Text('ALLOW ALL', style: MyColors.white.semiBold15)),
+                            child: Center(child: Text(MyStrings.allowAll.tr.toUpperCase(), style: MyColors.white.semiBold15)),
                           ),
                         ),
                       ),
@@ -182,7 +182,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                           child: Container(
                             color: Colors.red,
                             height: 50,
-                            child: Center(child: Text('DENY ALL', style: MyColors.white.semiBold15)),
+                            child: Center(child: Text(MyStrings.denyAll.tr.toUpperCase(), style: MyColors.white.semiBold15)),
                           ),
                         ),
                       ),

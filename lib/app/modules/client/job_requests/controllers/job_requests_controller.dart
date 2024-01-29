@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/utils.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/custom_error.dart';
@@ -65,7 +66,7 @@ class JobRequestsController extends GetxController {
   void onDeleteClick({required String jobId}) async {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: "Confirm?",
+      title: MyStrings.confirm.tr,
       msg: "Are you sure you want to delete this job request?",
       confirmButtonText: "Delete",
       onConfirm: () async {

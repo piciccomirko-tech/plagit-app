@@ -49,9 +49,9 @@ class EmployeeBookedHistoryDetailsController extends GetxController {
     if (bookingDetails.value.requestDateList!.length > 1) {
       CustomDialogue.confirmation(
         context: Get.context!,
-        title: "Confirm?",
-        msg: "Are you sure you want to remove this range?",
-        confirmButtonText: "Remove",
+        title: MyStrings.confirm.tr,
+        msg: MyStrings.removeThisRange.tr,
+        confirmButtonText: MyStrings.remove.tr,
         onConfirm: () async {
           Get.back();
           CustomLoader.show(context!);

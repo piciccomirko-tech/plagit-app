@@ -17,7 +17,7 @@ class EmployeeDateRangeWidget extends GetWidget<CalenderController> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -28,7 +28,7 @@ class EmployeeDateRangeWidget extends GetWidget<CalenderController> {
                                   style: MyColors.l111111_dwhite(context).semiBold13),
                               Container(width: 12.w, color: Colors.grey, height: 2.h),
                               if (controller.rangeEndDate.value == null)
-                                Text('  Select End Date', style: MyColors.c_7B7B7B.semiBold13)
+                                Text('  ${MyStrings.selectEndDate.tr}', style: MyColors.c_7B7B7B.semiBold13)
                               else
                                 Text('  ${DateFormat('E, dd MMM, yyyy').format(controller.rangeEndDate.value!)}',
                                     style: MyColors.l111111_dwhite(context).semiBold13),
@@ -55,7 +55,7 @@ class EmployeeDateRangeWidget extends GetWidget<CalenderController> {
                               ),
                               value: controller.sameAsStartDate.value,
                               onChanged: controller.onSameAsStartDatePressedForEmployee),
-                          Text('Same as Start Date', style: MyColors.primaryDark.semiBold15),
+                          Text(MyStrings.sameAsStartDate.tr, style: MyColors.primaryDark.semiBold15),
                         ],
                       ),
                     )))

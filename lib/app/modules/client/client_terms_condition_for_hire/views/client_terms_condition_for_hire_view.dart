@@ -48,14 +48,14 @@ class ClientTermsConditionForHireView extends GetView<ClientTermsConditionForHir
       (state) => CustomBottomBar(
         child: CustomButtons.button(
           onTap: controller.onIAgreeClick,
-          text: "I Agree",
+          text: MyStrings.agree.tr,
           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
         ),
       ),
       onLoading: CustomBottomBar(
         child: CustomButtons.button(
           onTap: null,
-          text: "I Agree",
+          text: MyStrings.agree.tr,
           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
         ),
       ),

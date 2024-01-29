@@ -11,7 +11,7 @@ class HourlyRateWidget extends GetWidget<CreateJobPostController> {
     return Obx(
       () => CustomTextInputField(
         controller: controller.tecRatePerHour.value,
-        label: "Hourly Rate",
+        label: MyStrings.hourlyRate.tr,
         prefixIcon: Icons.money,
         //isMapField: true,
         // onSuffixPressed: controller.onClientAddressPressed,

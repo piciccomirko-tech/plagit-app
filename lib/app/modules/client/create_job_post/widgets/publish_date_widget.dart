@@ -13,7 +13,7 @@ class PublishDateWidget extends GetWidget<CreateJobPostController> {
     return Obx(
       () => CustomTextInputField(
         controller: controller.tecPublishDate.value,
-        label: "Publish Date",
+        label: MyStrings.publishDate.tr,
         prefixIcon: Icons.calendar_month,
         readOnly: true,
         onTap: () => controller.selectDate(context: context, dateType: 'publish'),

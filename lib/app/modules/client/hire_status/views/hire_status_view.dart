@@ -25,17 +25,17 @@ class HireStatusView extends GetView<HireStatusController> {
                       children: [
                         Lottie.asset(MyAssets.lottie.registrationDone),
                         Text(
-                          "Booked Successfully",
+                          "${MyStrings.booked.tr} ${MyStrings.successfully.tr}",
                           style: MyColors.l111111_dwhite(context).semiBold22,
                         ),
                         const SizedBox(height: 30),
                         Text(
-                          "Our authority will contact with you within 1 hour",
+                          MyStrings.ourAuthority.tr,
                           style: MyColors.l111111_dwhite(context).semiBold15,
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          "for further execution",
+                          MyStrings.forFurther.tr,
                           style: MyColors.l111111_dwhite(context).semiBold15,
                         ),
                       ],

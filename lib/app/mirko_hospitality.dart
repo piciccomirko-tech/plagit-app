@@ -19,8 +19,6 @@ class MirkoHospitality extends StatelessWidget {
     // that's why store MediaQuery.of(context).viewInsets.bottom (basically keyboard height) in a observable variable
 
     Get.find<AppController>().bottomPadding.value = MediaQuery.of(context).viewInsets.bottom;
-    final Locale locale = _loadLocale();
-    print('MirkoHospitality.build: ${locale}');
 
     return ScreenUtilInit(
       designSize: const Size(428, 926),
@@ -40,8 +38,8 @@ class MirkoHospitality extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          locale: locale,
-          fallbackLocale: locale,
+          locale: Locale(StorageHelper.getLanguage),
+          fallbackLocale: Locale(StorageHelper.getLanguage),
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: ThemeMode.system,
@@ -54,22 +52,5 @@ class MirkoHospitality extends StatelessWidget {
         );
       },
     );
-  }
-
-  Locale _loadLocale() {
-    Locale locale = const Locale("en", "US");
-    print('MirkoHospitality._loadLocale: ${StorageHelper.getLanguage}');
-    if (StorageHelper.getLanguage == "en") {
-      print('MirkoHospitality._loadLocale 1');
-      locale = const Locale("en", "US");
-    } else if (StorageHelper.getLanguage == "ar") {
-      print('MirkoHospitality._loadLocale 2');
-      locale = const Locale("ar", "AE");
-    } else {
-      print('MirkoHospitality._loadLocale 3');
-      locale = const Locale("it", "IT");
-    }
-    print('Local: $locale');
-    return locale;
   }
 }

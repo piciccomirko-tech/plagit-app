@@ -11,7 +11,7 @@ class VacancyWidget extends GetWidget<CreateJobPostController> {
   Widget build(BuildContext context) {
     return Obx(() => CustomDropdown(
       prefixIcon: Icons.business_center,
-      hints: MyStrings.vacancy,
+      hints: MyStrings.vacancy.tr,
       value: controller.selectedVacancy.value,
       items: controller.vacancyList,
       onChange: controller.onVacancyChange,

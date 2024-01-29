@@ -244,7 +244,7 @@ class ShortlistController extends GetxService {
   void _confirmationForRemoveEmployeeFromShortlist(String employeeId) {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: "Confirm?",
+      title: MyStrings.confirm.tr,
       msg: "Are you sure you want to delete employee from shortlist?",
       confirmButtonText: "Delete",
       onConfirm: () {

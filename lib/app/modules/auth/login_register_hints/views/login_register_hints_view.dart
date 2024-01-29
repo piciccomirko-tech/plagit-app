@@ -61,8 +61,8 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
           SizedBox(height: 48.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 37.0.w),
-            child: HorizontalDividerWithText(
-              text: MyStrings.premierStaffingSolutions.tr,
+            child: const HorizontalDividerWithText(
+              text: MyStrings.premierStaffingSolutions,
             ),
           ),
           SizedBox(height: 48.h),

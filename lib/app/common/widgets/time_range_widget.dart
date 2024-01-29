@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
 
 class TimeRangeWidget extends StatelessWidget {
@@ -38,11 +39,12 @@ class TimeRangeWidget extends StatelessWidget {
               if (hasDeleteOption == true)
                 Material(
                     color: Colors.transparent,
-                    child: InkWell(onTap: onTap, child: const Icon(CupertinoIcons.delete_solid, size: 18, color: Colors.red)))
+                    child: InkWell(
+                        onTap: onTap, child: const Icon(CupertinoIcons.delete_solid, size: 18, color: Colors.red)))
             ],
           ),
           Text(
-              '${DateTime.parse(requestDate.startDate ?? '').daysUntil(DateTime.parse(requestDate.endDate ?? ''))} ${DateTime.parse(requestDate.startDate ?? '').daysUntil(DateTime.parse(requestDate.endDate ?? '')) == 1 ? 'day' : 'days'}',
+              '${DateTime.parse(requestDate.startDate ?? '').daysUntil(DateTime.parse(requestDate.endDate ?? ''))} ${DateTime.parse(requestDate.startDate ?? '').daysUntil(DateTime.parse(requestDate.endDate ?? '')) == 1 ? MyStrings.day.tr : MyStrings.days.tr}',
               style: MyColors.c_C6A34F.semiBold15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

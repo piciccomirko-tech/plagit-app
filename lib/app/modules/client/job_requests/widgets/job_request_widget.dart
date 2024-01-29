@@ -60,7 +60,7 @@ class JobRequestWidget extends StatelessWidget {
                         "${jobRequest.minExperience} - ${jobRequest.maxExperience} years", context),
                     _detailsItem(
                         MyAssets.rate,
-                        'Rate:',
+                        '${MyStrings.rate.tr}:',
                         "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(jobRequest.minRatePerHour ?? 0.0).toStringAsFixed(2)} - ${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(jobRequest.maxRatePerHour ?? 0.0).toStringAsFixed(2)}",
                         context),
                     InkResponse(
@@ -94,7 +94,7 @@ class JobRequestWidget extends StatelessWidget {
               child: CustomButtons.button(
                 padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 height: 28,
-                text: ("View Job Details"),
+                text: MyStrings.viewJobDetails.tr,
                 margin: EdgeInsets.zero,
                 fontSize: 12,
                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
