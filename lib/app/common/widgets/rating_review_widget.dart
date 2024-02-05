@@ -3,9 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_buttons.dart';
 import 'package:mh/app/enums/custom_button_style.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
@@ -47,7 +49,7 @@ class RatingReviewWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text("Rate your working journey".toUpperCase(), style: MyColors.l111111_dwhite(context).semiBold16),
+                  Text(MyStrings.ratingJourney.tr.toUpperCase(), style: MyColors.l111111_dwhite(context).semiBold16),
                   SizedBox(height: 10.h),
                   ClipOval(
                     child: CachedNetworkImage(
@@ -100,7 +102,7 @@ class RatingReviewWidget extends StatelessWidget {
                     style: MyColors.l111111_dwhite(context).regular14,
                     decoration: MyDecoration.inputFieldDecoration(
                       context: context,
-                      label: "Comment if any (optional)",
+                      label: MyStrings.commentIfAny.tr,
                     ),
                   ),
                   SizedBox(height: 20.h),
@@ -114,7 +116,7 @@ class RatingReviewWidget extends StatelessWidget {
                               ? reviewDialogDetailsModel.restaurantDetails?.hiredBy ?? ''
                               : reviewDialogDetailsModel.employeeId ?? '');
                     },
-                    text: "Submit",
+                    text: MyStrings.submit.tr,
                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                   ),
                 ],

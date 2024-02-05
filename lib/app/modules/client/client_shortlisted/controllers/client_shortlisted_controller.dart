@@ -84,9 +84,9 @@ class ClientShortlistedController extends GetxController {
       {required int index, required String shortListId, required List<RequestDateModel> requestDateList}) {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: MyStrings.confirm.tr,
-      msg: "Are you sure you want to remove this range?",
-      confirmButtonText: "Remove",
+      title: "${MyStrings.confirm.tr}?",
+      msg: "${MyStrings.sureWantTo.tr} ${MyStrings.remove.tr} ${MyStrings.thisRange.tr}?",
+      confirmButtonText: MyStrings.remove.tr,
       onConfirm: () async {
         Get.back();
         requestDateList.removeAt(index);
@@ -111,8 +111,8 @@ class ClientShortlistedController extends GetxController {
       } else {
         CustomDialogue.information(
           context: Get.context!,
-          title: "Error",
-          description: "Something went wrong",
+          title: MyStrings.error.tr,
+          description: MyStrings.somethingWentWrong.tr,
         );
       }
     });

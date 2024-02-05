@@ -1,4 +1,5 @@
 import 'package:mh/app/common/controller/app_controller.dart';
+import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 
@@ -128,39 +129,78 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
         onTap: () => controller.onEmployeeClick(user),
         child: Stack(
           children: [
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: SizedBox(
-                width: 122.w,
-                child: CustomButtons.button(
-                  height: 28.w,
-                  text:
-                      "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.admin?.countryName ?? '')}${user.hourlyRate ?? 0} / hour",
-                  margin: EdgeInsets.zero,
-                  fontSize: 12,
-                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                  onTap: () {},
+            if (StorageHelper.getLanguage == "ar")
+              Positioned(
+                left: 0,
+                bottom: 0,
+                child: SizedBox(
+                  width: 122.w,
+                  child: CustomButtons.button(
+                    height: 28.w,
+                    text:
+                        "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.admin?.countryName ?? '')}${user.hourlyRate ?? 0} / hour",
+                    margin: EdgeInsets.zero,
+                    fontSize: 12,
+                    customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                    onTap: () {},
+                  ),
+                ),
+              )
+            else
+              Positioned(
+                right: 0,
+                bottom: 0,
+                child: SizedBox(
+                  width: 122.w,
+                  child: CustomButtons.button(
+                    height: 28.w,
+                    text:
+                        "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.admin?.countryName ?? '')}${user.hourlyRate ?? 0} / hour",
+                    margin: EdgeInsets.zero,
+                    fontSize: 12,
+                    customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                    onTap: () {},
+                  ),
                 ),
               ),
-            ),
-            Positioned(
-              right: 10.w,
-              top: 5.h,
-              child: _chat(user: user),
-            ),
-            Positioned(
-              right: 40.w,
-              top: 5.h,
-              child: GestureDetector(
-                onTap: () => controller.onCalenderClick(employeeId: user.id ?? ''),
-                child: Image.asset(
-                  MyAssets.calender2,
-                  height: 20,
-                  width: 20,
+            if (StorageHelper.getLanguage == "ar")
+              Positioned(
+                left: 10.w,
+                top: 5.h,
+                child: _chat(user: user),
+              )
+            else
+              Positioned(
+                right: 10.w,
+                top: 5.h,
+                child: _chat(user: user),
+              ),
+            if (StorageHelper.getLanguage == "ar")
+              Positioned(
+                left: 40.w,
+                top: 5.h,
+                child: GestureDetector(
+                  onTap: () => controller.onCalenderClick(employeeId: user.id ?? ''),
+                  child: Image.asset(
+                    MyAssets.calender2,
+                    height: 20,
+                    width: 20,
+                  ),
+                ),
+              )
+            else
+              Positioned(
+                right: 40.w,
+                top: 5.h,
+                child: GestureDetector(
+                  onTap: () => controller.onCalenderClick(employeeId: user.id ?? ''),
+                  child: Image.asset(
+                    MyAssets.calender2,
+                    height: 20,
+                    width: 20,
+                  ),
                 ),
               ),
-            ),
             Row(
               children: [
                 _image((user.profilePicture ?? "").imageUrl),
@@ -214,10 +254,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                       Row(
                         children: [
                           _detailsItem(
-                              tag: '',
-                              MyAssets.flag,
-                              '${MyStrings.nationality.tr}:',
-                              user.nationality??'TBA'),
+                              tag: '', MyAssets.flag, '${MyStrings.nationality.tr}:', user.nationality ?? 'TBA'),
                         ],
                       ),
                     ],
@@ -232,19 +269,19 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
   }
 
   Widget _image(String profilePicture) => Container(
-    margin: const EdgeInsets.fromLTRB(16, 16, 13, 16),
-    width: 70.w,
-    height: 74.w,
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(5),
-      color: Colors.grey.withOpacity(.1),
-    ),
-    child: CustomNetworkImage(
-      url: profilePicture,
-      fit: BoxFit.fill,
-      radius: 5,
-    ),
-  );
+        margin: const EdgeInsets.fromLTRB(16, 16, 13, 16),
+        width: 70.w,
+        height: 74.w,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.grey.withOpacity(.1),
+        ),
+        child: CustomNetworkImage(
+          url: profilePicture,
+          fit: BoxFit.fill,
+          radius: 5,
+        ),
+      );
 
   Widget _name(String name) => Text(
         name,

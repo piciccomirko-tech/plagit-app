@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get_connect/http/src/request/request.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
+import 'package:mh/app/common/translations/translations_service.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
@@ -389,11 +389,12 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
 
   @override
   EitherModel<TermsConditionForHire> getTermsConditionForHire() async {
-    var response = await get("terms-conditions");
-    if (response.statusCode == null) response = await get("terms-conditions");
-    if (response.statusCode == null) response = await get("terms-conditions");
-    if (response.statusCode == null) response = await get("terms-conditions");
-
+    String url =
+        "terms-conditions?country=${TranslationsService.languageList.singleWhere((element) => element.languageCode == StorageHelper.getLanguage).countryName}";
+    Response response = await get(url);
+    if (response.statusCode == null) response = await get(url);
+    if (response.statusCode == null) response = await get(url);
+    if (response.statusCode == null) response = await get(url);
     return _convert<TermsConditionForHire>(
       response,
       TermsConditionForHire.fromJson,
@@ -1383,7 +1384,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel}) async {
+  EitherModel<Response> updateLocation(
+      {required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel}) async {
     String url = "users/update-location";
     String requestBody = employeeLocationUpdateRequestModel.toRawJson();
     Response response = await put(url, requestBody);
@@ -1391,10 +1393,9 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await put(url, requestBody);
     if (response.statusCode == null) await put(url, requestBody);
 
-
     return _convert<Response>(
       response,
-          (Map<String, dynamic> data) {},
+      (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((CustomError l) => left(l), (Response r) => right(r));
   }

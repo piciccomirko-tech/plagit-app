@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/app_info/app_info.dart';
@@ -42,8 +41,8 @@ class SplashController extends GetxController {
           CustomDialogue.information(
             context: context!,
             title: "Server Maintenance",
-            description: commons.appVersion!.first.serverMaintenanceMsg ?? "We will online soon",
-            buttonText: "Exit",
+            description: commons.appVersion!.first.serverMaintenanceMsg ?? "We will come back soon",
+            buttonText: MyStrings.exit.tr,
             onTap: () {
               Utils.exitApp;
             },
@@ -52,10 +51,10 @@ class SplashController extends GetxController {
             (commons.appVersion!.first.appVersion != AppInfo.version)) {
           CustomDialogue.information(
             context: context!,
-            title: "Update Available!",
+            title: "${MyStrings.update.tr} ${MyStrings.available.tr}!",
             description:
-                "New version (${commons.appVersion!.first.appVersion}) has been released. Please update your app for better using experience.",
-            buttonText: "Update",
+                "${MyStrings.newVersion.tr} (${commons.appVersion!.first.appVersion}) ${MyStrings.updateApp.tr}",
+            buttonText: MyStrings.update.tr,
             onTap: () {
               launchApp(
                   playStoreLink: commons.appVersion?.first.playStoreLink ?? '',

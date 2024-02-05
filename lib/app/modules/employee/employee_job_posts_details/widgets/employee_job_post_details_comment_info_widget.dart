@@ -1,11 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:get/get.dart';
-import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
 import 'package:mh/app/common/utils/exports.dart';
-import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/controllers/employee_job_posts_details_controller.dart';
 
 class EmployeeJobPostDetailsCommentInfoWidget extends GetWidget<EmployeeJobPostsDetailsController> {

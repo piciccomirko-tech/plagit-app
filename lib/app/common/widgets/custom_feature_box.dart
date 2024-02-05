@@ -12,13 +12,13 @@ class CustomFeatureBox extends StatelessWidget {
 
   const CustomFeatureBox(
       {super.key,
-      required this.title,
-      required this.icon,
-      this.visibleMH = false,
-      required this.onTap,
-      this.iconHeight,
-      this.loading = false,
-      this.height});
+        required this.title,
+        required this.icon,
+        this.visibleMH = false,
+        required this.onTap,
+        this.iconHeight,
+        this.loading = false,
+        this.height});
 
   @override
   Widget build(BuildContext context) {
@@ -32,44 +32,44 @@ class CustomFeatureBox extends StatelessWidget {
           onTap: loading ? null : onTap,
           child: loading
               ? const Center(
-                  child: CircularProgressIndicator.adaptive(
-                    backgroundColor: MyColors.c_C6A34F,
-                  ),
-                )
+            child: CircularProgressIndicator.adaptive(
+              backgroundColor: MyColors.c_C6A34F,
+            ),
+          )
               : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      icon,
-                      width: iconHeight ?? 60.w,
-                      height: iconHeight ?? 60.w,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(
+                icon,
+                width: iconHeight ?? 60.w,
+                height: iconHeight ?? 60.w,
+              ),
+              SizedBox(height: iconHeight == null ? 6.h : 70.w - iconHeight!),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Visibility(
+                    visible: visibleMH,
+                    child: Text(
+                      MyStrings.mh.tr,
+                      style: MyColors.c_C6A34F.semiBold16,
                     ),
-                    SizedBox(height: iconHeight == null ? 6.h : 70.w - iconHeight!),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Visibility(
-                          visible: visibleMH,
-                          child: Text(
-                            MyStrings.mh.tr,
-                            style: MyColors.c_C6A34F.semiBold16,
-                          ),
-                        ),
-                        Text(
-                          title,
-                          textAlign: TextAlign.center,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: height == 120
-                              ? MyColors.l111111_dwhite(context).medium12
-                              : MyColors.l111111_dwhite(context).medium15,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                  Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: height == 120
+                        ? MyColors.l111111_dwhite(context).medium12
+                        : MyColors.l111111_dwhite(context).medium15,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

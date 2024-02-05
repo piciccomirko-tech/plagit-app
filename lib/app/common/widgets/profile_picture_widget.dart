@@ -10,6 +10,7 @@ import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/values/my_assets.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:path_provider/path_provider.dart';
@@ -196,7 +197,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
     String? imageUrl = await Utils.uploadProfileImage(imageFile: pickedImage!);
     Get.back();
     if ((imageUrl ?? "").isNotEmpty) {
-      Utils.showSnackBar(message: "Profile picture has been updated successfully", isTrue: true);
+      Utils.showSnackBar(message: MyStrings.pictureUpdated.tr, isTrue: true);
     } else {
       Utils.showSnackBar(message: "Failed to upload profile picture", isTrue: false);
     }

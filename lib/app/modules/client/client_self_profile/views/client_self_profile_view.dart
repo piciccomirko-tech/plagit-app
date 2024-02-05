@@ -16,7 +16,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
 
     return Scaffold(
       backgroundColor: MyColors.lFAFAFA_dframeBg(context),
-      appBar: CustomAppbar.appbar(title: "My Profile", context: context),
+      appBar: CustomAppbar.appbar(title: MyStrings.myProfile.tr, context: context),
       bottomNavigationBar: _bottomBar(context),
       body: Obx(() => controller.loading.value == true
           ? Center(child: CustomLoader.loading())
@@ -35,7 +35,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
 
                       _item(
                         logo: Icons.add_business,
-                        fieldName: "Restaurant Name",
+                        fieldName: MyStrings.restaurantName.tr,
                         textEditingController: controller.tecRestaurantName,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecRestaurantName.text,
@@ -47,7 +47,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
 
                       _item(
                         logo: Icons.location_on_rounded,
-                        fieldName: "Restaurant Location",
+                        fieldName: MyStrings.restaurantAddress.tr,
                         textEditingController: controller.tecRestaurantAddress,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecRestaurantAddress.text,
@@ -86,7 +86,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
 
                       _item(
                         logo: Icons.phone_android_rounded,
-                        fieldName: "Phone Number",
+                        fieldName: MyStrings.phoneNumber.tr,
                         textEditingController: controller.tecRestaurantPhoneNumber,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecRestaurantName.text,
@@ -132,7 +132,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
 
                       _item(
                         logo: Icons.email_rounded,
-                        fieldName: "Email",
+                        fieldName: MyStrings.email.tr,
                         textEditingController: controller.tecRestaurantEmail,
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecRestaurantEmail.text,
@@ -231,7 +231,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
     return CustomBottomBar(
       child: CustomButtons.button(
         onTap: controller.onUpdatePressed,
-        text: "Update",
+        text: MyStrings.update.tr,
         customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
       ),
     );

@@ -80,7 +80,7 @@ class ClientSelfProfileController extends GetxController {
       }, (ClientRegistrationResponse clientRegistrationResponse) async {
         if (clientRegistrationResponse.statusCode == 201) {
           await appController.updateToken(clientRegistrationResponse.token!);
-          Utils.showSnackBar(message: 'Profile has been updated successfully...', isTrue: true);
+          Utils.showSnackBar(message: MyStrings.profileUpdated.tr, isTrue: true);
         } else if ((clientRegistrationResponse.errors ?? []).isNotEmpty) {
           _errorDialog("Invalid Input",
               clientRegistrationResponse.errors?.first.msg ?? "Please check you input field and try again");

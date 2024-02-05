@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar_back_button.dart';
 import '../../../../common/widgets/custom_bottombar.dart';

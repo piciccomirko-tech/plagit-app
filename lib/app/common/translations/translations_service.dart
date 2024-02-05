@@ -7,21 +7,18 @@ import 'package:mh/app/common/translations/language_model.dart';
 class TranslationsService extends Translations {
   static List<LanguageModel> languageList = <LanguageModel>[
     LanguageModel(
-      imageUrl: "🇺🇸",
-      languageName: 'en',
-      countryCode: 'US',
+      imageUrl: "🇬🇧",
+      countryName: 'United Kingdom',
       languageCode: 'en',
     ),
     LanguageModel(
       imageUrl: "🇦🇪",
-      languageName: 'ar', // Arabic
-      countryCode: 'AE',
+      countryName: 'United Arab Emirates',
       languageCode: 'ar',
     ),
     LanguageModel(
       imageUrl: "🇮🇹",
-      languageName: 'it', // Italian
-      countryCode: 'IT',
+      countryName: 'Italy',
       languageCode: 'it',
     ),
   ];

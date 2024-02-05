@@ -264,7 +264,7 @@ class ClientHomeController extends GetxController {
 
   void refreshPage() {
     homeMethods();
-    Utils.showSnackBar(message: 'This page has been refreshed...', isTrue: true);
+    Utils.showSnackBar(message: MyStrings.pageRefreshed.tr, isTrue: true);
   }
 
   void showReviewBottomSheet() {
@@ -307,7 +307,7 @@ class ClientHomeController extends GetxController {
       }, (CommonResponseModel response) {
         if (response.status == "success" && response.statusCode == 201) {
           tecReview.clear();
-          Utils.showSnackBar(message: 'Thanks for your review...', isTrue: true);
+          Utils.showSnackBar(message: MyStrings.thanksReview.tr, isTrue: true);
         }
       });
     });

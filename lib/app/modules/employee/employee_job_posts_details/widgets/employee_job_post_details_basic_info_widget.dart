@@ -54,7 +54,7 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
                 icon: MyAssets.exp,
                 title: MyStrings.exp.tr,
                 value: Text(
-                    "${controller.jobPostDetails.minExperience} - ${controller.jobPostDetails.maxExperience} years",
+                    "${controller.jobPostDetails.minExperience} - ${controller.jobPostDetails.maxExperience} ${MyStrings.years.tr}",
                     style: MyColors.l111111_dwhite(context).medium13)),
             SizedBox(height: 10.h),
             DetailsItemWidget(
@@ -101,7 +101,7 @@ class EmployeeJobPostDetailsBasicInfoWidget extends GetWidget<EmployeeJobPostsDe
                         customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                         height: 23,
                         fontSize: 12,
-                        text: "  ${MyStrings.details.tr}  ",
+                        text: " ${MyStrings.details.tr} ",
                         margin: EdgeInsets.zero,
                         onTap: controller.onDetailsClick)
                   ],

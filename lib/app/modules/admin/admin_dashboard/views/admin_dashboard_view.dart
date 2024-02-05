@@ -20,7 +20,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
     return Scaffold(
       appBar: CustomAppbar.appbar(
         context: context,
-        title: 'Dashboard',
+        title: MyStrings.dashboard.tr,
       ),
       body: Obx(
         () => controller.historyLoading.value
@@ -134,14 +134,14 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Expanded(child: _itemValue("Clients", controller.uniqueClient.value.toString())),
+                            Expanded(child: _itemValue(MyStrings.client.tr, controller.uniqueClient.value.toString())),
                             _vDivider,
                             Expanded(
-                                child: _itemValue(
-                                    "Hours", (controller.totalWorkingTimeInMinutes.value / 60).toStringAsFixed(1))),
+                                child: _itemValue(MyStrings.hours.tr,
+                                    (controller.totalWorkingTimeInMinutes.value / 60).toStringAsFixed(1))),
                             _vDivider,
                             Expanded(
-                                child: _itemValue("Amount",
+                                child: _itemValue(MyStrings.amount.tr,
                                     "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.admin?.countryName ?? '')}${controller.amount.value.toStringAsFixed(2)}")),
                           ],
                         ),
@@ -154,7 +154,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: Text(
-                          "${controller.history.length} Employees Active",
+                          "${controller.history.length} ${MyStrings.employees.tr} ${MyStrings.active.tr}",
                           style: MyColors.c_C6A34F.semiBold16,
                         ),
                       ),
@@ -236,16 +236,16 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
 
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget('Date', 90.w),
-      _getTitleItemWidget('Restaurant Name', 150.w),
-      _getTitleItemWidget('Employee Name', 150.w),
-      _getTitleItemWidget('Position', 150.w),
-      _getTitleItemWidget('Check in', 100.w),
-      _getTitleItemWidget('Check out', 100.w),
-      _getTitleItemWidget('Break Time', 100.w),
-      _getTitleItemWidget('Total hours', 100.w),
-      _getTitleItemWidget('Amount', 120.w),
-      _getTitleItemWidget('Complain', 150.w),
+      _getTitleItemWidget(MyStrings.date.tr, 90.w),
+      _getTitleItemWidget(MyStrings.restaurantName.tr, 150.w),
+      _getTitleItemWidget(MyStrings.employeeName.tr, 150.w),
+      _getTitleItemWidget(MyStrings.position.tr, 150.w),
+      _getTitleItemWidget(MyStrings.checkIn.tr, 100.w),
+      _getTitleItemWidget(MyStrings.checkOut.tr, 100.w),
+      _getTitleItemWidget(MyStrings.breakTime.tr, 100.w),
+      _getTitleItemWidget(MyStrings.totalHours.tr, 100.w),
+      _getTitleItemWidget(MyStrings.amount.tr, 120.w),
+      _getTitleItemWidget(MyStrings.complain.tr, 150.w),
     ];
   }
 

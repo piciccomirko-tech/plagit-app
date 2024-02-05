@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -92,109 +93,113 @@ class AdminAllClientsView extends GetView<AdminAllClientsController> {
           color: MyColors.c_A6A6A6,
         ),
       ),
-      child: InkWell(
-        onTap: () {},
-        child: Stack(
-          children: [
+      child: Stack(
+        children: [
+          if (StorageHelper.getLanguage == "ar")
+            Positioned(
+              left: 10.w,
+              top: 7.h,
+              child: _chat(user: user),
+            )
+          else
             Positioned(
               right: 10.w,
               top: 7.h,
               child: _chat(user: user),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // _image((user.profilePicture ?? "").imageUrl),
-                Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 14).copyWith(
-                    top: 16,
-                  ),
-                  child: Text(
-                    (index + 1).toString(),
-                    style: MyColors.l111111_dffffff(controller.context!).semiBold18,
-                  ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // _image((user.profilePicture ?? "").imageUrl),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 14).copyWith(
+                  top: 16,
                 ),
+                child: Text(
+                  (index + 1).toString(),
+                  style: MyColors.l111111_dffffff(controller.context!).semiBold18,
+                ),
+              ),
 
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(height: 16.h),
-                                Row(
-                                  children: [
-                                    Flexible(flex: user.rating! > 0.0 ? 2 : 7, child: _name(user.restaurantName ?? "")),
-                                    Expanded(flex: 2, child: _rating(user.rating ?? 0.0)),
-                                    const Expanded(flex: 2, child: Wrap()),
-                                  ],
-                                ),
-                              ],
-                            ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 16.h),
+                              Row(
+                                children: [
+                                  Flexible(flex: user.rating! > 0.0 ? 2 : 7, child: _name(user.restaurantName ?? "")),
+                                  Expanded(flex: 2, child: _rating(user.rating ?? 0.0)),
+                                  const Expanded(flex: 2, child: Wrap()),
+                                ],
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
 
-                      SizedBox(height: 8.h),
+                    SizedBox(height: 8.h),
 
-                      Row(
+                    Row(
+                      children: [
+                        const CircleAvatar(
+                            radius: 11.0,
+                            backgroundColor: MyColors.c_C6A34F,
+                            child: Icon(Icons.add_road_rounded, size: 15, color: MyColors.c_FFFFFF)),
+                        SizedBox(width: 5.w),
+                        Expanded(
+                          child: Text(
+                            user.restaurantAddress ?? "No address found",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: MyColors.l111111_dwhite(controller.context!).regular14,
+                          ),
+                        ),
+                        const SizedBox(width: 7),
+                      ],
+                    ),
+
+                    SizedBox(height: 8.h),
+
+                    InkResponse(
+                      onTap: () => launchUrl(Uri.parse("tel:${user.phoneNumber}")),
+                      child: Row(
                         children: [
                           const CircleAvatar(
                               radius: 11.0,
                               backgroundColor: MyColors.c_C6A34F,
-                              child: Icon(Icons.add_road_rounded, size: 15, color: MyColors.c_FFFFFF)),
+                              child: Icon(CupertinoIcons.phone, size: 15, color: MyColors.c_FFFFFF)),
                           SizedBox(width: 5.w),
-                          Expanded(
-                            child: Text(
-                              user.restaurantAddress ?? "No address found",
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: MyColors.l111111_dwhite(controller.context!).regular14,
-                            ),
+                          Text(
+                            user.phoneNumber ?? " ",
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: MyColors.l111111_dwhite(controller.context!).regular14,
                           ),
-                          const SizedBox(width: 7),
                         ],
                       ),
-
-                      SizedBox(height: 8.h),
-
-                      InkResponse(
-                        onTap: () => launchUrl(Uri.parse("tel:${user.phoneNumber}")),
-                        child: Row(
-                          children: [
-                            const CircleAvatar(
-                                radius: 11.0,
-                                backgroundColor: MyColors.c_C6A34F,
-                                child: Icon(CupertinoIcons.phone, size: 15, color: MyColors.c_FFFFFF)),
-                            SizedBox(width: 5.w),
-                            Text(
-                              user.phoneNumber ?? " ",
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: MyColors.l111111_dwhite(controller.context!).regular14,
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      // Row(
-                      //   children: [
-                      //     Text("Discount ${user.clientDiscount ?? 0}%"),
-                      //   ],
-                      // ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 8.h),
+                    // Row(
+                    //   children: [
+                    //     Text("Discount ${user.clientDiscount ?? 0}%"),
+                    //   ],
+                    // ),
+                  ],
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

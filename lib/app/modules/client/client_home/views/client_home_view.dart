@@ -214,12 +214,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${controller.countTotalRequestedEmployees()} Employees are requested",
+                          "${controller.countTotalRequestedEmployees()} ${MyStrings.employees.tr} ${MyStrings.areRequested.tr}",
                           style: MyColors.white.semiBold16,
                         ),
                         SizedBox(height: 7.h),
                         Text(
-                          "MH suggest you ${controller.countSuggestedEmployees()} employees",
+                          "MH ${MyStrings.suggestYou.tr} ${controller.countSuggestedEmployees()} ${MyStrings.employees.tr}",
                           style: MyColors.white.regular12,
                         ),
                       ],
@@ -266,12 +266,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${controller.shortlistController.totalShortlisted.value} employees are shortlisted",
+                          "${controller.shortlistController.totalShortlisted.value} ${controller.shortlistController.totalShortlisted.value > 1?MyStrings.employees.tr:MyStrings.employee.tr} ${MyStrings.areShortListed.tr}",
                           style: MyColors.white.semiBold16,
                         ),
                         SizedBox(height: 7.h),
                         Text(
-                          "Hire them before other client hire",
+                          MyStrings.hireThem.tr,
                           style: MyColors.white.regular12,
                         ),
                       ],

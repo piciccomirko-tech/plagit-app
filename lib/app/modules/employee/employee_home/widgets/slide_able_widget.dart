@@ -41,8 +41,8 @@ class _SlideAbleWidgetState extends State<SlideAbleWidget> {
                 if (_position != 0 && widget.checkIn == true)  const SizedBox(width: 10),
                 Text(
                     _position == 0 && widget.checkIn == false
-                        ? '        Swipe right to checkin'.toUpperCase()
-                        : 'Swipe left to checkout        '.toUpperCase(),
+                        ? '        ${MyStrings.swipeRight.tr} ${MyStrings.checkIn.tr}'.toUpperCase()
+                        : '${MyStrings.swipeRight.tr} ${MyStrings.checkOut.tr}        '.toUpperCase(),
                     style: MyColors.white.semiBold14),
                 if (_position == 0 && widget.checkIn == false)  const SizedBox(width: 10),
                 if (_position == 0 && widget.checkIn == false)

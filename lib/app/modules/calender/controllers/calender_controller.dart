@@ -78,7 +78,7 @@ class CalenderController extends GetxController {
     } else if (Get.isRegistered<EmployeeHomeController>() == true) {
       onDateClickForEmployee(currentDate: currentDate);
     } else {
-      Utils.showSnackBar(message: 'You cannot update any date', isTrue: false);
+      Utils.showSnackBar(message: MyStrings.cannotUpdateDate.tr, isTrue: false);
     }
   }
 
@@ -132,7 +132,7 @@ class CalenderController extends GetxController {
             rangeStart: rangeStartDate.value.toString().substring(0, 10),
             rangeEnd: currentDate.toString().substring(0, 10)) ==
         true) {
-      Utils.showSnackBar(message: 'You cannot select this range', isTrue: false);
+      Utils.showSnackBar(message: MyStrings.cannotSelectRange.tr, isTrue: false);
     } else if (rangeStartDate.value != null && currentDate.isBefore(rangeStartDate.value!)) {
       rangeEndDate.value = rangeStartDate.value;
       rangeStartDate.value = currentDate;
@@ -166,9 +166,9 @@ class CalenderController extends GetxController {
           unavailableDateList.clear();
           selectedDates.clear();
           Get.back();
-          Utils.showSnackBar(message: 'Dates have been updated successfully', isTrue: true);
+          Utils.showSnackBar(message: MyStrings.datesUpdate.tr, isTrue: true);
         } else {
-          Utils.showSnackBar(message: 'Date update failed', isTrue: false);
+          Utils.showSnackBar(message: MyStrings.dateUpdateFailed.tr, isTrue: false);
         }
       });
     });
@@ -248,9 +248,9 @@ class CalenderController extends GetxController {
     if (!Get.isRegistered<EmployeeHomeController>()) return;
     CustomDialogue.confirmation(
       context: context!,
-      title: "Warning!",
-      msg: "Are you sure you want to make this date range available?",
-      confirmButtonText: "YES",
+      title: MyStrings.warning.tr,
+      msg: MyStrings.sureToMakeUnavailableDate.tr,
+      confirmButtonText: MyStrings.yes.tr,
       onConfirm: () async {
         unavailableDateList.clear();
         Get.back();
@@ -281,7 +281,7 @@ class CalenderController extends GetxController {
       sameAsStartDate.value = false;
       rangeStartDate.value = currentDate;
     } else if (inValidRange(currentDate: currentDate) == true) {
-      Utils.showSnackBar(message: 'You cannot select this range', isTrue: false);
+      Utils.showSnackBar(message: MyStrings.cannotSelectRange.tr, isTrue: false);
     } else if (rangeStartDate.value != null && currentDate.isBefore(rangeStartDate.value!)) {
       rangeEndDate.value = rangeStartDate.value;
       rangeStartDate.value = currentDate;
@@ -484,8 +484,8 @@ class CalenderController extends GetxController {
       } else {
         CustomDialogue.information(
           context: Get.context!,
-          title: "Error",
-          description: "Something went wrong",
+          title: MyStrings.error.tr,
+          description: MyStrings.somethingWentWrong.tr,
         );
       }
     });

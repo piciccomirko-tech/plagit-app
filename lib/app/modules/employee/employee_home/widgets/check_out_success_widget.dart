@@ -19,7 +19,7 @@ class CheckOutSuccessWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Lottie.asset(MyAssets.lottie.successLottie, height: 140.w, width: 140.w),
-            Text('Checkout Successful', style: MyColors.l111111_dwhite(context).semiBold16),
+            Text('${MyStrings.checkOut.tr} ${MyStrings.successful.tr}', style: MyColors.l111111_dwhite(context).semiBold16),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -29,12 +29,12 @@ class CheckOutSuccessWidget extends StatelessWidget {
                     height: 38,
                     fontSize: 15,
                     backgroundColor: Colors.grey.shade400,
-                    text: 'Close', onTap: () => Get.back(), customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
+                    text: MyStrings.close.tr, onTap: () => Get.back(), customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                 CustomButtons.button(
                   height: 38,
                   padding: EdgeInsets.symmetric(horizontal: 20.0.w),
                   margin: EdgeInsets.zero,
-                    text: 'Dashboard',
+                    text: MyStrings.dashboard.tr,
                     fontSize: 15,
                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                     onTap: () => Get.toNamed(Routes.employeeDashboard)!.then((value){

@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mh/app/common/widgets/no_item_found.dart';
 
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -32,6 +33,7 @@ class ClientTermsConditionForHireView extends GetView<ClientTermsConditionForHir
             child: CupertinoActivityIndicator(
           radius: 10,
         )),
+        onEmpty: const Center(child: NoItemFound()),
         onError: (String? msg) => Center(
           child: Text(
             msg ?? "Something wrong!",

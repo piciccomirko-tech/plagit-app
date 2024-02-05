@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/values/my_color.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/controllers/employee_home_controller.dart';
 
@@ -31,9 +32,9 @@ class EmployeeTodayDashboardWidget extends GetWidget<EmployeeHomeController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _itemValue("Check In", controller.dailyStatistics.displayCheckInTime),
-                      _itemValue("Check Out", controller.dailyStatistics.displayCheckOutTime),
-                      _itemValue("Break", controller.dailyStatistics.displayBreakTime),
+                      _itemValue(MyStrings.checkIn.tr, controller.dailyStatistics.displayCheckInTime),
+                      _itemValue(MyStrings.checkOut.tr, controller.dailyStatistics.displayCheckOutTime),
+                      _itemValue(MyStrings.breakTime.tr, controller.dailyStatistics.displayBreakTime),
                     ],
                   ),
                   const SizedBox(height: 7),
@@ -46,8 +47,8 @@ class EmployeeTodayDashboardWidget extends GetWidget<EmployeeHomeController> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      _itemValue("Working Time", controller.dailyStatistics.workingHour, valueFontSize: 18),
-                      _itemValue("Date", controller.dailyStatistics.date, valueFontSize: 14),
+                      _itemValue(MyStrings.workingTime.tr, controller.dailyStatistics.workingHour, valueFontSize: 18),
+                      _itemValue(MyStrings.date.tr, controller.dailyStatistics.date, valueFontSize: 14),
                     ],
                   ),
                 ],

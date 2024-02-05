@@ -26,7 +26,7 @@ class EmployeeHomeBodyWidget extends GetWidget<EmployeeHomeController> {
             EmployeeTodayDashboardWidget(),
             EmployeeHomeCardWidget(),
             EmployeeJobPostsWidget(),
-            EmployeeLocationWidget(),
+            EmployeeLocationWidget()
           ],
         ),
       ),

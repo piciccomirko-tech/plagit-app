@@ -88,7 +88,7 @@ class AdminHomeController extends GetxController {
 
   void reloadPage() async {
     await homeMethods();
-    Utils.showSnackBar(message: 'This page has been refreshed...', isTrue: true);
+    Utils.showSnackBar(message: MyStrings.pageRefreshed.tr, isTrue: true);
   }
 
   void _trackUnreadMsg() {

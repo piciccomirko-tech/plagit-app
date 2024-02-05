@@ -281,7 +281,7 @@ class CustomDialogue {
                                   CustomLoader.hide(context);
                                 },
                                 child: Text(
-                                  "CLOSE",
+                                  MyStrings.close.tr,
                                   style: MyColors.text.semiBold16,
                                 ),
                               ),

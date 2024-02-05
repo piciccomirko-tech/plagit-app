@@ -42,12 +42,12 @@ class JobPostWidget extends StatelessWidget {
                 context),
             SizedBox(height: 10.h),
             CustomButtons.button(
-                height: 35.h,
+                height: 35,
                 onTap: () => Get.find<EmployeeHomeController>().onFullViewClick(jobPostDetails: jobPost),
                 margin: EdgeInsets.zero,
                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                 text: MyStrings.details.tr),
-            SizedBox(height: 5.h),
+            SizedBox(height: 5.h)
           ],
         ));
   }

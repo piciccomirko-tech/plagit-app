@@ -607,7 +607,7 @@ class Utils {
         snackStyle: SnackStyle.FLOATING,
         snackPosition: SnackPosition.TOP,
         margin: const EdgeInsets.all(10.0),
-        title: isTrue == true ? 'Success' : 'Warning!',
+        title: isTrue == true ? MyStrings.success.tr : MyStrings.warning.tr,
         message: message,
         backgroundColor: isTrue == true ? MyColors.c_C6A34F : Colors.red,
         borderRadius: 10.0);

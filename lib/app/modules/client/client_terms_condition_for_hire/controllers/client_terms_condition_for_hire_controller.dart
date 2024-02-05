@@ -1,3 +1,4 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/utils/utils.dart';
@@ -26,7 +27,7 @@ class ClientTermsConditionForHireController extends GetxController with StateMix
   Future<void> _fetchTermsCondition() async {
     change(null, status: RxStatus.loading());
 
-    await _apiHelper.getTermsConditionForHire().then((response) {
+    await _apiHelper.getTermsConditionForHire().then((Either<CustomError, TermsConditionForHire> response) {
       response.fold((l) {
         change(null, status: RxStatus.error(l.msg));
       }, (TermsConditionForHire termsConditionForHire) {

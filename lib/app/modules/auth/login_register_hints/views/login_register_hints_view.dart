@@ -1,5 +1,3 @@
-import 'package:mh/app/common/local_storage/storage_helper.dart';
-
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/bottom_curve_path.dart';
 import '../../../../common/widgets/horizontal_divider_with_text.dart';

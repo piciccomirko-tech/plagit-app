@@ -20,7 +20,7 @@ class LanguageDropdown extends StatelessWidget {
               children: [
                 Text(language.imageUrl, style: const TextStyle(fontSize: 20)), // Assuming imageUrl is a URL
                 const SizedBox(width: 5),
-                Text(language.languageName, style: MyColors.l5C5C5C_dwhite(context).medium16),
+                Text(language.languageCode, style: MyColors.l5C5C5C_dwhite(context).medium16),
               ],
             ),
           );
@@ -33,7 +33,7 @@ class LanguageDropdown extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
               StorageHelper.getLanguage, style: MyColors.l5C5C5C_dwhite(context).medium16),
-          const Icon(Icons.arrow_drop_down),
+          const Icon(Icons.arrow_drop_down, color: MyColors.c_C6A34F),
         ],
       ),
       onSelected: (String languageCode) {

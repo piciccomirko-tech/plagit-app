@@ -291,7 +291,7 @@ class EmployeeHomeController extends GetxController {
     response.fold((CustomError customError) {
       CustomDialogue.information(
         context: context!,
-        title: "Failed to CheckIn",
+        title: MyStrings.failedToCheckIn.tr,
         description: customError.msg,
       );
     }, (CommonResponseModel clients) {
@@ -318,7 +318,7 @@ class EmployeeHomeController extends GetxController {
 
     homeMethods();
 
-    Utils.showSnackBar(message: 'This page has been refreshed', isTrue: true);
+    Utils.showSnackBar(message: MyStrings.pageRefreshed.tr, isTrue: true);
   }
 
   void _trackUnreadMsg() {
@@ -355,9 +355,10 @@ class EmployeeHomeController extends GetxController {
   void updateNotification({required String id, required String hiredStatus}) {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: MyStrings.confirmPassword.tr,
-      msg: "Are you sure you want to $hiredStatus this booking request?",
-      confirmButtonText: hiredStatus,
+      title: MyStrings.confirm.tr,
+      msg:
+          "${MyStrings.sureWantTo.tr} ${hiredStatus == "ALLOW" ? MyStrings.allow.tr : MyStrings.deny.tr} ${MyStrings.bookingRequest.tr}?",
+      confirmButtonText: hiredStatus == "ALLOW" ? MyStrings.allow.tr : MyStrings.deny.tr,
       onConfirm: () async {
         Get.back();
         CustomLoader.show(context!);
@@ -423,7 +424,7 @@ class EmployeeHomeController extends GetxController {
       }, (CommonResponseModel response) {
         if (response.status == "success" && response.statusCode == 201) {
           tecReview.clear();
-          Utils.showSnackBar(message: 'Thanks for your review...', isTrue: true);
+          Utils.showSnackBar(message: MyStrings.thanksReview.tr, isTrue: true);
         }
       });
     });
@@ -503,7 +504,7 @@ class EmployeeHomeController extends GetxController {
     await _getTodayCheckInOutDetails();
 
     if (checkIn.value == true && checkOut.value == false) {
-      Utils.showSnackBar(message: 'You have successfully checkedIn', isTrue: true);
+      Utils.showSnackBar(message: MyStrings.successfullyCheckedIn.tr, isTrue: true);
     } else if (checkOut.value == false && checkIn.value == false) {
       Get.dialog(Dialog(
           backgroundColor: MyColors.lightCard(Get.context!),
@@ -533,7 +534,7 @@ class EmployeeHomeController extends GetxController {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Lottie.asset(MyAssets.lottie.calenderLottie),
-                        Text('PLEASE UPDATE YOUR CALENDAR', style: MyColors.c_C6A34F.semiBold18),
+                        Text(MyStrings.updateCalendar.tr, style: MyColors.c_C6A34F.semiBold18, maxLines: 2),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -541,7 +542,7 @@ class EmployeeHomeController extends GetxController {
                             CustomButtons.button(
                                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                                 margin: EdgeInsets.zero,
-                                text: "Update",
+                                text: MyStrings.update.tr,
                                 onTap: () => onCalenderUpdatePressed(tag: 'update'),
                                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                             const SizedBox(width: 20),
@@ -549,7 +550,7 @@ class EmployeeHomeController extends GetxController {
                                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                                 margin: EdgeInsets.zero,
                                 backgroundColor: Colors.grey.shade400,
-                                text: 'Close',
+                                text: MyStrings.close.tr,
                                 onTap: () => onCalenderUpdatePressed(tag: 'close'),
                                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                           ],
@@ -642,8 +643,8 @@ class EmployeeHomeController extends GetxController {
   void showLocationEnableDialog() {
     CustomDialogue.information(
         context: context!,
-        title: "Warning!",
-        description: "For better user experience you have to enable your device's location",
+        title: MyStrings.warning.tr,
+        description: MyStrings.enableDeviceLocation.tr,
         onTap: () async {
           await Geolocator.openLocationSettings();
         });

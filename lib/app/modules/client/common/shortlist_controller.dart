@@ -106,8 +106,8 @@ class ShortlistController extends GetxService {
         isFetching.value = false;
         CustomDialogue.information(
           context: Get.context!,
-          title: "Error",
-          description: "Employee already hired",
+          title: MyStrings.error.tr,
+          description: "${MyStrings.employee.tr} ${MyStrings.already.tr} ${MyStrings.hired.tr}",
         );
       }
     });
@@ -194,7 +194,7 @@ class ShortlistController extends GetxService {
       if (fromWhere == 'Requested Employees') {
         _addEmployeeToShortListNew(employeeId: employeeId, id: id ?? '');
       } else {
-       await _addEmployeeToShortlist(
+        await _addEmployeeToShortlist(
             employeeId: employeeId, requestDateList: requestedDateList, uniformMandatory: uniformMandatory);
       }
     }
@@ -244,9 +244,10 @@ class ShortlistController extends GetxService {
   void _confirmationForRemoveEmployeeFromShortlist(String employeeId) {
     CustomDialogue.confirmation(
       context: Get.context!,
-      title: MyStrings.confirm.tr,
-      msg: "Are you sure you want to delete employee from shortlist?",
-      confirmButtonText: "Delete",
+      title: "${MyStrings.confirm.tr}?",
+      msg:
+          "${MyStrings.sureWantTo.tr} ${MyStrings.delete.tr} ${MyStrings.employee.tr} ${MyStrings.from.tr} ${MyStrings.shortList.tr}?",
+      confirmButtonText: MyStrings.delete.tr,
       onConfirm: () {
         Get.back(); // hide dialog
         _removeEmployeeFromFromShortlist(employeeId);
@@ -279,8 +280,8 @@ class ShortlistController extends GetxService {
           isFetching.value = false;
           CustomDialogue.information(
             context: Get.context!,
-            title: "Error",
-            description: "Employee already hired",
+            title: MyStrings.error.tr,
+            description: "${MyStrings.employee.tr} ${MyStrings.already.tr} ${MyStrings.hired.tr}",
           );
         }
       });

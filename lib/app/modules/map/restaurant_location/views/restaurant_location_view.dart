@@ -92,8 +92,8 @@ class RestaurantLocationView extends GetView<RestaurantLocationController> {
                                             onTap: controller.onSearchLocationClick,
                                             backgroundColor: Colors.teal,
                                             text: controller.showAutoCompleteSearchWidget.value == false
-                                                ? 'Search Location'.toUpperCase()
-                                                : 'Close Search'.toUpperCase(),
+                                                ? '${MyStrings.search.tr} ${MyStrings.location.tr}'.toUpperCase()
+                                                : '${MyStrings.close.tr} ${MyStrings.search.tr}'.toUpperCase(),
                                           )),
                                       Obx(() => CustomButtons.button(
                                             margin: EdgeInsets.zero,
@@ -104,7 +104,7 @@ class RestaurantLocationView extends GetView<RestaurantLocationController> {
                                             onTap: controller.confirmButtonDisable.value == true
                                                 ? null
                                                 : controller.onConfirmPressed,
-                                            text: 'Confirm Location'.toUpperCase(),
+                                            text: '${MyStrings.confirm.tr} ${MyStrings.location.tr}'.toUpperCase(),
                                           )),
                                     ],
                                   )

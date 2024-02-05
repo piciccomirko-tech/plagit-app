@@ -32,7 +32,7 @@ class CustomBreakTime {
                     _divider(context),
                     SizedBox(width: 10.w),
                     Text(
-                      "Break Time",
+                      MyStrings.breakTime.tr,
                       style: MyColors.l7B7B7B_dtext(context).semiBold16,
                     ),
                     SizedBox(width: 10.w),
@@ -66,7 +66,7 @@ class CustomBreakTime {
                       Transform.translate(
                         offset: const Offset(0, -13),
                         child: Text(
-                          "Hour",
+                          MyStrings.hours.tr,
                           style: MyColors.l111111_dwhite(context).regular14,
                         ),
                       ),
@@ -92,7 +92,7 @@ class CustomBreakTime {
                       Transform.translate(
                         offset: const Offset(0, -13),
                         child: Text(
-                          "Min",
+                          MyStrings.min.tr,
                           style: MyColors.l111111_dwhite(context).regular14,
                         ),
                       ),
@@ -100,7 +100,7 @@ class CustomBreakTime {
                   ),
                 ),
                 CustomButtons.button(
-                  text: "Done",
+                  text: MyStrings.done.tr,
                   customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                   onTap: () {
                     Navigator.pop(context); // hide modal

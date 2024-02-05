@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';

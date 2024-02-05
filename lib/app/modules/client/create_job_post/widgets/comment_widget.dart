@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
-import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/utils/validators.dart';
 import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/common/values/my_strings.dart';

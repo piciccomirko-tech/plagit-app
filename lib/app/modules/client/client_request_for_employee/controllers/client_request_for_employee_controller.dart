@@ -7,7 +7,6 @@ import '../../../../repository/api_helper.dart';
 import '../../client_home/controllers/client_home_controller.dart';
 
 class ClientRequestForEmployeeController extends GetxController {
-
   BuildContext? context;
 
   final AppController appController = Get.find();
@@ -20,12 +19,11 @@ class ClientRequestForEmployeeController extends GetxController {
 
   @override
   void onInit() {
-
-    for(int i = 0; i <= 50; i++) {
+    for (int i = 0; i <= 50; i++) {
       dropdownValues.add(i);
     }
 
-    for(int i = 0; i < appController.allActivePositions.length; i++) {
+    for (int i = 0; i < appController.allActivePositions.length; i++) {
       selectedEmployee.add(0);
     }
     super.onInit();
@@ -36,52 +34,39 @@ class ClientRequestForEmployeeController extends GetxController {
   }
 
   Future<void> onRequestPressed() async {
-
     List<Map<String, dynamic>> idsWihCount = [];
 
-    for(int i = 0; i < selectedEmployee.length; i++) {
-      if(selectedEmployee[i] > 0) {
-        idsWihCount.add({
-          "positionId": appController.allActivePositions[i].id,
-          "numOfEmployee": selectedEmployee[i]
-        });
+    for (int i = 0; i < selectedEmployee.length; i++) {
+      if (selectedEmployee[i] > 0) {
+        idsWihCount.add({"positionId": appController.allActivePositions[i].id, "numOfEmployee": selectedEmployee[i]});
       }
     }
 
-    Map<String, dynamic> data = {
-      "requestClientId": appController.user.value.userId,
-      "employees": idsWihCount
-    };
+    Map<String, dynamic> data = {"requestClientId": appController.user.value.userId, "employees": idsWihCount};
 
     CustomLoader.show(context!);
     await apiHelper.clientRequestForEmployee(data).then((response) {
-
       CustomLoader.hide(context!);
 
       response.fold((CustomError customError) {
-
         Utils.errorDialog(context!, customError..onRetry = onRequestPressed);
-
       }, (r) {
-
-        if([200,201].contains(r.statusCode)) {
+        if ([200, 201].contains(r.statusCode)) {
           clientHomeController.onInit();
           Get.back();
           CustomDialogue.information(
             context: Get.context!,
             title: "Requested",
-            description: "Your Request has been placed successfully. Expect a recommendation within 24 hours" ,
+            description: "Your Request has been placed successfully. Expect a recommendation within 24 hours",
           );
         } else {
           CustomDialogue.information(
             context: Get.context!,
-            title: "Error",
-            description: "Something went wrong",
+            title: MyStrings.error.tr,
+            description: MyStrings.somethingWentWrong.tr,
           );
         }
-
       });
     });
   }
-
 }
