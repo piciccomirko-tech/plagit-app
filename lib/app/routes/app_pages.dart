@@ -87,6 +87,8 @@ import '../modules/employee_booked_history_details/bindings/employee_booked_hist
 import '../modules/employee_booked_history_details/views/employee_booked_history_details_view.dart';
 import '../modules/employee_hired_history/bindings/employee_hired_history_binding.dart';
 import '../modules/employee_hired_history/views/employee_hired_history_view.dart';
+import '../modules/live_chat/bindings/live_chat_binding.dart';
+import '../modules/live_chat/views/live_chat_view.dart';
 import '../modules/map/restaurant_location/bindings/restaurant_location_binding.dart';
 import '../modules/map/restaurant_location/views/restaurant_location_view.dart';
 import '../modules/notifications/bindings/notifications_binding.dart';
@@ -426,6 +428,11 @@ class AppPages {
       name: _Paths.employeeJobPostDetails,
       page: () => const EmployeeJobPostsDetailsView(),
       binding: EmployeeJobPostsDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.liveChat,
+      page: () => const LiveChatView(),
+      binding: LiveChatBinding(),
     ),
   ];
 }

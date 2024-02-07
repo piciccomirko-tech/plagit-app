@@ -24,25 +24,27 @@ class CustomNetworkImage extends StatelessWidget {
         // width: width ?? 200,
         fit: fit,
         imageUrl: url,
-        placeholder: (context, url) => Container(
+        placeholder: (BuildContext context, String url) => Container(
           color: Colors.white,
           child: const Center(
             child: CupertinoActivityIndicator(),
           ),
         ),
         errorWidget: (context, url, error) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: const Icon(Icons.error, color: Colors.red),
                 ),
-                child: const Icon(Icons.error, color: Colors.red),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

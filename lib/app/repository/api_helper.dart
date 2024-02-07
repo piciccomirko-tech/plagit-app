@@ -27,6 +27,10 @@ import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedul
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
 import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -225,4 +229,6 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
   EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel});
   EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
+  EitherModel<ConversationResponseModel> createConversation({required ConversationCreateRequestModel conversationCreateRequestModel});
+  EitherModel<MessageResponseModel> getMessages({required MessageRequestModel messageRequestModel});
 }

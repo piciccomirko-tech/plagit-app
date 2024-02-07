@@ -35,6 +35,10 @@ import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedul
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
 import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -1398,5 +1402,39 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
+  EitherModel<ConversationResponseModel> createConversation(
+      {required ConversationCreateRequestModel conversationCreateRequestModel}) async {
+    String url = "conversations/create";
+    String requestBody = conversationCreateRequestModel.toRawJson();
+    Response response = await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+
+    print('ApiHelperImpl.createConversation: ${response.bodyString}');
+    return _convert<ConversationResponseModel>(
+      response,
+      ConversationResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (ConversationResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<MessageResponseModel> getMessages({required MessageRequestModel messageRequestModel}) async {
+    String url =
+        "messages?conversationId=${messageRequestModel.conversationId}&limit=${messageRequestModel.limit}&page=${messageRequestModel.page}";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    print('ApiHelperImpl.getMessages: ${response.bodyString}');
+
+    return _convert<MessageResponseModel>(
+      response,
+      MessageResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (MessageResponseModel r) => right(r));
   }
 }
