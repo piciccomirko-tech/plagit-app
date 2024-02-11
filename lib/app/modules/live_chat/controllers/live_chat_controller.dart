@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -24,10 +23,15 @@ class LiveChatController extends GetxController {
   RxBool messageLoaded = false.obs;
   late String conversationId;
   TextEditingController tecMessage = TextEditingController();
+  late ScrollController scrollController;
+  int pageNumber = 1;
+
   @override
   void onInit() {
     liveChatDataTransferModel = Get.arguments;
     _getConversationId();
+    scrollController = ScrollController();
+    scrollController.addListener(_scrollListener);
     super.onInit();
   }
 
@@ -41,7 +45,15 @@ class LiveChatController extends GetxController {
   void onClose() {
     tecMessage.dispose();
     Utils.unFocus();
+    scrollController.dispose();
     super.onClose();
+  }
+
+  void _scrollListener() {
+    if (scrollController.offset <= scrollController.position.minScrollExtent && !scrollController.position.outOfRange) {
+      pageNumber++;
+      _getMoreMessages();
+    }
   }
 
   void _getConversationId() {
@@ -55,14 +67,15 @@ class LiveChatController extends GetxController {
       }, (ConversationResponseModel response) {
         if (response.status == "success" && response.statusCode == 201 && response.details != null) {
           conversationId = response.details?.id ?? "";
-          _getAllMessages(conversationId: conversationId);
+          _getAllMessages();
         }
       });
     });
   }
 
-  void _getAllMessages({required String conversationId}) async {
-    MessageRequestModel messageRequestModel = MessageRequestModel(conversationId: conversationId, limit: 10, page: 1);
+  void _getAllMessages() async {
+    MessageRequestModel messageRequestModel =
+        MessageRequestModel(conversationId: conversationId, limit: 20, page: pageNumber);
     Either<CustomError, MessageResponseModel> responseData =
         await _apiHelper.getMessages(messageRequestModel: messageRequestModel);
     responseData.fold((CustomError customError) {
@@ -77,23 +90,48 @@ class LiveChatController extends GetxController {
     });
   }
 
+  void _getMoreMessages() async {
+    MessageRequestModel messageRequestModel =
+        MessageRequestModel(conversationId: conversationId, limit: 20, page: pageNumber);
+    Either<CustomError, MessageResponseModel> responseData =
+        await _apiHelper.getMessages(messageRequestModel: messageRequestModel);
+    responseData.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError);
+    }, (MessageResponseModel response) {
+      if (response.status == "success" && response.statusCode == 200) {
+        messageList.addAll(response.messages ?? []);
+        messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
+        messageList.refresh();
+      }
+    });
+  }
+
   void sendMessage() {
     SendMessageRequestModel sendMessageRequestModel = SendMessageRequestModel(
         senderId: _appController.user.value.userId,
         conversationId: conversationId,
         dateTime: DateTime.now().toString(),
         text: tecMessage.text);
+    tecMessage.clear();
     _apiHelper.sendMessage(sendMessageRequestModel: sendMessageRequestModel);
   }
 
   void _getMessagesFromSocket() {
-    try {
-      Get.find<SocketController>().socket?.on('new_message', (data) async {
-        print('LiveChatController._getMessagesFromSocket: ${jsonEncode(data)}');
-        messageList.add(MessageModel.fromJson(data));
-        messageList.refresh();
-        print('LiveChatController._getMessagesFromSocket: ${messageList.length}');
-      });
-    } catch (_) {}
+    Get.find<SocketController>().socket?.on('new_message', (data) async {
+      messageList.add(MessageModel.fromJson(data['message']));
+      messageList.refresh();
+      scrollToBottom();
+    });
+  }
+
+  void scrollToBottom() {
+    print('LiveChatController.scrollToBottom: ${scrollController.hasClients}');
+    if (scrollController.hasClients) {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent + 80.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.slowMiddle,
+      );
+    }
   }
 }

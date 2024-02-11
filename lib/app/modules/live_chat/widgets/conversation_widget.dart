@@ -21,11 +21,18 @@ class ConversationWidget extends GetWidget<LiveChatController> {
           child: Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
             child: ListView.builder(
+                controller: controller.scrollController,
                 shrinkWrap: true,
+                physics: const BouncingScrollPhysics(),
                 padding: EdgeInsets.zero,
                 itemCount: controller.messageList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return MessageWidget(messageModel: controller.messageList[index]);
+                  if (index == controller.messageList.length) {
+                    return const CircularProgressIndicator();
+                  } else {
+                    // Show chat message
+                    return MessageWidget(messageModel: controller.messageList[index], index: index);
+                  }
                 }),
           ),
         );
