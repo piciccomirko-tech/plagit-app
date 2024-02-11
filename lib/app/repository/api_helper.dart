@@ -31,6 +31,7 @@ import 'package:mh/app/modules/live_chat/models/conversation_create_request_mode
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/send_message_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -160,10 +161,6 @@ abstract class ApiHelper {
 
   EitherModel<Response> addEmployeeAsSuggest(Map<String, dynamic> data);
 
-  EitherModel<OneToOneMsg> getMsg(String senderId, String receiverId);
-
-  EitherModel<Response> sendMsg(Map<String, dynamic> data);
-
   EitherModel<EmployeeFullDetails> employeeFullDetails(String id);
 
   EitherModel<ClientRegistrationResponse> updateClientProfile(ClientProfileUpdate clientProfileUpdate);
@@ -231,4 +228,5 @@ abstract class ApiHelper {
   EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
   EitherModel<ConversationResponseModel> createConversation({required ConversationCreateRequestModel conversationCreateRequestModel});
   EitherModel<MessageResponseModel> getMessages({required MessageRequestModel messageRequestModel});
+  EitherModel<Response> sendMessage({required SendMessageRequestModel sendMessageRequestModel});
 }

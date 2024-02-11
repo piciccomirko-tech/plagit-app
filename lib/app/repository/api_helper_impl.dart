@@ -39,6 +39,7 @@ import 'package:mh/app/modules/live_chat/models/conversation_create_request_mode
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/send_message_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -61,7 +62,6 @@ import '../models/custom_error.dart';
 import '../models/employee_full_details.dart';
 import '../models/employees_by_id.dart';
 import '../models/lat_long_to_address.dart';
-import '../models/one_to_one_msg.dart';
 import '../models/requested_employees.dart' as requested_employees;
 import '../models/sources.dart';
 import '../models/user_info.dart';
@@ -737,33 +737,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<OneToOneMsg> getMsg(String senderId, String receiverId) async {
-    Response response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-    if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-    if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-    if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-
-    return _convert<OneToOneMsg>(
-      response,
-      OneToOneMsg.fromJson,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
-  EitherModel<Response> sendMsg(Map<String, dynamic> data) async {
-    Response response = await post("messages/create", jsonEncode(data));
-    if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
-    if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
-    if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
-
-    return _convert<Response>(
-      response,
-      (Map<String, dynamic> data) {},
-      onlyErrorCheck: true,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
   EitherModel<EmployeeFullDetails> employeeFullDetails(String id) async {
     String url = "users/$id";
 
@@ -1414,7 +1387,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
 
-    print('ApiHelperImpl.createConversation: ${response.bodyString}');
     return _convert<ConversationResponseModel>(
       response,
       ConversationResponseModel.fromJson,
@@ -1430,11 +1402,23 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
 
-    print('ApiHelperImpl.getMessages: ${response.bodyString}');
-
     return _convert<MessageResponseModel>(
       response,
       MessageResponseModel.fromJson,
     ).fold((CustomError l) => left(l), (MessageResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<Response> sendMessage({required SendMessageRequestModel sendMessageRequestModel}) async {
+    Response response = await post("messages/create", sendMessageRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
+
+    return _convert<Response>(
+      response,
+      (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 }

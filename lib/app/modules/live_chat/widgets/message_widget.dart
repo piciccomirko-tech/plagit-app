@@ -9,7 +9,6 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('MessageWidget.build: ${messageModel.dateTime}');
     return Row(
       mainAxisAlignment: messageModel.senderDetails?.senderId == Get.find<AppController>().user.value.userId
           ? MainAxisAlignment.end

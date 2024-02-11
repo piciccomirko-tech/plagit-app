@@ -37,7 +37,6 @@ Future<void> main() async {
   });
 
   LocalNotificationService.initialize();
-
   Initializer.instance.init().then((value) {
     runApp(const MirkoHospitality());
   });

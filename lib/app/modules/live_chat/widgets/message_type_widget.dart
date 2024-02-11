@@ -32,6 +32,7 @@ class MessageTypeWidget extends GetWidget<LiveChatController> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30.0),
                   child: TextFormField(
+                    controller: controller.tecMessage,
                     decoration: InputDecoration(
                         hintText: "Type here...",
                         border: InputBorder.none,
@@ -41,11 +42,14 @@ class MessageTypeWidget extends GetWidget<LiveChatController> {
                 ),
               )),
           const SizedBox(width: 10),
-          const Expanded(
+          Expanded(
             flex: 1,
-            child: CircleAvatar(
-              backgroundColor: MyColors.c_C6A34F,
-              child: Icon(Icons.send, color: Colors.white),
+            child: InkResponse(
+              onTap: controller.sendMessage,
+              child: const CircleAvatar(
+                backgroundColor: MyColors.c_C6A34F,
+                child: Icon(Icons.send, color: Colors.white),
+              ),
             ),
           )
         ],
