@@ -54,19 +54,11 @@ class AdminAllEmployeesController extends GetxController {
     });
   }
 
-  void onChatClick(Employee employee) {
-    Get.toNamed(Routes.liveChat,
-        arguments: LiveChatDataTransferModel(
-            toName: employee.firstName ?? "",
-            toId: employee.id ?? "",
-            toProfilePicture: (employee.profilePicture ?? "").imageUrl));
-    /*Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: employee.id ?? "",
-      MyStrings.arg.supportChatDocId: employee.id ?? "",
-      MyStrings.arg.receiverName: employee.firstName ?? "-",
-    });*/
-  }
+  void onChatClick(Employee employee) => Get.toNamed(Routes.liveChat,
+      arguments: LiveChatDataTransferModel(
+          toName: employee.firstName ?? "",
+          toId: employee.id ?? "",
+          toProfilePicture: (employee.profilePicture ?? "").imageUrl));
 
   String getPositionLogo(String positionId) {
     Iterable<DropdownItem> positions = appController.allActivePositions.where((element) => element.id == positionId);

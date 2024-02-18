@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/modules/live_chat/controllers/live_chat_controller.dart';
 
@@ -32,6 +33,7 @@ class MessageTypeWidget extends GetWidget<LiveChatController> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(30.0),
                   child: TextFormField(
+                    style: MyColors.l111111_dwhite(context).medium16,
                     controller: controller.tecMessage,
                     decoration: InputDecoration(
                         hintText: "Type here...",

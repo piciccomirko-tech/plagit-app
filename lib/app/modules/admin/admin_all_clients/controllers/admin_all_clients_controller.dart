@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/custom_error.dart';
@@ -57,14 +58,11 @@ class AdminAllClientsController extends GetxController {
     });
   }
 
-  void onChatClick(Employee employee) {
-    Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: employee.id ?? "",
-      MyStrings.arg.supportChatDocId: employee.id ?? "",
-      MyStrings.arg.receiverName: employee.restaurantName ?? "-",
-    });
-  }
+  void onChatClick(Employee employee) => Get.toNamed(Routes.liveChat,
+      arguments: LiveChatDataTransferModel(
+          toName: employee.restaurantName ?? "",
+          toId: employee.id ?? "",
+          toProfilePicture: (employee.profilePicture ?? "").imageUrl));
 
   /* void paginateTask() {
     scrollController.addListener(() {

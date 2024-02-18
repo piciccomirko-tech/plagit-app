@@ -6,6 +6,7 @@ import 'package:mh/app/modules/client/job_requests/models/job_post_request_model
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -100,14 +101,13 @@ class ClientHomeController extends GetxController {
   }
 
   void chatWithAdmin() {
-    Get.back(); // hide dialogue
+    Get.back();
 
-    Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: "allAdmin",
-      MyStrings.arg.supportChatDocId: appController.user.value.userId,
-      MyStrings.arg.receiverName: "Support",
-    });
+    Get.toNamed(Routes.liveChat,
+        arguments: LiveChatDataTransferModel(
+            toName: "Support",
+            toId: appController.user.value.userId,
+            toProfilePicture: "https://www.iconpacks.net/icons/2/free-chat-support-icon-1721-thumb.png"));
   }
 
   void requestEmployees() {

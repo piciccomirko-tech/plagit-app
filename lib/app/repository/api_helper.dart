@@ -49,7 +49,6 @@ import '../models/commons.dart';
 import '../models/employee_full_details.dart';
 import '../models/employees_by_id.dart';
 import '../models/lat_long_to_address.dart';
-import '../models/one_to_one_msg.dart';
 import '../models/requested_employees.dart' as requested_employees;
 import '../models/sources.dart';
 import '../models/user_info.dart';

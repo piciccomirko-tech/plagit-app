@@ -18,6 +18,7 @@ import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedul
 import 'package:mh/app/modules/employee/employee_home/views/employee_job_posts_view_all_view.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/check_out_success_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/slide_action_widget.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
@@ -197,14 +198,13 @@ class EmployeeHomeController extends GetxController {
   }
 
   void chatWithAdmin() {
-    Get.back(); // hide dialogue
+    Get.back();
 
-    Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: "allAdmin",
-      MyStrings.arg.supportChatDocId: appController.user.value.userId,
-      MyStrings.arg.receiverName: "Support",
-    });
+    Get.toNamed(Routes.liveChat,
+        arguments: LiveChatDataTransferModel(
+            toName: "Support",
+            toId: appController.user.value.userId,
+            toProfilePicture: "https://www.iconpacks.net/icons/2/free-chat-support-icon-1721-thumb.png"));
   }
 
   void chatWithClient() {
@@ -212,14 +212,23 @@ class EmployeeHomeController extends GetxController {
 
     if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
         todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails != null) {
-      Get.toNamed(Routes.clientEmployeeChat, arguments: {
+
+      Get.toNamed(Routes.liveChat,
+          arguments: LiveChatDataTransferModel(
+              toName: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.restaurantName ?? "",
+              toId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
+              senderId: appController.user.value.userId,
+              bookedId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.id ?? "",
+              toProfilePicture: "https://www.iconpacks.net/icons/2/free-chat-support-icon-1721-thumb.png"));
+
+      /* Get.toNamed(Routes.clientEmployeeChat, arguments: {
         MyStrings.arg.receiverName:
             todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.restaurantName ?? "-",
         MyStrings.arg.fromId: appController.user.value.employee?.id ?? "",
         MyStrings.arg.toId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
         MyStrings.arg.clientId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
         MyStrings.arg.employeeId: appController.user.value.employee?.id ?? "",
-      });
+      });*/
     } else {
       Utils.showSnackBar(
           message: 'You cannot chat with any restaurant because you have not been hired yet', isTrue: false);

@@ -116,7 +116,10 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
               right: 40.w,
               top: 4.h,
               child: _chat(
-                  employeeName: hiredHistory.employeeDetails?.name ?? '', employeeId: hiredHistory.employeeId ?? ''),
+                bookingId: hiredHistory.id??'',
+                  profilePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl,
+                  employeeName: hiredHistory.employeeDetails?.name ?? '',
+                  employeeId: hiredHistory.employeeId ?? ''),
             ),
             Row(
               children: [
@@ -313,8 +316,10 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
         ),
       );
 
-  Widget _chat({required String employeeName, required String employeeId}) => GestureDetector(
-        onTap: () => controller.chatWithEmployee(employeeId: employeeId, employeeName: employeeName),
+  Widget _chat({required String employeeName, required String employeeId, required String profilePicture, required String bookingId}) =>
+      GestureDetector(
+        onTap: () => controller.chatWithEmployee(
+            employeeId: employeeId, employeeName: employeeName, profilePicture: profilePicture, bookingId: bookingId),
         child: Center(
           child: Stack(
             clipBehavior: Clip.none,

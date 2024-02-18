@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -1001,6 +1002,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
 
+    print('ApiHelperImpl.getTodayWorkSchedule: ${response.bodyString}');
+
     return _convert<TodayWorkScheduleModel>(
       response,
       TodayWorkScheduleModel.fromJson,
@@ -1217,6 +1220,9 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
+
+    log("${response.bodyString}");
+
     return _convert<ClientMyEmployeesModel>(
       response,
       ClientMyEmployeesModel.fromJson,
@@ -1387,6 +1393,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
 
+    print('ApiHelperImpl.createConversation: ${conversationCreateRequestModel.toRawJson()}');
+
     return _convert<ConversationResponseModel>(
       response,
       ConversationResponseModel.fromJson,
@@ -1415,6 +1423,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
     if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
 
+    print('ApiHelperImpl.sendMessage: ${response.bodyString}');
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},

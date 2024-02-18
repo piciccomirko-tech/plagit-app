@@ -1,4 +1,5 @@
-import 'dart:convert';
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -57,8 +58,17 @@ class LiveChatController extends GetxController {
   }
 
   void _getConversationId() {
-    ConversationCreateRequestModel conversationCreateRequestModel =
-        ConversationCreateRequestModel(isAdmin: true, senderId: liveChatDataTransferModel.toId);
+    ConversationCreateRequestModel conversationCreateRequestModel;
+    if (liveChatDataTransferModel.senderId == null) {
+      conversationCreateRequestModel =
+          ConversationCreateRequestModel(isAdmin: true, senderId: liveChatDataTransferModel.toId);
+    } else {
+      conversationCreateRequestModel = ConversationCreateRequestModel(
+          senderId: liveChatDataTransferModel.senderId,
+          receiverId: liveChatDataTransferModel.toId,
+          bookedId: liveChatDataTransferModel.bookedId);
+    }
+
     _apiHelper
         .createConversation(conversationCreateRequestModel: conversationCreateRequestModel)
         .then((Either<CustomError, ConversationResponseModel> responseData) {
@@ -118,6 +128,7 @@ class LiveChatController extends GetxController {
 
   void _getMessagesFromSocket() {
     Get.find<SocketController>().socket?.on('new_message', (data) async {
+      log('LiveChatController._getMessagesFromSocket: $data');
       messageList.add(MessageModel.fromJson(data['message']));
       messageList.refresh();
       scrollToBottom();
@@ -125,7 +136,6 @@ class LiveChatController extends GetxController {
   }
 
   void scrollToBottom() {
-    print('LiveChatController.scrollToBottom: ${scrollController.hasClients}');
     if (scrollController.hasClients) {
       scrollController.animateTo(
         scrollController.position.maxScrollExtent + 80.0,
