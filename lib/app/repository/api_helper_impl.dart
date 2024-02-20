@@ -1392,9 +1392,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
-
-    print('ApiHelperImpl.createConversation: ${conversationCreateRequestModel.toRawJson()}');
-
     return _convert<ConversationResponseModel>(
       response,
       ConversationResponseModel.fromJson,
@@ -1422,8 +1419,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
     if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
     if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
-
-    print('ApiHelperImpl.sendMessage: ${response.bodyString}');
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},
