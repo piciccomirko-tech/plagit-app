@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -1002,8 +1001,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
 
-    print('ApiHelperImpl.getTodayWorkSchedule: ${response.bodyString}');
-
     return _convert<TodayWorkScheduleModel>(
       response,
       TodayWorkScheduleModel.fromJson,
@@ -1220,8 +1217,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
-
-    log("${response.bodyString}");
 
     return _convert<ClientMyEmployeesModel>(
       response,

@@ -1,6 +1,3 @@
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/exports.dart';
@@ -29,10 +26,35 @@ class MessageWidget extends StatelessWidget {
                   color: messageModel.senderDetails?.senderId == Get.find<AppController>().user.value.userId
                       ? MyColors.c_C6A34F
                       : Colors.blueGrey.shade300),
-              child: Column(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${messageModel.text}', style: MyColors.white.medium15, maxLines: 10),
-
+                  Flexible(
+                    flex: 3,
+                      child: Text('${messageModel.text}', style: MyColors.white.medium15)),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    flex: 1,
+                      child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: Text(
+                        DateFormat.jm().format(messageModel.dateTime ?? DateTime.now()),
+                        style: Colors.grey.shade100.medium10),
+                  )),
+                /*  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                          DateFormat.jm().format(messageModel.dateTime ?? DateTime.now()),
+                          style: Colors.grey.shade100.medium10),
+                      Visibility(
+                          visible:
+                          messageModel.senderDetails?.senderId == Get.find<AppController>().user.value.userId,
+                          child: const Icon(Icons.check, color: Colors.white, size: 12))
+                    ],
+                  )*/
                 ],
               )),
         ),

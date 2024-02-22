@@ -21,6 +21,7 @@ class ConversationWidget extends GetWidget<LiveChatController> {
           child: Padding(
             padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
             child: ListView.builder(
+                reverse: true,
                 controller: controller.scrollController,
                 shrinkWrap: true,
                 physics: const BouncingScrollPhysics(),

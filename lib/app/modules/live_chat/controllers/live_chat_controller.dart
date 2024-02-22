@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -32,7 +30,6 @@ class LiveChatController extends GetxController {
     liveChatDataTransferModel = Get.arguments;
     _getConversationId();
     scrollController = ScrollController();
-    scrollController.addListener(_scrollListener);
     super.onInit();
   }
 
@@ -48,13 +45,6 @@ class LiveChatController extends GetxController {
     Utils.unFocus();
     scrollController.dispose();
     super.onClose();
-  }
-
-  void _scrollListener() {
-    if (scrollController.offset <= scrollController.position.minScrollExtent && !scrollController.position.outOfRange) {
-      pageNumber++;
-      _getMoreMessages();
-    }
   }
 
   void _getConversationId() {
@@ -93,7 +83,7 @@ class LiveChatController extends GetxController {
     }, (MessageResponseModel response) {
       if (response.status == "success" && response.statusCode == 200) {
         messageList.value = response.messages ?? [];
-        messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
+        //  messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
         messageList.refresh();
         messageLoaded.value = true;
       }
@@ -110,7 +100,7 @@ class LiveChatController extends GetxController {
     }, (MessageResponseModel response) {
       if (response.status == "success" && response.statusCode == 200) {
         messageList.addAll(response.messages ?? []);
-        messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
+        //  messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
         messageList.refresh();
       }
     });
@@ -128,19 +118,18 @@ class LiveChatController extends GetxController {
 
   void _getMessagesFromSocket() {
     Get.find<SocketController>().socket?.on('new_message', (data) async {
-      log('LiveChatController._getMessagesFromSocket: $data');
-      messageList.add(MessageModel.fromJson(data['message']));
+      messageList.insert(0, MessageModel.fromJson(data['message']));
       messageList.refresh();
-      scrollToBottom();
+      _scrollToBottom();
     });
   }
 
-  void scrollToBottom() {
+  void _scrollToBottom() {
     if (scrollController.hasClients) {
       scrollController.animateTo(
-        scrollController.position.maxScrollExtent + 80.0,
+        0.0,
         duration: const Duration(milliseconds: 300),
-        curve: Curves.slowMiddle,
+        curve: Curves.easeOut,
       );
     }
   }
