@@ -25,10 +25,6 @@ import '../modules/auth/register/bindings/register_binding.dart';
 import '../modules/auth/register/views/register_view.dart';
 import '../modules/calender/bindings/calender_binding.dart';
 import '../modules/calender/views/calender_view.dart';
-import '../modules/chat/client_employee_chat/bindings/client_employee_chat_binding.dart';
-import '../modules/chat/client_employee_chat/views/client_employee_chat_view.dart';
-import '../modules/chat/support_chat/bindings/support_chat_binding.dart';
-import '../modules/chat/support_chat/views/support_chat_view.dart';
 import '../modules/client/client_dashboard/bindings/client_dashboard_binding.dart';
 import '../modules/client/client_dashboard/views/client_dashboard_view.dart';
 import '../modules/client/client_home/bindings/client_home_binding.dart';
@@ -328,16 +324,6 @@ class AppPages {
       name: _Paths.restaurantLocation,
       page: () => const RestaurantLocationView(),
       binding: RestaurantLocationBinding(),
-    ),
-    GetPage(
-      name: _Paths.clientEmployeeChat,
-      page: () => const ClientEmployeeChatView(),
-      binding: ClientEmployeeChatBinding(),
-    ),
-    GetPage(
-      name: _Paths.supportChat,
-      page: () => const SupportChatView(),
-      binding: SupportChatBinding(),
     ),
     GetPage(
       name: _Paths.notifications,

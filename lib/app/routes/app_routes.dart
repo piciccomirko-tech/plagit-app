@@ -42,8 +42,6 @@ abstract class Routes {
   static const restaurantLocation = _Paths.restaurantLocation;
   static const employeeSelfProfile = _Paths.employeeSelfProfile;
   static const clientSelfProfile = _Paths.clientSelfProfile;
-  static const clientEmployeeChat = _Paths.clientEmployeeChat;
-  static const supportChat = _Paths.supportChat;
   static const notifications = _Paths.notifications;
   static const invoicePdf = _Paths.invoicePdf;
   static const stripePayment = _Paths.stripePayment;
@@ -110,8 +108,6 @@ abstract class _Paths {
   static const adminClientRequestPositions = '/admin-client-request-positions';
   static const adminClientRequestPositionEmployees =
       '/admin-client-request-position-employees';
-  static const clientEmployeeChat = '/client-employee-chat';
-  static const supportChat = '/support-chat';
   static const notifications = '/notifications';
   static const invoicePdf = '/invoice-pdf';
   static const stripePayment = '/stripe-payment';

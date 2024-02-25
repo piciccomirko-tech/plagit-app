@@ -81,31 +81,17 @@ class ClientMyEmployeeController extends GetxController {
     calculatePreviousDates(bookedDateList: bookedDateList);
   }
 
-  void chatWithEmployee({required String employeeName, required String employeeId, required String profilePicture, required String bookingId}) {
+  void chatWithEmployee({required LiveChatDataTransferModel liveChatDataTransferModel}) {
     CustomLoader.show(context!);
-    _apiHelper.matchEmployee(employeeId: employeeId).then((Either<CustomError, CommonResponseModel> response) {
+    _apiHelper
+        .matchEmployee(employeeId: liveChatDataTransferModel.toId)
+        .then((Either<CustomError, CommonResponseModel> response) {
       CustomLoader.hide(context!);
       response.fold((CustomError customError) {
         Utils.errorDialog(context!, customError);
       }, (CommonResponseModel responseData) {
         if (responseData.status == "success" && responseData.statusCode == 200 && responseData.result == "true") {
-
-          Get.toNamed(Routes.liveChat,
-              arguments: LiveChatDataTransferModel(
-                  toName: employeeName,
-                  toId: employeeId,
-                  senderId: appController.user.value.userId,
-                  bookedId: bookingId,
-                  toProfilePicture: profilePicture));
-
-         /* Get.toNamed(Routes.clientEmployeeChat, arguments: {
-            MyStrings.arg.receiverName: employeeName,
-            MyStrings.arg.fromId: appController.user.value.userId,
-            MyStrings.arg.toId: employeeId,
-            MyStrings.arg.clientId: appController.user.value.userId,
-            MyStrings.arg.employeeId: employeeId,
-          });*/
-
+          Get.toNamed(Routes.liveChat, arguments: liveChatDataTransferModel);
         } else {
           Utils.showSnackBar(
               message: 'You cannot chat with this employee \nbecause he is not hired today', isTrue: false);

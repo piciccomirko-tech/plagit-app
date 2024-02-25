@@ -18,7 +18,10 @@ import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedul
 import 'package:mh/app/modules/employee/employee_home/views/employee_job_posts_view_all_view.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/check_out_success_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/slide_action_widget.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
+import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
@@ -75,6 +78,8 @@ class EmployeeHomeController extends GetxController {
 
   Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
   RxBool jobPostDataLoading = false.obs;
+
+  RxInt unreadMessage = 0.obs;
 
   @override
   void onInit() {
@@ -185,11 +190,7 @@ class EmployeeHomeController extends GetxController {
   }
 
   void onHelpAndSupportClick() {
-    ChatWithUserChoose.show(
-      context!,
-      msgFromAdmin: unreadMsgFromAdmin.value,
-      msgFromClient: unreadMsgFromClient.value,
-    );
+    _createConversation();
   }
 
   void onProfileClick() {
@@ -212,7 +213,6 @@ class EmployeeHomeController extends GetxController {
 
     if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
         todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails != null) {
-
       Get.toNamed(Routes.liveChat,
           arguments: LiveChatDataTransferModel(
               toName: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.restaurantName ?? "",
@@ -657,5 +657,43 @@ class EmployeeHomeController extends GetxController {
         onTap: () async {
           await Geolocator.openLocationSettings();
         });
+  }
+
+  void _createConversation() {
+    CustomLoader.show(context!);
+    ConversationCreateRequestModel conversationCreateRequestModel =
+        ConversationCreateRequestModel(isAdmin: true, senderId: appController.user.value.userId);
+
+    _apiHelper
+        .createConversation(conversationCreateRequestModel: conversationCreateRequestModel)
+        .then((Either<CustomError, ConversationResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (ConversationResponseModel response) {
+        if (response.status == "success" && response.statusCode == 201 && response.details != null) {
+          _getUnreadMessage(conversationId: response.details?.id ?? "");
+        }
+      });
+    });
+  }
+
+  void _getUnreadMessage({required String conversationId}) {
+    _apiHelper
+        .getUnreadMessage(conversationId: conversationId)
+        .then((Either<CustomError, UnreadMessageResponseModel> responseData) {
+      CustomLoader.hide(context!);
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (UnreadMessageResponseModel response) {
+        if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+          unreadMessage.value = response.details?.count ?? 0;
+        }
+      });
+      ChatWithUserChoose.show(
+        context!,
+        msgFromAdmin: unreadMessage.value,
+        msgFromClient: unreadMsgFromClient.value,
+      );
+    });
   }
 }

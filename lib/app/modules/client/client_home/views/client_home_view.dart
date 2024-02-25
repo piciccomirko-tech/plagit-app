@@ -136,9 +136,9 @@ class ClientHomeView extends GetView<ClientHomeController> {
                             top: 0,
                             right: 5,
                             child: Visibility(
-                              visible: controller.unreadMsgFromAdmin.value != 0,
+                              visible: controller.unreadMessageFromAdmin.value != 0,
                               child: CustomBadge(
-                                controller.unreadMsgFromAdmin.value.toString(),
+                                controller.unreadMessageFromAdmin.value.toString(),
                               ),
                             ),
                           ),

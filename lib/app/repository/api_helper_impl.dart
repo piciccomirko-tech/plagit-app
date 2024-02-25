@@ -40,6 +40,7 @@ import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart
 import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/send_message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -665,6 +666,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
+
+
     return _convert<CheckInCheckOutHistory>(
       response,
       CheckInCheckOutHistory.fromJson,
@@ -1387,6 +1390,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
+
     return _convert<ConversationResponseModel>(
       response,
       ConversationResponseModel.fromJson,
@@ -1419,5 +1423,19 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
+  EitherModel<UnreadMessageResponseModel> getUnreadMessage({required String conversationId}) async {
+    String url = "messages/unread-msg?conversationId=$conversationId";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<UnreadMessageResponseModel>(
+      response,
+      UnreadMessageResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (UnreadMessageResponseModel r) => right(r));
   }
 }

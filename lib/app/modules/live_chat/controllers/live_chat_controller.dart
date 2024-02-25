@@ -24,12 +24,14 @@ class LiveChatController extends GetxController {
   TextEditingController tecMessage = TextEditingController();
   late ScrollController scrollController;
   int pageNumber = 1;
+  RxBool moreMessageAvailable = false.obs;
 
   @override
   void onInit() {
     liveChatDataTransferModel = Get.arguments;
     _getConversationId();
     scrollController = ScrollController();
+    scrollController.addListener(_scrollListener);
     super.onInit();
   }
 
@@ -99,9 +101,14 @@ class LiveChatController extends GetxController {
       Utils.errorDialog(context!, customError);
     }, (MessageResponseModel response) {
       if (response.status == "success" && response.statusCode == 200) {
-        messageList.addAll(response.messages ?? []);
-        //  messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
-        messageList.refresh();
+        if ((response.messages ?? []).isNotEmpty) {
+          moreMessageAvailable.value = true;
+          messageList.addAll(response.messages ?? []);
+          messageList.refresh();
+        } else {
+          moreMessageAvailable.value = false;
+          Utils.showSnackBar(message: 'No message available...', isTrue: false);
+        }
       }
     });
   }
@@ -131,6 +138,15 @@ class LiveChatController extends GetxController {
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
+    }
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.atEdge) {
+      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+        pageNumber++;
+        _getMoreMessages();
+      }
     }
   }
 }

@@ -1,10 +1,10 @@
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
-import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/no_item_found.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -116,10 +116,13 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
               right: 40.w,
               top: 4.h,
               child: _chat(
-                bookingId: hiredHistory.id??'',
-                  profilePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl,
-                  employeeName: hiredHistory.employeeDetails?.name ?? '',
-                  employeeId: hiredHistory.employeeId ?? ''),
+                liveChatDataTransferModel: LiveChatDataTransferModel(
+                    toName: hiredHistory.employeeDetails?.name ?? '',
+                    toId: hiredHistory.employeeId ?? '',
+                    senderId: controller.appController.user.value.userId,
+                    toProfilePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl,
+                    bookedId: hiredHistory.id ?? ''),
+              ),
             ),
             Row(
               children: [
@@ -316,10 +319,8 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
         ),
       );
 
-  Widget _chat({required String employeeName, required String employeeId, required String profilePicture, required String bookingId}) =>
-      GestureDetector(
-        onTap: () => controller.chatWithEmployee(
-            employeeId: employeeId, employeeName: employeeName, profilePicture: profilePicture, bookingId: bookingId),
+  Widget _chat({required LiveChatDataTransferModel liveChatDataTransferModel}) => GestureDetector(
+        onTap: () => controller.chatWithEmployee(liveChatDataTransferModel: liveChatDataTransferModel),
         child: Center(
           child: Stack(
             clipBehavior: Clip.none,
@@ -328,7 +329,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                 Icons.message,
                 color: MyColors.c_C6A34F,
               ),
-              Positioned(
+              /*  Positioned(
                 top: -10.h,
                 right: -5.w,
                 child: Obx(
@@ -342,7 +343,7 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                     return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());
                   },
                 ),
-              ),
+              ),*/
             ],
           ),
         ),

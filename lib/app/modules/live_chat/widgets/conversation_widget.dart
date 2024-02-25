@@ -28,12 +28,7 @@ class ConversationWidget extends GetWidget<LiveChatController> {
                 padding: EdgeInsets.zero,
                 itemCount: controller.messageList.length,
                 itemBuilder: (BuildContext context, int index) {
-                  if (index == controller.messageList.length) {
-                    return const CircularProgressIndicator();
-                  } else {
-                    // Show chat message
-                    return MessageWidget(messageModel: controller.messageList[index], index: index);
-                  }
+                  return MessageWidget(messageModel: controller.messageList[index], index: index);
                 }),
           ),
         );

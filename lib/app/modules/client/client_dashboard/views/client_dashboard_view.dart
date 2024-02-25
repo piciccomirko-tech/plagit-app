@@ -363,7 +363,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                         radius: 8.0,
                       ),
                     ),
-                    Positioned(
+                   /* Positioned(
                       top: -15,
                       right: -3,
                       child: Obx(
@@ -376,7 +376,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                           child: const CustomBadge(""),
                         ),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
                 SizedBox(width: 10.w),
@@ -413,7 +413,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                 Icons.message,
                 color: MyColors.c_C6A34F,
               ),
-              Positioned(
+            /*  Positioned(
                 top: -10.h,
                 right: -5.w,
                 child: Obx(
@@ -427,7 +427,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                     return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());
                   },
                 ),
-              ),
+              ),*/
             ],
           ),
         ),

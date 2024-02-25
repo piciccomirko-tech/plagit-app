@@ -7,7 +7,6 @@ class MessageTypeWidget extends GetWidget<LiveChatController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 80,
       padding: const EdgeInsets.all(20.0),
       decoration: BoxDecoration(
           borderRadius: const BorderRadius.vertical(
@@ -27,13 +26,12 @@ class MessageTypeWidget extends GetWidget<LiveChatController> {
               flex: 7,
               child: SizedBox(
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(20.0),
                   child: TextFormField(
                     maxLines: null,
                     style: MyColors.l111111_dwhite(context).medium16,
                     controller: controller.tecMessage,
                     decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(left:15.0, bottom: 10.0),
                         hintText: "Type here...",
                         hintStyle: const TextStyle(color: Colors.grey),
                         border: InputBorder.none,

@@ -6,6 +6,7 @@ import 'package:mh/app/models/check_in_check_out_details.dart';
 import 'package:mh/app/models/employee_details.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_loader.dart';
@@ -106,85 +107,12 @@ class ClientDashboardController extends GetxController {
     return true;
   }
 
-/*  void setUpdatedDate(int index) {
-    CheckInCheckOutHistoryElement? element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
-    if (element.checkInCheckOutDetails != null) {
-      tecComment.text = element.checkInCheckOutDetails?.clientComment ?? "";
-      tecTime.clear();
-
-      complainType = [
-        "Check In Before",
-        "Check In After",
-      ];
-
-      if (element.checkInCheckOutDetails?.checkOutTime != null) {
-        complainType = [
-          "Check In Before",
-          "Check In After",
-          "Check Out Before",
-          "Check Out After",
-          "Break Time",
-        ];
-      }
-
-      if (selectedComplainType == complainType[0] || selectedComplainType == complainType[1]) {
-        if (element.checkInCheckOutDetails?.clientCheckInTime != null) {
-          var dif = element.checkInCheckOutDetails!.clientCheckInTime!
-              .difference(element.checkInCheckOutDetails!.checkInTime!)
-              .inMinutes;
-
-          if (selectedComplainType == complainType[0]) {
-            if (dif < 0) {
-              tecTime.text = dif.abs().toString();
-            } else {
-              tecTime.text = "";
-            }
-          } else {
-            if (dif > 0) {
-              tecTime.text = dif.abs().toString();
-            } else {
-              tecTime.text = "";
-            }
-          }
-        }
-      } else if (selectedComplainType == complainType[2] || selectedComplainType == complainType[3]) {
-        if (element.checkInCheckOutDetails?.clientCheckOutTime != null) {
-          var dif = element.checkInCheckOutDetails!.clientCheckOutTime!
-              .difference(element.checkInCheckOutDetails!.checkOutTime!)
-              .inMinutes;
-
-          if (selectedComplainType == complainType[2]) {
-            if (dif < 0) {
-              tecTime.text = dif.abs().toString();
-            } else {
-              tecTime.text = "";
-            }
-          } else {
-            if (dif > 0) {
-              tecTime.text = dif.abs().toString();
-            } else {
-              tecTime.text = "";
-            }
-          }
-        }
-      } else if (selectedComplainType == complainType.last) {
-        tecTime.text = (element.checkInCheckOutDetails?.clientBreakTime ?? 0).toString();
-      }
-    }
-  }*/
-
   void onDatePicked(DateTime dateTime) {
     dashboardDate.value = dateTime;
     dashboardDate.refresh();
     selectedDate.value = DateFormat('E, d MMM y').format(dashboardDate.value);
     _fetchCheckInOutHistory();
   }
-
-/*  void onComplainTypeChange(int index, String? type) {
-    selectedComplainType = type!;
-
-    setUpdatedDate(index);
-  }*/
 
   Future<void> _fetchCheckInOutHistory() async {
     loading.value = true;
@@ -207,46 +135,6 @@ class ClientDashboardController extends GetxController {
 
     if (formKey.currentState!.validate()) {
       formKey.currentState!.save();
-
-      /*CheckInCheckOutHistoryElement element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
-
-      int checkInDiff = 0, checkOutDiff = 0, breakTime = 0;
-
-      if (element.checkInCheckOutDetails!.clientCheckInTime != null) {
-        checkInDiff = element.checkInCheckOutDetails!.clientCheckInTime!
-            .difference(element.checkInCheckOutDetails!.checkInTime!)
-            .inMinutes;
-      }
-
-      if (element.checkInCheckOutDetails!.clientCheckOutTime != null) {
-        checkOutDiff = element.checkInCheckOutDetails!.clientCheckOutTime!
-            .difference(element.checkInCheckOutDetails!.checkOutTime!)
-            .inMinutes;
-      }
-
-      if (element.checkInCheckOutDetails!.clientBreakTime != null) {
-        breakTime = element.checkInCheckOutDetails?.clientBreakTime ?? 0;
-      }
-
-      Map<String, dynamic> data = {
-        "id": element.currentHiredEmployeeId,
-        "checkIn": element.checkInCheckOutDetails?.checkIn ?? false,
-        "checkOut": element.checkInCheckOutDetails?.checkOut ?? false,
-        if (tecComment.text.isNotEmpty) "clientComment": tecComment.text,
-        "clientBreakTime": selectedComplainType == complainType.last ? int.parse(tecTime.text) : breakTime,
-        "clientCheckInTime": complainType[0] == selectedComplainType
-            ? -(int.parse(tecTime.text))
-            : complainType[1] == selectedComplainType
-                ? int.parse(tecTime.text)
-                : checkInDiff,
-        "clientCheckOutTime": complainType.length > 2
-            ? complainType[2] == selectedComplainType
-                ? -(int.parse(tecTime.text))
-                : complainType[3] == selectedComplainType
-                    ? int.parse(tecTime.text)
-                    : checkOutDiff
-            : 0,
-      };*/
 
       CheckInCheckOutHistoryElement element = checkInCheckOutHistory.value.checkInCheckOutHistory![index];
 
@@ -285,13 +173,13 @@ class ClientDashboardController extends GetxController {
         Utils.errorDialog(context!, customError);
       }, (CommonResponseModel responseData) {
         if (responseData.status == "success" && responseData.statusCode == 200 && responseData.result == "true") {
-          Get.toNamed(Routes.clientEmployeeChat, arguments: {
-            MyStrings.arg.receiverName: employeeDetails.name ?? "-",
-            MyStrings.arg.fromId: appController.user.value.userId,
-            MyStrings.arg.toId: employeeDetails.employeeId ?? "",
-            MyStrings.arg.clientId: appController.user.value.userId,
-            MyStrings.arg.employeeId: employeeDetails.employeeId ?? "",
-          });
+          Get.toNamed(Routes.liveChat,
+              arguments: LiveChatDataTransferModel(
+                  toName: employeeDetails.name ?? "",
+                  toId: employeeDetails.employeeId ?? "",
+                  senderId: appController.user.value.userId,
+                  bookedId: "", //bookingId,
+                  toProfilePicture: (employeeDetails.profilePicture ?? "").imageUrl));
         } else {
           Utils.showSnackBar(
               message: 'You cannot chat with this employee \nbecause he is not hired today', isTrue: false);

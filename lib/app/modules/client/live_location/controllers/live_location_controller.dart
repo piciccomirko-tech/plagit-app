@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/live_location/models/travel_mode_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'dart:ui' as ui;
 
 import 'package:mh/app/routes/app_pages.dart';
@@ -142,13 +143,16 @@ class LiveLocationController extends GetxController {
     return completer.future;
   }
 
-  void onLiveChatPressed() => Get.toNamed(Routes.clientEmployeeChat, arguments: {
-        MyStrings.arg.receiverName: employeeInfo.employeeDetails?.name,
-        MyStrings.arg.fromId: appController.user.value.client?.id,
-        MyStrings.arg.toId: employeeInfo.employeeId,
-        MyStrings.arg.clientId: appController.user.value.client?.id,
-        MyStrings.arg.employeeId: employeeInfo.employeeId,
-      });
+  void onLiveChatPressed() {
+
+    Get.toNamed(Routes.liveChat,
+        arguments: LiveChatDataTransferModel(
+            toName: employeeInfo.employeeDetails?.name ?? "",
+            toId: employeeInfo.employeeId ?? "",
+            toProfilePicture: (employeeInfo.employeeDetails?.profilePicture ?? "").imageUrl,
+            senderId: Get.find<AppController>().user.value.userId,
+            bookedId: employeeInfo.id ?? ""));
+  }
 
   void onTravelModeTap({required String mode}) {
     // Define the travel mode dynamically
@@ -224,7 +228,8 @@ class LiveLocationController extends GetxController {
       socketLocationModel.refresh();
       polylineCoordinates.refresh();
     } catch (_) {
-      Utils.showSnackBar(message: "No route for ${travelMode.toString().split('.').last} between these points", isTrue: false);
+      Utils.showSnackBar(
+          message: "No route for ${travelMode.toString().split('.').last} between these points", isTrue: false);
     }
   }
 

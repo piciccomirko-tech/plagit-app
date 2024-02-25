@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import '../../modules/chat/client_employee_chat/controllers/client_employee_chat_controller.dart';
-import '../../modules/chat/support_chat/controllers/support_chat_controller.dart';
 import 'app_controller.dart';
 
 class AppLifecycleController extends GetxController with WidgetsBindingObserver {
@@ -30,11 +28,11 @@ class AppLifecycleController extends GetxController with WidgetsBindingObserver 
           print('App resumed');
         }
 
-        if (Get.isRegistered<ClientEmployeeChatController>()) {
+   /*     if (Get.isRegistered<ClientEmployeeChatController>()) {
           _updateActiveStatus(true);
         } else if (Get.isRegistered<SupportChatController>()) {
           _updateActiveStatus(true);
-        }
+        }*/
 
         break;
 
