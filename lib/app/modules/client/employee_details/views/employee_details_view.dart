@@ -79,8 +79,8 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
             ),
           ),
           const Spacer(),
-          /* Obx(
-            () => Visibility(c
+         /*  Obx(
+            () => Visibility(
               visible: !controller.showAsAdmin,
               child: Visibility(
                 visible: !(controller.employee.isHired ?? false),

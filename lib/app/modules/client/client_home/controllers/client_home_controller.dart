@@ -1,4 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
@@ -68,6 +69,7 @@ class ClientHomeController extends GetxController {
   void onReady() {
     Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
     _getMessagesFromSocket();
+    _createConversation();
     super.onReady();
   }
 
@@ -92,7 +94,10 @@ class ClientHomeController extends GetxController {
   void onJobRequestsClick() => Get.toNamed(Routes.jobRequests);
 
   void onHelpAndSupportClick() {
-    _createConversation();
+    ClientHelpOption.show(
+      context!,
+      msgFromAdmin: unreadMessageFromAdmin.value,
+    );
   }
 
   void onProfileClick() {
@@ -343,7 +348,6 @@ class ClientHomeController extends GetxController {
   }
 
   void _createConversation() {
-    CustomLoader.show(context!);
     ConversationCreateRequestModel conversationCreateRequestModel =
         ConversationCreateRequestModel(isAdmin: true, senderId: appController.user.value.userId);
 
@@ -364,7 +368,6 @@ class ClientHomeController extends GetxController {
     _apiHelper
         .getUnreadMessage(conversationId: conversationId)
         .then((Either<CustomError, UnreadMessageResponseModel> responseData) {
-      CustomLoader.hide(context!);
       responseData.fold((CustomError customError) {
         Utils.errorDialog(context!, customError);
       }, (UnreadMessageResponseModel response) {
@@ -372,10 +375,6 @@ class ClientHomeController extends GetxController {
           unreadMessageFromAdmin.value = response.details?.count ?? 0;
         }
       });
-      ClientHelpOption.show(
-        context!,
-        msgFromAdmin: unreadMessageFromAdmin.value,
-      );
     });
   }
 
@@ -398,6 +397,7 @@ class ClientHomeController extends GetxController {
 
   void _getMessagesFromSocket() {
     Get.find<SocketController>().socket?.on('new_message', (data) async {
+      print('ClientHomeController._getMessagesFromSocket: ${jsonEncode(data)}');
       MessageModel messageModel = MessageModel.fromJson(data['message']);
       showNotification();
     });

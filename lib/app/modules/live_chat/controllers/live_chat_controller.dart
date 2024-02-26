@@ -85,7 +85,6 @@ class LiveChatController extends GetxController {
     }, (MessageResponseModel response) {
       if (response.status == "success" && response.statusCode == 200) {
         messageList.value = response.messages ?? [];
-        //  messageList.sort((MessageModel a, MessageModel b) => (a.id ?? "").compareTo(b.id ?? ""));
         messageList.refresh();
         messageLoaded.value = true;
       }

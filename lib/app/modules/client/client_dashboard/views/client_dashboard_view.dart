@@ -3,12 +3,10 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/employee_details.dart';
-
 import '../../../../common/style/my_decoration.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_appbar.dart';
-import '../../../../common/widgets/custom_badge.dart';
 import '../../../../common/widgets/custom_dialog.dart';
 import '../../../../common/widgets/custom_network_image.dart';
 import '../../../../common/widgets/no_item_found.dart';
