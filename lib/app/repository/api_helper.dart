@@ -4,6 +4,7 @@ import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employ
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/client/card_add/models/session_id_response_model.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_bank_info_model.dart';
@@ -225,4 +226,6 @@ abstract class ApiHelper {
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
   EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel});
   EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
+  EitherModel<Response> userValidation({required String email});
+  EitherModel<SessionIdResponseModel> getSessionId({required String email});
 }

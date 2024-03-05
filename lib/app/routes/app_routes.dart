@@ -15,8 +15,7 @@ abstract class Routes {
   static const adminDashboard = _Paths.adminDashboard;
   static const adminClientRequest = _Paths.adminClientRequest;
   static const adminClientRequestPositions = _Paths.adminClientRequestPositions;
-  static const adminClientRequestPositionEmployees =
-      _Paths.adminClientRequestPositionEmployees;
+  static const adminClientRequestPositionEmployees = _Paths.adminClientRequestPositionEmployees;
 
   static const employeeHome = _Paths.employeeHome;
   static const employeeDashboard = _Paths.employeeDashboard;
@@ -51,8 +50,7 @@ abstract class Routes {
   static const calender = _Paths.calender;
   static const employeeBookedHistory = _Paths.employeeBookedHistory;
   static const employeeHiredHistory = _Paths.employeeHiredHistory;
-  static const employeeBookedHistoryDetails =
-      _Paths.employeeBookedHistoryDetails;
+  static const employeeBookedHistoryDetails = _Paths.employeeBookedHistoryDetails;
   static const settings = _Paths.settings;
   static const emailInput = _Paths.emailInput;
   static const otp = _Paths.otp;
@@ -63,6 +61,7 @@ abstract class Routes {
   static const jobRequests = _Paths.jobRequests;
   static const jobRequestDetails = _Paths.jobRequestDetails;
   static const employeeJobPostDetails = _Paths.employeeJobPostDetails;
+  static const cardAdd = _Paths.cardAdd;
 }
 
 abstract class _Paths {
@@ -107,8 +106,7 @@ abstract class _Paths {
 
   static const restaurantLocation = '/restaurant-location';
   static const adminClientRequestPositions = '/admin-client-request-positions';
-  static const adminClientRequestPositionEmployees =
-      '/admin-client-request-position-employees';
+  static const adminClientRequestPositionEmployees = '/admin-client-request-position-employees';
   static const clientEmployeeChat = '/client-employee-chat';
   static const supportChat = '/support-chat';
   static const notifications = '/notifications';
@@ -118,8 +116,7 @@ abstract class _Paths {
   static const calender = '/calender';
   static const employeeBookedHistory = '/employee-booked-history';
   static const employeeHiredHistory = '/employee-hired-history';
-  static const employeeBookedHistoryDetails =
-      '/employee-booked-history-details';
+  static const employeeBookedHistoryDetails = '/employee-booked-history-details';
   static const settings = '/settings';
   static const emailInput = '/email-input';
   static const otp = '/otp';
@@ -130,4 +127,5 @@ abstract class _Paths {
   static const jobRequests = '/job-requests';
   static const jobRequestDetails = '/job-request-details';
   static const employeeJobPostDetails = '/employee-job-posts-details';
+  static const cardAdd = '/card-add';
 }

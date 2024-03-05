@@ -7,11 +7,23 @@ import '../../../../routes/app_pages.dart';
 class EmployeeRegisterSuccessController extends GetxController {
   final AppController appController = Get.find();
 
+  String email = '';
+
+  @override
+  void onInit() {
+    email = Get.arguments;
+    super.onInit();
+  }
+
   void onGetStartedClick() {
     if (appController.user.value.userType == UserType.client) {
       Get.offAndToNamed(Routes.clientHome);
     } else {
-      Get.offAndToNamed(Routes.mhEmployees);
+      if (email.isEmpty) {
+        Get.offAndToNamed(Routes.mhEmployees);
+      } else {
+        Get.offAndToNamed(Routes.cardAdd, arguments: [email, 'signUp']);
+      }
     }
   }
 }

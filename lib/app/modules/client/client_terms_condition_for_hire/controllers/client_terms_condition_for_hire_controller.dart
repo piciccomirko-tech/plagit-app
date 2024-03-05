@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/custom_error.dart';
@@ -16,7 +17,6 @@ class ClientTermsConditionForHireController extends GetxController with StateMix
   BuildContext? context;
 
   final ShortlistController shortlistController = Get.find();
-
 
   @override
   void onInit() {
@@ -41,7 +41,22 @@ class ClientTermsConditionForHireController extends GetxController with StateMix
   }*/
 
   void onIAgreeClick() {
-    hireConfirm();
+    CustomLoader.show(context!);
+
+    _apiHelper
+        .userValidation(email: Get.find<AppController>().user.value.client?.email??"")
+        .then((Either<CustomError, Response> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (Response r) {
+        if (r.statusCode == 201) {
+          hireConfirm();
+        } else {
+          CustomLoader.hide(context!);
+          Get.toNamed(Routes.cardAdd, arguments: [Get.find<AppController>().user.value.client?.email, 'terms']);
+        }
+      });
+    });
   }
 
   Future<void> hireConfirm() async {
@@ -50,8 +65,6 @@ class ClientTermsConditionForHireController extends GetxController with StateMix
     for (var element in shortlistController.selectedForHire) {
       shortlistIds.add(element.sId!);
     }
-
-    CustomLoader.show(context!);
 
     await _apiHelper.hireConfirm({"selectedShortlist": shortlistIds}).then((response) {
       CustomLoader.hide(context!);

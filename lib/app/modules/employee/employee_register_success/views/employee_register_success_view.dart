@@ -30,7 +30,7 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
                 Align(
                   alignment: Alignment.center,
                   child: Text(
-                    "Congratulation!",
+                    MyStrings.congratulations.tr,
                     style: MyColors.c_C6A34F.semiBold22.copyWith(
                       fontSize: 30.sp,
                     ),
@@ -44,14 +44,14 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        "Register successfully",
+                        "${MyStrings.register.tr} ${MyStrings.successfully.tr}",
                         style: MyColors.l111111_dwhite(context).medium20,
                       ),
                       const SizedBox(height: 15),
                       Text(
                         controller.appController.user.value.isClient
                             ? "Welcome to MH premier staffing solution"
-                            : "Our HR contact with you within 24 Hours",
+                            : MyStrings.hrContact.tr,
                         textAlign: TextAlign.center,
                         style: MyColors.l7B7B7B_dtext(context).regular15,
                       ),
@@ -63,7 +63,7 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: CustomButtons.button(
-                      text: "Get Started",
+                      text: MyStrings.getStarted.tr,
                       onTap: controller.onGetStartedClick,
                       customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                     ),

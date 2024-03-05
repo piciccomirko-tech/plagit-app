@@ -209,7 +209,7 @@ class RegisterController extends GetxController implements RegisterInterface {
         Utils.errorDialog(context!, customError..onRetry = _clientRegister);
       }, (ClientRegistrationResponse clientRegistrationResponse) async {
         if (clientRegistrationResponse.statusCode == 201) {
-          await appController.afterSuccessRegister(clientRegistrationResponse.token!);
+          await appController.afterSuccessRegister(email: tecClientEmailAddress.text.trim().toLowerCase());
         } else if ((clientRegistrationResponse.errors ?? []).isNotEmpty) {
           _errorDialog("Invalid Input",
               clientRegistrationResponse.errors?.first.msg ?? "Please check you input field and try again");
@@ -326,7 +326,7 @@ class RegisterController extends GetxController implements RegisterInterface {
       Get.back(); // hide dialog
       if (response != null) {
         if ([200, 201].contains(response["data"]["statusCode"])) {
-          await appController.afterSuccessRegister("");
+          await appController.afterSuccessRegister(email: "");
         } else {
           _errorDialog("Something wrong",
               response["data"]["message"] ?? "Failed to register. Please check you data and try again");

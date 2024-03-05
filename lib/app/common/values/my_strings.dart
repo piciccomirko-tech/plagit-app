@@ -82,6 +82,9 @@ class MyStrings {
   static const String forgotPassword = "forgotPassword";
   static const String dontHaveAnAccount = "dontHaveAnAccount";
   static const String register = "register";
+  static const String congratulations = "congratulations!";
+  static const String hrContact = "hrContact";
+  static const String getStarted = "getStarted";
   static const String client = "client";
   static const String employee = "employee";
   static const String calendar = "calendar";

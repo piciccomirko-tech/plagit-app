@@ -8,7 +8,6 @@ class AppInfo {
 
   static const String version = "2.5.9";
 
-  /// it must change [releaseMode] when release
   static const ReleaseMode releaseMode = ReleaseMode.release;
 
   /// change [serverUrl] based on testing

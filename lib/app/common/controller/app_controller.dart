@@ -72,7 +72,7 @@ class AppController extends GetxService {
 
   bool _isTokenExpire() => JwtDecoder.isExpired(StorageHelper.getToken);
 
-  Future<void> afterSuccessRegister(String token) async {
+  Future<void> afterSuccessRegister({required String email}) async {
     // if (token.isEmpty) {
     //   user.value.userType = UserType.guest;
     //   Get.offAllNamed(Routes.employeeRegisterSuccess);
@@ -93,7 +93,7 @@ class AppController extends GetxService {
     activeShortlistService();
     user.value.userType = UserType.guest;
 
-    Get.offNamed(Routes.employeeRegisterSuccess);
+    Get.offNamed(Routes.employeeRegisterSuccess, arguments: email);
   }
 
   Future<void> afterSuccessLogin(String token) async {

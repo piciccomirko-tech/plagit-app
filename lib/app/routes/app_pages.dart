@@ -29,6 +29,8 @@ import '../modules/chat/client_employee_chat/bindings/client_employee_chat_bindi
 import '../modules/chat/client_employee_chat/views/client_employee_chat_view.dart';
 import '../modules/chat/support_chat/bindings/support_chat_binding.dart';
 import '../modules/chat/support_chat/views/support_chat_view.dart';
+import '../modules/client/card_add/bindings/card_add_binding.dart';
+import '../modules/client/card_add/views/card_add_view.dart';
 import '../modules/client/client_dashboard/bindings/client_dashboard_binding.dart';
 import '../modules/client/client_dashboard/views/client_dashboard_view.dart';
 import '../modules/client/client_home/bindings/client_home_binding.dart';
@@ -426,6 +428,11 @@ class AppPages {
       name: _Paths.employeeJobPostDetails,
       page: () => const EmployeeJobPostsDetailsView(),
       binding: EmployeeJobPostsDetailsBinding(),
+    ),
+    GetPage(
+      name: _Paths.cardAdd,
+      page: () => const CardAddView(),
+      binding: CardAddBinding(),
     ),
   ];
 }
