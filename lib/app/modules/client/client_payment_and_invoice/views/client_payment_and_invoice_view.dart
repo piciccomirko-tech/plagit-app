@@ -102,7 +102,14 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
         child: Row(
           children: [
             const Spacer(),
-            Column(
+            Center(
+              child: Text(
+                "${invoice.fromWeekDate.toString().split(" ").first}\n-\n${invoice.toWeekDate.toString().split(" ").first}",
+                textAlign: TextAlign.center,
+                style: MyColors.l7B7B7B_dtext(context).semiBold13,
+              ),
+            ),
+            /*Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -130,7 +137,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
                   ),
                 ),
               ],
-            ),
+            ),*/
             const Spacer(),
             Container(
               width: 4,

@@ -356,7 +356,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               textAlign: TextAlign.center,
               style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
-        _cell(width: 150.w, widget: _action(index)),
+        _cell(width: 150.w, widget: const CircleAvatar(
+            backgroundColor: Colors.transparent,
+            child: Icon(Icons.check_box, color: Colors.green))//_action(index)
+        ),
       ],
     );
   }

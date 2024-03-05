@@ -44,7 +44,8 @@ class ClientTermsConditionForHireController extends GetxController with StateMix
     CustomLoader.show(context!);
 
     _apiHelper
-        .userValidation(email: Get.find<AppController>().user.value.client?.email??"")
+        .userValidation(email: "abc@gmail.com"//Get.find<AppController>().user.value.client?.email??""
+    )
         .then((Either<CustomError, Response> responseData) {
       responseData.fold((CustomError customError) {
         Utils.errorDialog(context!, customError);

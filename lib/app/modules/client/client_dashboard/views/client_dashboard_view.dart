@@ -261,7 +261,11 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
             clientUpdatedValue: dailyStatistics.employeeBreakTime),
         _cell(width: 100.w, value: dailyStatistics.workingHour),
         _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!)),
-        _cell(width: 100.w, value: "--", child: _action(index)),
+        _cell(width: 100.w, value: "--", child: const CircleAvatar(
+          backgroundColor: Colors.transparent,
+            child: Icon(Icons.check_box, color: Colors.green))
+        //_action(index)
+        ),
       ],
     );
   }
