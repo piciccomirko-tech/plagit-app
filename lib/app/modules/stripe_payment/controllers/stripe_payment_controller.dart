@@ -20,7 +20,7 @@ class StripePaymentController extends GetxController {
   RxBool isLoading = true.obs;
   late String invoiceId;
 
- late StripeResponseDetailsModel details;
+  late StripeResponseDetailsModel details;
 
   @override
   void onInit() {
@@ -71,9 +71,9 @@ class StripePaymentController extends GetxController {
       CustomLoader.hide(Get.context!);
 
       response.fold((CustomError customError) {
-        Utils.errorDialog(Get.context!, customError..onRetry = clientHomeController.getClientInvoice);
+        Utils.errorDialog(Get.context!, customError..onRetry);
       }, (Response response) {
-        clientHomeController.getClientInvoice();
+        // clientHomeController.getClientInvoice();
         Get.offAll(() => const StripePaymentSuccessView());
       });
     });

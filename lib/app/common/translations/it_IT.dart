@@ -6,6 +6,7 @@ Map<String, String> italian = <String, String>{
   MyStrings.todaysEmployees: "Dipendenti di Oggi",
   MyStrings.foundNothing: "Nessun Risultato!",
   MyStrings.contractorPerHoursRate: "Tariffa Contractor Per Ore",
+  MyStrings.name: "Nome",
   MyStrings.chatWithAdmin: "Chat con l'Amministratore / Supporto",
   MyStrings.chatWithRestaurant: "Chat con il Ristorante",
   MyStrings.details: "Dettagli",

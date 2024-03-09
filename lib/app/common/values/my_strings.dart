@@ -87,6 +87,7 @@ class MyStrings {
   static const String getStarted = "getStarted";
   static const String client = "client";
   static const String employee = "employee";
+  static const String name = "name";
   static const String calendar = "calendar";
   static const String checkIn = "checkIn";
   static const String checkOut = "checkOut";

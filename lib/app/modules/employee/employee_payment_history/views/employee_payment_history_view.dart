@@ -55,8 +55,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
 
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget(MyStrings.week.tr, 150.w),
-      _getTitleItemWidget(MyStrings.employee.tr, 100.w),
+      _getTitleItemWidget(MyStrings.day.tr, 150.w),
       _getTitleItemWidget(MyStrings.restaurantName.tr, 150.w),
       _getTitleItemWidget(MyStrings.position.tr, 150.w),
       _getTitleItemWidget(MyStrings.contractorPerHoursRate.tr, 100.w),
@@ -89,7 +88,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
       child: _cell(
           width: 90.w,
           widget: Text(
-            controller.employeePaymentHistory(index).week,
+            controller.employeePaymentHistory(index).day,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
@@ -101,15 +100,6 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
     return Row(
       children: <Widget>[
-        _cell(
-            width: 100.w,
-            widget: Text(
-              controller.employeePaymentHistory(index).contractor,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
-            )),
         _cell(
             width: 150.w,
             widget: Text(

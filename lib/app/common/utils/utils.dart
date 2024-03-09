@@ -4,8 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 import 'package:mh/app/common/local_storage/storage_helper.dart';
-import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_invoice_model.dart';
-import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_model.dart';
 import 'package:mh/app/repository/server_urls.dart';
 import 'package:pdf/pdf.dart';
@@ -230,10 +228,9 @@ class Utils {
     return dailyStatistics;
   }
 
-  static EmployeePaymentModel employeePaymentHistory(EmployeePaymentHistoryModel element) {
+  static EmployeePaymentModel employeePaymentHistory(CheckInCheckOutHistoryElement element) {
     EmployeePaymentModel employeePayment = EmployeePaymentModel(
-        week: "-",
-        contractor: '-',
+        day: "-",
         restaurantName: '-',
         position: '-',
         contractorPerHoursRate: 0.0,
@@ -241,17 +238,15 @@ class Utils {
         employeeAmount: 0.0,
         status: '-');
 
-    DateTime? fromDate = element.fromDate;
-    DateTime? toDate = element.toDate;
+    DateTime? hiredDate = element.hiredDate;
 
-    if (fromDate != null && toDate != null) {
-      employeePayment.week = "${fromDate.toLocal().dMMMy} - ${toDate.toLocal().dMMMy}";
+    if (hiredDate != null) {
+      employeePayment.day = hiredDate.toLocal().dMMMy;
     }
-    employeePayment.contractor = element.employeeName ?? '';
-    employeePayment.restaurantName = element.restaurantName ?? '';
-    employeePayment.position = element.positionName ?? '';
-    employeePayment.contractorPerHoursRate = element.contractorHourlyRate ?? 0.0;
-    employeePayment.totalHours = element.totalHours ?? '0.0';
+    employeePayment.restaurantName = element.restaurantDetails?.restaurantName ?? '';
+    employeePayment.position = element.employeeDetails?.positionName ?? '';
+    employeePayment.contractorPerHoursRate = element.employeeAmount ?? 0.0; //TODO:
+    employeePayment.totalHours = element.workedHour ?? '0.0';
     employeePayment.employeeAmount = element.employeeAmount ?? 0.0;
     employeePayment.status = element.status ?? '';
     return employeePayment;
@@ -264,7 +259,7 @@ class Utils {
   }
 
   // Function to generate the PDF
-  static Future<File> generatePdfWithImageAndText({required InvoiceModel invoice}) async {
+  static Future<File> generatePdfWithImageAndText({required CheckInCheckOutHistoryElement invoice}) async {
     final pw.Document pdf = pw.Document();
     pw.MemoryImage? image;
     File file;
@@ -298,10 +293,10 @@ class Utils {
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
                         pw.Text('To:'),
                         pw.SizedBox(height: 10),
-                        pw.Text(invoice.restaurantName ?? "", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text(invoice.restaurantAddress ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text(invoice.restaurantEmail ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text(invoice.restaurantPhone ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        pw.Text(invoice.restaurantDetails?.restaurantName ?? "", style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        pw.Text(invoice.restaurantDetails?.restaurantAddress ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                       // pw.Text(invoice.restaurantDetails?.restaurantEmail ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                       // pw.Text(invoice.restaurantDetails?.restaurantPhone ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       ])),
                   pw.Expanded(flex: 1, child: pw.Wrap())
                 ]),
@@ -311,17 +306,17 @@ class Utils {
                   pw.Expanded(
                       flex: 1,
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.end, children: [
-                        pw.Text('Invoice N: ${invoice.invoiceNumber}'),
+                        pw.Text('Invoice N: '),
                         pw.Text('Invoice date: ${DateFormat('d MMMM, y').format(invoice.createdAt!)}')
                       ]))
                 ]),
                 pw.SizedBox(height: 50),
                 pw.Text(
-                    '${invoice.restaurantName ?? ''} week from ${DateFormat('d MMMM, y').format(invoice.fromWeekDate!)} to ${DateFormat('d MMMM, y').format(invoice.toWeekDate!)}',
+                    '${invoice.restaurantDetails?.restaurantName ?? ''} of ${DateFormat('d MMMM, y').format(invoice.hiredDate!)}',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16)),
                 pw.SizedBox(height: 20),
                 pw.Text(
-                    'Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.amount?.toStringAsFixed(2)}'),
+                    'Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.employeeAmount?.toStringAsFixed(2)}'),
                 pw.Text('VAT: ${invoice.vat}%'),
                 pw.Text(
                     'VAT Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.vatAmount?.toStringAsFixed(2)}'),
@@ -331,7 +326,7 @@ class Utils {
                 pw.Divider(indent: 100, endIndent: 100),
                 // pw.SizedBox(height: 10),
                 pw.Text(
-                    'Total Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.amount?.toStringAsFixed(2)}',
+                    'Total Amount: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.employeeAmount?.toStringAsFixed(2)}',
                     style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16)),
                 pw.SizedBox(height: 70),
                 pw.Row(children: [
@@ -363,7 +358,7 @@ class Utils {
   }
 
   static Future<File> generatePdfWithImageAndTextForUk(
-      {required InvoiceModel invoice, required String companyName}) async {
+      {required CheckInCheckOutHistoryElement invoice, required String companyName}) async {
     final pw.Document pdf = pw.Document();
     pw.MemoryImage? image;
     File file;
@@ -446,15 +441,15 @@ class Utils {
                   pw.Expanded(
                       flex: 5,
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                        pw.Text(invoice.restaurantName ?? ""),
+                        pw.Text(invoice.restaurantDetails?.restaurantName ?? ""),
                         pw.SizedBox(height: 10),
                         pw.Text(companyName),
-                        pw.Text(invoice.restaurantAddress ?? '')
+                        pw.Text(invoice.restaurantDetails?.restaurantAddress ?? '')
                       ])),
                   pw.Expanded(
                       flex: 2,
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                        pw.Text('Invoice No: ${invoice.invoiceNumber}'),
+                        pw.Text('Invoice No: '),
                         pw.SizedBox(height: 10),
                         pw.Text('Date: ${DateFormat('d MMM y').format(invoice.createdAt!)}')
                       ]))
@@ -471,12 +466,11 @@ class Utils {
                 pw.Divider(color: PdfColors.black, height: 0.0),
                 pw.SizedBox(height: 10),
                 pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-                  pw.Text('One Week'),
                   pw.Text(
-                    'From ${DateFormat('d MMM').format(invoice.fromWeekDate!)} to ${DateFormat('d MMM y').format(invoice.toWeekDate!)}',
+                    DateFormat('d MMM').format(invoice.hiredDate!),
                   ),
                   pw.Text(
-                      '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.amount?.toStringAsFixed(2)}')
+                      '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.employeeAmount?.toStringAsFixed(2)}')
                 ]),
                 pw.SizedBox(height: 10),
                 pw.Divider(color: PdfColors.black, height: 0.0),

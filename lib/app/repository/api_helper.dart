@@ -26,7 +26,6 @@ import 'package:mh/app/modules/employee/employee_home/models/booking_history_mod
 import 'package:mh/app/modules/employee/employee_home/models/single_booking_details_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
-import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
@@ -55,7 +54,6 @@ import '../modules/auth/register/models/client_register.dart';
 import '../modules/auth/register/models/client_register_response.dart';
 import '../modules/auth/register/models/employee_registration.dart';
 import '../modules/client/client_dashboard/models/current_hired_employees.dart';
-import '../modules/client/client_payment_and_invoice/model/client_invoice_model.dart';
 import '../modules/client/client_self_profile/model/client_profile_update.dart';
 import '../modules/client/client_shortlisted/models/shortlisted_employees.dart' as short_list_employees;
 import '../modules/client/client_terms_condition_for_hire/models/terms_condition_for_hire.dart';
@@ -165,8 +163,6 @@ abstract class ApiHelper {
 
   EitherModel<ClientRegistrationResponse> updateClientProfile(ClientProfileUpdate clientProfileUpdate);
 
-  EitherModel<ClientInvoiceModel> getClientInvoice(String clientId);
-
   EitherModel<Response> updatePaymentStatus(Map<String, dynamic> data);
 
   EitherModel<NotificationResponseModel> getNotifications();
@@ -183,7 +179,6 @@ abstract class ApiHelper {
 
   EitherModel<StripeResponseModel> stripePayment({required StripeRequestModel stripeRequestModel});
 
-  EitherModel<EmployeePaymentHistory> employeePaymentHistory({required String employeeId});
 
   EitherModel<ReviewDialogModel> showReviewDialog();
 

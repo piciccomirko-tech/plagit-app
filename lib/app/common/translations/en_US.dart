@@ -50,6 +50,7 @@ Map<String, String> english = <String, String>{
   MyStrings.dontHaveAnAccount: "Don’t have an account?",
   MyStrings.register: "Register",
   MyStrings.getStarted: "Get Started",
+  MyStrings.name: "Name",
   MyStrings.congratulations: "Congratulations!",
   MyStrings.hrContact: "Our HR will contact with you withing 24 hours",
   MyStrings.client: "Clients",

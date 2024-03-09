@@ -21,7 +21,7 @@ dependencies:
 
   chewie: ^1.7.5
 
-  video_player: ^2.8.2
+  video_player: ^2.8.3
 
   # local storage
   get_storage: ^2.1.1
@@ -36,7 +36,7 @@ dependencies:
 
   flutter_image_compress: ^2.1.0
 
-  file_picker: ^6.1.1
+  file_picker: ^6.2.0
 
   # for image picker
   permission_handler: ^11.3.0
@@ -88,13 +88,13 @@ dependencies:
 
   google_maps_flutter: ^2.5.3
   geolocator: ^11.0.0
-  firebase_core: ^2.25.4
-  firebase_crashlytics: ^3.4.15
+  firebase_core: ^2.26.0
+  firebase_crashlytics: ^3.4.17
   carousel_slider: ^4.2.1
-  firebase_in_app_messaging: ^0.7.4+14
-  firebase_messaging: ^14.7.16
-  flutter_local_notifications: ^16.3.2
-  cloud_firestore: ^4.15.5
+  firebase_in_app_messaging: ^0.7.4+16
+  firebase_messaging: ^14.7.18
+  flutter_local_notifications: ^16.3.3
+  cloud_firestore: ^4.15.7
   device_info_plus: ^9.1.2
   http: ^1.2.0
   flutter_staggered_animations: ^1.1.1
@@ -125,6 +125,7 @@ flutter:
     - assets/payment/
     - assets/map_style/
     - assets/lottie/
+    - assets/html/
 
   fonts:
     - family: Montserrat

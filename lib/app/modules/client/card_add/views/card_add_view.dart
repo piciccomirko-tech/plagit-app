@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';

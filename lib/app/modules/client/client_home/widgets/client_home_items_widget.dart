@@ -108,9 +108,9 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                             top: 4,
                             right: 5,
                             child: Visibility(
-                              visible: ((controller.clientInvoice.value.invoices ?? [])
+                              visible: ((controller.clientPaymentInvoice.value.checkInCheckOutHistory ?? [])
                                   .where((element) => element.status == "DUE")).isNotEmpty,
-                              child: CustomBadge(((controller.clientInvoice.value.invoices ?? [])
+                              child: CustomBadge(((controller.clientPaymentInvoice.value.checkInCheckOutHistory ?? [])
                                   .where((element) => element.status == "DUE")).length.toString()),
                             ),
                           ),
@@ -149,7 +149,7 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                                 right: 5,
                                 child: Visibility(
                                   visible: (controller.jobPostRequest.value.jobs ?? []).isNotEmpty,
-                                  child: CustomBadge((controller.jobPostRequest.value.jobs??[]).length.toString()),
+                                  child: CustomBadge((controller.jobPostRequest.value.jobs ?? []).length.toString()),
                                 ),
                               ),
                             ],

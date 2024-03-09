@@ -13,6 +13,7 @@ Map<String, String> arabic = <String, String>{
   MyStrings.age: "العمر",
   MyStrings.getStarted: "ابدأ",
   MyStrings.congratulations: "تهانينا!",
+  MyStrings.name: "الاسم",
   MyStrings.hrContact: "سيتصل موظفو الموارد البشرية لدينا بك في غضون ٢٤ ساعة",
   MyStrings.viewCalendar: "عرض التقويم",
   MyStrings.selectDateRange: "تحديد نطاق التاريخ",

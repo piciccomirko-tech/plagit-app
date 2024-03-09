@@ -1,6 +1,5 @@
 class EmployeePaymentModel {
-  String week;
-  String contractor;
+  String day;
   String restaurantName;
   String position;
   double contractorPerHoursRate;
@@ -9,8 +8,7 @@ class EmployeePaymentModel {
   String status;
 
   EmployeePaymentModel({
-    required this.week,
-    required this.contractor,
+    required this.day,
     required this.restaurantName,
     required this.position,
     required this.contractorPerHoursRate,

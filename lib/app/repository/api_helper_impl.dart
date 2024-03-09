@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -34,7 +35,6 @@ import 'package:mh/app/modules/employee/employee_home/models/booking_history_mod
 import 'package:mh/app/modules/employee/employee_home/models/single_booking_details_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
-import 'package:mh/app/modules/employee/employee_payment_history/models/employee_payment_history_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
@@ -68,7 +68,6 @@ import '../modules/auth/register/models/client_register.dart';
 import '../modules/auth/register/models/client_register_response.dart';
 import '../modules/auth/register/models/employee_registration.dart';
 import '../modules/client/client_dashboard/models/current_hired_employees.dart';
-import '../modules/client/client_payment_and_invoice/model/client_invoice_model.dart';
 import '../modules/client/client_self_profile/model/client_profile_update.dart';
 import '../modules/client/client_shortlisted/models/shortlisted_employees.dart' as short_list_employees;
 import '../modules/client/client_terms_condition_for_hire/models/terms_condition_for_hire.dart';
@@ -662,6 +661,8 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
+
+    log('ApiHelperImpl.getCheckInOutHistory: ${response.bodyString}');
     return _convert<CheckInCheckOutHistory>(
       response,
       CheckInCheckOutHistory.fromJson,
@@ -769,6 +770,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
 
+    log('ApiHelperImpl.employeeFullDetails: ${response.bodyString}');
     return _convert<EmployeeFullDetails>(
       response,
       EmployeeFullDetails.fromJson,
@@ -791,20 +793,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     return _convert<ClientRegistrationResponse>(
       response,
       ClientRegistrationResponse.fromJson,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
-  EitherModel<ClientInvoiceModel> getClientInvoice(String clientId) async {
-    String url = "invoices?clientId=$clientId";
-
-    Response response = await get(url);
-    if (response.statusCode == null) response = await get(url);
-    if (response.statusCode == null) response = await get(url);
-    if (response.statusCode == null) response = await get(url);
-    return _convert<ClientInvoiceModel>(
-      response,
-      ClientInvoiceModel.fromJson,
     ).fold((l) => left(l), (r) => right(r));
   }
 
@@ -925,21 +913,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       StripeResponseModel.fromJson,
     ).fold((CustomError l) => left(l), (StripeResponseModel r) => right(r));
-  }
-
-  @override
-  EitherModel<EmployeePaymentHistory> employeePaymentHistory({required String employeeId}) async {
-    String url = "employee-invoices?employeeId=$employeeId";
-
-    Response response = await get(url);
-    if (response.statusCode == null) await get(url);
-    if (response.statusCode == null) await get(url);
-    if (response.statusCode == null) await get(url);
-
-    return _convert<EmployeePaymentHistory>(
-      response,
-      EmployeePaymentHistory.fromJson,
-    ).fold((CustomError l) => left(l), (EmployeePaymentHistory r) => right(r));
   }
 
   @override
@@ -1410,7 +1383,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
 
-    print('ApiHelperImpl.userValidation: ${response.bodyString}');
     return _convert<Response>(
       response,
       (Map<String, dynamic> data) {},
@@ -1421,7 +1393,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   @override
   EitherModel<SessionIdResponseModel> getSessionId({required String email}) async {
     String url = "users/get-session";
-    String requestBody = jsonEncode({"email": email});
+    String requestBody = jsonEncode({"email": email, "returnUrl": "https://mhpremierstaffingsolutions.com"});
     Response response = await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);

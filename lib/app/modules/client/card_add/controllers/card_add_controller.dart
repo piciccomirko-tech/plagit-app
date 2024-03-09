@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/modules/client/card_add/models/session_id_response_model.dart';
 import 'package:mh/app/repository/api_helper.dart';
@@ -25,6 +24,13 @@ class CardAddController extends GetxController {
     super.onInit();
   }
 
+  @override
+  void onClose() {
+    webViewController.clearCache();
+    webViewController.clearLocalStorage();
+    super.onClose();
+  }
+
   void _getSessionId() {
     sessionIdLoading.value = true;
     _apiHelper.getSessionId(email: Get.arguments[0]).then((Either<CustomError, SessionIdResponseModel> responseData) {
@@ -40,27 +46,26 @@ class CardAddController extends GetxController {
   }
 
   void loadWebView({required String sessionId}) {
+    String url = "https://mh-payment.netlify.app/card-verify?sessionId=$sessionId";
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) async {
-            print('CardAddController.loadWebView url: $url');
           },
           onPageFinished: (String value) {
             isLoading.value = false;
           },
-          onWebResourceError: (WebResourceError error) {},
+          onWebResourceError: (WebResourceError error) {
+          },
           onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
-              return NavigationDecision.prevent;
-            }
+            print('Request: ${request.url}');
             return NavigationDecision.navigate;
           },
         ),
       )
-      ..loadRequest(Uri.parse("https://mhpremierstaffingsolutions.com/card-verify?sessionId=$sessionId"));
+      ..loadRequest(Uri.parse(url));
   }
 
   void onCloseTapped() {

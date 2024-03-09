@@ -32,16 +32,10 @@ class CheckInCheckOutHistory {
         message: json["message"],
         total: json["total"],
         count: json["count"],
-        checkInCheckOutHistory: /*Get.isRegistered<EmployeeHomeController>() == true
-            ? json["checkInCheckOutHistory"] == null
-                ? []
-                : List<CheckInCheckOutHistoryElement>.from(
-                    json["checkInCheckOutHistory"]!.map((x) => CheckInCheckOutHistoryElement.fromJson(x)))
-            :*/
-            json["result"] == null
-                ? []
-                : List<CheckInCheckOutHistoryElement>.from(
-                    json["result"]!.map((x) => CheckInCheckOutHistoryElement.fromJson(x))),
+        checkInCheckOutHistory: json["result"] == null
+            ? []
+            : List<CheckInCheckOutHistoryElement>.from(
+                json["result"]!.map((x) => CheckInCheckOutHistoryElement.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -62,6 +56,13 @@ class CheckInCheckOutHistory {
 class CheckInCheckOutHistoryElement {
   CheckInCheckOutHistoryElement({
     this.id,
+    this.status,
+    this.employeeAmount,
+    this.totalAmount,
+    this.vat,
+    this.vatAmount,
+    this.platformFee,
+    this.workedHour,
     this.employeeId,
     this.currentHiredEmployeeId,
     this.hiredBy,
@@ -79,6 +80,14 @@ class CheckInCheckOutHistoryElement {
 
   final String? id;
   final String? employeeId;
+  final String? status;
+  final double? employeeAmount;
+  final double? totalAmount;
+  final double? vat;
+  final double? vatAmount;
+  final double? platformFee;
+  final String? workedHour;
+
   final String? currentHiredEmployeeId;
   final String? hiredBy;
   final EmployeeDetails? employeeDetails;
@@ -99,6 +108,13 @@ class CheckInCheckOutHistoryElement {
 
   factory CheckInCheckOutHistoryElement.fromJson(Map<String, dynamic> json) => CheckInCheckOutHistoryElement(
         id: json["_id"],
+        status: json["status"],
+        totalAmount: json["totalAmount"] == null ? 0.0 : double.parse(json["totalAmount"].toString()),
+        employeeAmount: json["employeeAmount"] == null ? 0.0 : double.parse(json["employeeAmount"].toString()),
+        platformFee: json["platformFee"] == null ? 0.0 : double.parse(json["platformFee"].toString()),
+        vatAmount: json["vatAmount"] == null ? 0.0 : double.parse(json["vatAmount"].toString()),
+        vat: json["vat"] == null ? 0.0 : double.parse(json["vat"].toString()),
+        workedHour: json["workedHour"],
         employeeId: json["employeeId"],
         currentHiredEmployeeId: json["currentHiredEmployeeId"],
         hiredBy: json["hiredBy"],
@@ -119,6 +135,13 @@ class CheckInCheckOutHistoryElement {
 
   Map<String, dynamic> toJson() => {
         "_id": id,
+        "status": status,
+        "totalAmount": totalAmount,
+        "employeeAmount": employeeAmount,
+        "vatAmount": vatAmount,
+        "vat": vat,
+        "platformFee": platformFee,
+        "workedHour": workedHour,
         "employeeId": employeeId,
         "currentHiredEmployeeId": currentHiredEmployeeId,
         "hiredBy": hiredBy,

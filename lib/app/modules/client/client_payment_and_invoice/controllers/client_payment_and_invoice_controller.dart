@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dartz/dartz.dart';
+import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_bank_info_model.dart';
-import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_invoice_model.dart';
 import 'package:mh/app/modules/stripe_payment/models/stripe_request_model.dart';
 import 'package:mh/app/modules/stripe_payment/models/stripe_response_model.dart';
 import 'package:mh/app/routes/app_pages.dart';
@@ -27,7 +27,7 @@ class ClientPaymentAndInvoiceController extends GetxController {
     super.onInit();
   }
 
-  void onPayClick(int index) {
+/*  void onPayClick(int index) {
     _selectedInvoiceId = clientHomeController.clientInvoice.value.invoices![index].sId ?? "";
     makeStripePayment(
         stripeRequestModel: StripeRequestModel(
@@ -39,9 +39,9 @@ class ClientPaymentAndInvoiceController extends GetxController {
                 : appController.user.value.client?.countryName?.toLowerCase() == 'united arab emirates'
                     ? 'aed'
                     : 'usd'));
-  }
+  }*/
 
-  void onViewInvoicePress({required InvoiceModel invoice}) async {
+  void onViewInvoicePress({required CheckInCheckOutHistoryElement invoice}) async {
     if ((Get.find<AppController>().user.value.client?.countryName?.toLowerCase() ?? '') == 'united kingdom') {
       invoiceFile = await Utils.generatePdfWithImageAndTextForUk(invoice: invoice, companyName: companyName);
     } else {

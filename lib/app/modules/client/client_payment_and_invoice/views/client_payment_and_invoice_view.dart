@@ -1,6 +1,6 @@
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
-import 'package:mh/app/modules/client/client_payment_and_invoice/model/client_invoice_model.dart';
+import 'package:mh/app/models/check_in_out_histories.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../controllers/client_payment_and_invoice_controller.dart';
@@ -20,20 +20,21 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
       body: Obx(
         () => controller.clientHomeController.isLoading.value
             ? _loading
-            : (controller.clientHomeController.clientInvoice.value.invoices ?? []).isEmpty
+            : (controller.clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory ?? []).isEmpty
                 ? Center(
                     child: Text(
                     MyStrings.noInvoiceFound.tr,
                     style: MyColors.l111111_dwhite(context).semiBold16,
                   ))
                 : HorizontalDataTable(
-                    leftHandSideColumnWidth: 143.w,
-                    rightHandSideColumnWidth: 1000.w,
+                    leftHandSideColumnWidth: 100.w,
+                    rightHandSideColumnWidth: 1150.w,
                     isFixedHeader: true,
                     headerWidgets: _getTitleWidget(),
                     leftSideItemBuilder: _generateFirstColumnRow,
                     rightSideItemBuilder: _generateRightHandSideColumnRow,
-                    itemCount: (controller.clientHomeController.clientInvoice.value.invoices ?? []).length,
+                    itemCount: (controller.clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory ?? [])
+                        .length,
                     rowSeparatorWidget: Container(
                       height: 6.h,
                       color: MyColors.lFAFAFA_dframeBg(context),
@@ -53,11 +54,12 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
 
   List<Widget> _getTitleWidget() {
     return [
-      _getTitleItemWidget(MyStrings.week.tr, 143.w),
-      _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.employee.tr}', 100.w),
-      _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.hours.tr}', 100.w),
+      _getTitleItemWidget(MyStrings.date.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.employee.tr}\n${MyStrings.name.tr}', 150.w),
+      _getTitleItemWidget(MyStrings.position.tr, 100.w),
+      _getTitleItemWidget(MyStrings.totalHour.tr, 100.w),
       _getTitleItemWidget(MyStrings.amount.tr, 100.w),
-      _getTitleItemWidget(MyStrings.vat.tr, 100.w),
+      _getTitleItemWidget('${MyStrings.vat.tr} (%)', 100.w),
       _getTitleItemWidget('${MyStrings.vat.tr}\n${MyStrings.amount.tr}', 100.w),
       _getTitleItemWidget(MyStrings.platformFee.tr, 100.w),
       _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.amount.tr}', 100.w),
@@ -83,7 +85,8 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
   }
 
   Widget _generateFirstColumnRow(BuildContext context, int index) {
-    InvoiceModel invoice = controller.clientHomeController.clientInvoice.value.invoices![index];
+    CheckInCheckOutHistoryElement invoice =
+        (controller.clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory ?? [])[index];
 
     double height = 71.h;
 
@@ -104,40 +107,11 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             const Spacer(),
             Center(
               child: Text(
-                "${invoice.fromWeekDate.toString().split(" ").first}\n-\n${invoice.toWeekDate.toString().split(" ").first}",
+                invoice.hiredDate.toString().split(" ").first,
                 textAlign: TextAlign.center,
                 style: MyColors.l7B7B7B_dtext(context).semiBold13,
               ),
             ),
-            /*Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Center(
-                  child: Text(
-                    "${invoice.fromWeekDate.toString().split(" ").first}\n-\n${invoice.toWeekDate.toString().split(" ").first}",
-                    textAlign: TextAlign.center,
-                    style: MyColors.l7B7B7B_dtext(context).semiBold13,
-                  ),
-                ),
-                Visibility(
-                  visible: invoice.status != "PAID",
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 10),
-                      CustomButtons.button(
-                        text: MyStrings.pay.tr,
-                        height: 25,
-                        onTap: () => controller.onPayClick(index),
-                        padding: const EdgeInsets.symmetric(horizontal: 10),
-                        margin: EdgeInsets.zero,
-                        customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),*/
             const Spacer(),
             Container(
               width: 4,
@@ -183,7 +157,8 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
       );
 
   Widget _generateRightHandSideColumnRow(BuildContext context, int index) {
-    InvoiceModel invoice = controller.clientHomeController.clientInvoice.value.invoices![index];
+    CheckInCheckOutHistoryElement invoice =
+        (controller.clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory ?? [])[index];
 
     double height = 71.h;
 
@@ -194,22 +169,24 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
     return Row(
       children: <Widget>[
         _cell(
+            width: 150.w, height: height, value: invoice.employeeDetails?.name ?? "", isPaid: invoice.status == "PAID"),
+        _cell(
             width: 100.w,
             height: height,
-            value: (invoice.totalEmployee ?? 0).toString(),
+            value: (invoice.employeeDetails?.positionName ?? "").toString(),
             isPaid: invoice.status == "PAID"),
         _cell(
             width: 100.w,
             height: height,
-            value: invoice.totalWorkingHour!.contains(':')
-                ? "${invoice.totalWorkingHour ?? '0.0'}h"
-                : "${double.parse(invoice.totalWorkingHour ?? '0.0').toStringAsFixed(2)}h",
+            value: invoice.workedHour!.contains(':')
+                ? "${invoice.workedHour ?? '0.0'}h"
+                : "${double.parse(invoice.workedHour ?? '0.0').toStringAsFixed(2)}h",
             isPaid: invoice.status == "PAID"),
         _cell(
             width: 100.w,
             height: height,
             value:
-                '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.amount ?? 0).toStringAsFixed(2)}',
+                '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.employeeAmount ?? 0).toStringAsFixed(2)}',
             isPaid: invoice.status == "PAID"),
         _cell(width: 100.w, height: height, value: '${invoice.vat ?? "-"}%', isPaid: invoice.status == "PAID"),
         _cell(
@@ -230,7 +207,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             value:
                 '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.totalAmount ?? 0).toStringAsFixed(2)}',
             isPaid: invoice.status == "PAID"),
-        _cell(width: 100.w, height: height, value: invoice.invoiceNumber ?? "-", isPaid: invoice.status == "PAID"),
+        _cell(width: 100.w, height: height, value: "Invoice" ?? "-", isPaid: invoice.status == "PAID"),
         _cell(
           width: 100.w,
           height: height,

@@ -78,7 +78,6 @@ class EmployeeDashboardController extends GetxController {
           history.refresh();
         } else {
           stopScrolling.value = true;
-          Utils.showSnackBar(message: 'No more items', isTrue: false);
         }
       });
     }

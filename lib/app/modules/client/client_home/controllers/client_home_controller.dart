@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
+import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/dropdown_item.dart';
 import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
@@ -16,7 +17,6 @@ import '../../../../models/custom_error.dart';
 import '../../../../models/requested_employees.dart';
 import '../../../../repository/api_helper.dart';
 import '../../../../routes/app_pages.dart';
-import '../../client_payment_and_invoice/model/client_invoice_model.dart';
 import '../../common/shortlist_controller.dart';
 
 class ClientHomeController extends GetxController {
@@ -26,7 +26,6 @@ class ClientHomeController extends GetxController {
   final ShortlistController shortlistController = Get.find();
   final ApiHelper _apiHelper = Get.find();
   Rx<RequestedEmployees> requestedEmployees = RequestedEmployees().obs;
-  Rx<ClientInvoiceModel> clientInvoice = ClientInvoiceModel().obs;
   RxBool isLoading = true.obs;
   // unread msg track
   RxInt unreadMsgFromEmployee = 0.obs;
@@ -42,6 +41,8 @@ class ClientHomeController extends GetxController {
   Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
   RxBool jobPostDataLoading = false.obs;
 
+  Rx<CheckInCheckOutHistory> clientPaymentInvoice = CheckInCheckOutHistory().obs;
+
   @override
   void onInit() {
     homeMethods();
@@ -52,7 +53,6 @@ class ClientHomeController extends GetxController {
   void onClose() {
     super.onClose();
     scrollController.dispose();
-    tecSearch.dispose();
     tecReview.dispose();
   }
 
@@ -237,26 +237,9 @@ class ClientHomeController extends GetxController {
     });
   }
 
-  Future<void> getClientInvoice() async {
-    isLoading.value = true;
-
-    await _apiHelper
-        .getClientInvoice(appController.user.value.userId)
-        .then((Either<CustomError, ClientInvoiceModel> response) {
-      isLoading.value = false;
-
-      response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = getClientInvoice);
-      }, (ClientInvoiceModel clientInvoice) {
-        this.clientInvoice.value = clientInvoice;
-        this.clientInvoice.refresh();
-      });
-    });
-  }
-
   void homeMethods() {
     notificationsController.getNotificationList();
-    getClientInvoice();
+    _clientPaymentInvoice();
     _trackUnreadMsg();
     fetchRequestEmployees();
     getJobRequests();
@@ -370,5 +353,18 @@ class ClientHomeController extends GetxController {
   void onSearchItemTap({required DropdownItem position}) {
     clearIconTap();
     Get.toNamed(Routes.mhEmployeesById, arguments: {MyStrings.arg.data: position});
+  }
+
+  Future<void> _clientPaymentInvoice() async {
+    isLoading.value = true;
+    Either<CustomError, CheckInCheckOutHistory> response = await _apiHelper.getCheckInOutHistory(
+      clientId: appController.user.value.userId,
+    );
+    isLoading.value = false;
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError..onRetry = _clientPaymentInvoice);
+    }, (CheckInCheckOutHistory checkInCheckOutHistory) async {
+      clientPaymentInvoice.value = checkInCheckOutHistory;
+    });
   }
 }

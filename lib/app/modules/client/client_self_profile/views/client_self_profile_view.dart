@@ -1,5 +1,6 @@
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/profile_picture_widget.dart';
+import 'package:mh/app/modules/client/client_self_profile/widgets/bank_card_widget.dart';
 
 import '../../../../common/utils/exports.dart';
 import '../../../../common/utils/validators.dart';
@@ -27,11 +28,11 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
                   key: controller.formKeyClient,
                   child: Column(
                     children: [
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 15.h),
 
                       ProfilePictureWidget(
                           profilePictureUrl: (controller.employee.value.details?.profilePicture ?? "").imageUrl),
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 15.h),
 
                       _item(
                         logo: Icons.add_business,
@@ -43,7 +44,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
                         ),
                       ),
 
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 15.h),
 
                       _item(
                         logo: Icons.location_on_rounded,
@@ -82,7 +83,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
                         ),
                       ),
 
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 15.h),
 
                       _item(
                         logo: Icons.phone_android_rounded,
@@ -128,7 +129,7 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
                       //   autovalidateMode: AutovalidateMode.onUserInteraction,
                       // ),
 
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 15.h),
 
                       _item(
                         logo: Icons.email_rounded,
@@ -140,7 +141,8 @@ class ClientSelfProfileView extends GetView<ClientSelfProfileController> {
                         ),
                       ),
 
-                      SizedBox(height: 40.h),
+                      SizedBox(height: 15.h),
+                      const BankCardWidget()
                     ],
                   ),
                 ),
