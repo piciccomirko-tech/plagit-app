@@ -75,6 +75,8 @@ class CheckInCheckOutHistoryElement {
     this.createdBy,
     this.createdAt,
     this.updatedAt,
+    this.invoiceNumber,
+    this.clientAmount,
     this.v,
   });
 
@@ -82,12 +84,12 @@ class CheckInCheckOutHistoryElement {
   final String? employeeId;
   final String? status;
   final double? employeeAmount;
+  final double? clientAmount;
   final double? totalAmount;
   final double? vat;
   final double? vatAmount;
   final double? platformFee;
   final String? workedHour;
-
   final String? currentHiredEmployeeId;
   final String? hiredBy;
   final EmployeeDetails? employeeDetails;
@@ -98,6 +100,7 @@ class CheckInCheckOutHistoryElement {
   final DateTime? hiredDate;
   final String? createdBy;
   final DateTime? createdAt;
+  final String? invoiceNumber;
   final DateTime? updatedAt;
   final int? v;
 
@@ -109,8 +112,10 @@ class CheckInCheckOutHistoryElement {
   factory CheckInCheckOutHistoryElement.fromJson(Map<String, dynamic> json) => CheckInCheckOutHistoryElement(
         id: json["_id"],
         status: json["status"],
+        invoiceNumber: json["invoiceNumber"],
         totalAmount: json["totalAmount"] == null ? 0.0 : double.parse(json["totalAmount"].toString()),
         employeeAmount: json["employeeAmount"] == null ? 0.0 : double.parse(json["employeeAmount"].toString()),
+        clientAmount: json["clientAmount"] == null ? 0.0 : double.parse(json["clientAmount"].toString()),
         platformFee: json["platformFee"] == null ? 0.0 : double.parse(json["platformFee"].toString()),
         vatAmount: json["vatAmount"] == null ? 0.0 : double.parse(json["vatAmount"].toString()),
         vat: json["vat"] == null ? 0.0 : double.parse(json["vat"].toString()),
@@ -136,8 +141,10 @@ class CheckInCheckOutHistoryElement {
   Map<String, dynamic> toJson() => {
         "_id": id,
         "status": status,
+        "invoiceNumber": invoiceNumber,
         "totalAmount": totalAmount,
         "employeeAmount": employeeAmount,
+        "clientAmount": clientAmount,
         "vatAmount": vatAmount,
         "vat": vat,
         "platformFee": platformFee,

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -662,7 +661,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
 
-    log('ApiHelperImpl.getCheckInOutHistory: ${response.bodyString}');
     return _convert<CheckInCheckOutHistory>(
       response,
       CheckInCheckOutHistory.fromJson,
@@ -770,7 +768,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
 
-    log('ApiHelperImpl.employeeFullDetails: ${response.bodyString}');
     return _convert<EmployeeFullDetails>(
       response,
       EmployeeFullDetails.fromJson,
@@ -1391,18 +1388,33 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   }
 
   @override
-  EitherModel<SessionIdResponseModel> getSessionId({required String email}) async {
+  EitherModel<SessionIdResponseModel> getSessionId({required String email, required String fromWhere}) async {
     String url = "users/get-session";
-    String requestBody = jsonEncode({"email": email, "returnUrl": "https://mhpremierstaffingsolutions.com"});
+    String requestBody = jsonEncode({"email": email, "returnUrl": "https://mhpremierstaffingsolutions.com?name=$fromWhere"});
     Response response = await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
 
-    print('ApiHelperImpl.getSessionId: ${response.bodyString}');
     return _convert<SessionIdResponseModel>(
       response,
       SessionIdResponseModel.fromJson,
     ).fold((CustomError l) => left(l), (SessionIdResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<Response> removeCard() async {
+    String url = "users/remove-token";
+    String requestBody = jsonEncode({"id": Get.find<AppController>().user.value.userId});
+    Response response = await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+
+    return _convert<Response>(
+      response,
+      (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 }

@@ -169,6 +169,7 @@ class MyStrings {
   static const String employees = "employees";
   static const String active = "active";
   static const String sureWantTo = "sureWantTo";
+  static const String cardRemove = "cardRemoved";
   static const String bookingRequest = "bookingRequest";
   static const String allow = "allow";
   static const String close = "close";

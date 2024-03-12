@@ -107,6 +107,7 @@ class RestaurantDetails {
       {this.hiredBy,
       this.restaurantName,
       this.restaurantAddress,
+        this.email,
       this.lat,
       this.long,
       this.id,
@@ -116,6 +117,7 @@ class RestaurantDetails {
   final String? hiredBy;
   final String? restaurantName;
   final String? restaurantAddress;
+  final String? email;
   final String? lat;
   final String? long;
   final String? id;
@@ -130,6 +132,7 @@ class RestaurantDetails {
       hiredBy: json["hiredBy"],
       restaurantName: json["restaurantName"],
       restaurantAddress: json["restaurantAddress"],
+      email: json["email"],
       lat: json["lat"],
       long: json["long"],
       id: json["_id"],
@@ -140,6 +143,7 @@ class RestaurantDetails {
         "hiredBy": hiredBy,
         "restaurantName": restaurantName,
         "restaurantAddress": restaurantAddress,
+        "email": email,
         "lat": lat,
         "long": long,
         "_id": id,

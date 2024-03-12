@@ -9,6 +9,7 @@ Map<String, String> english = <String, String>{
   MyStrings.active: "Active",
   MyStrings.booked: "Booked",
   MyStrings.sureWantTo: "Are you sure you want to",
+  MyStrings.cardRemove: "This card has been removed successfully",
   MyStrings.bookingRequest: "this booking request",
   MyStrings.allow: "Allow",
   MyStrings.close: "Close",

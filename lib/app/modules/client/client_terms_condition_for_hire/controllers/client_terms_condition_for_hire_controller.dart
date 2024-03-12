@@ -5,6 +5,7 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/custom_error.dart';
+import 'package:mh/app/modules/client/client_shortlisted/models/shortlisted_employees.dart';
 import 'package:mh/app/modules/client/common/shortlist_controller.dart';
 
 import '../../../../repository/api_helper.dart';
@@ -63,7 +64,7 @@ class ClientTermsConditionForHireController extends GetxController with StateMix
   Future<void> hireConfirm() async {
     List<String> shortlistIds = [];
 
-    for (var element in shortlistController.selectedForHire) {
+    for (ShortList element in shortlistController.selectedForHire) {
       shortlistIds.add(element.sId!);
     }
 

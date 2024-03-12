@@ -186,7 +186,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             width: 100.w,
             height: height,
             value:
-                '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.employeeAmount ?? 0).toStringAsFixed(2)}',
+                '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.clientAmount ?? 0).toStringAsFixed(2)}',
             isPaid: invoice.status == "PAID"),
         _cell(width: 100.w, height: height, value: '${invoice.vat ?? "-"}%', isPaid: invoice.status == "PAID"),
         _cell(
@@ -207,7 +207,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             value:
                 '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.totalAmount ?? 0).toStringAsFixed(2)}',
             isPaid: invoice.status == "PAID"),
-        _cell(width: 100.w, height: height, value: "Invoice" ?? "-", isPaid: invoice.status == "PAID"),
+        _cell(width: 100.w, height: height, value: invoice.invoiceNumber??"", isPaid: invoice.status == "PAID"),
         _cell(
           width: 100.w,
           height: height,

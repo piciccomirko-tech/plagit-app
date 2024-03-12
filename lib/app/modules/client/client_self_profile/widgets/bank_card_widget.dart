@@ -7,83 +7,109 @@ class BankCardWidget extends GetWidget<ClientSelfProfileController> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
-        height: 200.0,
-        width: Get.width,
-        decoration: BoxDecoration(
-          color: Colors.blueGrey,
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'CARD NUMBER',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5.0),
-              Text(
-                '1234 5678 9101 1121',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                ),
-              ),
-              Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'CARDHOLDER',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      SizedBox(height: 5.0),
-                      Text(
-                        'John Doe',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
-                        ),
-                      ),
-                    ],
+      child: (controller.employee.value.details?.sourceOfFunds ?? "").isEmpty
+          ? CustomButtons.button(
+              text: 'Add Card',
+              onTap: controller.addCard,
+              margin: const EdgeInsets.only(top: 100, right: 30, left: 30),
+              backgroundColor: Colors.teal,
+              customButtonStyle: CustomButtonStyle.radiusTopBottomCorner)
+          : Stack(
+              children: [
+                Container(
+                  height: 200.0,
+                  width: Get.width,
+                  decoration: BoxDecoration(
+                    color: Colors.blueGrey,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'EXPIRES',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'CARD NUMBER',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      SizedBox(height: 5.0),
-                      Text(
-                        '12/24',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.0,
+                        const SizedBox(height: 5.0),
+                        Text(
+                          controller.bankCardModel.provided?.card?.number ?? "",
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18.0,
+                          ),
                         ),
-                      ),
-                    ],
+                        const Spacer(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'CARDHOLDER',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                                Text(
+                                  controller.bankCardModel.provided?.card?.nameOnCard ?? "",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'EXPIRES',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 5.0),
+                                Text(
+                                  '${controller.bankCardModel.provided?.card?.expiry?.month ?? ""}/${controller.bankCardModel.provided?.card?.expiry?.year ?? ""}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+                ),
+                Positioned.fill(
+                    child: Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: InkResponse(
+                      onTap: controller.removeCard,
+                      child: const CircleAvatar(
+                        radius: 15,
+                        backgroundColor: Colors.red,
+                        child: Icon(Icons.clear, color: Colors.white, size: 18),
+                      ),
+                    ),
+                  ),
+                ))
+              ],
+            ),
     );
   }
 }

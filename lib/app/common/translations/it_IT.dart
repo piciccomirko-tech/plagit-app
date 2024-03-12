@@ -11,6 +11,7 @@ Map<String, String> italian = <String, String>{
   MyStrings.chatWithRestaurant: "Chat con il Ristorante",
   MyStrings.details: "Dettagli",
   MyStrings.myProfile: "Il mio profilo",
+  MyStrings.cardRemove: "Questa carta è stata rimossa con successo",
   MyStrings.email: "Email",
   MyStrings.active: "Attivo",
   MyStrings.search: "Ricerca",

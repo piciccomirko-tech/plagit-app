@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/modules/client/card_add/models/session_id_response_model.dart';
+import 'package:mh/app/modules/client/client_terms_condition_for_hire/controllers/client_terms_condition_for_hire_controller.dart';
 import 'package:mh/app/repository/api_helper.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -24,16 +25,11 @@ class CardAddController extends GetxController {
     super.onInit();
   }
 
-  @override
-  void onClose() {
-    webViewController.clearCache();
-    webViewController.clearLocalStorage();
-    super.onClose();
-  }
-
   void _getSessionId() {
     sessionIdLoading.value = true;
-    _apiHelper.getSessionId(email: Get.arguments[0]).then((Either<CustomError, SessionIdResponseModel> responseData) {
+    _apiHelper
+        .getSessionId(email: Get.arguments[0], fromWhere: fromWhere)
+        .then((Either<CustomError, SessionIdResponseModel> responseData) {
       sessionIdLoading.value = false;
       responseData.fold((CustomError customError) {
         Utils.errorDialog(context!, customError);
@@ -46,21 +42,29 @@ class CardAddController extends GetxController {
   }
 
   void loadWebView({required String sessionId}) {
-    String url = "https://mh-payment.netlify.app/card-verify?sessionId=$sessionId";
+    String url = "https://raw.githack.com/rashedabir/payment-gateway/main/index.html?session_id=$sessionId";
     webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0x00000000))
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) async {
+            if (url.startsWith("https://mhpremierstaffingsolutions.com/?name=terms")) {
+              Get.find<ClientTermsConditionForHireController>().hireConfirm();
+            } else if (url.startsWith("https://mhpremierstaffingsolutions.com/?name=signUp")) {
+              Get.offAllNamed(Routes.login);
+            } else if(url.startsWith("https://mhpremierstaffingsolutions.com/?name=clientProfile")) {
+              Get.offAllNamed(Routes.clientHome);
+            }
           },
           onPageFinished: (String value) {
             isLoading.value = false;
           },
-          onWebResourceError: (WebResourceError error) {
-          },
+          onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
-            print('Request: ${request.url}');
+            if (request.url.startsWith('https://www.youtube.com/')) {
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
         ),

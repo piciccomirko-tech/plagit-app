@@ -222,5 +222,6 @@ abstract class ApiHelper {
   EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel});
   EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
   EitherModel<Response> userValidation({required String email});
-  EitherModel<SessionIdResponseModel> getSessionId({required String email});
+  EitherModel<Response> removeCard();
+  EitherModel<SessionIdResponseModel> getSessionId({required String email, required String fromWhere});
 }

@@ -110,6 +110,7 @@ class Employee {
       this.nationality,
       this.height,
       this.weight,
+        this.sourceOfFunds,
       this.certified,
       this.dressSize,
       this.hasUniform});
@@ -125,6 +126,7 @@ class Employee {
   final DateTime? dateOfBirth;
   final String? userIdNumber;
   final String? email;
+  final String? sourceOfFunds;
   final String? phoneNumber;
   final String? presentAddress;
   final String? permanentAddress;
@@ -193,6 +195,7 @@ class Employee {
         firstName: json["firstName"],
         lastName: json["lastName"],
         positionId: json["positionId"],
+    sourceOfFunds: json["sourceOfFunds"],
         positionName: json["positionName"],
         gender: json["gender"],
         dateOfBirth: json["dateOfBirth"] == null ? null : DateTime.parse(json["dateOfBirth"]),
@@ -259,6 +262,7 @@ class Employee {
         "certified": certified,
         "firstName": firstName,
         "lastName": lastName,
+        "sourceOfFunds": sourceOfFunds,
         "positionId": positionId,
         "positionName": positionName,
         "gender": gender,
