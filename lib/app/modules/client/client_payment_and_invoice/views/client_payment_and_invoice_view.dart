@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
@@ -35,7 +36,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
                   ))
                 : HorizontalDataTable(
                     leftHandSideColumnWidth: 100.w,
-                    rightHandSideColumnWidth: 1250.w,
+                    rightHandSideColumnWidth: 1350.w,
                     isFixedHeader: true,
                     headerWidgets: _getTitleWidget(),
                     leftSideItemBuilder: _generateFirstColumnRow,
@@ -73,6 +74,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
       _getTitleItemWidget(MyStrings.invoiceNo.tr, 100.w),
       _getTitleItemWidget(MyStrings.status.tr, 100.w),
       _getTitleItemWidget(MyStrings.complain.tr, 100.w),
+      _getTitleItemWidget(MyStrings.refund.tr, 100.w),
       _getTitleItemWidget(MyStrings.viewInvoice.tr, 100.w),
     ];
   }
@@ -236,6 +238,13 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
           isPaid: invoice.status == "PAID",
         ),
         _cell(
+          width: 100.w,
+          height: height,
+          value: "-",
+          child: _refundWidget(refund: invoice.refund ?? ""),
+          isPaid: invoice.status == "PAID",
+        ),
+        _cell(
             width: 100.w,
             height: height,
             value: "-",
@@ -311,7 +320,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
           },
           child: const Icon(
             Icons.info,
-            color: Colors.blue,
+            color: Colors.orange,
             size: 22,
           ),
         );
@@ -360,7 +369,8 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(employeeDetails.positionName ?? ""),
+                            Text(employeeDetails.positionName ?? "",
+                                style: MyColors.l111111_dwhite(controller.context!).medium12),
                             Container(
                               margin: const EdgeInsets.only(left: 20),
                               decoration: BoxDecoration(
@@ -369,7 +379,8 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
                                 children: [
                                   const SizedBox(width: 5),
                                   CircleAvatar(backgroundColor: MyColors.c_00C92C, radius: 5),
-                                  Text(" ${MyStrings.active.tr} ")
+                                  Text(" ${MyStrings.active.tr} ",
+                                      style: MyColors.l111111_dwhite(controller.context!).medium10)
                                 ],
                               ),
                             )
@@ -521,4 +532,48 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
           ),
         ),
       );
+
+  Widget _refundWidget({required String refund}) {
+    return refund.isEmpty
+        ? const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 22,
+          )
+        : InkWell(
+            onTap: () {
+              Get.bottomSheet(Container(
+                decoration: BoxDecoration(
+                    borderRadius:
+                        const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+                    color: MyColors.lightCard(controller.context!)),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(MyStrings.refund.tr, style: MyColors.l111111_dwhite(controller.context!).semiBold20),
+                      SizedBox(height: 30.h),
+                      Text(refund, style: MyColors.l111111_dwhite(controller.context!).medium12),
+                      SizedBox(height: 30.h),
+                      CustomButtons.button(
+                        height: 52.h,
+                        onTap: () => Get.back(),
+                        text: MyStrings.underStand.tr,
+                        margin: EdgeInsets.zero,
+                        customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                      ),
+                      SizedBox(height: 10.h)
+                    ],
+                  ),
+                ),
+              ));
+            },
+            child: const Icon(
+              Icons.info,
+              color: Colors.orange,
+              size: 22,
+            ),
+          );
+  }
 }

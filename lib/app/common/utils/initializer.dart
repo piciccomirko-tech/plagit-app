@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:mh/app/common/controller/app_error_controller.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import '../../repository/api_helper.dart';
 import '../../repository/api_helper_impl.dart';
 import '../controller/app_controller.dart';
@@ -53,7 +55,7 @@ class Initializer {
     try {
       _initScreenPreference();
       _initStorage();
-
+      _initAppsFlyerSdk();
       Get.put(AppController());
       Get.put(AppLifecycleController());
       Get.put(SocketController());
@@ -71,6 +73,25 @@ class Initializer {
 
   Future<void> _initStorage() async {
     await GetStorage.init();
+  }
+
+  void _initAppsFlyerSdk() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
+        afDevKey: "HJkjJuWPSncZJfMu6eyCpU",
+        showDebug: true,
+        appId: "com.invain.mh",
+        timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
+        disableAdvertisingIdentifier: false, // Optional field
+        disableCollectASA: false, //Optional field
+        manualStart: true); // Optional field
+
+    AppsflyerSdk appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
+
+    appsflyerSdk.initSdk(
+        registerConversionDataCallback: true,
+        registerOnAppOpenAttributionCallback: true,
+        registerOnDeepLinkingCallback: true);
   }
 }
 

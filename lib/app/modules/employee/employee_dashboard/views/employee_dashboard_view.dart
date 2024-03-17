@@ -2,7 +2,6 @@ import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
-import '../../../../common/widgets/custom_dialog.dart';
 import '../../../../common/widgets/no_item_found.dart';
 import '../../../../models/employee_daily_statistics.dart';
 import '../controllers/employee_dashboard_controller.dart';
@@ -69,7 +68,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
                                       // Build your HorizontalDataTable for each page
                                       return HorizontalDataTable(
                                         leftHandSideColumnWidth: 90.w,
-                                        rightHandSideColumnWidth: 670.w,
+                                        rightHandSideColumnWidth: 550.w,
                                         isFixedHeader: true,
                                         headerWidgets: _getTitleWidget(),
                                         leftSideItemBuilder: (context, index) => _generateFirstColumnRow(
@@ -107,7 +106,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
       _getTitleItemWidget(MyStrings.checkOut.tr, 100.w),
       _getTitleItemWidget(MyStrings.breakTime.tr, 100.w),
       _getTitleItemWidget('${MyStrings.total.tr} ${MyStrings.hours.tr}', 100.w),
-      _getTitleItemWidget(MyStrings.complain.tr, 120.w),
+     // _getTitleItemWidget(MyStrings.complain.tr, 120.w),
     ];
   }
 
@@ -165,7 +164,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
             clientUpdatedValue: dailyStatistics.employeeBreakTime,
           ),
           _cell(width: 100.w, value: dailyStatistics.workingHour),
-          _cell(width: 120.w, value: "--", child: _action(index)),
+         // _cell(width: 120.w, value: "--", child: _action(index)),
         ],
       );
     } else {
@@ -200,27 +199,6 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
               ),
             ),
       );
-
-  Widget _action(int index) => controller.getComment(index).isEmpty
-      ? const Icon(
-          Icons.check_circle,
-          color: Colors.green,
-          size: 22,
-        )
-      : GestureDetector(
-          onTap: () {
-            CustomDialogue.information(
-              context: controller.context!,
-              title: "Restaurant Report on You",
-              description: controller.getComment(index),
-            );
-          },
-          child: const Icon(
-            Icons.info,
-            color: Colors.blue,
-            size: 22,
-          ),
-        );
 
   Future<void> _selectDateRange(BuildContext context) async {
     DateTimeRange? picked = await showDateRangePicker(

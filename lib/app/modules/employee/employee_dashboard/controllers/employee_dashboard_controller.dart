@@ -33,10 +33,6 @@ class EmployeeDashboardController extends GetxController {
     super.onClose();
   }
 
-  String getComment(int index) {
-    return history[index].checkInCheckOutDetails?.clientComment ?? "";
-  }
-
   Future<void> _fetchCheckInOutHistory({String? startDate, String? endDate, int? limit, int? page}) async {
     loading.value = true;
     Either<CustomError, CheckInCheckOutHistory> response =

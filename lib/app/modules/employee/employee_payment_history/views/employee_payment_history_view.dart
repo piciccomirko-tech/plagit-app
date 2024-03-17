@@ -7,6 +7,7 @@ import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
+import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/no_item_found.dart';
 
@@ -62,6 +63,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
       _getTitleItemWidget('${MyStrings.total.tr} ${MyStrings.hours.tr}', 100.w),
       _getTitleItemWidget(MyStrings.amount.tr, 100.w),
       _getTitleItemWidget(MyStrings.status.tr, 100.w),
+      _getTitleItemWidget(MyStrings.complain.tr, 100.w),
     ];
   }
 
@@ -157,7 +159,9 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               style: TextStyle(
                   color: controller.employeePaymentHistory(index).status == 'DUE' ? Colors.red : Colors.green,
                   fontWeight: FontWeight.bold),
-            ))
+            )
+        ),
+        _cell(width: 100.w,  widget: _action(index)),
       ],
     );
   }
@@ -169,4 +173,25 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
           child: widget,
         ),
       );
+
+  Widget _action(int index) => controller.getComment(index).isEmpty
+      ? const Icon(
+    Icons.check_circle,
+    color: Colors.green,
+    size: 22,
+  )
+      : GestureDetector(
+    onTap: () {
+      CustomDialogue.information(
+        context: controller.context!,
+        title: MyStrings.restaurantReport.tr,
+        description: controller.getComment(index),
+      );
+    },
+    child: const Icon(
+      Icons.info,
+      color: Colors.blue,
+      size: 22,
+    ),
+  );
 }

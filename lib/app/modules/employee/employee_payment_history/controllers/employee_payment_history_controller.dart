@@ -33,30 +33,20 @@ class EmployeePaymentHistoryController extends GetxController {
       Utils.employeePaymentHistory(employeePaymentHistoryList[index]);
 
   void _getEmployeePaymentHistory() async {
-         Either<CustomError, CheckInCheckOutHistory> response = await _apiHelper.getCheckInOutHistory(
-        employeeId: appController.user.value.userId,
-      );
-      response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = _getEmployeePaymentHistory);
-      }, (CheckInCheckOutHistory r) async {
-        if (r.status == "success" && r.statusCode == 200 && r.checkInCheckOutHistory != null) {
-          employeePaymentHistoryList.value = r.checkInCheckOutHistory ?? [];
-          employeePaymentHistoryDataLoaded.value = true;
-        }
-      });
+    Either<CustomError, CheckInCheckOutHistory> response = await _apiHelper.getCheckInOutHistory(
+      employeeId: appController.user.value.userId,
+    );
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError..onRetry = _getEmployeePaymentHistory);
+    }, (CheckInCheckOutHistory r) async {
+      if (r.status == "success" && r.statusCode == 200 && r.checkInCheckOutHistory != null) {
+        employeePaymentHistoryList.value = r.checkInCheckOutHistory ?? [];
+        employeePaymentHistoryDataLoaded.value = true;
+      }
+    });
+  }
 
-
-   /* _apiHelper
-        .checkIn(employeeId: appController.user.value.userId)
-        .then((Either<CustomError, EmployeePaymentHistory> responseData) {
-      responseData.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = _getEmployeePaymentHistory);
-      }, (EmployeePaymentHistory response) {
-        if (response.status == "success" && response.statusCode == 200 && response.employeePaymentHistoryList != null) {
-          employeePaymentHistoryList.value = response.employeePaymentHistoryList ?? [];
-          employeePaymentHistoryDataLoaded.value = true;
-        }
-      });
-    });*/
+  String getComment(int index) {
+    return employeePaymentHistoryList[index].checkInCheckOutDetails?.clientComment ?? "";
   }
 }

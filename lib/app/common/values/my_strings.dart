@@ -168,6 +168,8 @@ class MyStrings {
   static const String mh = "mh";
   static const String employees = "employees";
   static const String active = "active";
+  static const String refund = "refund";
+  static const String restaurantReport = "restaurantReport";
   static const String sureWantTo = "sureWantTo";
   static const String cardRemove = "cardRemoved";
   static const String report = "report";

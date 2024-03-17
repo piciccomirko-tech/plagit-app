@@ -14,6 +14,8 @@ Map<String, String> arabic = <String, String>{
   MyStrings.cantReport: "لا يمكنك التبليغ الآن",
   MyStrings.haveToReport: "يجب عليك التبليغ في غضون 01 ساعة بعد الخروج",
   MyStrings.total: "الإجمالي",
+  MyStrings.refund: "استرداد",
+  MyStrings.restaurantReport: "تقرير المطعم عنك",
   MyStrings.age: "العمر",
   MyStrings.getStarted: "ابدأ",
   MyStrings.congratulations: "تهانينا!",
