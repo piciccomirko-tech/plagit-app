@@ -239,7 +239,7 @@ class ClientHomeController extends GetxController {
 
   void homeMethods() {
     notificationsController.getNotificationList();
-    _clientPaymentInvoice();
+    clientPaymentInvoiceMethod();
     _trackUnreadMsg();
     fetchRequestEmployees();
     getJobRequests();
@@ -355,14 +355,14 @@ class ClientHomeController extends GetxController {
     Get.toNamed(Routes.mhEmployeesById, arguments: {MyStrings.arg.data: position});
   }
 
-  Future<void> _clientPaymentInvoice() async {
+  Future<void> clientPaymentInvoiceMethod() async {
     isLoading.value = true;
     Either<CustomError, CheckInCheckOutHistory> response = await _apiHelper.getCheckInOutHistory(
       clientId: appController.user.value.userId,
     );
     isLoading.value = false;
     response.fold((CustomError customError) {
-      Utils.errorDialog(context!, customError..onRetry = _clientPaymentInvoice);
+      Utils.errorDialog(context!, customError..onRetry = clientPaymentInvoice);
     }, (CheckInCheckOutHistory checkInCheckOutHistory) async {
       clientPaymentInvoice.value = checkInCheckOutHistory;
     });

@@ -170,6 +170,10 @@ class MyStrings {
   static const String active = "active";
   static const String sureWantTo = "sureWantTo";
   static const String cardRemove = "cardRemoved";
+  static const String report = "report";
+  static const String cantReport = "cantReport";
+  static const String haveToReport = "haveToReport";
+  static const String time = "time";
   static const String bookingRequest = "bookingRequest";
   static const String allow = "allow";
   static const String close = "close";

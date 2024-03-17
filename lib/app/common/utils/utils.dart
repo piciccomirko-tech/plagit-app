@@ -192,11 +192,11 @@ class Utils {
       dailyStatistics.clientBreakTime = "${element.checkInCheckOutDetails?.clientBreakTime ?? 0} min";
     }
 
-    DateTime? tempCheckInTime = clientCheckIn ?? employeeCheckIn;
-    DateTime? tempCheckOutTime = clientCheckOut ?? employeeCheckout;
-    int? tempBreakTime = (element.checkInCheckOutDetails?.clientBreakTime ?? 0) == 0
+    DateTime? tempCheckInTime = employeeCheckIn; //clientCheckIn ?? employeeCheckIn;
+    DateTime? tempCheckOutTime = employeeCheckout; //clientCheckOut ?? employeeCheckout;
+    int? tempBreakTime = (element.checkInCheckOutDetails?.breakTime ?? 0); /*(element.checkInCheckOutDetails?.clientBreakTime ?? 0) == 0
         ? (element.checkInCheckOutDetails?.breakTime ?? 0)
-        : (element.checkInCheckOutDetails?.clientBreakTime ?? 0);
+        : (element.checkInCheckOutDetails?.clientBreakTime ?? 0);*/
     int? tempWorkingTimeInSeconds = _getWorkingTimeInSeconds(
         checkInTime: tempCheckInTime, checkOutTime: tempCheckOutTime, breakTime: tempBreakTime);
 
@@ -297,7 +297,8 @@ class Utils {
                             style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         pw.Text(invoice.restaurantDetails?.restaurantAddress ?? '',
                             style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text(invoice.restaurantDetails?.email ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                        pw.Text(invoice.restaurantDetails?.email ?? '',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                         // pw.Text(invoice.restaurantDetails?.restaurantPhone ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                       ])),
                   pw.Expanded(flex: 1, child: pw.Wrap())

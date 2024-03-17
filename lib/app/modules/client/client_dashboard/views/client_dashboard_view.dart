@@ -3,13 +3,9 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/employee_details.dart';
-
-import '../../../../common/style/my_decoration.dart';
 import '../../../../common/utils/exports.dart';
-import '../../../../common/utils/validators.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../../../../common/widgets/custom_badge.dart';
-import '../../../../common/widgets/custom_dialog.dart';
 import '../../../../common/widgets/custom_network_image.dart';
 import '../../../../common/widgets/no_item_found.dart';
 import '../../../../models/employee_daily_statistics.dart';
@@ -97,7 +93,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                       Expanded(
                         child: HorizontalDataTable(
                           leftHandSideColumnWidth: 143.w,
-                          rightHandSideColumnWidth: 600.w,
+                          rightHandSideColumnWidth: 500.w,
                           isFixedHeader: true,
                           headerWidgets: _getTitleWidget(),
                           leftSideItemBuilder: _generateFirstColumnRow,
@@ -157,7 +153,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
       _getTitleItemWidget('Break Time', 100.w),
       _getTitleItemWidget('Total hours', 100.w),
       _getTitleItemWidget('Chat', 100.w),
-      _getTitleItemWidget('Complain', 100.w),
+      // _getTitleItemWidget('Complain', 100.w),
     ];
   }
 
@@ -209,7 +205,8 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
               child: /*Text(value, textAlign: TextAlign.center,
                 style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13)*/
                   Text.rich(
-                TextSpan(text: value, children: [
+                TextSpan(text: clientUpdatedValue)
+                /*TextSpan(text: value, children: [
                   TextSpan(
                       text:
                           (clientUpdatedValue == null) || (clientUpdatedValue == value) ? "" : '\n$clientUpdatedValue',
@@ -217,7 +214,8 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                           decoration: TextDecoration.lineThrough,
                           decorationColor: Colors.red, // Set the color here
                           decorationThickness: 2.0)),
-                ]),
+                ])*/
+                ,
                 textAlign: TextAlign.center,
                 style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
               ),
@@ -235,10 +233,10 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
           _cell(width: 100.w, value: "-"),
           _cell(width: 100.w, value: "-"),
           _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!)),
-          _cell(
+          /*  _cell(
             width: 100.w,
             value: "-",
-          ),
+          ),*/
         ],
       );
     }
@@ -258,77 +256,19 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
         _cell(
             width: 100.w,
             value: dailyStatistics.displayBreakTime,
-            clientUpdatedValue: dailyStatistics.employeeBreakTime),
-        _cell(width: 100.w, value: dailyStatistics.workingHour),
+            clientUpdatedValue: dailyStatistics.employeeBreakTime
+        ),
+        _cell(width: 100.w, value:"" , clientUpdatedValue: dailyStatistics.workingHour
+        ),
         _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!)),
-        _cell(width: 100.w, value: "--", child: const CircleAvatar(
+        /*  _cell(width: 100.w, value: "--", child: const CircleAvatar(
           backgroundColor: Colors.transparent,
             child: Icon(Icons.check_box, color: Colors.green))
         //_action(index)
-        ),
+        ),*/
       ],
     );
   }
-
-  Widget _action(int index) => controller.getComment(index).isEmpty
-      ? GestureDetector(
-          onTap: () {
-            if (controller.clientCommentEnable(index)) {
-              // controller.setUpdatedDate(index);
-
-              showModalBottomSheet(
-                context: controller.context!,
-                builder: (context) => Container(
-                  // padding: EdgeInsets.only(
-                  //   bottom: MediaQuery.of(context).viewInsets.bottom,
-                  // ),
-                  color: MyColors.lightCard(context),
-                  child: BottomA(_updateOption(index)),
-                ),
-              );
-            } else {
-              CustomDialogue.information(
-                context: controller.context!,
-                title: "Report",
-                description: "You can't report now. \n\n You have to report within 12 hours after checkout",
-              );
-            }
-          },
-          child: const Icon(
-            Icons.check_circle,
-            color: Colors.green,
-            size: 22,
-          ),
-        )
-      : GestureDetector(
-          onTap: () {
-            if (controller.clientCommentEnable(index)) {
-              // controller.setUpdatedDate(index);
-
-              showModalBottomSheet(
-                context: controller.context!,
-                builder: (context) => Container(
-                  // padding: EdgeInsets.only(
-                  //   bottom: MediaQuery.of(context).viewInsets.bottom,
-                  // ),
-                  color: MyColors.lightCard(context),
-                  child: BottomA(_updateOption(index)),
-                ),
-              );
-            } else {
-              CustomDialogue.information(
-                context: controller.context!,
-                title: "Report",
-                description: controller.getComment(index),
-              );
-            }
-          },
-          child: const Icon(
-            Icons.info,
-            color: Colors.blue,
-            size: 22,
-          ),
-        );
 
   Widget _employeeDetails(
     String id,
@@ -433,160 +373,6 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                 ),
               ),
             ],
-          ),
-        ),
-      );
-
-  Widget _updateOption(int index) => Form(
-        key: controller.formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Center(
-                  child: Container(
-                    height: 4.h,
-                    width: 80.w,
-                    decoration: const BoxDecoration(
-                      color: MyColors.c_5C5C5C,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  children: [
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.green),
-                          child: Center(child: Text('CheckIn Time', style: MyColors.white.semiBold16)),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Image.asset(MyAssets.checkIn, height: 30, width: 30),
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(5.0)),
-                          child: Center(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Obx(() => Text(
-                                  '${controller.clientUpdateStatusModel.value.clientCheckInTime?.split(" ").last.substring(0, 8)}',
-                                  style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
-                              InkWell(
-                                  onTap: () => controller.onClockPressed(index: index, tag: 'checkIn'),
-                                  child: Image.asset(MyAssets.clock, height: 20, width: 20))
-                            ],
-                          )),
-                        ))
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  children: [
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.red),
-                          child: Center(child: Text('CheckOut Time', style: MyColors.white.semiBold16)),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Image.asset(MyAssets.checkOut, height: 30, width: 30),
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade400),
-                                borderRadius: BorderRadius.circular(5.0)),
-                            child: Obx(() => controller.clientUpdateStatusModel.value.clientCheckOutTime == null ||
-                                    controller.clientUpdateStatusModel.value.clientCheckOutTime!.isEmpty
-                                ? const Text('')
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      Text(
-                                          "${controller.clientUpdateStatusModel.value.clientCheckOutTime?.split(" ").last.substring(0, 8)}",
-                                          style: MyColors.l111111_dwhite(controller.context!).semiBold16),
-                                      InkWell(
-                                          onTap: () => controller.onClockPressed(index: index, tag: 'checkout'),
-                                          child: Image.asset(MyAssets.clock, height: 20, width: 20))
-                                    ],
-                                  ))))
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                Row(
-                  children: [
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.blueGrey),
-                          child: Center(child: Text('Break Time', style: MyColors.white.semiBold16)),
-                        )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: Image.asset(MyAssets.breakTime, height: 30, width: 30),
-                    ),
-                    Expanded(
-                        flex: 1,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.shade400), borderRadius: BorderRadius.circular(5.0)),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Obx(() => Text("${controller.clientUpdateStatusModel.value.clientBreakTime} minutes",
-                                  style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
-                              InkWell(
-                                  onTap: controller.onBreakTimePressed,
-                                  child: Image.asset(MyAssets.clock, height: 20, width: 20))
-                            ],
-                          ),
-                        ))
-                  ],
-                ),
-                SizedBox(height: 30.h),
-                TextFormField(
-                  controller: controller.tecComment,
-                  keyboardType: TextInputType.multiline,
-                  minLines: 1,
-                  maxLines: null,
-                  cursorColor: MyColors.c_C6A34F,
-                  style: MyColors.l111111_dwhite(controller.context!).regular14,
-                  decoration: MyDecoration.inputFieldDecoration(
-                    context: controller.context!,
-                    label: "Comment",
-                  ),
-                  validator: (String? value) => Validators.emptyValidator(
-                    value?.trim(),
-                    MyStrings.required.tr,
-                  ),
-                ),
-                SizedBox(height: 30.h),
-                CustomButtons.button(
-                  height: 52.h,
-                  onTap: () => controller.onUpdatePressed(index),
-                  text: "Update",
-                  margin: const EdgeInsets.symmetric(horizontal: 14),
-                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-                ),
-                SizedBox(height: 30.h),
-              ],
-            ),
           ),
         ),
       );

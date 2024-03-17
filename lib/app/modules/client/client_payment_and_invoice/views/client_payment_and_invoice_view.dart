@@ -1,6 +1,13 @@
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
+import 'package:mh/app/common/style/my_decoration.dart';
+import 'package:mh/app/common/utils/validators.dart';
+import 'package:mh/app/common/widgets/custom_appbar_back_button.dart';
+import 'package:mh/app/common/widgets/custom_dialog.dart';
+import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
+import 'package:mh/app/models/employee_details.dart';
+import 'package:mh/app/modules/client/client_dashboard/views/client_dashboard_view.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
 import '../controllers/client_payment_and_invoice_controller.dart';
@@ -28,7 +35,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
                   ))
                 : HorizontalDataTable(
                     leftHandSideColumnWidth: 100.w,
-                    rightHandSideColumnWidth: 1150.w,
+                    rightHandSideColumnWidth: 1250.w,
                     isFixedHeader: true,
                     headerWidgets: _getTitleWidget(),
                     leftSideItemBuilder: _generateFirstColumnRow,
@@ -65,6 +72,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
       _getTitleItemWidget('${MyStrings.total.tr}\n${MyStrings.amount.tr}', 100.w),
       _getTitleItemWidget(MyStrings.invoiceNo.tr, 100.w),
       _getTitleItemWidget(MyStrings.status.tr, 100.w),
+      _getTitleItemWidget(MyStrings.complain.tr, 100.w),
       _getTitleItemWidget(MyStrings.viewInvoice.tr, 100.w),
     ];
   }
@@ -207,7 +215,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
             value:
                 '${Utils.getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${(invoice.totalAmount ?? 0).toStringAsFixed(2)}',
             isPaid: invoice.status == "PAID"),
-        _cell(width: 100.w, height: height, value: invoice.invoiceNumber??"", isPaid: invoice.status == "PAID"),
+        _cell(width: 100.w, height: height, value: invoice.invoiceNumber ?? "", isPaid: invoice.status == "PAID"),
         _cell(
           width: 100.w,
           height: height,
@@ -218,6 +226,13 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
               style: invoice.status == "PAID" ? MyColors.c_00C92C.semiBold18 : MyColors.c_FF5029.semiBold18,
             ),
           ),
+          isPaid: invoice.status == "PAID",
+        ),
+        _cell(
+          width: 100.w,
+          height: height,
+          value: "-",
+          child: _action(index: index, employeeDetails: invoice.employeeDetails!),
           isPaid: invoice.status == "PAID",
         ),
         _cell(
@@ -240,4 +255,270 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
       ],
     );
   }
+
+  Widget _action({required int index, required EmployeeDetails employeeDetails}) => controller.getComment(index).isEmpty
+      ? GestureDetector(
+          onTap: () {
+            if (controller.clientCommentEnable(index)) {
+              // controller.setUpdatedDate(index);
+
+              showModalBottomSheet(
+                context: controller.context!,
+                builder: (context) => Container(
+                  // padding: EdgeInsets.only(
+                  //   bottom: MediaQuery.of(context).viewInsets.bottom,
+                  // ),
+                  color: MyColors.lightCard(context),
+                  child: BottomA(_updateOption(index: index, employeeDetails: employeeDetails)),
+                ),
+              );
+            } else {
+              CustomDialogue.information(
+                context: controller.context!,
+                title: MyStrings.report.tr,
+                description: "${MyStrings.cantReport.tr}. \n\n ${MyStrings.haveToReport.tr}",
+              );
+            }
+          },
+          child: const Icon(
+            Icons.check_circle,
+            color: Colors.green,
+            size: 22,
+          ),
+        )
+      : GestureDetector(
+          onTap: () {
+            if (controller.clientCommentEnable(index)) {
+              // controller.setUpdatedDate(index);
+
+              showModalBottomSheet(
+                context: controller.context!,
+                builder: (context) => Container(
+                  // padding: EdgeInsets.only(
+                  //   bottom: MediaQuery.of(context).viewInsets.bottom,
+                  // ),
+                  color: MyColors.lightCard(context),
+                  child: BottomA(_updateOption(index: index, employeeDetails: employeeDetails)),
+                ),
+              );
+            } else {
+              CustomDialogue.information(
+                context: controller.context!,
+                title: MyStrings.report.tr,
+                description: controller.getComment(index),
+              );
+            }
+          },
+          child: const Icon(
+            Icons.info,
+            color: Colors.blue,
+            size: 22,
+          ),
+        );
+
+  Widget _updateOption({required int index, required EmployeeDetails employeeDetails}) => Form(
+        key: controller.formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const CustomAppbarBackButton(),
+                    Text("Any issue regarding this\n              employee?",
+                        style: MyColors.l111111_dwhite(controller.context!).medium18),
+                    const Wrap()
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 70.w,
+                      height: 74.w,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Colors.grey.withOpacity(.1),
+                      ),
+                      child: CustomNetworkImage(
+                        url: (employeeDetails.profilePicture ?? "").imageUrl,
+                        fit: BoxFit.fill,
+                        radius: 5,
+                      ),
+                    ),
+                    SizedBox(width: 20.h),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(employeeDetails.name ?? "",
+                            style: MyColors.l111111_dwhite(controller.context!).semiBold16),
+                        SizedBox(height: 20.h),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(employeeDetails.positionName ?? ""),
+                            Container(
+                              margin: const EdgeInsets.only(left: 20),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30.0), color: MyColors.c_00C92C.withOpacity(0.1)),
+                              child: Row(
+                                children: [
+                                  const SizedBox(width: 5),
+                                  CircleAvatar(backgroundColor: MyColors.c_00C92C, radius: 5),
+                                  Text(" ${MyStrings.active.tr} ")
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    )
+                  ],
+                ),
+                SizedBox(height: 30.h),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.green),
+                          child: Center(
+                              child: Text('${MyStrings.checkIn.tr} ${MyStrings.time.tr}',
+                                  style: MyColors.white.semiBold16)),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.asset(MyAssets.checkIn, height: 30, width: 30),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(5.0)),
+                          child: Center(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Obx(() => Text(
+                                  '${controller.clientUpdateStatusModel.value.clientCheckInTime?.split(" ").last.substring(0, 8)}',
+                                  style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
+                              InkWell(
+                                  onTap: () => controller.onClockPressed(index: index, tag: 'checkIn'),
+                                  child: Image.asset(MyAssets.clock, height: 20, width: 20))
+                            ],
+                          )),
+                        ))
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.red),
+                          child: Center(
+                              child: Text('${MyStrings.checkOut.tr} ${MyStrings.time.tr}',
+                                  style: MyColors.white.semiBold16)),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.asset(MyAssets.checkOut, height: 30, width: 30),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey.shade400),
+                                borderRadius: BorderRadius.circular(5.0)),
+                            child: Obx(() => controller.clientUpdateStatusModel.value.clientCheckOutTime == null ||
+                                    controller.clientUpdateStatusModel.value.clientCheckOutTime!.isEmpty
+                                ? const Text('')
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Text(
+                                          "${controller.clientUpdateStatusModel.value.clientCheckOutTime?.split(" ").last.substring(0, 8)}",
+                                          style: MyColors.l111111_dwhite(controller.context!).semiBold16),
+                                      InkWell(
+                                          onTap: () => controller.onClockPressed(index: index, tag: 'checkout'),
+                                          child: Image.asset(MyAssets.clock, height: 20, width: 20))
+                                    ],
+                                  ))))
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: Colors.blueGrey),
+                          child: Center(child: Text(MyStrings.breakTime.tr, style: MyColors.white.semiBold16)),
+                        )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: Image.asset(MyAssets.breakTime, height: 30, width: 30),
+                    ),
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 10.0),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey.shade400),
+                              borderRadius: BorderRadius.circular(5.0)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Obx(() => Text("${controller.clientUpdateStatusModel.value.clientBreakTime} minutes",
+                                  style: MyColors.l111111_dwhite(controller.context!).semiBold16)),
+                              InkWell(
+                                  onTap: controller.onBreakTimePressed,
+                                  child: Image.asset(MyAssets.clock, height: 20, width: 20))
+                            ],
+                          ),
+                        ))
+                  ],
+                ),
+                SizedBox(height: 30.h),
+                TextFormField(
+                  controller: controller.tecComment,
+                  keyboardType: TextInputType.multiline,
+                  minLines: 1,
+                  maxLines: null,
+                  cursorColor: MyColors.c_C6A34F,
+                  style: MyColors.l111111_dwhite(controller.context!).regular14,
+                  decoration: MyDecoration.inputFieldDecoration(
+                    context: controller.context!,
+                    label: MyStrings.comments.tr,
+                  ),
+                  validator: (String? value) => Validators.emptyValidator(
+                    value?.trim(),
+                    MyStrings.required.tr,
+                  ),
+                ),
+                SizedBox(height: 30.h),
+                CustomButtons.button(
+                  height: 52.h,
+                  onTap: () => controller.onUpdatePressed(index),
+                  text: MyStrings.update.tr,
+                  margin: EdgeInsets.zero,
+                  customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+                ),
+                SizedBox(height: 30.h),
+              ],
+            ),
+          ),
+        ),
+      );
 }
