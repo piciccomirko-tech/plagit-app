@@ -159,7 +159,7 @@ class CustomDialogue {
                 child: Material(
                   type: MaterialType.transparency,
                   child: Container(
-                    height: Get.height * (description.length < 100 ? .32 : .45),
+                   height: Get.height * .45,
                     width: Get.height * .4,
                     decoration: BoxDecoration(
                       color: MyColors.lightCard(context),
@@ -169,6 +169,7 @@ class CustomDialogue {
                       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(height: 25.h),
                           Text(

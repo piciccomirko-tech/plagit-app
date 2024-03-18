@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
+import 'package:intl/intl.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/common/values/my_color.dart';
@@ -10,6 +11,7 @@ import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/common/widgets/custom_dialog.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/no_item_found.dart';
+import 'package:mh/app/models/check_in_check_out_details.dart';
 
 import '../controllers/employee_payment_history_controller.dart';
 
@@ -159,9 +161,12 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               style: TextStyle(
                   color: controller.employeePaymentHistory(index).status == 'DUE' ? Colors.red : Colors.green,
                   fontWeight: FontWeight.bold),
-            )
-        ),
-        _cell(width: 100.w,  widget: _action(index)),
+            )),
+        _cell(
+            width: 100.w,
+            widget: _action(
+                index: index,
+                checkInCheckOutDetails: controller.employeePaymentHistoryList[index].checkInCheckOutDetails!)),
       ],
     );
   }
@@ -174,24 +179,26 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
         ),
       );
 
-  Widget _action(int index) => controller.getComment(index).isEmpty
-      ? const Icon(
-    Icons.check_circle,
-    color: Colors.green,
-    size: 22,
-  )
-      : GestureDetector(
-    onTap: () {
-      CustomDialogue.information(
-        context: controller.context!,
-        title: MyStrings.restaurantReport.tr,
-        description: controller.getComment(index),
-      );
-    },
-    child: const Icon(
-      Icons.info,
-      color: Colors.blue,
-      size: 22,
-    ),
-  );
+  Widget _action({required int index, required CheckInCheckOutDetails checkInCheckOutDetails}) =>
+      controller.getComment(index).isEmpty
+          ? const Icon(
+              Icons.check_circle,
+              color: Colors.green,
+              size: 22,
+            )
+          : GestureDetector(
+              onTap: () {
+                CustomDialogue.information(
+                  context: controller.context!,
+                  title: MyStrings.restaurantReport.tr,
+                  description:
+                      "CheckIn Time: ${DateFormat('HH: mm: ss').format(checkInCheckOutDetails.clientCheckInTime!)}\nCheckOut Time: ${DateFormat('HH: mm: ss').format(checkInCheckOutDetails.clientCheckOutTime!)}\nBreak Time: ${checkInCheckOutDetails.clientBreakTime} min\nComment: ${checkInCheckOutDetails.clientComment}",
+                );
+              },
+              child: const Icon(
+                Icons.info,
+                color: Colors.orange,
+                size: 22,
+              ),
+            );
 }

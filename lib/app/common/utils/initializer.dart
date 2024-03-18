@@ -76,15 +76,14 @@ class Initializer {
   }
 
   void _initAppsFlyerSdk() async {
-    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    //  PackageInfo packageInfo = await PackageInfo.fromPlatform();
     AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
         afDevKey: "HJkjJuWPSncZJfMu6eyCpU",
         showDebug: true,
-        appId: "com.invain.mh",
+        appId: GetPlatform.isAndroid ? "com.invain.mh" : "6446052294",
         timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
         disableAdvertisingIdentifier: false, // Optional field
-        disableCollectASA: false, //Optional field
-        manualStart: true); // Optional field
+        disableCollectASA: false); // Optional field
 
     AppsflyerSdk appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
 
