@@ -31,18 +31,20 @@ class CustomNetworkImage extends StatelessWidget {
           ),
         ),
         errorWidget: (context, url, error) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: const Icon(Icons.error, color: Colors.red),
                 ),
-                child: const Icon(Icons.error, color: Colors.red),
-              ),
-            ],
+              ],
+            ),
           );
         },
       ),

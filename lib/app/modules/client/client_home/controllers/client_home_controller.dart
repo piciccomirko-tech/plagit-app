@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:mh/app/common/widgets/custom_menu.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/dropdown_item.dart';
@@ -64,6 +66,14 @@ class ClientHomeController extends GetxController {
 
   void onMhEmployeeClick() {
     Get.toNamed(Routes.mhEmployees);
+  }
+
+  void onProfileTapped({required BuildContext context}){
+    CustomMenu.accountMenu(
+      context,
+      onSettingsTap: onSettingsClick,
+      onProfileTap: onProfileClick,
+    );
   }
 
   void onDashboardClick() {

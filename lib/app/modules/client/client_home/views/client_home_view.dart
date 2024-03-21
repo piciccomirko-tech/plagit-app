@@ -4,15 +4,14 @@ import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
 import 'package:mh/app/models/dropdown_item.dart';
 import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
+import 'package:mh/app/modules/client/client_home/widgets/client_bottom_nav_bar_widget.dart';
 import 'package:mh/app/modules/client/client_home/widgets/client_home_items_widget.dart';
 import 'package:mh/app/modules/client/client_home/widgets/position_search_field_widget.dart';
+import 'package:mh/app/modules/client/employee_details/widgets/custom_image_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
 
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
-import '../../../../common/widgets/custom_badge.dart';
-import '../../../../common/widgets/custom_help_support.dart';
-import '../../../../common/widgets/custom_menu.dart';
 import '../controllers/client_home_controller.dart';
 
 class ClientHomeView extends GetView<ClientHomeController> {
@@ -25,6 +24,16 @@ class ClientHomeView extends GetView<ClientHomeController> {
     return WillPopScope(
       onWillPop: () async => Utils.appExitConfirmation(context),
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50.0)
+          ),
+          backgroundColor: MyColors.c_C6A34F,
+          onPressed: controller.refreshPage,
+          child: const Icon(CupertinoIcons.refresh, color: Colors.white, size: 25),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: const ClientBottomNavBarWidget(),
         appBar: CustomAppbar.appbar(
           context: context,
           title: MyStrings.features.tr,
@@ -37,147 +46,115 @@ class ClientHomeView extends GetView<ClientHomeController> {
             Obx(() => controller.notificationsController.unreadCount.value == 0
                 ? InkResponse(onTap: () => Get.toNamed(Routes.notifications), child: const Icon(CupertinoIcons.bell))
                 : InkResponse(
-              onTap: () => Get.toNamed(Routes.notifications),
-              child: Badge(
-                backgroundColor: MyColors.c_C92C1A,
-                label: Obx(() {
-                  return Text(
-                      controller.notificationsController.unreadCount.value == 20
-                          ? '20+'
-                          : controller.notificationsController.unreadCount.toString(),
-                      style: MyColors.white.semiBold12);
-                }),
-                child: const Icon(CupertinoIcons.bell, size: 20),
-              ),
-            )),
-            const SizedBox(width: 20),
-            InkResponse(
-              onTap: () {
-                CustomMenu.accountMenu(
-                  context,
-                  onSettingsTap: controller.onSettingsClick,
-                  onProfileTap: controller.onProfileClick,
-                );
-              },
-              child: const Icon(
-                CupertinoIcons.person,
-                size: 20
-              ),
-            ),
-            const SizedBox(width: 10)
+                    onTap: () => Get.toNamed(Routes.notifications),
+                    child: Badge(
+                      backgroundColor: MyColors.c_C92C1A,
+                      label: Obx(() {
+                        return Text(
+                            controller.notificationsController.unreadCount.value == 20
+                                ? '20+'
+                                : controller.notificationsController.unreadCount.toString(),
+                            style: MyColors.white.semiBold12);
+                      }),
+                      child: const Icon(CupertinoIcons.bell, size: 20),
+                    ),
+                  )),
+            const SizedBox(width: 30),
           ],
         ),
-        body: SizedBox(
-          height: double.infinity,
-          child: Stack(
-            children: [
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: controller.scrollController,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 20.h),
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 10,
-                                  child: _restaurantName(MyStrings.hiRestaurant.trParams({
-                                    "restaurantName":
-                                        controller.appController.user.value.client?.restaurantName ?? "owner of the",
-                                  })),
-                                ),
-                                const SizedBox(width: 10),
-                                Expanded(flex: 1, child: RefreshWidget(onTap: controller.refreshPage))
-                              ],
-                            ),
-                            SizedBox(height: 20.h),
-
-                            _promotionText,
-
-                            SizedBox(height: 30.h),
-                            const PositionSearchFieldWidget(),
-                            _suggestedEmployees,
-
-                            // _dueInvoice,
-
-                            Obx(
-                              () => Visibility(
-                                visible: controller.shortlistController.totalShortlisted.value > 0,
-                                child: SizedBox(
-                                  height: 20.h,
-                                ),
+        body: Stack(
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: controller.scrollController,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 20.h),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                                colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
                               ),
-                            ),
-
-                            _employeeShortlisted,
-
-                            SizedBox(height: 30.h),
-                            const ClientHomeItemsWidget()
-                          ],
+                            borderRadius: BorderRadius.circular(10.0)
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _restaurantName(MyStrings.hiRestaurant.trParams({
+                                "restaurantName":
+                                controller.appController.user.value.client?.restaurantName ?? "owner of the",
+                              })),
+                              SizedBox(height: 10.h),
+                              _promotionText,
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    Stack(
-                      children: [
-                        CustomHelpSupport(
-                          onTap: controller.onHelpAndSupportClick,
-                          title: MyStrings.helpSupport.tr,
-                          asset: MyAssets.helpSupport,
-                        ),
-                        Obx(
-                          () => Positioned(
-                            top: 0,
-                            right: 5,
-                            child: Visibility(
-                              visible: controller.unreadMsgFromAdmin.value != 0,
-                              child: CustomBadge(
-                                controller.unreadMsgFromAdmin.value.toString(),
+                          SizedBox(height: 20.h),
+
+                          const PositionSearchFieldWidget(),
+                          _suggestedEmployees,
+
+                          // _dueInvoice,
+
+                          Obx(
+                            () => Visibility(
+                              visible: controller.shortlistController.totalShortlisted.value > 0,
+                              child: SizedBox(
+                                height: 20.h,
                               ),
                             ),
                           ),
-                        ),
-                      ],
+
+                          _employeeShortlisted,
+
+                          SizedBox(height: 20.h),
+                          const ClientHomeItemsWidget()
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 20.h),
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 20.h),
+                ],
               ),
-              Positioned.fill(
-                  child: Align(
-                      alignment: Alignment.topCenter,
-                      child: Obx(() => Visibility(
-                          visible: controller.positionList.isNotEmpty,
-                          child: Container(
-                            margin: const EdgeInsets.only(top: 80.0, left: 15.0, right: 15.0),
-                            height: MediaQuery.of(context).size.height * 0.35,
-                            decoration: MyDecoration.cardBoxDecoration(context: context),
-                            child: ListView.builder(
-                                itemCount: controller.positionList.length,
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  DropdownItem position = controller.positionList[index];
-                                  return ListTile(
-                                    onTap: () => controller.onSearchItemTap(position: position),
-                                    leading: SizedBox(
-                                      width: 20.w,
-                                      height: 20.w,
-                                      child: CustomNetworkImage(url: (position.logo ?? '').uniformImageUrl),
-                                    ),
-                                    title:
-                                        Text(position.name ?? '', style: MyColors.l111111_dwhite(context).semiBold16),
-                                    trailing: const Icon(CupertinoIcons.arrow_up_left, color: MyColors.c_C6A34F),
-                                  );
-                                }),
-                          )))))
-            ],
-          ),
+            ),
+            Positioned.fill(
+                child: Align(
+                    alignment: Alignment.topCenter,
+                    child: Obx(() => Visibility(
+                        visible: controller.positionList.isNotEmpty,
+                        child: Container(
+                          margin: const EdgeInsets.only(top: 80.0, left: 15.0, right: 15.0),
+                          height: MediaQuery.of(context).size.height * 0.35,
+                          decoration: MyDecoration.cardBoxDecoration(context: context),
+                          child: ListView.builder(
+                              itemCount: controller.positionList.length,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                DropdownItem position = controller.positionList[index];
+                                return ListTile(
+                                  onTap: () => controller.onSearchItemTap(position: position),
+                                  leading: SizedBox(
+                                    width: 20.w,
+                                    height: 20.w,
+                                    child: CustomNetworkImage(url: (position.logo ?? '').uniformImageUrl),
+                                  ),
+                                  title:
+                                      Text(position.name ?? '', style: MyColors.l111111_dwhite(context).semiBold16),
+                                  trailing: const Icon(CupertinoIcons.arrow_up_left, color: MyColors.c_C6A34F),
+                                );
+                              }),
+                        )))))
+          ],
         ),
       ),
     );
@@ -187,12 +164,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
         name,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: MyColors.l111111_dwhite(controller.context!).semiBold20,
+        style: MyColors.white.semiBold18,
       );
 
   Widget get _promotionText => Text(
         MyStrings.exploreTheFeaturesOfMhAppBelow.tr,
-        style: MyColors.l777777_dtext(controller.context!).medium15,
+        style: MyColors.white.medium15,
       );
 
   Widget get _suggestedEmployees => Obx(
@@ -266,7 +243,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${controller.shortlistController.totalShortlisted.value} ${controller.shortlistController.totalShortlisted.value > 1?MyStrings.employees.tr:MyStrings.employee.tr} ${MyStrings.areShortListed.tr}",
+                          "${controller.shortlistController.totalShortlisted.value} ${controller.shortlistController.totalShortlisted.value > 1 ? MyStrings.employees.tr : MyStrings.employee.tr} ${MyStrings.areShortListed.tr}",
                           style: MyColors.white.semiBold16,
                         ),
                         SizedBox(height: 7.h),

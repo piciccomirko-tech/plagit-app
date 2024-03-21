@@ -38,6 +38,7 @@ class ClientSelfProfileController extends GetxController {
 
   late BankCardModel bankCardModel;
 
+
   @override
   void onInit() {
     super.onInit();
@@ -160,4 +161,20 @@ class ClientSelfProfileController extends GetxController {
       },
     );
   }
+
+  String formatString({required String original}) {
+    String formatted = '';
+    int index = 0;
+
+    for (int i = 0; i < original.length; i++) {
+      if (index == 4 || index == 8 || index == 12) {
+        formatted += '  ';
+      }
+      formatted += original[i];
+      index++;
+    }
+
+    return formatted;
+  }
+
 }

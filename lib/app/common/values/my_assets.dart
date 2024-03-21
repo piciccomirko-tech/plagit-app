@@ -31,7 +31,11 @@ class MyAssets {
   static const flag = "assets/images/flag.png";
   static const review = "assets/images/review.png";
   static const license = "assets/images/license.png";
+  static const visa = "assets/images/visa.png";
   static const height = "assets/icons/height.png";
+  static const home = "assets/icons/home.png";
+  static const user = "assets/icons/user.png";
+  static const support = "assets/icons/support.png";
   static const weight = "assets/icons/weight.png";
   static const job = "assets/icons/job.png";
   static const checkIn = "assets/icons/checkin.png";

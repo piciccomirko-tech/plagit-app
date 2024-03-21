@@ -11,9 +11,9 @@ dependencies:
 
   html: ^0.15.4
 
-  appsflyer_sdk: ^6.13.0
+  flip_card: ^0.7.0
 
-  package_info_plus: ^4.2.0
+  appsflyer_sdk: ^6.13.0
 
   # better error handle helper
   dartz: ^0.10.1

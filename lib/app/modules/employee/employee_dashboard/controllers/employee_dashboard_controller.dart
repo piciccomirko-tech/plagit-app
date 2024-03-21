@@ -43,7 +43,6 @@ class EmployeeDashboardController extends GetxController {
       Utils.errorDialog(context!, customError..onRetry = _fetchCheckInOutHistory);
     }, (CheckInCheckOutHistory checkInCheckOutHistory) async {
       history.value = checkInCheckOutHistory.checkInCheckOutHistory ?? [];
-      // Calculate total pages based on the total items and page size
     });
   }
 
