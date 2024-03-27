@@ -11,7 +11,7 @@ class CustomAppbarBackButton extends StatelessWidget {
         height: 25,
         width: 25,
         decoration: BoxDecoration(
-          color: MyColors.c_DDBD68,
+          color: MyColors.c_C6A34F,
           borderRadius: BorderRadius.circular(3.86),
         ),
         child: const Center(

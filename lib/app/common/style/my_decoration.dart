@@ -95,11 +95,22 @@ class MyDecoration {
   static BoxDecoration cardBoxDecoration({
     required BuildContext context,
   }) => BoxDecoration(
-        color: MyColors.lightCard(context),
+    gradient: LinearGradient(
+        stops: [
+          0.3,
+          0.7
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          MyColors.lightCard(context),
+          MyColors.c_C6A34F.withOpacity(0.1),
+        ]),
+        //color: MyColors.lightCard(context),
         borderRadius: BorderRadius.circular(10.0),
-        border: Border.all(
+      /*  border: Border.all(
           width: .5,
           color: MyColors.c_A6A6A6,
-        ),
+        ),*/
       );
 }

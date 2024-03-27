@@ -49,11 +49,11 @@ class CardAddController extends GetxController {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) async {
-            if (url.startsWith("https://mhpremierstaffingsolutions.com/?name=terms")) {
+            if (url.startsWith("https://plagit.com/?name=terms")) {
               Get.find<ClientTermsConditionForHireController>().hireConfirm();
-            } else if (url.startsWith("https://mhpremierstaffingsolutions.com/?name=signUp")) {
+            } else if (url.startsWith("https://plagit.com/?name=signUp")) {
               Get.offAllNamed(Routes.login);
-            } else if(url.startsWith("https://mhpremierstaffingsolutions.com/?name=clientProfile")) {
+            } else if(url.startsWith("https://plagit.com/?name=clientProfile")) {
               Get.offAllNamed(Routes.clientHome);
             }
           },

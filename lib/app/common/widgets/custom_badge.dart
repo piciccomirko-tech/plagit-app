@@ -9,9 +9,9 @@ class CustomBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      decoration:  BoxDecoration(
+      decoration:  const BoxDecoration(
         shape: BoxShape.circle,
-        color: MyColors.c_00C92C,
+        color: MyColors.c_C6A34F,
       ),
       child: Text(
         text,

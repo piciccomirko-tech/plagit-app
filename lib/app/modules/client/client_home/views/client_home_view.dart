@@ -1,13 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:mh/app/common/app_info/app_info.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
 import 'package:mh/app/common/widgets/custom_network_image.dart';
-import 'package:mh/app/common/widgets/refresh_widget.dart';
 import 'package:mh/app/models/dropdown_item.dart';
 import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/modules/client/client_home/widgets/client_bottom_nav_bar_widget.dart';
 import 'package:mh/app/modules/client/client_home/widgets/client_home_items_widget.dart';
 import 'package:mh/app/modules/client/client_home/widgets/position_search_field_widget.dart';
-import 'package:mh/app/modules/client/employee_details/widgets/custom_image_widget.dart';
 import 'package:mh/app/routes/app_pages.dart';
 
 import '../../../../common/utils/exports.dart';
@@ -48,7 +47,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                 : InkResponse(
                     onTap: () => Get.toNamed(Routes.notifications),
                     child: Badge(
-                      backgroundColor: MyColors.c_C92C1A,
+                      backgroundColor: MyColors.c_C6A34F,
                       label: Obx(() {
                         return Text(
                             controller.notificationsController.unreadCount.value == 20
@@ -56,7 +55,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                 : controller.notificationsController.unreadCount.toString(),
                             style: MyColors.white.semiBold12);
                       }),
-                      child: const Icon(CupertinoIcons.bell, size: 20),
+                      child: const Icon(CupertinoIcons.bell, size: 21),
                     ),
                   )),
             const SizedBox(width: 30),
@@ -181,7 +180,11 @@ class ClientHomeView extends GetView<ClientHomeController> {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                color: Colors.purple.withOpacity(.6),
+                gradient: const LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
+                ),
               ),
               child: Row(
                 children: [
@@ -196,7 +199,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                         ),
                         SizedBox(height: 7.h),
                         Text(
-                          "MH ${MyStrings.suggestYou.tr} ${controller.countSuggestedEmployees()} ${MyStrings.employees.tr}",
+                          "${AppInfo.appName.toUpperCase()} ${MyStrings.suggestYou.tr} ${controller.countSuggestedEmployees()} ${MyStrings.employees.tr}",
                           style: MyColors.white.regular12,
                         ),
                       ],
@@ -207,9 +210,9 @@ class ClientHomeView extends GetView<ClientHomeController> {
                   ),
                   Container(
                     padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.purple.withOpacity(.45),
+                      color: Colors.blueGrey,
                     ),
                     child: const Icon(
                       Icons.arrow_forward,
@@ -232,8 +235,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.centerRight,
+                    end: Alignment.centerLeft,
+                    colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
+                  ),
                 borderRadius: BorderRadius.circular(10.0),
-                color: MyColors.c_C6A34F.withOpacity(.6),
               ),
               child: Row(
                 children: [
@@ -261,7 +268,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: MyColors.c_C6A34F,
+                      color: Colors.blueGrey,
                     ),
                     child: const Icon(
                       Icons.arrow_forward,

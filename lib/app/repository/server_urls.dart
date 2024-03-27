@@ -19,7 +19,7 @@ class ServerUrls {
   static String serverTestUrlUser = '$_getTestServerUrl$_apiVersion/';
 
   static String get _getLiveServerUrl {
-    const String prodUrl = "https://server.mhpremierstaffingsolutions.com/";
+    const String prodUrl = "https://server.plagit.com/";
 
     return _url(prodUrl);
   }

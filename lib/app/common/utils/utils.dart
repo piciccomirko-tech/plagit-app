@@ -280,7 +280,7 @@ class Utils {
                 pw.Image(image!, height: 120, width: 120),
                 pw.SizedBox(height: 30), // Add some spacing between image and text
                 pw.Text(
-                  'MH Premier Staffing Solutions Ltd',
+                  'Plagit',
                   style: pw.TextStyle(
                     color: PdfColor.fromHex('C6A34F'), // Set the text color to blue.
                     fontSize: 30,
@@ -337,10 +337,10 @@ class Utils {
                       flex: 1,
                       child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
                         pw.Text('Bank Transfer:', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                        pw.Text('MH Premier Staffing Solutions'),
+                        pw.Text('Plagit'),
                         pw.Text('48 Warwick St Regent Street W1B 5AW London'),
                         pw.Text('+44 20 3980 9360'),
-                        pw.Text('info@mhpremierstaffingsolutions.com'),
+                        pw.Text('info@plagit.com'),
                       ])),
                   pw.Expanded(flex: 1, child: pw.Wrap()),
                 ]),
@@ -407,7 +407,7 @@ class Utils {
                     ])),
                 pw.SizedBox(height: 30),
                 pw.Text(
-                  'MH Premier Staffing Solutions Ltd',
+                  'Plagit',
                   style: const pw.TextStyle(
                     color: PdfColors.black, // Set the text color to blue.
                     fontSize: 30,
@@ -421,7 +421,7 @@ class Utils {
                         pw.Text('48 Warwick St, Regent St'),
                         pw.Text('London, W1B SAW'),
                         pw.Text('VAT number: 450105738'),
-                        pw.Text('account@mhpremierstaffingsolutions.com'),
+                        pw.Text('account@plagit.com'),
                         pw.Text('07960966110')
                       ])),
                   pw.Expanded(flex: 1, child: pw.Wrap())
@@ -529,7 +529,7 @@ class Utils {
                         pw.Expanded(
                             flex: 5,
                             child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                              pw.Text('MH PREMIER STAFFING SOLUTIONS'),
+                              pw.Text('PLAGIT'),
                               pw.Text('Account Number: 06418279'),
                               pw.Text('Sort Code: 04-29-09'),
                               pw.Text('Beneficiary Address: 48, Warwick Street, W1B SAW, London, United Kingdom'),
@@ -552,7 +552,7 @@ class Utils {
                             crossAxisAlignment: pw.CrossAxisAlignment.center,
                             mainAxisAlignment: pw.MainAxisAlignment.center,
                             children: [
-                              pw.Text('Make all cheques payable to MH Premier Staffing Solutions Ltd'),
+                              pw.Text('Make all cheques payable to Plagit'),
                               pw.SizedBox(height: 10),
                               pw.Text('THANK YOU FOR YOUR BUSINESS'),
                             ]))),

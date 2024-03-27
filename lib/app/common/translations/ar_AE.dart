@@ -58,7 +58,6 @@ Map<String, String> arabic = <String, String>{
   MyStrings.newPasswordAndConfirmPasswordNotMatch: "كلمة المرور غير متطابقة",
   MyStrings.skip: "تخطى",
   MyStrings.deviceNotSupport: "الجهاز غير مدعوم",
-  MyStrings.premierStaffingSolutions: "PREMIER STAFFING SOLUTIONS",
   MyStrings.login: "تسجيل الدخول",
   MyStrings.signUp: "التسجيل",
   MyStrings.welcomeBack: "مرحبًا مرة أخرى!",

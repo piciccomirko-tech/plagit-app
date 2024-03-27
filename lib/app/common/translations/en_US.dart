@@ -45,7 +45,6 @@ Map<String, String> english = <String, String>{
   MyStrings.newPasswordAndConfirmPasswordNotMatch: "Password not match",
   MyStrings.skip: "Skip",
   MyStrings.deviceNotSupport: "Device not support",
-  MyStrings.premierStaffingSolutions: "PREMIER STAFFING SOLUTIONS",
   MyStrings.agree: "I Agree",
   MyStrings.login: "Login",
   MyStrings.signUp: "Sign Up",

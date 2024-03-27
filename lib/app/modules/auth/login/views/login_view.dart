@@ -57,8 +57,8 @@ class LoginView extends GetView<LoginController> {
             ),
             Image.asset(
               MyAssets.logo,
-              width: 112.w,
-              height: 100.h,
+              width: 160.w,
+              height: 160.h,
             ),
             SizedBox(height: 45.h),
             _welcomeBack,

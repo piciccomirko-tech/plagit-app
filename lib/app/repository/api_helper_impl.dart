@@ -1392,7 +1392,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   @override
   EitherModel<SessionIdResponseModel> getSessionId({required String email, required String fromWhere}) async {
     String url = "users/get-session";
-    String requestBody = jsonEncode({"email": email, "returnUrl": "https://mhpremierstaffingsolutions.com?name=$fromWhere"});
+    String requestBody = jsonEncode({"email": email, "returnUrl": "https://plagit.com?name=$fromWhere"});
     Response response = await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);
     if (response.statusCode == null) await post(url, requestBody);

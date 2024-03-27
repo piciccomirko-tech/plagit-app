@@ -12,7 +12,7 @@
 
 
     <application
-        android:label="MH Premier"
+        android:label="Plagit"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">

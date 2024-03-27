@@ -51,7 +51,6 @@ class MyStrings {
 
   static const String deviceNotSupport = "deviceNotSupport";
   static const String skip = "skip";
-  static const String premierStaffingSolutions = "PREMIER STAFFING SOLUTIONS";
   static const String login = "login";
   static const String agree = "iAgree";
 

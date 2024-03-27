@@ -4,7 +4,7 @@ import '../../enums/server_url.dart';
 class AppInfo {
   AppInfo._();
 
-  static const String appName = "MH Premier Staffing Solutions";
+  static const String appName = "Plagit";
 
   static const String version = "2.6.1";
 

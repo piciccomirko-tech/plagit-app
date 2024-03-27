@@ -108,7 +108,6 @@ Map<String, String> italian = <String, String>{
   MyStrings.newPasswordAndConfirmPasswordNotMatch: "La password non corrisponde",
   MyStrings.skip: "Salta",
   MyStrings.deviceNotSupport: "Dispositivo non supportato",
-  MyStrings.premierStaffingSolutions: "SOLUZIONI DI ASSUNZIONE DI PERSONALE PREMIER",
   MyStrings.login: "Accedi",
   MyStrings.signUp: "Iscriviti",
   MyStrings.welcomeBack: "Bentornato!",

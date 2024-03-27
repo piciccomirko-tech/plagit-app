@@ -50,7 +50,7 @@ class EmployeeRegisterSuccessView extends GetView<EmployeeRegisterSuccessControl
                       const SizedBox(height: 15),
                       Text(
                         controller.appController.user.value.isClient
-                            ? "Welcome to MH premier staffing solution"
+                            ? "Welcome to Plagit"
                             : MyStrings.hrContact.tr,
                         textAlign: TextAlign.center,
                         style: MyColors.l7B7B7B_dtext(context).regular15,

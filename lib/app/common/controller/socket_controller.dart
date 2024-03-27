@@ -20,7 +20,7 @@ class SocketController extends GetxController {
   }
 
   void connectToSocket() {
-    socket = skt.io("wss://server.mhpremierstaffingsolutions.com", <String, dynamic>{
+    socket = skt.io("wss://server.plagit.com", <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": true,
     });

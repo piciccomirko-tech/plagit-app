@@ -1,3 +1,5 @@
+import 'package:mh/app/common/app_info/app_info.dart';
+
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/bottom_curve_path.dart';
 import '../../../../common/widgets/horizontal_divider_with_text.dart';
@@ -60,8 +62,8 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
           SizedBox(height: 48.h),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 37.0.w),
-            child: const HorizontalDividerWithText(
-              text: MyStrings.premierStaffingSolutions,
+            child:  HorizontalDividerWithText(
+              text: AppInfo.appName.toUpperCase(),
             ),
           ),
           SizedBox(height: 48.h),
