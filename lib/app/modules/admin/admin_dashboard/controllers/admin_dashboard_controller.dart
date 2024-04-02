@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:mh/app/common/widgets/custom_loader.dart';
+import 'package:mh/app/modules/admin/admin_dashboard/models/update_refund_model.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/current_hired_employees.dart';
 
 import '../../../../common/controller/app_controller.dart';
@@ -33,12 +35,13 @@ class AdminDashboardController extends GetxController {
   RxList<String> restaurants = ["ALL"].obs;
   RxBool clientLoading = true.obs;
 
-
   RxInt totalWorkingTimeInMinutes = 0.obs;
   RxDouble amount = 0.0.obs;
 
   TextEditingController tecTime = TextEditingController();
   TextEditingController tecComment = TextEditingController();
+  TextEditingController tecRemark = TextEditingController();
+  TextEditingController tecRefundAmount = TextEditingController();
 
   List<String> complainType = [
     "Check In Before",
@@ -103,10 +106,7 @@ class AdminDashboardController extends GetxController {
   Future<void> _fetchClients() async {
     clientLoading.value = true;
 
-    await _apiHelper
-        .getAllUsersFromAdmin(
-      requestType: "CLIENT")
-        .then((response) {
+    await _apiHelper.getAllUsersFromAdmin(requestType: "CLIENT").then((response) {
       clientLoading.value = false;
 
       response.fold((CustomError customError) {
@@ -152,6 +152,7 @@ class AdminDashboardController extends GetxController {
 
     return null;
   }
+
   void onComplainTypeChange(int index, String? type) {
     selectedComplainType = type!;
 
@@ -160,7 +161,7 @@ class AdminDashboardController extends GetxController {
 
   void setUpdatedDate(int index) {
     CheckInCheckOutHistoryElement? element = getCheckInOutDate(index);
-    if(element != null) {
+    if (element != null) {
       tecComment.text = element.checkInCheckOutDetails?.clientComment ?? "";
       tecTime.clear();
 
@@ -169,7 +170,7 @@ class AdminDashboardController extends GetxController {
         "Check In After",
       ];
 
-      if(element.checkInCheckOutDetails?.checkOutTime != null) {
+      if (element.checkInCheckOutDetails?.checkOutTime != null) {
         complainType = [
           "Check In Before",
           "Check In After",
@@ -179,52 +180,79 @@ class AdminDashboardController extends GetxController {
         ];
       }
 
-      if(selectedComplainType == complainType[0] || selectedComplainType == complainType[1]) {
-        if(element.checkInCheckOutDetails?.clientCheckInTime != null) {
-
-          int dif = element.checkInCheckOutDetails!.clientCheckInTime!.difference(element.checkInCheckOutDetails!.checkInTime!).inMinutes;
-          if(selectedComplainType == complainType[0]) {
-            if(dif < 0) {
+      if (selectedComplainType == complainType[0] || selectedComplainType == complainType[1]) {
+        if (element.checkInCheckOutDetails?.clientCheckInTime != null) {
+          int dif = element.checkInCheckOutDetails!.clientCheckInTime!
+              .difference(element.checkInCheckOutDetails!.checkInTime!)
+              .inMinutes;
+          if (selectedComplainType == complainType[0]) {
+            if (dif < 0) {
               tecTime.text = dif.abs().toString();
             } else {
               tecTime.text = "";
             }
           } else {
-            if(dif > 0) {
+            if (dif > 0) {
               tecTime.text = dif.abs().toString();
             } else {
               tecTime.text = "";
             }
           }
-
         }
-      }
-      else if(selectedComplainType == complainType[2] || selectedComplainType == complainType[3]) {
-        if(element.checkInCheckOutDetails?.clientCheckOutTime != null) {
+      } else if (selectedComplainType == complainType[2] || selectedComplainType == complainType[3]) {
+        if (element.checkInCheckOutDetails?.clientCheckOutTime != null) {
+          var dif = element.checkInCheckOutDetails!.clientCheckOutTime!
+              .difference(element.checkInCheckOutDetails!.checkOutTime!)
+              .inMinutes;
 
-          var dif = element.checkInCheckOutDetails!.clientCheckOutTime!.difference(element.checkInCheckOutDetails!.checkOutTime!).inMinutes;
-
-          if(selectedComplainType == complainType[2]) {
-            if(dif < 0) {
+          if (selectedComplainType == complainType[2]) {
+            if (dif < 0) {
               tecTime.text = dif.abs().toString();
             } else {
               tecTime.text = "";
             }
           } else {
-            if(dif > 0) {
+            if (dif > 0) {
               tecTime.text = dif.abs().toString();
             } else {
               tecTime.text = "";
             }
           }
-
         }
-      }
-      else if(selectedComplainType == complainType.last) {
+      } else if (selectedComplainType == complainType.last) {
         tecTime.text = (element.checkInCheckOutDetails?.clientBreakTime ?? 0).toString();
       }
     }
-
   }
 
+  void submitRefundAmount({required int index}) {
+    if(tecRefundAmount.text.isEmpty){
+      Utils.showSnackBar(message: "Refund amount is required", isTrue: false);
+    }
+    if(tecRemark.text.isEmpty){
+      Utils.showSnackBar(message: "Remark is required", isTrue: false);
+    }
+    else{
+      CustomLoader.show(context!);
+      UpdateRefundModel updateRefundModel = UpdateRefundModel(
+          id: getCheckInOutDate(index)?.id ?? "",
+          refundAmount: double.parse(tecRefundAmount.text.trim()),
+          remark: tecRemark.text);
+
+      _apiHelper.updateRefund(updateRefundModel: updateRefundModel).then((responseData) {
+        CustomLoader.hide(context!);
+        Utils.unFocus();
+        Get.back();
+        responseData.fold((CustomError customError) {
+          Utils.errorDialog(context!, customError);
+        }, (response) {
+          if ([200, 201].contains(response.statusCode)) {
+            Utils.showSnackBar(message: response.message ?? "", isTrue: true);
+          } else {
+            Utils.showSnackBar(message: response.message ?? "", isTrue: false);
+          }
+        });
+      });
+    }
+  }
 }

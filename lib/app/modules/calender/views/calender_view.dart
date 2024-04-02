@@ -22,7 +22,7 @@ class CalenderView extends GetView<CalenderController> {
       body: Obx(() {
         if (controller.dateDataLoading.value == true) {
           return Center(
-              child: Lottie.asset(MyAssets.lottie.calenderLoading, fit: BoxFit.cover, height: 200.w, width: 200.w));
+              child: Lottie.asset(MyAssets.lottie.calenderLoading, fit: BoxFit.cover));
         } else {
           return Stack(
             children: [

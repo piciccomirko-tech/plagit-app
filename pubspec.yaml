@@ -1,9 +1,9 @@
 name: mh
-version: 2.6.2+62
+version: 2.6.3+63
 publish_to: none
 description: A new Flutter project.
 environment:
-  sdk: '>=3.3.1 <4.0.0'
+  sdk: '>=3.3.3 <4.0.0'
 
 dependencies:
 
@@ -46,7 +46,7 @@ dependencies:
   permission_handler: ^11.3.1
 
   # for network (specially for upload file)
-  dio: ^5.4.2
+  dio: ^5.4.2+1
 
   http_parser: ^4.0.2
 

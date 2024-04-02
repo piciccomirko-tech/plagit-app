@@ -18,7 +18,7 @@ class MyAssets {
   static const dashboard = "assets/images/dashboard.png";
   static const myEmployees = "assets/images/my_employees.png";
   static const invoicePayment = "assets/images/invoice_payment.png";
-  static const splash = "assets/images/splash.png";
+  static const splash = "assets/images/Splash.png";
   static const request = "assets/images/request.png";
   static const restaurant = "assets/images/restaurant.jpeg";
 
@@ -123,14 +123,14 @@ class _Lottie {
   String notFound = "assets/lottie/not_found.json";
   String noNotification = "assets/lottie/no_notification.json";
   String mapLoading = "assets/lottie/map_loading.json";
-  String calenderLoading = "assets/lottie/calender_loading.json";
+  String calenderLoading = "assets/lottie/calendar_loading.json";
   String hiLottie = "assets/lottie/hi.json";
   String successLottie = "assets/lottie/success.json";
   String changePasswordLottie = "assets/lottie/change_password.json";
   String inputEmailLottie = "assets/lottie/input_email.json";
   String otpCheckLottie = "assets/lottie/otp_check.json";
   String resetPasswordLottie = "assets/lottie/reset_password.json";
-  String calenderLottie = "assets/lottie/calender.json";
+  String calenderLottie = "assets/lottie/calendar.json";
 }
 
 class _PaymentMethod {

@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:horizontal_data_table/horizontal_data_table.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
@@ -53,7 +55,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                             ],
                           ),
                         ),
-                        Expanded(
+                        /* Expanded(
                           child: SizedBox(
                             height: 40.h,
                             child: Padding(
@@ -113,7 +115,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                               ),
                             ),
                           ),
-                        )
+                        )*/
                       ],
                     ),
                   ),
@@ -176,7 +178,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                       child: Expanded(
                         child: HorizontalDataTable(
                           leftHandSideColumnWidth: 90.w,
-                          rightHandSideColumnWidth: 1120.w,
+                          rightHandSideColumnWidth: 1270.w,
                           isFixedHeader: true,
                           headerWidgets: _getTitleWidget(),
                           leftSideItemBuilder: _generateFirstColumnRow,
@@ -246,6 +248,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       _getTitleItemWidget(MyStrings.totalHours.tr, 100.w),
       _getTitleItemWidget(MyStrings.amount.tr, 120.w),
       _getTitleItemWidget(MyStrings.complain.tr, 150.w),
+      _getTitleItemWidget(MyStrings.refund.tr, 150.w),
     ];
   }
 
@@ -356,10 +359,8 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               textAlign: TextAlign.center,
               style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
-        _cell(width: 150.w, widget: const CircleAvatar(
-            backgroundColor: Colors.transparent,
-            child: Icon(Icons.check_box, color: Colors.green))//_action(index)
-        ),
+        _cell(width: 150.w, widget: _action(index)),
+        _cell(width: 150.w, widget: _refundAction(index)),
       ],
     );
   }
@@ -394,71 +395,94 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           },
           child: const Icon(
             Icons.info,
-            color: Colors.blue,
+            color: Colors.deepOrange,
             size: 22,
           ),
         );
 
-  Widget _updateOption(int index) => Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(height: 19.h),
-          Center(
-            child: Container(
-              height: 4.h,
-              width: 80.w,
-              decoration: const BoxDecoration(
-                color: MyColors.c_5C5C5C,
+  Widget _refundAction(int index) => controller.getComment(index).isEmpty
+      ? const Icon(
+          Icons.check_circle,
+          color: Colors.green,
+          size: 22,
+        )
+      : GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              context: controller.context!,
+              builder: (context) => Container(
+                // padding: EdgeInsets.only(
+                //   bottom: MediaQuery.of(context).viewInsets.bottom,
+                // ),
+                color: MyColors.lightCard(context),
+                child: BottomA(_refundOption(index)),
+              ),
+            );
+          },
+          child: const Icon(
+            Icons.info,
+            color: Colors.deepOrange,
+            size: 22,
+          ),
+        );
+
+  Widget _updateOption(int index) => Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Container(
+                height: 4.h,
+                width: 70.w,
+                decoration: BoxDecoration(color: MyColors.c_C6A34F, borderRadius: BorderRadius.circular(30.0)),
               ),
             ),
-          ),
-          SizedBox(height: 30.h),
-          Row(
-            children: [
-              Expanded(
-                flex: 8,
-                child: CustomDropdown(
-                  prefixIcon: Icons.timelapse,
-                  hints: null,
-                  value: controller.selectedComplainType,
-                  items: controller.complainType,
-                  onChange: (String? value) {
-                    controller.onComplainTypeChange(index, value);
-                  },
+            SizedBox(height: 30.h),
+            Row(
+              children: [
+                Expanded(
+                  flex: 8,
+                  child: CustomDropdown(
+                    prefixIcon: Icons.timelapse,
+                    hints: null,
+                    value: controller.selectedComplainType,
+                    items: controller.complainType,
+                    onChange: (String? value) {
+                      controller.onComplainTypeChange(index, value);
+                    },
+                  ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: SizedBox(
-                  height: 58.h,
-                  child: TextFormField(
-                    readOnly: true,
-                    controller: controller.tecTime,
-                    keyboardType: TextInputType.number,
-                    cursorColor: MyColors.c_C6A34F,
-                    style: MyColors.l111111_dwhite(controller.context!).regular14,
-                    decoration: MyDecoration.inputFieldDecoration(
-                      context: controller.context!,
-                      label: "",
-                    ),
-                    validator: (String? value) => Validators.emptyValidator(
-                      value?.trim(),
-                      MyStrings.required.tr,
+                Expanded(
+                  flex: 2,
+                  child: SizedBox(
+                    height: 48.h,
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: controller.tecTime,
+                      keyboardType: TextInputType.number,
+                      cursorColor: MyColors.c_C6A34F,
+                      style: MyColors.l111111_dwhite(controller.context!).regular14,
+                      decoration: MyDecoration.inputFieldDecoration(
+                        context: controller.context!,
+                        label: "",
+                      ),
+                      validator: (String? value) => Validators.emptyValidator(
+                        value?.trim(),
+                        MyStrings.required.tr,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Text(
-                "  Min",
-                style: MyColors.l111111_dffffff(controller.context!).medium12,
-              ),
-              const SizedBox(width: 14),
-            ],
-          ),
-          SizedBox(height: 30.h),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14),
-            child: TextFormField(
+                Text(
+                  "  Min",
+                  style: MyColors.l111111_dffffff(controller.context!).medium12,
+                ),
+                const SizedBox(width: 14),
+              ],
+            ),
+            SizedBox(height: 30.h),
+            TextFormField(
               controller: controller.tecComment,
               keyboardType: TextInputType.multiline,
               minLines: 5,
@@ -468,19 +492,70 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               style: MyColors.l111111_dwhite(controller.context!).regular14,
               decoration: MyDecoration.inputFieldDecoration(
                 context: controller.context!,
-                label: "Comment",
+                label: MyStrings.comments.tr,
               ),
             ),
+            SizedBox(height: 30.h),
+            CustomButtons.button(
+              onTap: () => Get.back(),
+              text: MyStrings.close.tr,
+              margin: EdgeInsets.zero,
+              customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+            ),
+          ],
+        ),
+      );
+
+  Widget _refundOption(int index) => SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  height: 4.h,
+                  width: 70.w,
+                  decoration: BoxDecoration(color: MyColors.c_C6A34F, borderRadius: BorderRadius.circular(30.0)),
+                ),
+              ),
+              SizedBox(height: 30.h),
+              TextFormField(
+                controller: controller.tecRemark,
+                keyboardType: TextInputType.multiline,
+                minLines: 1,
+                maxLines: null,
+                cursorColor: MyColors.c_C6A34F,
+                style: MyColors.l111111_dwhite(controller.context!).regular14,
+                decoration: MyDecoration.inputFieldDecoration(
+                  context: controller.context!,
+                  label: "Remark",
+                ),
+              ),
+              SizedBox(height: 20.h),
+              TextFormField(
+                controller: controller.tecRefundAmount,
+                minLines: 1,
+                maxLines: 1,
+                readOnly: false,
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}$'))],
+                cursorColor: MyColors.c_C6A34F,
+                style: MyColors.l111111_dwhite(controller.context!).regular14,
+                decoration: MyDecoration.inputFieldDecoration(
+                  context: controller.context!,
+                  label: "Refund Amount",
+                ),
+              ),
+              SizedBox(height: 30.h),
+              CustomButtons.button(
+                onTap: () => controller.submitRefundAmount(index: index),
+                text: MyStrings.submit.tr,
+                margin: EdgeInsets.zero,
+                customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
+              ),
+            ],
           ),
-          SizedBox(height: 30.h),
-          CustomButtons.button(
-            height: 52.h,
-            onTap: () => Get.back(),
-            text: "Close",
-            margin: const EdgeInsets.symmetric(horizontal: 14),
-            customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
-          ),
-          SizedBox(height: 30.h),
-        ],
+        ),
       );
 }

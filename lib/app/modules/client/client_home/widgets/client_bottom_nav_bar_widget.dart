@@ -27,7 +27,7 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Image.asset(MyAssets.support, height: 25, width: 25),
-                  Text(MyStrings.helpSupport.tr.split("&").last)
+                  Text(MyStrings.helpSupport.tr.split("&").last, style: MyColors.l111111_dwhite(context).medium16)
                 ],
               ),
             ),
@@ -36,7 +36,7 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
               onTap: () => controller.onProfileTapped(context: context),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [Image.asset(MyAssets.user, height: 25, width: 25), Text(MyStrings.profile.tr)],
+                children: [Image.asset(MyAssets.user, height: 25, width: 25), Text(MyStrings.profile.tr, style: MyColors.l111111_dwhite(context).medium16)],
               ),
             )
           ],

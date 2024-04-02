@@ -31,7 +31,7 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
                   : InkResponse(
                 onTap: () => Get.toNamed(Routes.notifications),
                 child: Badge(
-                  backgroundColor: MyColors.c_C92C1A,
+                  backgroundColor: MyColors.c_C6A34F,
                   label: Obx(() {
                     return Text(
                         controller.notificationsController.unreadCount.value == 20

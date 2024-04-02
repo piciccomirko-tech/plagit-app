@@ -9,6 +9,7 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/translations/translations_service.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/admin/admin_dashboard/models/update_refund_model.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
@@ -1418,5 +1419,19 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
+  EitherModel<CommonResponseModel> updateRefund({required UpdateRefundModel updateRefundModel}) async {
+    String url = "check-in-check-out-histories/update-refund";
+    Response response = await put(url, updateRefundModel.toRawJson());
+    if (response.statusCode == null) await put(url, updateRefundModel.toRawJson());
+    if (response.statusCode == null) await put(url, updateRefundModel.toRawJson());
+    if (response.statusCode == null) await put(url, updateRefundModel.toRawJson());
+
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), ( CommonResponseModel r) => right(r));
   }
 }

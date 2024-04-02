@@ -75,20 +75,20 @@ class MyDecoration {
         ),
         border: OutlineInputBorder(
           borderSide: const BorderSide(width: 1),
-          borderRadius: BorderRadius.circular(10.73),
+          borderRadius: BorderRadius.circular(10),
         ),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(width: .5, color: MyColors.c_777777),
-          borderRadius: BorderRadius.circular(10.73),
+          borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(width: 1, color: MyColors.c_C6A34F),
-          borderRadius: BorderRadius.circular(10.73),
+          borderRadius: BorderRadius.circular(10),
           gapPadding: 10,
         ),
         errorBorder: OutlineInputBorder(
           borderSide: const BorderSide(width: 1, color: Colors.redAccent),
-          borderRadius: BorderRadius.circular(10.73),
+          borderRadius: BorderRadius.circular(10),
         ),
       );
 
@@ -96,16 +96,13 @@ class MyDecoration {
     required BuildContext context,
   }) => BoxDecoration(
     gradient: LinearGradient(
-        stops: [
-          0.3,
-          0.7
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
+        end: Alignment.topLeft,
+        begin: Alignment.bottomRight,
         colors: [
-          MyColors.lightCard(context),
           MyColors.c_C6A34F.withOpacity(0.1),
-        ]),
+          MyColors.white
+        ]
+    ),
         //color: MyColors.lightCard(context),
         borderRadius: BorderRadius.circular(10.0),
       /*  border: Border.all(

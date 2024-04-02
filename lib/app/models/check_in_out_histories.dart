@@ -57,7 +57,8 @@ class CheckInCheckOutHistoryElement {
   CheckInCheckOutHistoryElement({
     this.id,
     this.status,
-    this.refund,
+    this.refundAmount,
+    this.remark,
     this.employeeAmount,
     this.totalAmount,
     this.vat,
@@ -84,7 +85,8 @@ class CheckInCheckOutHistoryElement {
   final String? id;
   final String? employeeId;
   final String? status;
-  final String? refund;
+  final double? refundAmount;
+  final String? remark;
   final double? employeeAmount;
   final double? clientAmount;
   final double? totalAmount;
@@ -114,7 +116,8 @@ class CheckInCheckOutHistoryElement {
   factory CheckInCheckOutHistoryElement.fromJson(Map<String, dynamic> json) => CheckInCheckOutHistoryElement(
         id: json["_id"],
         status: json["status"],
-        refund: json["refund"],
+    remark: json["remark"],
+    refundAmount: json["refundAmount"] == null ? 0.0 :double.parse(json["refundAmount"].toString()),
         invoiceNumber: json["invoiceNumber"],
         totalAmount: json["totalAmount"] == null ? 0.0 : double.parse(json["totalAmount"].toString()),
         employeeAmount: json["employeeAmount"] == null ? 0.0 : double.parse(json["employeeAmount"].toString()),
@@ -144,7 +147,8 @@ class CheckInCheckOutHistoryElement {
   Map<String, dynamic> toJson() => {
         "_id": id,
         "status": status,
-        "refund": refund,
+        "refundAmount": refundAmount,
+        "remark": remark,
         "invoiceNumber": invoiceNumber,
         "totalAmount": totalAmount,
         "employeeAmount": employeeAmount,

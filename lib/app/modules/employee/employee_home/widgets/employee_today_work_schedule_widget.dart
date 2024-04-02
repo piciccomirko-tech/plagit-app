@@ -23,6 +23,10 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
           margin: EdgeInsets.only(bottom: 15.h),
           padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 15.0.w),
           decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [
+              Colors.blue.withOpacity(0.6),
+              Colors.black
+            ]),
               boxShadow: [
                 BoxShadow(
                   color: Get.theme.dividerColor.withOpacity(0.05),
@@ -31,7 +35,6 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                   offset: const Offset(0, 3), // changes position of shadow
                 ),
               ],
-              color: Colors.blue.withOpacity(0.6),
               borderRadius: BorderRadius.circular(10.0)),
           child: Column(
             children: [

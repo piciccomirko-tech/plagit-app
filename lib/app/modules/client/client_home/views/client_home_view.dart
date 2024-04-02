@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/app_info/app_info.dart';
-import 'package:mh/app/common/style/my_decoration.dart';
 import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/models/dropdown_item.dart';
 import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
@@ -79,10 +78,10 @@ class ClientHomeView extends GetView<ClientHomeController> {
                           padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
                           width: Get.width,
                           decoration: BoxDecoration(
-                              gradient: const LinearGradient(
+                              gradient:  LinearGradient(
                                 begin: Alignment.centerLeft,
                                 end: Alignment.centerRight,
-                                colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
+                                colors: [MyColors.c_C6A34F, Colors.blueGrey.shade900], // Gradient colors
                               ),
                             borderRadius: BorderRadius.circular(10.0)
                           ),
@@ -134,7 +133,9 @@ class ClientHomeView extends GetView<ClientHomeController> {
                         child: Container(
                           margin: const EdgeInsets.only(top: 80.0, left: 15.0, right: 15.0),
                           height: MediaQuery.of(context).size.height * 0.35,
-                          decoration: MyDecoration.cardBoxDecoration(context: context),
+                          decoration: BoxDecoration(
+                            color: MyColors.lightCard(context)
+                          ),
                           child: ListView.builder(
                               itemCount: controller.positionList.length,
                               shrinkWrap: true,
@@ -178,13 +179,15 @@ class ClientHomeView extends GetView<ClientHomeController> {
             onTap: controller.onSuggestedEmployeesClick,
             child: Container(
               padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.only(top: 20.0),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10.0),
-                gradient: const LinearGradient(
+               color: MyColors.lightCard(controller.context!)
+               /* gradient: const LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
-                ),
+                ),*/
               ),
               child: Row(
                 children: [
@@ -195,12 +198,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
                       children: [
                         Text(
                           "${controller.countTotalRequestedEmployees()} ${MyStrings.employees.tr} ${MyStrings.areRequested.tr}",
-                          style: MyColors.white.semiBold16,
+                          style: MyColors.c_C6A34F.semiBold16,
                         ),
                         SizedBox(height: 7.h),
                         Text(
                           "${AppInfo.appName.toUpperCase()} ${MyStrings.suggestYou.tr} ${controller.countSuggestedEmployees()} ${MyStrings.employees.tr}",
-                          style: MyColors.white.regular12,
+                          style: MyColors.c_C6A34F.regular12,
                         ),
                       ],
                     ),
@@ -212,7 +215,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.blueGrey,
+                      color: MyColors.c_C6A34F,
                     ),
                     child: const Icon(
                       Icons.arrow_forward,
@@ -235,11 +238,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
             child: Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                  gradient: const LinearGradient(
+                color: MyColors.lightCard(controller.context!),
+                  /*gradient: const LinearGradient(
                     begin: Alignment.centerRight,
                     end: Alignment.centerLeft,
                     colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
-                  ),
+                  ),*/
                 borderRadius: BorderRadius.circular(10.0),
               ),
               child: Row(
@@ -251,12 +255,12 @@ class ClientHomeView extends GetView<ClientHomeController> {
                       children: [
                         Text(
                           "${controller.shortlistController.totalShortlisted.value} ${controller.shortlistController.totalShortlisted.value > 1 ? MyStrings.employees.tr : MyStrings.employee.tr} ${MyStrings.areShortListed.tr}",
-                          style: MyColors.white.semiBold16,
+                          style: MyColors.c_C6A34F.semiBold16,
                         ),
                         SizedBox(height: 7.h),
                         Text(
                           MyStrings.hireThem.tr,
-                          style: MyColors.white.regular12,
+                          style: MyColors.c_C6A34F.regular12,
                         ),
                       ],
                     ),
@@ -268,7 +272,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                     padding: const EdgeInsets.all(10),
                     decoration: const BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.blueGrey,
+                      color: MyColors.c_C6A34F,
                     ),
                     child: const Icon(
                       Icons.arrow_forward,

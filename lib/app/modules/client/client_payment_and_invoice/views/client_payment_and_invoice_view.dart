@@ -241,7 +241,7 @@ class ClientPaymentAndInvoiceView extends GetView<ClientPaymentAndInvoiceControl
           width: 100.w,
           height: height,
           value: "-",
-          child: _refundWidget(refund: invoice.refund ?? ""),
+          child: _refundWidget(refund: invoice.remark ?? ""),
           isPaid: invoice.status == "PAID",
         ),
         _cell(

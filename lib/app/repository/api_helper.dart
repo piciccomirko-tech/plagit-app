@@ -1,5 +1,6 @@
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/admin/admin_dashboard/models/update_refund_model.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
@@ -224,4 +225,5 @@ abstract class ApiHelper {
   EitherModel<Response> userValidation({required String email});
   EitherModel<Response> removeCard();
   EitherModel<SessionIdResponseModel> getSessionId({required String email, required String fromWhere});
+  EitherModel<CommonResponseModel> updateRefund({required UpdateRefundModel updateRefundModel});
 }
