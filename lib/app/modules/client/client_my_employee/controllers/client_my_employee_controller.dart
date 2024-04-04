@@ -40,10 +40,6 @@ class ClientMyEmployeeController extends GetxController {
     super.onReady();
   }
 
-  @override
-  void onClose() async {
-    super.onInit();
-  }
 
   Future<void> _getAllHiredEmployees() async {
     isLoading.value = true;

@@ -57,15 +57,17 @@ class ClientMyEmployeeResult {
 
 class EmployeeModel {
   String? employeeId;
+  int? unreadMessage;
   EmployeeDetails? employeeDetails;
   List<RequestDateModel>? bookedDate;
 
   List<RequestDateModel>? previousDate;
 
-  EmployeeModel({this.employeeId, this.employeeDetails, this.bookedDate, this.previousDate});
+  EmployeeModel({this.employeeId, this.unreadMessage, this.employeeDetails, this.bookedDate, this.previousDate});
 
   EmployeeModel.fromJson(Map<String, dynamic> json) {
     employeeId = json['employeeId'];
+    unreadMessage = json['unreadMessage'];
     employeeDetails = json['employeeDetails'] != null
         ? EmployeeDetails.fromJson(json['employeeDetails'])
         : null;

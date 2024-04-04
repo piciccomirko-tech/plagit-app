@@ -391,7 +391,7 @@ class CalenderController extends GetxController {
                   TimerWheelWidget(
                     height: 150.h,
                     width: 300.w,
-                    centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
+                    centerHighlightColor: MyColors.c_C6A34F.withOpacity(0.4),
                     onTimeChanged: (String time) {
                       requestDateList[index].startTime = time;
                       requestDateList.refresh();
@@ -403,7 +403,7 @@ class CalenderController extends GetxController {
                   TimerWheelWidget(
                     height: 150.h,
                     width: 300.w,
-                    centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
+                    centerHighlightColor: MyColors.c_C6A34F.withOpacity(0.4),
                     onTimeChanged: (String time) {
                       requestDateList[index].endTime = time;
                       requestDateList.refresh();
