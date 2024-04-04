@@ -107,10 +107,11 @@ class RestaurantDetails {
       {this.hiredBy,
       this.restaurantName,
       this.restaurantAddress,
-        this.email,
+      this.email,
       this.lat,
       this.long,
       this.id,
+      this.profilePicture,
       this.contractorHourlyRate,
       this.countryName});
 
@@ -122,6 +123,7 @@ class RestaurantDetails {
   final String? long;
   final String? id;
   final double? contractorHourlyRate;
+  final String? profilePicture;
   final String? countryName;
 
   factory RestaurantDetails.fromRawJson(String str) => RestaurantDetails.fromJson(json.decode(str));
@@ -132,17 +134,20 @@ class RestaurantDetails {
       hiredBy: json["hiredBy"],
       restaurantName: json["restaurantName"],
       restaurantAddress: json["restaurantAddress"],
+      profilePicture: json["profilePicture"],
       email: json["email"],
       lat: json["lat"],
       long: json["long"],
       id: json["_id"],
-      contractorHourlyRate: json["contractorHourlyRate"] == null ? 0.0 : double.parse(json["contractorHourlyRate"].toString()),
+      contractorHourlyRate:
+          json["contractorHourlyRate"] == null ? 0.0 : double.parse(json["contractorHourlyRate"].toString()),
       countryName: json["countryName"]);
 
   Map<String, dynamic> toJson() => {
         "hiredBy": hiredBy,
         "restaurantName": restaurantName,
         "restaurantAddress": restaurantAddress,
+        "profilePicture": profilePicture,
         "email": email,
         "lat": lat,
         "long": long,

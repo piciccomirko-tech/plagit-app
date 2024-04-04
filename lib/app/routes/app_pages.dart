@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 
 import '../middleware/auth_middleware.dart';
+import '../modules/admin/add_chat_user/bindings/add_chat_user_binding.dart';
+import '../modules/admin/add_chat_user/views/add_chat_user_view.dart';
 import '../modules/admin/admin_all_clients/bindings/admin_all_clients_binding.dart';
 import '../modules/admin/admin_all_clients/views/admin_all_clients_view.dart';
 import '../modules/admin/admin_all_employees/bindings/admin_all_employees_binding.dart';
@@ -25,10 +27,8 @@ import '../modules/auth/register/bindings/register_binding.dart';
 import '../modules/auth/register/views/register_view.dart';
 import '../modules/calender/bindings/calender_binding.dart';
 import '../modules/calender/views/calender_view.dart';
-import '../modules/chat/client_employee_chat/bindings/client_employee_chat_binding.dart';
-import '../modules/chat/client_employee_chat/views/client_employee_chat_view.dart';
-import '../modules/chat/support_chat/bindings/support_chat_binding.dart';
-import '../modules/chat/support_chat/views/support_chat_view.dart';
+import '../modules/chat_it/bindings/chat_it_binding.dart';
+import '../modules/chat_it/views/chat_it_view.dart';
 import '../modules/client/card_add/bindings/card_add_binding.dart';
 import '../modules/client/card_add/views/card_add_view.dart';
 import '../modules/client/client_dashboard/bindings/client_dashboard_binding.dart';
@@ -89,6 +89,8 @@ import '../modules/employee_booked_history_details/bindings/employee_booked_hist
 import '../modules/employee_booked_history_details/views/employee_booked_history_details_view.dart';
 import '../modules/employee_hired_history/bindings/employee_hired_history_binding.dart';
 import '../modules/employee_hired_history/views/employee_hired_history_view.dart';
+import '../modules/live_chat/bindings/live_chat_binding.dart';
+import '../modules/live_chat/views/live_chat_view.dart';
 import '../modules/map/restaurant_location/bindings/restaurant_location_binding.dart';
 import '../modules/map/restaurant_location/views/restaurant_location_view.dart';
 import '../modules/notifications/bindings/notifications_binding.dart';
@@ -330,16 +332,6 @@ class AppPages {
       binding: RestaurantLocationBinding(),
     ),
     GetPage(
-      name: _Paths.clientEmployeeChat,
-      page: () => const ClientEmployeeChatView(),
-      binding: ClientEmployeeChatBinding(),
-    ),
-    GetPage(
-      name: _Paths.supportChat,
-      page: () => const SupportChatView(),
-      binding: SupportChatBinding(),
-    ),
-    GetPage(
       name: _Paths.notifications,
       page: () => const NotificationsView(),
       binding: NotificationsBinding(),
@@ -433,6 +425,21 @@ class AppPages {
       name: _Paths.cardAdd,
       page: () => const CardAddView(),
       binding: CardAddBinding(),
+    ),
+    GetPage(
+      name: _Paths.liveChat,
+      page: () => const LiveChatView(),
+      binding: LiveChatBinding(),
+    ),
+    GetPage(
+      name: _Paths.chatIt,
+      page: () => const ChatItView(),
+      binding: ChatItBinding(),
+    ),
+    GetPage(
+      name: _Paths.addChatUser,
+      page: () => const AddChatUserView(),
+      binding: AddChatUserBinding(),
     ),
   ];
 }

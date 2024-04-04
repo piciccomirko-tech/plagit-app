@@ -12,10 +12,8 @@ class ClientMyEmployeesModel {
   ClientMyEmployeesModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     statusCode = json['statusCode'];
-    details =
-    json['details'] != null ? ClientMyEmployeeDetailsModel.fromJson(json['details']) : null;
+    details = json['details'] != null ? ClientMyEmployeeDetailsModel.fromJson(json['details']) : null;
   }
-
 }
 
 class ClientMyEmployeeDetailsModel {
@@ -31,7 +29,6 @@ class ClientMyEmployeeDetailsModel {
       });
     }
   }
-
 }
 
 class ClientMyEmployeeResult {
@@ -43,9 +40,8 @@ class ClientMyEmployeeResult {
 
   ClientMyEmployeeResult.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    restaurantDetails = json['restaurantDetails'] != null
-        ? RestaurantDetails.fromJson(json['restaurantDetails'])
-        : null;
+    restaurantDetails =
+        json['restaurantDetails'] != null ? RestaurantDetails.fromJson(json['restaurantDetails']) : null;
     if (json['employee'] != null) {
       employee = <EmployeeModel>[];
       json['employee'].forEach((v) {
@@ -56,6 +52,7 @@ class ClientMyEmployeeResult {
 }
 
 class EmployeeModel {
+  String? id;
   String? employeeId;
   int? unreadMessage;
   EmployeeDetails? employeeDetails;
@@ -66,6 +63,7 @@ class EmployeeModel {
   EmployeeModel({this.employeeId, this.unreadMessage, this.employeeDetails, this.bookedDate, this.previousDate});
 
   EmployeeModel.fromJson(Map<String, dynamic> json) {
+    id = json['_id'];
     employeeId = json['employeeId'];
     unreadMessage = json['unreadMessage'];
     employeeDetails = json['employeeDetails'] != null
@@ -84,6 +82,4 @@ class EmployeeModel {
       });
     }
   }
-
 }
-

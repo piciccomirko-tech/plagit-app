@@ -5,6 +5,7 @@ import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employ
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/chat_it/models/chat_it_model.dart';
 import 'package:mh/app/modules/client/card_add/models/session_id_response_model.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
@@ -28,6 +29,12 @@ import 'package:mh/app/modules/employee/employee_home/models/single_booking_deta
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/send_message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -45,7 +52,6 @@ import '../models/commons.dart';
 import '../models/employee_full_details.dart';
 import '../models/employees_by_id.dart';
 import '../models/lat_long_to_address.dart';
-import '../models/one_to_one_msg.dart';
 import '../models/requested_employees.dart' as requested_employees;
 import '../models/sources.dart';
 import '../models/user_info.dart';
@@ -156,10 +162,6 @@ abstract class ApiHelper {
 
   EitherModel<Response> addEmployeeAsSuggest(Map<String, dynamic> data);
 
-  EitherModel<OneToOneMsg> getMsg(String senderId, String receiverId);
-
-  EitherModel<Response> sendMsg(Map<String, dynamic> data);
-
   EitherModel<EmployeeFullDetails> employeeFullDetails(String id);
 
   EitherModel<ClientRegistrationResponse> updateClientProfile(ClientProfileUpdate clientProfileUpdate);
@@ -179,7 +181,6 @@ abstract class ApiHelper {
       {required String employeeId, required String requestId});
 
   EitherModel<StripeResponseModel> stripePayment({required StripeRequestModel stripeRequestModel});
-
 
   EitherModel<ReviewDialogModel> showReviewDialog();
 
@@ -221,9 +222,17 @@ abstract class ApiHelper {
   EitherModel<JobPostRequestModel> getJobRequests({String? userType, String? clientId, String? status});
   EitherModel<CommonResponseModel> deleteJobPost({required String jobId});
   EitherModel<Response> interested({required InterestedRequestModel interestedRequestModel});
-  EitherModel<Response> updateLocation({required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
+  EitherModel<Response> updateLocation(
+      {required EmployeeLocationUpdateRequestModel employeeLocationUpdateRequestModel});
+
   EitherModel<Response> userValidation({required String email});
   EitherModel<Response> removeCard();
   EitherModel<SessionIdResponseModel> getSessionId({required String email, required String fromWhere});
   EitherModel<CommonResponseModel> updateRefund({required UpdateRefundModel updateRefundModel});
+  EitherModel<ConversationResponseModel> createConversation(
+      {required ConversationCreateRequestModel conversationCreateRequestModel});
+  EitherModel<MessageResponseModel> getMessages({required MessageRequestModel messageRequestModel});
+  EitherModel<Response> sendMessage({required SendMessageRequestModel sendMessageRequestModel});
+  EitherModel<UnreadMessageResponseModel> getUnreadMessage({required String conversationId});
+  EitherModel<ChatItModel> getConversations();
 }

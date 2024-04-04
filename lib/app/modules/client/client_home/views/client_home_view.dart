@@ -24,7 +24,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
       child: Scaffold(
         floatingActionButton: FloatingActionButton(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50.0)
+              borderRadius: BorderRadius.circular(50.0)
           ),
           backgroundColor: MyColors.c_C6A34F,
           onPressed: controller.refreshPage,
@@ -44,19 +44,19 @@ class ClientHomeView extends GetView<ClientHomeController> {
             Obx(() => controller.notificationsController.unreadCount.value == 0
                 ? InkResponse(onTap: () => Get.toNamed(Routes.notifications), child: const Icon(CupertinoIcons.bell))
                 : InkResponse(
-                    onTap: () => Get.toNamed(Routes.notifications),
-                    child: Badge(
-                      backgroundColor: MyColors.c_C6A34F,
-                      label: Obx(() {
-                        return Text(
-                            controller.notificationsController.unreadCount.value == 20
-                                ? '20+'
-                                : controller.notificationsController.unreadCount.toString(),
-                            style: MyColors.white.semiBold12);
-                      }),
-                      child: const Icon(CupertinoIcons.bell, size: 21),
-                    ),
-                  )),
+              onTap: () => Get.toNamed(Routes.notifications),
+              child: Badge(
+                backgroundColor: MyColors.c_C6A34F,
+                label: Obx(() {
+                  return Text(
+                      controller.notificationsController.unreadCount.value == 20
+                          ? '20+'
+                          : controller.notificationsController.unreadCount.toString(),
+                      style: MyColors.white.semiBold12);
+                }),
+                child: const Icon(CupertinoIcons.bell, size: 21),
+              ),
+            )),
             const SizedBox(width: 30),
           ],
         ),
@@ -74,29 +74,29 @@ class ClientHomeView extends GetView<ClientHomeController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(height: 20.h),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                              gradient:  LinearGradient(
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                                colors: [MyColors.c_C6A34F, Colors.blueGrey.shade900], // Gradient colors
-                              ),
-                            borderRadius: BorderRadius.circular(10.0)
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
+                            width: Get.width,
+                            decoration: BoxDecoration(
+                                gradient:  LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.centerRight,
+                                  colors: [MyColors.c_C6A34F, Colors.blueGrey.shade900], // Gradient colors
+                                ),
+                                borderRadius: BorderRadius.circular(10.0)
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _restaurantName(MyStrings.hiRestaurant.trParams({
+                                  "restaurantName":
+                                  controller.appController.user.value.client?.restaurantName ?? "owner of the",
+                                })),
+                                SizedBox(height: 10.h),
+                                _promotionText,
+                              ],
+                            ),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              _restaurantName(MyStrings.hiRestaurant.trParams({
-                                "restaurantName":
-                                controller.appController.user.value.client?.restaurantName ?? "owner of the",
-                              })),
-                              SizedBox(height: 10.h),
-                              _promotionText,
-                            ],
-                          ),
-                        ),
                           SizedBox(height: 20.h),
 
                           const PositionSearchFieldWidget(),
@@ -105,7 +105,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                           // _dueInvoice,
 
                           Obx(
-                            () => Visibility(
+                                () => Visibility(
                               visible: controller.shortlistController.totalShortlisted.value > 0,
                               child: SizedBox(
                                 height: 20.h,
@@ -134,7 +134,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                           margin: const EdgeInsets.only(top: 80.0, left: 15.0, right: 15.0),
                           height: MediaQuery.of(context).size.height * 0.35,
                           decoration: BoxDecoration(
-                            color: MyColors.lightCard(context)
+                              color: MyColors.lightCard(context)
                           ),
                           child: ListView.builder(
                               itemCount: controller.positionList.length,
@@ -149,7 +149,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                                     child: CustomNetworkImage(url: (position.logo ?? '').uniformImageUrl),
                                   ),
                                   title:
-                                      Text(position.name ?? '', style: MyColors.l111111_dwhite(context).semiBold16),
+                                  Text(position.name ?? '', style: MyColors.l111111_dwhite(context).semiBold16),
                                   trailing: const Icon(CupertinoIcons.arrow_up_left, color: MyColors.c_C6A34F),
                                 );
                               }),
@@ -161,128 +161,128 @@ class ClientHomeView extends GetView<ClientHomeController> {
   }
 
   Widget _restaurantName(String name) => Text(
-        name,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-        style: MyColors.white.semiBold18,
-      );
+    name,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
+    style: MyColors.white.semiBold18,
+  );
 
   Widget get _promotionText => Text(
-        MyStrings.exploreTheFeaturesOfMhAppBelow.tr,
-        style: MyColors.white.medium15,
-      );
+    MyStrings.exploreTheFeaturesOfMhAppBelow.tr,
+    style: MyColors.white.medium15,
+  );
 
   Widget get _suggestedEmployees => Obx(
         () => Visibility(
-          visible: (controller.requestedEmployees.value.requestEmployeeList ?? []).isNotEmpty,
-          child: GestureDetector(
-            onTap: controller.onSuggestedEmployeesClick,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              margin: const EdgeInsets.only(top: 20.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-               color: MyColors.lightCard(controller.context!)
-               /* gradient: const LinearGradient(
+      visible: (controller.requestedEmployees.value.requestEmployeeList ?? []).isNotEmpty,
+      child: GestureDetector(
+        onTap: controller.onSuggestedEmployeesClick,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.only(top: 20.0),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              color: MyColors.lightCard(controller.context!)
+            /* gradient: const LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                   colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
                 ),*/
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${controller.countTotalRequestedEmployees()} ${MyStrings.employees.tr} ${MyStrings.areRequested.tr}",
+                      style: MyColors.c_C6A34F.semiBold16,
+                    ),
+                    SizedBox(height: 7.h),
+                    Text(
+                      "${AppInfo.appName.toUpperCase()} ${MyStrings.suggestYou.tr} ${controller.countSuggestedEmployees()} ${MyStrings.employees.tr}",
+                      style: MyColors.c_C6A34F.regular12,
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${controller.countTotalRequestedEmployees()} ${MyStrings.employees.tr} ${MyStrings.areRequested.tr}",
-                          style: MyColors.c_C6A34F.semiBold16,
-                        ),
-                        SizedBox(height: 7.h),
-                        Text(
-                          "${AppInfo.appName.toUpperCase()} ${MyStrings.suggestYou.tr} ${controller.countSuggestedEmployees()} ${MyStrings.employees.tr}",
-                          style: MyColors.c_C6A34F.regular12,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: MyColors.c_C6A34F,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_forward,
-                      color: MyColors.white,
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: 10.w,
               ),
-            ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: MyColors.c_C6A34F,
+                ),
+                child: const Icon(
+                  Icons.arrow_forward,
+                  color: MyColors.white,
+                ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
   Widget get _employeeShortlisted => Obx(
         () => Visibility(
-          visible: controller.shortlistController.totalShortlisted.value > 0,
-          child: InkWell(
-            borderRadius: BorderRadius.circular(10.0),
-            onTap: controller.onShortlistClick,
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: MyColors.lightCard(controller.context!),
-                  /*gradient: const LinearGradient(
+      visible: controller.shortlistController.totalShortlisted.value > 0,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10.0),
+        onTap: controller.onShortlistClick,
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: MyColors.lightCard(controller.context!),
+            /*gradient: const LinearGradient(
                     begin: Alignment.centerRight,
                     end: Alignment.centerLeft,
                     colors: [MyColors.c_C6A34F, Colors.blueGrey], // Gradient colors
                   ),*/
-                borderRadius: BorderRadius.circular(10.0),
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "${controller.shortlistController.totalShortlisted.value} ${controller.shortlistController.totalShortlisted.value > 1 ? MyStrings.employees.tr : MyStrings.employee.tr} ${MyStrings.areShortListed.tr}",
+                      style: MyColors.c_C6A34F.semiBold16,
+                    ),
+                    SizedBox(height: 7.h),
+                    Text(
+                      MyStrings.hireThem.tr,
+                      style: MyColors.c_C6A34F.regular12,
+                    ),
+                  ],
+                ),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "${controller.shortlistController.totalShortlisted.value} ${controller.shortlistController.totalShortlisted.value > 1 ? MyStrings.employees.tr : MyStrings.employee.tr} ${MyStrings.areShortListed.tr}",
-                          style: MyColors.c_C6A34F.semiBold16,
-                        ),
-                        SizedBox(height: 7.h),
-                        Text(
-                          MyStrings.hireThem.tr,
-                          style: MyColors.c_C6A34F.regular12,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: MyColors.c_C6A34F,
-                    ),
-                    child: const Icon(
-                      Icons.arrow_forward,
-                      color: MyColors.white,
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: 10.w,
               ),
-            ),
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: MyColors.c_C6A34F,
+                ),
+                child: const Icon(
+                  Icons.arrow_forward,
+                  color: MyColors.white,
+                ),
+              ),
+            ],
           ),
         ),
-      );
+      ),
+    ),
+  );
 }

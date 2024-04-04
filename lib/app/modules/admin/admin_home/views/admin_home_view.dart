@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/custom_feature_box.dart';
-import 'package:mh/app/common/widgets/custom_help_support.dart';
 import 'package:mh/app/common/widgets/refresh_widget.dart';
 import 'package:mh/app/modules/auth/login/widgets/language_drop_down.dart';
 import 'package:mh/app/routes/app_pages.dart';
@@ -60,147 +59,151 @@ class AdminHomeView extends GetView<AdminHomeController> {
             const SizedBox(width: 10)
           ],
         ),
-        body: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        body: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20.h),
+                Row(
                   children: [
-                    SizedBox(height: 20.h),
-                    Row(
-                      children: [
-                        Expanded(
-                            flex: 10,
-                            child: _restaurantName("Hi, ${controller.appController.user.value.admin?.name ?? "-"}")),
-                        const SizedBox(width: 10),
-                        Expanded(flex: 1, child: RefreshWidget(onTap: controller.reloadPage))
-                      ],
-                    ),
-                    SizedBox(height: 20.h),
-                    _promotionText,
-                    SizedBox(height: 40.h),
-                    /*Obx(() => controller.loading.value == true
-                        ? ShimmerWidget.clientMyEmployeesShimmerWidget()
-                        : AnimationLimiter(
-                            child: ListView.builder(
-                                itemCount: adminHomeCardList.length,
-                                scrollDirection: Axis.vertical,
-                                shrinkWrap: true,
-                                primary: false,
-                                itemBuilder: (context, index) {
-                                  return AnimationConfiguration.staggeredList(
-                                      position: index,
-                                      duration: const Duration(milliseconds: 800),
-                                      child: SlideAnimation(
-                                          horizontalOffset: 50.0,
-                                          child: FadeInAnimation(
-                                              child: AdminHomeCardWidget(
-                                                  adminHomeCardModel: adminHomeCardList[index], index: index))));
-                                }),
-                          ))*/
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomFeatureBox(
-                            title: MyStrings.dashboard.tr,
-                            icon: MyAssets.dashboard,
-                            onTap: controller.onAdminDashboardClick,
-                          ),
-                        ),
-                        SizedBox(width: 24.w),
-                        Expanded(
-                          child: Obx(
-                            () => Stack(
-                              clipBehavior: Clip.none,
-                              children: [
-                                CustomFeatureBox(
-                                  title: MyStrings.requests.tr,
-                                  icon: MyAssets.request,
-                                  loading: controller.loading.value,
-                                  onTap: controller.onRequestClick,
-                                ),
-                                Positioned(
-                                  top: 4,
-                                  right: 5,
-                                  child: Visibility(
-                                    visible: controller.numberOfRequestFromClient > 0,
-                                    child: CustomBadge(controller.numberOfRequestFromClient.toString()),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Obx(
-                            () => Stack(
-                              children: [
-                                CustomFeatureBox(
-                                  title: MyStrings.employees.tr,
-                                  icon: MyAssets.myEmployees,
-                                  onTap: controller.onEmployeeClick,
-                                ),
-                                Positioned(
-                                  top: 4,
-                                  right: 5,
-                                  child: Visibility(
-                                    visible: controller.unreadMsgFromEmployee.value != 0,
-                                    child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 24.w),
-                        Expanded(
-                          child: Obx(
-                            () => Stack(
-                              children: [
-                                CustomFeatureBox(
-                                  title: MyStrings.client.tr,
-                                  icon: MyAssets.clientFixedLogo,
-                                  onTap: controller.onClientClick,
-                                ),
-                                Positioned(
-                                  top: 4,
-                                  right: 5,
-                                  child: Visibility(
-                                    visible: controller.unreadMsgFromClient.value != 0,
-                                    child: CustomBadge(controller.unreadMsgFromClient.value.toString()),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
+                    Expanded(
+                        flex: 10,
+                        child: _restaurantName("Hi, ${controller.appController.user.value.admin?.name ?? "-"}")),
+                     SizedBox(width: 15.w),
+                    Expanded(flex: 1, child: RefreshWidget(onTap: controller.reloadPage))
                   ],
                 ),
-              ),
-            ),
-            Positioned(
-                child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 50.0, left: 15, right: 15),
-                child: CustomHelpSupport(
-                  onTap: controller.onTodaysEmployeesPressed,
-                  title: MyStrings.todaysEmployees.tr,
-                  asset: MyAssets.manager,
+                SizedBox(height: 20.h),
+                _promotionText,
+                SizedBox(height: 40.h),
+                /*Obx(() => controller.loading.value == true
+                    ? ShimmerWidget.clientMyEmployeesShimmerWidget()
+                    : AnimationLimiter(
+                        child: ListView.builder(
+                            itemCount: adminHomeCardList.length,
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            primary: false,
+                            itemBuilder: (context, index) {
+                              return AnimationConfiguration.staggeredList(
+                                  position: index,
+                                  duration: const Duration(milliseconds: 800),
+                                  child: SlideAnimation(
+                                      horizontalOffset: 50.0,
+                                      child: FadeInAnimation(
+                                          child: AdminHomeCardWidget(
+                                              adminHomeCardModel: adminHomeCardList[index], index: index))));
+                            }),
+                      ))*/
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFeatureBox(
+                        title: MyStrings.dashboard.tr,
+                        icon: MyAssets.dashboard,
+                        onTap: controller.onAdminDashboardClick,
+                      ),
+                    ),
+                    SizedBox(width: 15.w),
+                    Expanded(
+                      child: Obx(
+                        () => Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            CustomFeatureBox(
+                              title: MyStrings.requests.tr,
+                              icon: MyAssets.request,
+                              loading: controller.loading.value,
+                              onTap: controller.onRequestClick,
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 5,
+                              child: Visibility(
+                                visible: controller.numberOfRequestFromClient > 0,
+                                child: CustomBadge(controller.numberOfRequestFromClient.toString()),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ))
-          ],
+                SizedBox(height: 15.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Obx(
+                        () => Stack(
+                          children: [
+                            CustomFeatureBox(
+                              title: MyStrings.employees.tr,
+                              icon: MyAssets.myEmployees,
+                              onTap: controller.onEmployeeClick,
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 5,
+                              child: Visibility(
+                                visible: controller.unreadMsgFromEmployee.value != 0,
+                                child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 15.w),
+                    Expanded(
+                      child: Obx(
+                        () => Stack(
+                          children: [
+                            CustomFeatureBox(
+                              title: MyStrings.client.tr,
+                              icon: MyAssets.clientFixedLogo,
+                              onTap: controller.onClientClick,
+                            ),
+                            Positioned(
+                              top: 4,
+                              right: 5,
+                              child: Visibility(
+                                visible: controller.unreadMsgFromClient.value != 0,
+                                child: CustomBadge(controller.unreadMsgFromClient.value.toString()),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 15.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomFeatureBox(
+                        title: MyStrings.todaysEmployees.tr,
+                        icon: MyAssets.manager,
+                        onTap: controller.onTodaysEmployeesPressed,
+                      ),
+                    ),
+                    SizedBox(width: 15.w),
+                    Expanded(
+                      child: CustomFeatureBox(
+                        title: "Chat It",
+                        icon: MyAssets.chat,
+                        onTap: controller.onChatPressed,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/custom_error.dart';
@@ -46,21 +47,18 @@ class AdminAllEmployeesController extends GetxController {
 
   void onEmployeeClick(Employee employee) {
     Get.toNamed(Routes.employeeDetails, arguments: {
-      MyStrings.arg.employeeAvailableDays: employee.available??"",
+      MyStrings.arg.employeeAvailableDays: employee.available ?? "",
       MyStrings.arg.data: employee.id,
       MyStrings.arg.showAsAdmin: true,
       MyStrings.arg.fromWhere: 'admin_home_view'
     });
   }
 
-  void onChatClick(Employee employee) {
-    Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: employee.id ?? "",
-      MyStrings.arg.supportChatDocId: employee.id ?? "",
-      MyStrings.arg.receiverName: employee.firstName ?? "-",
-    });
-  }
+  void onChatClick(Employee employee) => Get.toNamed(Routes.liveChat,
+      arguments: LiveChatDataTransferModel(
+          toName: employee.firstName ?? "",
+          toId: employee.id ?? "",
+          toProfilePicture: (employee.profilePicture ?? "").imageUrl));
 
   String getPositionLogo(String positionId) {
     Iterable<DropdownItem> positions = appController.allActivePositions.where((element) => element.id == positionId);
@@ -70,17 +68,8 @@ class AdminAllEmployeesController extends GetxController {
     return positions.first.logo!;
   }
 
-  void onApplyClick(
-      String selectedExp,
-      String minTotalHour,
-      String maxTotalHour,
-      String positionId,
-      String dressSize,
-      String nationality,
-      String minHeight,
-      String maxHeight,
-      String minHourlyRate,
-      String maxHourlyRate) async {
+  void onApplyClick(String selectedExp, String minTotalHour, String maxTotalHour, String positionId, String dressSize,
+      String nationality, String minHeight, String maxHeight, String minHourlyRate, String maxHourlyRate) async {
     //currentPage.value = 1;
     employees.value.users?.clear();
     await _getEmployees(

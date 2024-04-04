@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:lottie/lottie.dart';
@@ -18,6 +17,10 @@ import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedul
 import 'package:mh/app/modules/employee/employee_home/views/employee_job_posts_view_all_view.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/check_out_success_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/widgets/slide_action_widget.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
+import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
@@ -89,6 +92,7 @@ class EmployeeHomeController extends GetxController {
 
   @override
   void onReady() {
+    _createConversationForAdmin();
     showHomePopUpForCalender();
     Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
     super.onReady();
@@ -100,7 +104,6 @@ class EmployeeHomeController extends GetxController {
     _getTodayCheckInOutDetails();
     getBookingHistory();
     _getHiredHistory();
-    _trackUnreadMsg();
     getJobRequests();
   }
 
@@ -130,6 +133,7 @@ class EmployeeHomeController extends GetxController {
         todayWorkSchedule.refresh();
         _shareCurrentLocation();
       }
+      _createConversationForClient();
     });
   }
 
@@ -197,14 +201,13 @@ class EmployeeHomeController extends GetxController {
   }
 
   void chatWithAdmin() {
-    Get.back(); // hide dialogue
+    Get.back();
 
-    Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: "allAdmin",
-      MyStrings.arg.supportChatDocId: appController.user.value.userId,
-      MyStrings.arg.receiverName: "Support",
-    });
+    Get.toNamed(Routes.liveChat,
+        arguments: LiveChatDataTransferModel(
+            toName: "Support",
+            toId: appController.user.value.userId,
+            toProfilePicture: "https://www.iconpacks.net/icons/2/free-chat-support-icon-1721-thumb.png"));
   }
 
   void chatWithClient() {
@@ -212,14 +215,15 @@ class EmployeeHomeController extends GetxController {
 
     if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
         todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails != null) {
-      Get.toNamed(Routes.clientEmployeeChat, arguments: {
-        MyStrings.arg.receiverName:
-            todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.restaurantName ?? "-",
-        MyStrings.arg.fromId: appController.user.value.employee?.id ?? "",
-        MyStrings.arg.toId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
-        MyStrings.arg.clientId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
-        MyStrings.arg.employeeId: appController.user.value.employee?.id ?? "",
-      });
+      Get.toNamed(Routes.liveChat,
+          arguments: LiveChatDataTransferModel(
+              toName: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.restaurantName ?? "",
+              toId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
+              senderId: appController.user.value.userId,
+              bookedId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.id ?? "",
+              toProfilePicture:
+                  (todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.profilePicture ?? "")
+                      .imageUrl));
     } else {
       Utils.showSnackBar(
           message: 'You cannot chat with any restaurant because you have not been hired yet', isTrue: false);
@@ -273,6 +277,7 @@ class EmployeeHomeController extends GetxController {
 
     EmployeeCheckInRequestModel employeeCheckInRequestModel = EmployeeCheckInRequestModel(
         employeeId: appController.user.value.employee?.id ?? '',
+        bookingId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.id ?? "",
         hiredBy: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
         checkIn: true,
         lat: '${currentLocation?.latitude ?? 0.0}',
@@ -319,37 +324,6 @@ class EmployeeHomeController extends GetxController {
     homeMethods();
 
     Utils.showSnackBar(message: MyStrings.pageRefreshed.tr, isTrue: true);
-  }
-
-  void _trackUnreadMsg() {
-    try {
-      if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
-          todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails != null) {
-        FirebaseFirestore.instance
-            .collection('employee_client_chat')
-            .where("employeeId", isEqualTo: appController.user.value.employee?.id ?? '')
-            .where("clientId",
-                isEqualTo: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? '')
-            .snapshots()
-            .listen((QuerySnapshot<Map<String, dynamic>> event) {
-          if (event.docs.isNotEmpty) {
-            Map<String, dynamic> data = event.docs.first.data();
-            unreadMsgFromClient.value = data["${appController.user.value.employee?.id ?? ''}_unread"];
-          }
-        });
-      }
-
-      FirebaseFirestore.instance
-          .collection('support_chat')
-          .doc(appController.user.value.userId)
-          .snapshots()
-          .listen((event) {
-        if (event.exists) {
-          Map<String, dynamic> data = event.data()!;
-          unreadMsgFromAdmin.value = data["${appController.user.value.userId}_unread"];
-        }
-      });
-    } catch (_) {}
   }
 
   void updateNotification({required String id, required String hiredStatus}) {
@@ -648,5 +622,73 @@ class EmployeeHomeController extends GetxController {
         onTap: () async {
           await Geolocator.openLocationSettings();
         });
+  }
+
+  void _createConversationForAdmin() {
+    ConversationCreateRequestModel conversationCreateRequestModel =
+        ConversationCreateRequestModel(isAdmin: true, senderId: appController.user.value.userId);
+
+    _apiHelper
+        .createConversation(conversationCreateRequestModel: conversationCreateRequestModel)
+        .then((Either<CustomError, ConversationResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (ConversationResponseModel response) {
+        if (response.status == "success" && response.statusCode == 201 && response.details != null) {
+          _getUnreadMessageForAdmin(conversationId: response.details?.id ?? "");
+        }
+      });
+    });
+  }
+
+  void _getUnreadMessageForAdmin({required String conversationId}) {
+    _apiHelper
+        .getUnreadMessage(conversationId: conversationId)
+        .then((Either<CustomError, UnreadMessageResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (UnreadMessageResponseModel response) {
+        if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+          unreadMsgFromAdmin.value = response.details?.count ?? 0;
+        }
+      });
+    });
+  }
+
+  void _createConversationForClient() {
+    if (todayWorkSchedule.value.todayWorkScheduleDetailsModel != null &&
+        todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails != null) {
+      ConversationCreateRequestModel conversationCreateRequestModel;
+      conversationCreateRequestModel = ConversationCreateRequestModel(
+          senderId: appController.user.value.userId,
+          receiverId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.restaurantDetails?.hiredBy ?? "",
+          bookedId: todayWorkSchedule.value.todayWorkScheduleDetailsModel?.id ?? "");
+
+      _apiHelper
+          .createConversation(conversationCreateRequestModel: conversationCreateRequestModel)
+          .then((Either<CustomError, ConversationResponseModel> responseData) {
+        responseData.fold((CustomError customError) {
+          Utils.errorDialog(context!, customError);
+        }, (ConversationResponseModel response) {
+          if (response.status == "success" && response.statusCode == 201 && response.details != null) {
+            _getUnreadMessageForClient(conversationId: response.details?.id ?? "");
+          }
+        });
+      });
+    }
+  }
+
+  void _getUnreadMessageForClient({required String conversationId}) {
+    _apiHelper
+        .getUnreadMessage(conversationId: conversationId)
+        .then((Either<CustomError, UnreadMessageResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (UnreadMessageResponseModel response) {
+        if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+          unreadMsgFromClient.value = response.details?.count ?? 0;
+        }
+      });
+    });
   }
 }

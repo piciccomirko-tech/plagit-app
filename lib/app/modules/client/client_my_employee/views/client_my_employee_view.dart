@@ -5,6 +5,7 @@ import 'package:mh/app/common/widgets/no_item_found.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
@@ -116,7 +117,14 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
               right: 40.w,
               top: 4.h,
               child: _chat(
-                  employeeName: hiredHistory.employeeDetails?.name ?? '', employeeId: hiredHistory.employeeId ?? ''),
+                unreadMessage: hiredHistory.unreadMessage ?? 0,
+                liveChatDataTransferModel: LiveChatDataTransferModel(
+                    toName: hiredHistory.employeeDetails?.name ?? '',
+                    toId: hiredHistory.employeeId ?? '',
+                    senderId: controller.appController.user.value.userId,
+                    toProfilePicture: (hiredHistory.employeeDetails?.profilePicture ?? "").imageUrl,
+                    bookedId: hiredHistory.id ?? ''),
+              ),
             ),
             Row(
               children: [
@@ -313,8 +321,9 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
         ),
       );
 
-  Widget _chat({required String employeeName, required String employeeId}) => GestureDetector(
-        onTap: () => controller.chatWithEmployee(employeeId: employeeId, employeeName: employeeName),
+  Widget _chat({required LiveChatDataTransferModel liveChatDataTransferModel, required int unreadMessage}) =>
+      GestureDetector(
+        onTap: () => controller.chatWithEmployee(liveChatDataTransferModel: liveChatDataTransferModel),
         child: Center(
           child: Stack(
             clipBehavior: Clip.none,
@@ -323,21 +332,16 @@ class ClientMyEmployeeView extends GetView<ClientMyEmployeeController> {
                 Icons.message,
                 color: MyColors.c_C6A34F,
               ),
-              Positioned(
-                top: -10.h,
-                right: -5.w,
-                child: Obx(
-                  () {
-                    Iterable<Map<String, dynamic>> result = controller.clientHomeController.employeeChatDetails.where(
-                        (data) =>
-                            data["employeeId"] == employeeId &&
-                            data["${controller.appController.user.value.userId}_unread"] > 0);
-
-                    if (result.isEmpty) return Container();
-                    return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());
-                  },
-                ),
-              ),
+              Visibility(
+                  visible: unreadMessage > 0,
+                  child: Positioned(
+                    top: -10.h,
+                    right: -5.w,
+                    child: CircleAvatar(
+                        backgroundColor: MyColors.white,
+                        radius: 10,
+                        child: Text(unreadMessage.toString(), style: MyColors.c_C6A34F.semiBold12)),
+                  ))
             ],
           ),
         ),

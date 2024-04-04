@@ -39,12 +39,14 @@ class EmployeeDetailsController extends GetxController {
 
   // only admin chat with employee
   void onChatClick() {
-    Get.toNamed(Routes.supportChat, arguments: {
+
+   /* Get.toNamed(Routes.supportChat, arguments: {
       MyStrings.arg.fromId: _appController.user.value.userId,
       MyStrings.arg.toId: employee.value.id ?? "",
       MyStrings.arg.supportChatDocId: employee.value.id ?? "",
       MyStrings.arg.receiverName: employee.value.firstName ?? "-",
-    });
+    });*/
+
   }
 
   void onViewCalenderClick() {

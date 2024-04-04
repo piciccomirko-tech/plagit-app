@@ -46,8 +46,8 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                             top: 4,
                             right: 5,
                             child: Visibility(
-                              visible: controller.unreadMsgFromEmployee.value > 0,
-                              child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                              visible: controller.unreadMessageFromEmployee.value > 0,
+                              child: CustomBadge(controller.unreadMessageFromEmployee.value.toString()),
                             ),
                           ),
                         ],
@@ -82,8 +82,8 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                                   top: 4,
                                   right: 5,
                                   child: Visibility(
-                                    visible: controller.unreadMsgFromEmployee > 0,
-                                    child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
+                                    visible: controller.unreadMessageFromEmployee > 0,
+                                    child: CustomBadge(controller.unreadMessageFromEmployee.value.toString()),
                                   ),
                                 ),
                               ],

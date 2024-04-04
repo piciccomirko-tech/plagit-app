@@ -97,7 +97,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                   height: 36.w,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: MyColors.c_DDBD68,
+                    color: MyColors.c_C6A34F,
                   ),
                   child: const Icon(
                     Icons.filter_list_rounded,

@@ -14,6 +14,7 @@ import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employ
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
 import 'package:mh/app/modules/calender/models/update_unavailable_date_request_model.dart';
+import 'package:mh/app/modules/chat_it/models/chat_it_model.dart';
 import 'package:mh/app/modules/client/card_add/models/session_id_response_model.dart';
 import 'package:mh/app/modules/client/client_dashboard/models/client_update_status_model.dart';
 import 'package:mh/app/modules/client/client_my_employee/models/client_my_employees_model.dart';
@@ -37,6 +38,12 @@ import 'package:mh/app/modules/employee/employee_home/models/single_booking_deta
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/send_message_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_response_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_request_model.dart';
 import 'package:mh/app/modules/notifications/models/notification_update_response_model.dart';
@@ -59,7 +66,6 @@ import '../models/custom_error.dart';
 import '../models/employee_full_details.dart';
 import '../models/employees_by_id.dart';
 import '../models/lat_long_to_address.dart';
-import '../models/one_to_one_msg.dart';
 import '../models/requested_employees.dart' as requested_employees;
 import '../models/sources.dart';
 import '../models/user_info.dart';
@@ -726,33 +732,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await put("request-employees/update", jsonEncode(data));
     if (response.statusCode == null) response = await put("request-employees/update", jsonEncode(data));
     if (response.statusCode == null) response = await put("request-employees/update", jsonEncode(data));
-
-    return _convert<Response>(
-      response,
-      (Map<String, dynamic> data) {},
-      onlyErrorCheck: true,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
-  EitherModel<OneToOneMsg> getMsg(String senderId, String receiverId) async {
-    Response response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-    if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-    if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-    if (response.statusCode == null) response = await get("messages?receiverId=$receiverId&senderId=$senderId");
-
-    return _convert<OneToOneMsg>(
-      response,
-      OneToOneMsg.fromJson,
-    ).fold((l) => left(l), (r) => right(r));
-  }
-
-  @override
-  EitherModel<Response> sendMsg(Map<String, dynamic> data) async {
-    Response response = await post("messages/create", jsonEncode(data));
-    if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
-    if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
-    if (response.statusCode == null) response = await put("messages/create", jsonEncode(data));
 
     return _convert<Response>(
       response,
@@ -1432,6 +1411,78 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     return _convert<CommonResponseModel>(
       response,
       CommonResponseModel.fromJson,
-    ).fold((CustomError l) => left(l), ( CommonResponseModel r) => right(r));
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<ConversationResponseModel> createConversation(
+      {required ConversationCreateRequestModel conversationCreateRequestModel}) async {
+    String url = "conversations/create";
+    String requestBody = conversationCreateRequestModel.toRawJson();
+    Response response = await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+    if (response.statusCode == null) await post(url, requestBody);
+
+    return _convert<ConversationResponseModel>(
+      response,
+      ConversationResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (ConversationResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<MessageResponseModel> getMessages({required MessageRequestModel messageRequestModel}) async {
+    String url =
+        "messages?conversationId=${messageRequestModel.conversationId}&limit=${messageRequestModel.limit}&page=${messageRequestModel.page}";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<MessageResponseModel>(
+      response,
+      MessageResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (MessageResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<Response> sendMessage({required SendMessageRequestModel sendMessageRequestModel}) async {
+    Response response = await post("messages/create", sendMessageRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("messages/create", sendMessageRequestModel.toRawJson());
+    return _convert<Response>(
+      response,
+      (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
+  EitherModel<UnreadMessageResponseModel> getUnreadMessage({required String conversationId}) async {
+    String url = "messages/unread-msg?conversationId=$conversationId";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<UnreadMessageResponseModel>(
+      response,
+      UnreadMessageResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (UnreadMessageResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<ChatItModel> getConversations() async {
+    String url = "conversations";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<ChatItModel>(
+      response,
+      ChatItModel.fromJson,
+    ).fold((CustomError l) => left(l), (ChatItModel r) => right(r));
   }
 }

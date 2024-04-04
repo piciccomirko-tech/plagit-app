@@ -9,6 +9,7 @@ import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/socket_location_model.dart';
 import 'package:mh/app/modules/employee_hired_history/widgets/employee_hired_history_details_widget.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'package:mh/app/routes/app_pages.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/custom_error.dart';
@@ -76,21 +77,17 @@ class ClientMyEmployeeController extends GetxController {
     calculatePreviousDates(bookedDateList: bookedDateList);
   }
 
-  void chatWithEmployee({required String employeeName, required String employeeId}) {
+  void chatWithEmployee({required LiveChatDataTransferModel liveChatDataTransferModel}) {
     CustomLoader.show(context!);
-    _apiHelper.matchEmployee(employeeId: employeeId).then((Either<CustomError, CommonResponseModel> response) {
+    _apiHelper
+        .matchEmployee(employeeId: liveChatDataTransferModel.toId)
+        .then((Either<CustomError, CommonResponseModel> response) {
       CustomLoader.hide(context!);
       response.fold((CustomError customError) {
         Utils.errorDialog(context!, customError);
       }, (CommonResponseModel responseData) {
         if (responseData.status == "success" && responseData.statusCode == 200 && responseData.result == "true") {
-          Get.toNamed(Routes.clientEmployeeChat, arguments: {
-            MyStrings.arg.receiverName: employeeName,
-            MyStrings.arg.fromId: appController.user.value.userId,
-            MyStrings.arg.toId: employeeId,
-            MyStrings.arg.clientId: appController.user.value.userId,
-            MyStrings.arg.employeeId: employeeId,
-          });
+          Get.toNamed(Routes.liveChat, arguments: liveChatDataTransferModel);
         } else {
           Utils.showSnackBar(
               message: 'You cannot chat with this employee \nbecause he is not hired today', isTrue: false);

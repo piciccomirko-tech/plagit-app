@@ -5,6 +5,7 @@ import 'package:mh/app/modules/client/client_dashboard/models/client_update_stat
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import '../../../../common/widgets/custom_loader.dart';
 import '../../../../models/check_in_out_histories.dart';
 import '../../../../models/custom_error.dart';
@@ -74,7 +75,7 @@ class ClientDashboardController extends GetxController {
     });
   }
 
-  void chatWithEmployee({required EmployeeDetails employeeDetails}) {
+  void chatWithEmployee({required EmployeeDetails employeeDetails, required String bookingId}) {
     CustomLoader.show(context!);
     _apiHelper
         .matchEmployee(employeeId: employeeDetails.employeeId ?? '')
@@ -84,13 +85,13 @@ class ClientDashboardController extends GetxController {
         Utils.errorDialog(context!, customError);
       }, (CommonResponseModel responseData) {
         if (responseData.status == "success" && responseData.statusCode == 200 && responseData.result == "true") {
-          Get.toNamed(Routes.clientEmployeeChat, arguments: {
-            MyStrings.arg.receiverName: employeeDetails.name ?? "-",
-            MyStrings.arg.fromId: appController.user.value.userId,
-            MyStrings.arg.toId: employeeDetails.employeeId ?? "",
-            MyStrings.arg.clientId: appController.user.value.userId,
-            MyStrings.arg.employeeId: employeeDetails.employeeId ?? "",
-          });
+          Get.toNamed(Routes.liveChat,
+              arguments: LiveChatDataTransferModel(
+                  toName: employeeDetails.name ?? "",
+                  toId: employeeDetails.employeeId ?? "",
+                  senderId: appController.user.value.userId,
+                  bookedId: bookingId, //bookingId,
+                  toProfilePicture: (employeeDetails.profilePicture ?? "").imageUrl));
         } else {
           Utils.showSnackBar(
               message: 'You cannot chat with this employee \nbecause he is not hired today', isTrue: false);

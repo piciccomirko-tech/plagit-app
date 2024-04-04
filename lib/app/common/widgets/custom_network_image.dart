@@ -24,7 +24,7 @@ class CustomNetworkImage extends StatelessWidget {
         // width: width ?? 200,
         fit: fit,
         imageUrl: url,
-        placeholder: (context, url) => Container(
+        placeholder: (BuildContext context, String url) => Container(
           color: Colors.white,
           child: const Center(
             child: CupertinoActivityIndicator(),

@@ -44,6 +44,7 @@ class MyAssets {
   static const liveCamera = "assets/icons/live_camera.png";
   static const gallery = "assets/icons/gallery.png";
   static const distance = "assets/icons/distance.png";
+  static const chat = "assets/icons/chat.png";
   static const employeeMarker = "assets/icons/employee_marker.png";
   static const breakTime = "assets/icons/break_time.png";
   static const nationality = "assets/icons/nationality.png";

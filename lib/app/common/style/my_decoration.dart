@@ -100,7 +100,7 @@ class MyDecoration {
         begin: Alignment.bottomRight,
         colors: [
           MyColors.c_C6A34F.withOpacity(0.1),
-          MyColors.white
+          Colors.blueGrey.withOpacity(0.5)
         ]
     ),
         //color: MyColors.lightCard(context),

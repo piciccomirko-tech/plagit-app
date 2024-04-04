@@ -1,7 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
 import 'package:dartz/dartz.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/widgets/custom_menu.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/dropdown_item.dart';
@@ -9,6 +10,11 @@ import 'package:mh/app/modules/client/job_requests/models/job_post_request_model
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
+import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
+import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
+import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -30,21 +36,23 @@ class ClientHomeController extends GetxController {
   Rx<RequestedEmployees> requestedEmployees = RequestedEmployees().obs;
   RxBool isLoading = true.obs;
   // unread msg track
-  RxInt unreadMsgFromEmployee = 0.obs;
-  RxInt unreadMsgFromAdmin = 0.obs;
-  RxList<Map<String, dynamic>> employeeChatDetails = <Map<String, dynamic>>[].obs;
   RxDouble rating = 0.0.obs;
   TextEditingController tecReview = TextEditingController();
   TextEditingController tecSearch = TextEditingController();
+  RxBool showClearIcon = false.obs;
+
   ScrollController scrollController = ScrollController();
   RxList<DropdownItem> positionList = <DropdownItem>[].obs;
-  RxBool showClearIcon = false.obs;
 
   Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
   RxBool jobPostDataLoading = false.obs;
 
   Rx<CheckInCheckOutHistory> clientPaymentInvoice = CheckInCheckOutHistory().obs;
 
+  RxInt unreadMessageFromAdmin = 0.obs;
+  RxInt unreadMessageFromEmployee= 0.obs;
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   @override
   void onInit() {
     homeMethods();
@@ -61,6 +69,8 @@ class ClientHomeController extends GetxController {
   @override
   void onReady() {
     Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
+    _getMessagesFromSocket();
+    _createConversation();
     super.onReady();
   }
 
@@ -95,7 +105,7 @@ class ClientHomeController extends GetxController {
   void onHelpAndSupportClick() {
     ClientHelpOption.show(
       context!,
-      msgFromAdmin: unreadMsgFromAdmin.value,
+      msgFromAdmin: unreadMessageFromAdmin.value,
     );
   }
 
@@ -110,14 +120,13 @@ class ClientHomeController extends GetxController {
   }
 
   void chatWithAdmin() {
-    Get.back(); // hide dialogue
+    Get.back();
 
-    Get.toNamed(Routes.supportChat, arguments: {
-      MyStrings.arg.fromId: appController.user.value.userId,
-      MyStrings.arg.toId: "allAdmin",
-      MyStrings.arg.supportChatDocId: appController.user.value.userId,
-      MyStrings.arg.receiverName: "Support",
-    });
+    Get.toNamed(Routes.liveChat,
+        arguments: LiveChatDataTransferModel(
+            toName: "Support",
+            toId: appController.user.value.userId,
+            toProfilePicture: "https://www.iconpacks.net/icons/2/free-chat-support-icon-1721-thumb.png"));
   }
 
   void requestEmployees() {
@@ -213,44 +222,10 @@ class ClientHomeController extends GetxController {
     );
   }
 
-  void _trackUnreadMsg() {
-    // employee massage
-    FirebaseFirestore.instance
-        .collection('employee_client_chat')
-        .where("clientId", isEqualTo: appController.user.value.userId)
-        .snapshots()
-        .listen((QuerySnapshot<Map<String, dynamic>> event) {
-      unreadMsgFromEmployee.value = 0;
-      employeeChatDetails.clear();
-
-      for (QueryDocumentSnapshot<Map<String, dynamic>> element in event.docs) {
-        Map<String, dynamic> data = element.data();
-        unreadMsgFromEmployee.value += data["${appController.user.value.userId}_unread"] == null
-            ? 0
-            : int.parse(data["${appController.user.value.userId}_unread"].toString());
-        employeeChatDetails.add(data);
-      }
-
-      employeeChatDetails.refresh();
-    });
-
-    // admin massage
-    FirebaseFirestore.instance
-        .collection("support_chat")
-        .doc(appController.user.value.userId)
-        .snapshots()
-        .listen((DocumentSnapshot<Map<String, dynamic>> event) {
-      if (event.exists) {
-        Map<String, dynamic> data = event.data()!;
-        unreadMsgFromAdmin.value = data["${appController.user.value.userId}_unread"];
-      }
-    });
-  }
 
   void homeMethods() {
     notificationsController.getNotificationList();
     clientPaymentInvoiceMethod();
-    _trackUnreadMsg();
     fetchRequestEmployees();
     getJobRequests();
   }
@@ -276,7 +251,6 @@ class ClientHomeController extends GetxController {
                   onReviewSubmit: onReviewSubmitClick,
                   reviewDialogDetailsModel: response.reviewDialogDetailsModel!.first,
                   tecReview: tecReview)
-              //reviewDialogWidget(reviewDialogDetails: response.reviewDialogDetailsModel!.first)
               );
         }
       });
@@ -377,4 +351,61 @@ class ClientHomeController extends GetxController {
       clientPaymentInvoice.value = checkInCheckOutHistory;
     });
   }
-}
+
+  void _createConversation() {
+    ConversationCreateRequestModel conversationCreateRequestModel =
+    ConversationCreateRequestModel(isAdmin: true, senderId: appController.user.value.userId);
+
+    _apiHelper
+        .createConversation(conversationCreateRequestModel: conversationCreateRequestModel)
+        .then((Either<CustomError, ConversationResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (ConversationResponseModel response) {
+        if (response.status == "success" && response.statusCode == 201 && response.details != null) {
+          _getUnreadMessage(conversationId: response.details?.id ?? "");
+        }
+      });
+    });
+  }
+
+  void _getUnreadMessage({required String conversationId}) {
+    _apiHelper
+        .getUnreadMessage(conversationId: conversationId)
+        .then((Either<CustomError, UnreadMessageResponseModel> responseData) {
+      responseData.fold((CustomError customError) {
+        Utils.errorDialog(context!, customError);
+      }, (UnreadMessageResponseModel response) {
+        if (response.status == "success" && response.statusCode == 200 && response.details != null) {
+          unreadMessageFromAdmin.value = response.details?.count ?? 0;
+        }
+      });
+    });
+  }
+
+  Future<void> showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your_channel_id', // Change this value for different channels
+      'your_channel_name', // Change this value for different channels
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      'New Notification', // Title
+      'This is a local notification', // Body
+      platformChannelSpecifics,
+      payload: 'item x',
+    );
+  }
+
+  void _getMessagesFromSocket() {
+    Get.find<SocketController>().socket?.on('new_message', (data) async {
+      print('ClientHomeController._getMessagesFromSocket: ${jsonEncode(data)}');
+      MessageModel messageModel = MessageModel.fromJson(data['message']);
+      showNotification();
+    });
+  }
+
+  }

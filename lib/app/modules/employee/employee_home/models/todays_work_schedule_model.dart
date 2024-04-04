@@ -6,32 +6,30 @@ class TodayWorkScheduleModel {
   String? message;
   TodayWorkScheduleDetailsModel? todayWorkScheduleDetailsModel;
 
-  TodayWorkScheduleModel(
-      {this.status, this.statusCode, this.message, this.todayWorkScheduleDetailsModel});
+  TodayWorkScheduleModel({this.status, this.statusCode, this.message, this.todayWorkScheduleDetailsModel});
 
   TodayWorkScheduleModel.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     statusCode = json['statusCode'];
     message = json['message'];
     todayWorkScheduleDetailsModel =
-    json['result'] != null ? TodayWorkScheduleDetailsModel.fromJson(json['result']) : null;
+        json['result'] != null ? TodayWorkScheduleDetailsModel.fromJson(json['result']) : null;
   }
-
 }
 
 class TodayWorkScheduleDetailsModel {
+  String? id;
   RestaurantDetails? restaurantDetails;
   String? startTime;
   String? endTime;
 
-  TodayWorkScheduleDetailsModel({this.restaurantDetails, this.startTime, this.endTime});
+  TodayWorkScheduleDetailsModel({this.id, this.restaurantDetails, this.startTime, this.endTime});
 
   TodayWorkScheduleDetailsModel.fromJson(Map<String, dynamic> json) {
-    restaurantDetails = json['restaurantDetails'] != null
-        ? RestaurantDetails.fromJson(json['restaurantDetails'])
-        : null;
+    id = json['_id'];
+    restaurantDetails =
+        json['restaurantDetails'] != null ? RestaurantDetails.fromJson(json['restaurantDetails']) : null;
     startTime = json['startTime'];
     endTime = json['endTime'];
   }
-
 }

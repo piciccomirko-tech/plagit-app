@@ -5,7 +5,6 @@ import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/employee_details.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../common/widgets/custom_appbar.dart';
-import '../../../../common/widgets/custom_badge.dart';
 import '../../../../common/widgets/custom_network_image.dart';
 import '../../../../common/widgets/no_item_found.dart';
 import '../../../../models/employee_daily_statistics.dart';
@@ -232,7 +231,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
           _cell(width: 100.w, value: "-"),
           _cell(width: 100.w, value: "-"),
           _cell(width: 100.w, value: "-"),
-          _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!)),
+          _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!, bookingId: hiredHistory.bookingId??"")),
           /*  _cell(
             width: 100.w,
             value: "-",
@@ -260,7 +259,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
         ),
         _cell(width: 100.w, value:"" , clientUpdatedValue: dailyStatistics.workingHour
         ),
-        _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!)),
+        _cell(width: 100.w, value: "", child: _chat(employeeDetails: hiredHistory.employeeDetails!, bookingId: hiredHistory.bookingId??"")),
         /*  _cell(width: 100.w, value: "--", child: const CircleAvatar(
           backgroundColor: Colors.transparent,
             child: Icon(Icons.check_box, color: Colors.green))
@@ -307,7 +306,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                         radius: 8.0,
                       ),
                     ),
-                    Positioned(
+                   /* Positioned(
                       top: -15,
                       right: -3,
                       child: Obx(
@@ -320,7 +319,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                           child: const CustomBadge(""),
                         ),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
                 SizedBox(width: 10.w),
@@ -347,17 +346,17 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
     );
   }
 
-  Widget _chat({required EmployeeDetails employeeDetails}) => GestureDetector(
-        onTap: () => controller.chatWithEmployee(employeeDetails: employeeDetails),
-        child: Center(
+  Widget _chat({required EmployeeDetails employeeDetails, required String bookingId}) => GestureDetector(
+        onTap: () => controller.chatWithEmployee(employeeDetails: employeeDetails, bookingId: bookingId),
+        child: const Center(
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              const Icon(
+              Icon(
                 Icons.message,
                 color: MyColors.c_C6A34F,
               ),
-              Positioned(
+            /*  Positioned(
                 top: -10.h,
                 right: -5.w,
                 child: Obx(
@@ -371,7 +370,7 @@ class ClientDashboardView extends GetView<ClientDashboardController> {
                     return CustomBadge(result.first["${controller.appController.user.value.userId}_unread"].toString());
                   },
                 ),
-              ),
+              ),*/
             ],
           ),
         ),

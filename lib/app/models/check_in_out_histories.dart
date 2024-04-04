@@ -56,6 +56,7 @@ class CheckInCheckOutHistory {
 class CheckInCheckOutHistoryElement {
   CheckInCheckOutHistoryElement({
     this.id,
+    this.bookingId,
     this.status,
     this.refundAmount,
     this.remark,
@@ -83,6 +84,7 @@ class CheckInCheckOutHistoryElement {
   });
 
   final String? id;
+  final String? bookingId;
   final String? employeeId;
   final String? status;
   final double? refundAmount;
@@ -115,6 +117,7 @@ class CheckInCheckOutHistoryElement {
 
   factory CheckInCheckOutHistoryElement.fromJson(Map<String, dynamic> json) => CheckInCheckOutHistoryElement(
         id: json["_id"],
+    bookingId: json["bookingId"],
         status: json["status"],
     remark: json["remark"],
     refundAmount: json["refundAmount"] == null ? 0.0 :double.parse(json["refundAmount"].toString()),
@@ -146,6 +149,7 @@ class CheckInCheckOutHistoryElement {
 
   Map<String, dynamic> toJson() => {
         "_id": id,
+        "bookingId": bookingId,
         "status": status,
         "refundAmount": refundAmount,
         "remark": remark,
