@@ -43,13 +43,16 @@ class LiveChatView extends GetView<LiveChatController> {
                   ),
                 ),
                 const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(controller.liveChatDataTransferModel.toName,
-                        style: MyColors.l111111_dwhite(context).semiBold16),
-                    Text("Online", style: MyColors.c_A6A6A6.medium10)
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(controller.liveChatDataTransferModel.toName,
+                          style: MyColors.l111111_dwhite(context).semiBold16, overflow: TextOverflow.ellipsis, maxLines: 2),
+                      SizedBox(height: 3.h),
+                      Text("Online", style: MyColors.c_A6A6A6.medium10)
+                    ],
+                  ),
                 )
               ],
             ),

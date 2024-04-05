@@ -14,6 +14,7 @@ class ChatItController extends GetxController {
   BuildContext? context;
 
   RxList<Conversation> conversationList = <Conversation>[].obs;
+  RxList<Conversation> filteredConversationList = <Conversation>[].obs;
   RxBool conversationDataLoaded = false.obs;
 
   TextEditingController tecSearch = TextEditingController();
@@ -25,12 +26,17 @@ class ChatItController extends GetxController {
   }
 
   void getConversationList() async {
+    conversationDataLoaded.value = false;
     Either<CustomError, ChatItModel> responseData = await _apiHelper.getConversations();
     responseData.fold((CustomError customError) {
       Utils.errorDialog(context!, customError);
     }, (ChatItModel response) {
       if ([200, 201].contains(response.statusCode) && response.status == "success") {
         conversationList.value = response.conversations ?? [];
+        filteredConversationList = conversationList;
+        filteredConversationList.refresh();
+        print('ChatItController.getConversationList: ${filteredConversationList.length}');
+        print('ChatItController.getConversationList: ${ conversationList.length}');
       }
     });
     conversationDataLoaded.value = true;
@@ -46,7 +52,25 @@ class ChatItController extends GetxController {
     tecSearch.clear();
     showClearIcon.value = false;
     Utils.unFocus();
+    getConversationList();
   }
 
   void onAddChatUserPressed() => Get.toNamed(Routes.addChatUser);
+
+  void onSearchChatUser(String query) {
+    if (query.isNotEmpty) {
+      showClearIcon.value = true;
+      List<Conversation> tempList = [];
+      tempList.addAll(conversationList);
+      print('ChatItController.onSearchChatUser: ${tempList.length}');
+      print('ChatItController.onSearchChatUser: ${conversationList.length}');
+      filteredConversationList.assignAll(tempList.where((conversation) {
+        return conversation.members!.any((member) => member.name!.toLowerCase().contains(query.toLowerCase()));
+      }).toList());
+    }
+    else{
+      getConversationList();
+      showClearIcon.value = false;
+    }
+  }
 }

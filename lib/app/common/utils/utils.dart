@@ -282,7 +282,7 @@ class Utils {
                 pw.Text(
                   'Plagit',
                   style: pw.TextStyle(
-                    color: PdfColor.fromHex('C6A34F'), // Set the text color to blue.
+                    color: PdfColor.fromHex('58c8c8'), // Set the text color to blue.
                     fontSize: 30,
                   ),
                 ),
@@ -382,7 +382,7 @@ class Utils {
               children: [
                 pw.Container(
                     padding: const pw.EdgeInsets.all(10.0),
-                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
                     child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
                       pw.Image(image!, height: 80, width: 80),
                       pw.Text('INVOICE',
@@ -395,15 +395,15 @@ class Utils {
                       pw.Expanded(
                           flex: 1,
                           child:
-                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('C6A34F').shade(0.1)))),
+                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.1)))),
                       pw.Expanded(
                           flex: 1,
                           child:
-                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('C6A34F').shade(0.7)))),
+                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.7)))),
                       pw.Expanded(
                           flex: 1,
                           child:
-                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('C6A34F').shade(1.0))))
+                              pw.Container(decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(1.0))))
                     ])),
                 pw.SizedBox(height: 30),
                 pw.Text(
@@ -461,7 +461,7 @@ class Utils {
                 pw.SizedBox(height: 30),
                 pw.Container(
                     padding: const pw.EdgeInsets.all(10.0),
-                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
                     child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
                       pw.Text('QUANTITY', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
                       pw.Text('DATE', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
@@ -510,7 +510,7 @@ class Utils {
                 pw.Divider(color: PdfColors.grey400, height: 0.0),
                 pw.Container(
                     padding: const pw.EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
                     child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
                       pw.Text(
                           'TOTAL: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.totalAmount?.toStringAsFixed(2)}  ',
@@ -547,7 +547,7 @@ class Utils {
                     child: pw.Container(
                         width: double.infinity,
                         padding: const pw.EdgeInsets.symmetric(vertical: 10.0),
-                        decoration: pw.BoxDecoration(color: PdfColor.fromHex('DDBD68').shade(0.2)),
+                        decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
                         child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.center,
                             mainAxisAlignment: pw.MainAxisAlignment.center,

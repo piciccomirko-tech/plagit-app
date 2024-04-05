@@ -111,7 +111,6 @@ class Member {
   final String? profilePicture;
   final String? role;
   final String? id;
-  final String? restaurantName;
 
   Member({
     this.senderId,
@@ -119,18 +118,16 @@ class Member {
     this.profilePicture,
     this.role,
     this.id,
-    this.restaurantName,
   });
 
   factory Member.fromRawJson(String str) => Member.fromJson(json.decode(str));
 
   factory Member.fromJson(Map<String, dynamic> json) => Member(
     senderId: json["senderId"],
-    name: json["name"],
+    name: json["name"] ?? json["restaurantName"],
     profilePicture: json["profilePicture"],
     role: json["role"],
     id: json["_id"],
-    restaurantName: json["restaurantName"],
   );
 
 }

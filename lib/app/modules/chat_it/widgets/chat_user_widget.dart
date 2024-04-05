@@ -18,21 +18,22 @@ class ChatUserWidget extends StatelessWidget {
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(horizontal: 10),
           leading: CircleAvatar(
-            radius: 30,
+            radius: 25,
             backgroundColor: Colors.transparent,
             backgroundImage: NetworkImage(((conversation.members ?? []).first.profilePicture ?? "").imageUrl),
           ),
-          title: Text((conversation.members ?? []).first.name ?? "Guest",
-              style: MyColors.l111111_dwhite(context).medium16),
+          title: Text((conversation.members ?? []).first.name ??"Guest",
+              style: MyColors.l111111_dwhite(context).medium15),
           subtitle: Text(conversation.latestMessage?.text ?? "No message",
               style: (conversation.latestMessage?.read ?? false) == false
                   ? MyColors.l111111_dwhite(context).regular13
                   : MyColors.l111111_dwhite(context).medium13),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text((conversation.members ?? []).first.role ?? "", style: MyColors.l111111_dwhite(context).semiBold12),
-              Text(DateFormat('hh:mm a').format(conversation.latestMessage?.dateTime ?? DateTime.now())),
+              Text(DateFormat('dd MMM yyyy, hh:mm a').format(conversation.latestMessage?.dateTime ?? DateTime.now()), style: MyColors.c_C6A34F.medium10),
             ],
           ),
         ),

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
 import 'package:mh/app/common/style/my_decoration.dart';
 import 'package:mh/app/common/values/my_color.dart';
-import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/modules/chat_it/controllers/chat_it_controller.dart';
 
 class ChatUserSearchWidget extends GetWidget<ChatItController> {
@@ -43,7 +42,7 @@ class ChatUserSearchWidget extends GetWidget<ChatItController> {
               border: InputBorder.none,
               hintText: "Search by user name...",
               hintStyle: MyColors.c_7B7B7B.medium15),
-          onChanged: (v){},
+          onChanged: controller.onSearchChatUser,
         ),
       ),
     );

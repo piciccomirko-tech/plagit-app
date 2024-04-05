@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
@@ -25,6 +26,8 @@ class LiveChatController extends GetxController {
   late ScrollController scrollController;
   int pageNumber = 1;
   RxBool moreMessageAvailable = false.obs;
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   @override
   void onInit() {
@@ -149,5 +152,22 @@ class LiveChatController extends GetxController {
         _getMoreMessages();
       }
     }
+  }
+
+  Future<void> showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'your_channel_id', // Change this value for different channels
+      'your_channel_name', // Change this value for different channels
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0, // Notification ID
+      '', // Title
+      'This is a local notification', // Body
+      platformChannelSpecifics,
+      payload: 'item x',
+    );
   }
 }

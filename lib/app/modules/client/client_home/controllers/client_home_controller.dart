@@ -69,7 +69,6 @@ class ClientHomeController extends GetxController {
   @override
   void onReady() {
     Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
-    _getMessagesFromSocket();
     _createConversation();
     super.onReady();
   }
@@ -380,31 +379,6 @@ class ClientHomeController extends GetxController {
           unreadMessageFromAdmin.value = response.details?.count ?? 0;
         }
       });
-    });
-  }
-
-  Future<void> showNotification() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'your_channel_id', // Change this value for different channels
-      'your_channel_name', // Change this value for different channels
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      'New Notification', // Title
-      'This is a local notification', // Body
-      platformChannelSpecifics,
-      payload: 'item x',
-    );
-  }
-
-  void _getMessagesFromSocket() {
-    Get.find<SocketController>().socket?.on('new_message', (data) async {
-      print('ClientHomeController._getMessagesFromSocket: ${jsonEncode(data)}');
-      MessageModel messageModel = MessageModel.fromJson(data['message']);
-      showNotification();
     });
   }
 
