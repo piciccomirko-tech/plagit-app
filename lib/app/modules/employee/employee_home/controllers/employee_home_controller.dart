@@ -490,7 +490,7 @@ class EmployeeHomeController extends GetxController {
   void showHomePopUpForCalender() {
     _apiHelper.getSkipDate().then((Either<CustomError, CommonResponseModel> responseData) {
       responseData.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry);
+        Utils.errorDialog(context!, customError);
       }, (CommonResponseModel response) {
         if (response.status == "success" && response.statusCode == 200 && response.details != null) {
           if (response.details?.skipDate == null ||
@@ -498,16 +498,17 @@ class EmployeeHomeController extends GetxController {
               response.details?.skipDate?.split('T').first != DateTime.now().toString().split(" ").first) {
             Get.dialog(
                 Dialog(
-                  insetPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
+                  insetPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                   child: Container(
-                    height: 350,
+                    height: 370,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
                     decoration:
                         BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Lottie.asset(MyAssets.lottie.calenderLottie),
+                        Lottie.asset(MyAssets.lottie.calenderLottie, height: 220, width: 220),
                         Text(MyStrings.updateCalendar.tr, style: MyColors.c_C6A34F.semiBold18, maxLines: 2),
                         Row(
                           mainAxisSize: MainAxisSize.min,

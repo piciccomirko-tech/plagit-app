@@ -11,7 +11,7 @@ class MessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: messageModel.senderDetails?.senderId == Get.find<AppController>().user.value.userId
+      mainAxisAlignment: messageModel.senderId == Get.find<AppController>().user.value.userId
           ? MainAxisAlignment.end
           : MainAxisAlignment.start,
       children: [
@@ -23,7 +23,7 @@ class MessageWidget extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
-                  color: messageModel.senderDetails?.senderId == Get.find<AppController>().user.value.userId
+                  color: messageModel.senderId == Get.find<AppController>().user.value.userId
                       ? MyColors.c_C6A34F
                       : Colors.blueGrey.shade300),
               child: Row(

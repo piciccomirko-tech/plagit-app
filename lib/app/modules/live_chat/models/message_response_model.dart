@@ -39,6 +39,7 @@ class MessageResponseModel {
 class MessageModel {
   final String? id;
   final String? conversationId;
+  final String? senderId;
   final SenderDetailsModel? senderDetails;
   final String? text;
   final DateTime? dateTime;
@@ -47,6 +48,7 @@ class MessageModel {
   MessageModel({
     this.id,
     this.conversationId,
+    this.senderId,
     this.senderDetails,
     this.text,
     this.dateTime,
@@ -60,6 +62,7 @@ class MessageModel {
   factory MessageModel.fromJson(Map<String, dynamic> json) => MessageModel(
     id: json["_id"],
     conversationId: json["conversationId"],
+    senderId: json["senderId"],
     senderDetails: json["senderDetails"] == null ? null : SenderDetailsModel.fromJson(json["senderDetails"]),
     text: json["text"],
     dateTime: json["dateTime"] == null ? null : DateTime.parse(json["dateTime"]),

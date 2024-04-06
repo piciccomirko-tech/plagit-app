@@ -1439,6 +1439,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) await get(url);
     if (response.statusCode == null) await get(url);
 
+    log('ApiHelperImpl.getMessages: ${response.bodyString}');
     return _convert<MessageResponseModel>(
       response,
       MessageResponseModel.fromJson,
