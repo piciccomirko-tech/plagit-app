@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/client/client_shortlisted/models/add_to_shortlist_request_model.dart';
@@ -128,90 +129,93 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
                       endIndent: 13.w,
                     ),
                     SizedBox(height: 10.h),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        InkWell(
-                          onTap: () => controller.onDaysSelectedClick(
-                              requestDateList: employee.requestDateList ?? [], shortListId: employee.sId ?? ''),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3.0),
-                            decoration:
-                                BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: MyColors.c_F5F5F5),
-                            child: Row(
-                              children: [
-                                Image.asset(MyAssets.calender2, height: 20, width: 20),
-                                Text(' ${employee.requestDateList?.calculateTotalDays()} ${MyStrings.daysSelected.tr}',
-                                    style: MyColors.black.medium12)
-                              ],
-                            ),
-                          ),
-                        ),
-                        if (employee.employeeDetails?.hasUniform == true)
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
                           InkWell(
-                            onTap: () => controller.onUniformClick(
-                                positionId: employee.employeeDetails?.positionId ?? '',
-                                shortListId: employee.sId ?? '',
-                                requestDateList: employee.requestDateList ?? []),
+                            onTap: () => controller.onDaysSelectedClick(
+                                requestDateList: employee.requestDateList ?? [], shortListId: employee.sId ?? ''),
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3.0),
                               decoration:
                                   BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: MyColors.c_F5F5F5),
                               child: Row(
                                 children: [
-                                  Image.asset(MyAssets.uniform, height: 18, width: 18),
-                                  Obx(() => Text(
-                                      controller.selectedOption.value == 'Yes'
-                                          ? ' ${MyStrings.yesNeed.tr}'
-                                          : controller.selectedOption.value == 'No'
-                                              ? ' ${MyStrings.noNeed.tr}'
-                                              : ' ${MyStrings.uniform.tr}',
-                                      style: MyColors.black.medium12))
+                                  Image.asset(MyAssets.calender2, height: 20, width: 20),
+                                  Text(' ${employee.requestDateList?.calculateTotalDays()} ${MyStrings.daysSelected.tr}',
+                                      style: MyColors.black.medium12)
                                 ],
                               ),
                             ),
                           ),
-                        if (employee.requestDateList!.isNotEmpty)
-                          Obx(
-                            () => GestureDetector(
-                              onTap: () => controller.onSelectClick(employee),
+                          if (employee.employeeDetails?.hasUniform == true)
+                            InkWell(
+                              onTap: () => controller.onUniformClick(
+                                  positionId: employee.employeeDetails?.positionId ?? '',
+                                  shortListId: employee.sId ?? '',
+                                  requestDateList: employee.requestDateList ?? []),
                               child: Container(
-                                width: 25.h,
-                                height: 25.h,
-                                margin: EdgeInsets.only(right: 10.0.w),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: controller.shortlistController.selectedForHire.contains(employee)
-                                      ? Colors.green.shade400
-                                      : MyColors.c_F5F5F5,
-                                  border: Border.all(
-                                    color: controller.shortlistController.selectedForHire.contains(employee)
-                                        ? Colors.green
-                                        : Colors.grey.shade300,
-                                  ),
-                                ),
-                                child: Icon(
-                                  Icons.check,
-                                  size: 14,
-                                  color: controller.shortlistController.selectedForHire.contains(employee)
-                                      ? Colors.white
-                                      : Colors.grey.shade300,
+                                padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 3.0),
+                                decoration:
+                                    BoxDecoration(borderRadius: BorderRadius.circular(5.0), color: MyColors.c_F5F5F5),
+                                child: Row(
+                                  children: [
+                                    Image.asset(MyAssets.uniform, height: 18, width: 18),
+                                    Obx(() => Text(
+                                        controller.selectedOption.value == 'Yes'
+                                            ? ' ${MyStrings.yesNeed.tr}'
+                                            : controller.selectedOption.value == 'No'
+                                                ? ' ${MyStrings.noNeed.tr}'
+                                                : ' ${MyStrings.uniform.tr}',
+                                        style: MyColors.black.medium12))
+                                  ],
                                 ),
                               ),
                             ),
-                          )
-                        else
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10.0),
-                            child: InkWell(
-                                onTap: () => Get.toNamed(Routes.calender, arguments: [
-                                      employee.employeeId ?? '',
-                                      employee.sId ?? '',
-                                      employee.employeeDetails?.hasUniform == true ? null : false
-                                    ]),
-                                child: Image.asset(MyAssets.calender2, height: 25, width: 25)),
-                          ),
-                      ],
+                          if (employee.requestDateList!.isNotEmpty)
+                            Obx(
+                              () => GestureDetector(
+                                onTap: () => controller.onSelectClick(employee),
+                                child: Container(
+                                  width: 25.h,
+                                  height: 25.h,
+                                  margin: EdgeInsets.only(right: 10.0.w),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: controller.shortlistController.selectedForHire.contains(employee)
+                                        ? Colors.green.shade400
+                                        : MyColors.c_F5F5F5,
+                                    border: Border.all(
+                                      color: controller.shortlistController.selectedForHire.contains(employee)
+                                          ? Colors.green
+                                          : Colors.grey.shade300,
+                                    ),
+                                  ),
+                                  child: Icon(
+                                    Icons.check,
+                                    size: 14,
+                                    color: controller.shortlistController.selectedForHire.contains(employee)
+                                        ? Colors.white
+                                        : Colors.grey.shade300,
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: InkWell(
+                                  onTap: () => Get.toNamed(Routes.calender, arguments: [
+                                        employee.employeeId ?? '',
+                                        employee.sId ?? '',
+                                        employee.employeeDetails?.hasUniform == true ? null : false
+                                      ]),
+                                  child: Image.asset(MyAssets.calender2, height: 25, width: 25)),
+                            ),
+                        ],
+                      ),
                     )
                   ],
                 ),

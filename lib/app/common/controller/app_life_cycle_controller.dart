@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'app_controller.dart';
 
 class AppLifecycleController extends GetxController with WidgetsBindingObserver {
-  final AppController _appController = Get.find();
 
   @override
   void onInit() {

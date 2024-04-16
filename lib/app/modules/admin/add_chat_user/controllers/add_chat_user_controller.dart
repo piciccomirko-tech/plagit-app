@@ -2,7 +2,6 @@ import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/models/employees_by_id.dart';
-import 'package:mh/app/modules/chat_it/controllers/chat_it_controller.dart';
 import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
 import 'package:mh/app/repository/api_helper.dart';
 import 'package:mh/app/routes/app_pages.dart';

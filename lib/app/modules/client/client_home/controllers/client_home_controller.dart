@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/widgets/custom_menu.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/dropdown_item.dart';
@@ -13,7 +11,6 @@ import 'package:mh/app/modules/employee/employee_home/models/review_request_mode
 import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
-import 'package:mh/app/modules/live_chat/models/message_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/unread_message_response_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import '../../../../common/controller/app_controller.dart';
@@ -345,7 +342,7 @@ class ClientHomeController extends GetxController {
     );
     isLoading.value = false;
     response.fold((CustomError customError) {
-      Utils.errorDialog(context!, customError..onRetry = clientPaymentInvoice);
+      Utils.errorDialog(context!, customError);
     }, (CheckInCheckOutHistory checkInCheckOutHistory) async {
       clientPaymentInvoice.value = checkInCheckOutHistory;
     });

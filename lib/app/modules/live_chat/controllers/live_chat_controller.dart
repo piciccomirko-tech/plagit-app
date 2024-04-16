@@ -6,7 +6,6 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/models/custom_error.dart';
-import 'package:mh/app/models/one_to_one_msg.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';

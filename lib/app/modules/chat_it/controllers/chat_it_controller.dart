@@ -35,8 +35,6 @@ class ChatItController extends GetxController {
         conversationList.value = response.conversations ?? [];
         filteredConversationList = conversationList;
         filteredConversationList.refresh();
-        print('ChatItController.getConversationList: ${filteredConversationList.length}');
-        print('ChatItController.getConversationList: ${ conversationList.length}');
       }
     });
     conversationDataLoaded.value = true;
@@ -62,8 +60,6 @@ class ChatItController extends GetxController {
       showClearIcon.value = true;
       List<Conversation> tempList = [];
       tempList.addAll(conversationList);
-      print('ChatItController.onSearchChatUser: ${tempList.length}');
-      print('ChatItController.onSearchChatUser: ${conversationList.length}');
       filteredConversationList.assignAll(tempList.where((conversation) {
         return conversation.members!.any((member) => member.name!.toLowerCase().contains(query.toLowerCase()));
       }).toList());

@@ -13,7 +13,7 @@ class TranslationsService extends Translations {
     ),
     LanguageModel(
       imageUrl: "🇦🇪",
-      countryName: 'United Arab Emirates',
+      countryName: 'Dubai',
       languageCode: 'ar',
     ),
     LanguageModel(
