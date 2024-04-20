@@ -6,6 +6,7 @@ import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/models/custom_error.dart';
+import 'package:mh/app/modules/chat_it/controllers/chat_it_controller.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
@@ -134,6 +135,8 @@ class LiveChatController extends GetxController {
         messageList.refresh();
         _scrollToBottom();
         showNotification(newMessage: newMessage);
+          Get.put(ChatItController()).getConversationList();
+
       }
     });
   }
@@ -158,21 +161,22 @@ class LiveChatController extends GetxController {
   }
 
   Future<void> showNotification({required MessageModel newMessage}) async {
-  if(newMessage.senderId != Get.find<AppController>().user.value.userId){
-    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
-      'your_channel_id', // Change this value for different channels
-      'your_channel_name', // Change this value for different channels
-      importance: Importance.max,
-      priority: Priority.high,
-    );
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-      0, // Notification ID
-      'New Message', // Title
-      newMessage.text ?? "", // Body
-      platformChannelSpecifics,
-      payload: 'item x',
-    );
-  }
+    if (newMessage.senderId != Get.find<AppController>().user.value.userId) {
+      const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        'your_channel_id', // Change this value for different channels
+        'your_channel_name', // Change this value for different channels
+        importance: Importance.max,
+        priority: Priority.high,
+      );
+      const NotificationDetails platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+      await flutterLocalNotificationsPlugin.show(
+        0, // Notification ID
+        'New Message', // Title
+        newMessage.text ?? "", // Body
+        platformChannelSpecifics,
+        payload: 'item x',
+      );
+    }
   }
 }

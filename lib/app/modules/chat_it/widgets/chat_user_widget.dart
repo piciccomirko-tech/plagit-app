@@ -23,16 +23,16 @@ class ChatUserWidget extends StatelessWidget {
             backgroundImage: NetworkImage(((conversation.members ?? []).first.profilePicture ?? "").imageUrl),
           ),
           title: Text((conversation.members ?? []).first.name ??"Guest",
-              style: MyColors.l111111_dwhite(context).medium15),
+              style: MyColors.l111111_dwhite(context).semiBold15),
           subtitle: Text(conversation.latestMessage?.text ?? "No message",
               style: (conversation.latestMessage?.read ?? false) == false
                   ? MyColors.l111111_dwhite(context).regular13
-                  : MyColors.l111111_dwhite(context).medium13),
+                  : MyColors.l111111_dwhite(context).semiBold13),
           trailing: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text((conversation.members ?? []).first.role ?? "", style: MyColors.l111111_dwhite(context).semiBold12),
+              Text((conversation.members ?? []).first.role ?? "", style: MyColors.l111111_dwhite(context).medium12),
               Text(DateFormat('dd MMM yyyy, hh:mm a').format(conversation.latestMessage?.dateTime ?? DateTime.now()), style: MyColors.c_C6A34F.medium10),
             ],
           ),

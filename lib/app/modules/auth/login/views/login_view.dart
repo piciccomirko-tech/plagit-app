@@ -79,6 +79,7 @@ class LoginView extends GetView<LoginController> {
               onTap: controller.onLoginPressed,
               margin: const EdgeInsets.symmetric(horizontal: 18),
             ),
+
           ],
         ),
       );

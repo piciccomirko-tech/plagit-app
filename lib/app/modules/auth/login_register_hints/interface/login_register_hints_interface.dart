@@ -4,4 +4,6 @@ abstract class LoginRegisterHintsInterface {
   void onSignUpPressed();
 
   void onSkipPressed();
+
+  void onPolicyPressed();
 }

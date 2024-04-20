@@ -34,6 +34,7 @@ class ChatItController extends GetxController {
       if ([200, 201].contains(response.statusCode) && response.status == "success") {
         conversationList.value = response.conversations ?? [];
         filteredConversationList = conversationList;
+        filteredConversationList.sort((a, b) => b.updatedAt!.compareTo(a.updatedAt!));
         filteredConversationList.refresh();
       }
     });
@@ -63,8 +64,7 @@ class ChatItController extends GetxController {
       filteredConversationList.assignAll(tempList.where((conversation) {
         return conversation.members!.any((member) => member.name!.toLowerCase().contains(query.toLowerCase()));
       }).toList());
-    }
-    else{
+    } else {
       getConversationList();
       showClearIcon.value = false;
     }

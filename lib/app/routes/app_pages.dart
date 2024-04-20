@@ -97,6 +97,8 @@ import '../modules/notifications/bindings/notifications_binding.dart';
 import '../modules/notifications/views/notifications_view.dart';
 import '../modules/otp/bindings/otp_binding.dart';
 import '../modules/otp/views/otp_view.dart';
+import '../modules/policy/bindings/policy_binding.dart';
+import '../modules/policy/views/policy_view.dart';
 import '../modules/reset_password/bindings/reset_password_binding.dart';
 import '../modules/reset_password/views/reset_password_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
@@ -440,6 +442,11 @@ class AppPages {
       name: _Paths.addChatUser,
       page: () => const AddChatUserView(),
       binding: AddChatUserBinding(),
+    ),
+    GetPage(
+      name: _Paths.policy,
+      page: () => const PolicyView(),
+      binding: PolicyBinding(),
     ),
   ];
 }

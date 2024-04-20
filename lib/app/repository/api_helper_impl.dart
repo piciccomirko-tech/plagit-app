@@ -399,11 +399,9 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     String url =
         "terms-conditions?country=${TranslationsService.languageList.singleWhere((element) => element.languageCode == StorageHelper.getLanguage).countryName}";
     Response response = await get(url);
-    print('ApiHelperImpl.getTermsConditionForHire: $url');
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
-    log('ApiHelperImpl.getTermsConditionForHire: ${response.bodyString}');
     return _convert<TermsConditionForHire>(
       response,
       TermsConditionForHire.fromJson,

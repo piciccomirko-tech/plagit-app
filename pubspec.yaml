@@ -35,13 +35,13 @@ dependencies:
   cached_network_image: ^3.3.1
 
   # image picker form local
-  image_picker: ^1.0.8
+  image_picker: ^1.1.0
 
   image_cropper: ^5.0.1
 
   flutter_image_compress: ^2.2.0
 
-  file_picker: ^8.0.0+1
+  file_picker: ^8.0.1
 
   # for image picker
   permission_handler: ^11.3.1
@@ -91,7 +91,7 @@ dependencies:
 
   horizontal_data_table: ^4.3.1
 
-  google_maps_flutter: ^2.6.0
+  google_maps_flutter: ^2.6.1
   geolocator: ^11.0.0
   firebase_core: ^2.30.0
   firebase_crashlytics: ^3.5.2
