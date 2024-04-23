@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
@@ -36,17 +37,17 @@ class AdminAllClientsView extends GetView<AdminAllClientsController> {
                   _resultCountWithFilter(),
                   Expanded(
                     child: ListView.builder(
-                      //controller: controller.scrollController,
+                      controller: controller.scrollController,
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       itemCount: controller.clients.value.users?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        /*  if (index == controller.clients.value.users!.length - 1 &&
+                      itemBuilder: (BuildContext context, int index) {
+                        if (index == (controller.clients.value.users ?? []).length - 1 &&
                             controller.moreDataAvailable.value == true) {
                           return const SpinKitThreeBounce(
                             color: MyColors.c_C6A34F,
                             size: 40,
                           );
-                        }*/
+                        }
                         return _employeeItem(
                           index,
                           controller.clients.value.users![index],

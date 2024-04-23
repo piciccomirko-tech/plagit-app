@@ -26,22 +26,22 @@ class AdminAllEmployeesController extends GetxController {
   Rx<HourlyRateDetailsModel> hourlyRateDetails = HourlyRateDetailsModel().obs;
   RxBool hourlyRateDataLoaded = false.obs;
 
-  /* RxInt currentPage = 1.obs;
+   RxInt currentPage = 1.obs;
   final ScrollController scrollController = ScrollController();
-  RxBool moreDataAvailable = true.obs;*/
+  RxBool moreDataAvailable = true.obs;
 
   @override
   void onInit() async {
     await _getEmployees();
     await _getNationalityList();
     await _getHourlyRate();
-    //paginateTask();
+    paginateTask();
     super.onInit();
   }
 
   @override
   void onClose() {
-    //scrollController.dispose();
+    scrollController.dispose();
     super.onClose();
   }
 
@@ -87,7 +87,7 @@ class AdminAllEmployeesController extends GetxController {
 
   void onResetClick() {
     Get.back();
-    //currentPage.value = 1;
+    currentPage.value = 1;
     employees.value.users?.clear();
     _getEmployees();
   }
@@ -109,6 +109,7 @@ class AdminAllEmployeesController extends GetxController {
     Either<CustomError, Employees> response = await _apiHelper.getAllUsersFromAdmin(
         positionId: positionId,
         rating: rating,
+        pageNumber: currentPage.value,
         employeeExperience: experience,
         minTotalHour: minTotalHour,
         maxTotalHour: maxTotalHour,
@@ -131,24 +132,24 @@ class AdminAllEmployeesController extends GetxController {
     });
   }
 
-/*  void paginateTask() {
+  void paginateTask() {
     scrollController.addListener(() {
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         loadNextPage();
       }
     });
-  }*/
+  }
 
   void onCalenderClick({required String employeeId}) {
     Get.toNamed(Routes.calender, arguments: [employeeId, '', null]);
   }
 
-  /*void loadNextPage() async {
+  void loadNextPage() async {
     currentPage.value++;
     await _getMoreEmployees();
-  }*/
+  }
 
-  /* Future<void> _getMoreEmployees({
+   Future<void> _getMoreEmployees({
     String? rating,
     String? experience,
     String? minTotalHour,
@@ -158,6 +159,7 @@ class AdminAllEmployeesController extends GetxController {
     Either<CustomError, Employees> response = await _apiHelper.getAllUsersFromAdmin(
         positionId: positionId,
         rating: rating,
+        pageNumber: currentPage.value,
         employeeExperience: experience,
         minTotalHour: minTotalHour,
         maxTotalHour: maxTotalHour,
@@ -166,18 +168,18 @@ class AdminAllEmployeesController extends GetxController {
 
     response.fold((CustomError customError) {
       moreDataAvailable.value = false;
-      Utils.showSnackBar(message: 'No more employees are here...', isTrue: false);
+     // Utils.showSnackBar(message: 'No more employees are here...', isTrue: false);
     }, (Employees employees) {
-      if (employees.users!.isNotEmpty) {
+      if ((employees.users??[]).isNotEmpty) {
         moreDataAvailable.value = true;
       } else {
         moreDataAvailable.value = false;
-        Utils.showSnackBar(message: 'No more employees are here...', isTrue: false);
+       // Utils.showSnackBar(message: 'No more employees are here...', isTrue: false);
       }
       this.employees.value.users?.addAll(employees.users ?? []);
       this.employees.refresh();
     });
-  }*/
+  }
 
   Future<void> _getNationalityList() async {
     Either<CustomError, NationalityModel> response = await _apiHelper.getNationalities();

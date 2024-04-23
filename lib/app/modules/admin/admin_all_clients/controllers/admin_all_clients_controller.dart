@@ -18,27 +18,28 @@ class AdminAllClientsController extends GetxController {
   Rx<Employees> clients = Employees().obs;
   RxBool clientsDataLoading = true.obs;
 
-/*  RxInt currentPage = 1.obs;
+  RxInt currentPage = 1.obs;
   final ScrollController scrollController = ScrollController();
-  RxBool moreDataAvailable = true.obs;*/
+  RxBool moreDataAvailable = true.obs;
 
   @override
   void onInit() {
     _getClients();
-    // paginateTask();
+    paginateTask();
     super.onInit();
   }
 
   @override
   void onClose() {
-    // scrollController.dispose();
+    scrollController.dispose();
     super.onInit();
   }
 
   Future<void> _getClients() async {
     clientsDataLoading.value = true;
 
-    Either<CustomError, Employees> response = await _apiHelper.getAllUsersFromAdmin(requestType: "CLIENT");
+    Either<CustomError, Employees> response =
+        await _apiHelper.getAllUsersFromAdmin(requestType: "CLIENT", pageNumber: currentPage.value);
     clientsDataLoading.value = false;
 
     response.fold((CustomError customError) {
@@ -64,7 +65,7 @@ class AdminAllClientsController extends GetxController {
           toId: employee.id ?? "",
           toProfilePicture: (employee.profilePicture ?? "").imageUrl));
 
-  /* void paginateTask() {
+  void paginateTask() {
     scrollController.addListener(() {
       if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
         loadNextPage();
@@ -79,20 +80,20 @@ class AdminAllClientsController extends GetxController {
 
   Future<void> _getMoreClients() async {
     Either<CustomError, Employees> response =
-        await _apiHelper.getAllUsersFromAdmin(requestType: "CLIENT");
+        await _apiHelper.getAllUsersFromAdmin(requestType: "CLIENT", pageNumber: currentPage.value);
 
     response.fold((CustomError customError) {
       moreDataAvailable.value = false;
-      Utils.showSnackBar(message: 'No more client are here...', isTrue: false);
+     // Utils.showSnackBar(message: 'No more client are here...', isTrue: false);
     }, (Employees clients) {
       if (clients.users!.isNotEmpty) {
         moreDataAvailable.value = true;
       } else {
         moreDataAvailable.value = false;
-        Utils.showSnackBar(message: 'No more client are here...', isTrue: false);
+        //Utils.showSnackBar(message: 'No more client are here...', isTrue: false);
       }
       this.clients.value.users?.addAll(clients.users ?? []);
       this.clients.refresh();
     });
-  }*/
+  }
 }

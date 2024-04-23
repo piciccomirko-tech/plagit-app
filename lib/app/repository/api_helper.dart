@@ -103,6 +103,7 @@ abstract class ApiHelper {
   EitherModel<Employees> getAllUsersFromAdmin(
       {String? positionId,
       String? rating,
+       int? pageNumber,
       String? employeeExperience,
       String? minTotalHour,
       String? maxTotalHour,

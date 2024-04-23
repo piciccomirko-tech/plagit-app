@@ -32,7 +32,7 @@ class AdminDashboardController extends GetxController {
   String? clientId;
 
   Rx<Employees> clients = Employees().obs;
-  RxList<String> restaurants = ["ALL"].obs;
+ // RxList<String> restaurants = ["ALL"].obs;
   RxBool clientLoading = true.obs;
 
   RxInt totalWorkingTimeInMinutes = 0.obs;
@@ -55,7 +55,7 @@ class AdminDashboardController extends GetxController {
 
   @override
   void onInit() {
-    _fetchClients();
+    //_fetchClients();
     _fetchCheckInOutHistory();
     super.onInit();
   }
@@ -69,7 +69,7 @@ class AdminDashboardController extends GetxController {
     _fetchCheckInOutHistory();
   }
 
-  void onClientChange(String? value) {
+ /* void onClientChange(String? value) {
     if (value == restaurants.first) {
       clientId = null;
     } else {
@@ -77,7 +77,7 @@ class AdminDashboardController extends GetxController {
     }
 
     _fetchCheckInOutHistory();
-  }
+  }*/
 
   Future<void> _fetchCheckInOutHistory() async {
     historyLoading.value = true;
@@ -103,7 +103,7 @@ class AdminDashboardController extends GetxController {
     });
   }
 
-  Future<void> _fetchClients() async {
+  /*Future<void> _fetchClients() async {
     clientLoading.value = true;
 
     await _apiHelper.getAllUsersFromAdmin(requestType: "CLIENT").then((response) {
@@ -118,7 +118,7 @@ class AdminDashboardController extends GetxController {
         restaurants.addAll((clients.users ?? []).map((e) => e.restaurantName!).toList());
       });
     });
-  }
+  }*/
 
   void _updateSummary() {
     var uniqueRestaurant = <String>{};

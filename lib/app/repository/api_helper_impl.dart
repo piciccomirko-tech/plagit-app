@@ -353,13 +353,16 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<Employees> getAllUsersFromAdmin(
       {String? positionId,
       String? rating,
+      int? pageNumber,
       String? employeeExperience,
       String? minTotalHour,
       String? maxTotalHour,
       bool? isReferred,
       String? requestType,
       bool? active}) async {
-    String url = "users?skipLimit=YES&requestType=$requestType";
+    String url = pageNumber != null
+        ? "users?page=$pageNumber&limit=10&requestType=$requestType"
+        : "users?skipLimit=YES&requestType=$requestType";
 
     if ((positionId ?? "").isNotEmpty) url += "&positionId=$positionId";
     if ((rating ?? "").isNotEmpty) url += "&rating=$rating";
@@ -369,7 +372,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (isReferred ?? false) url += "&isReferPerson=${isReferred!.toApiFormat}";
     if (active ?? false) url += "&active=${active!.toApiFormat}";
 
-    var response = await get(url);
+    Response response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
     if (response.statusCode == null) response = await get(url);
@@ -377,7 +380,7 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     return _convert<Employees>(
       response,
       Employees.fromJson,
-    ).fold((l) => left(l), (r) => right(r));
+    ).fold((CustomError l) => left(l), (Employees r) => right(r));
   }
 
   @override

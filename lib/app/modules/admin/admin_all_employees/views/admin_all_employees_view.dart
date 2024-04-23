@@ -1,3 +1,4 @@
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/common/widgets/custom_badge.dart';
@@ -44,19 +45,19 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                   _resultCountWithFilter(),
                   Expanded(
                     child: ListView.builder(
-                      //controller: controller.scrollController,
+                      controller: controller.scrollController,
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       itemCount: controller.employees.value.users?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        /*  if (index == controller.employees.value.users!.length - 1 &&
+                      itemBuilder: (BuildContext context, int index) {
+                          if (index == (controller.employees.value.users??[]).length - 1 &&
                             controller.moreDataAvailable.value == true) {
                           return const SpinKitThreeBounce(
                             color: MyColors.c_C6A34F,
                             size: 40,
                           );
-                        }*/
+                        }
                         return _employeeItem(
-                          controller.employees.value.users![index],
+                          (controller.employees.value.users??[])[index],
                         );
                       },
                     ),
