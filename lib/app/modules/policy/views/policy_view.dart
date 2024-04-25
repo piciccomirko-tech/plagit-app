@@ -1,14 +1,10 @@
 import 'package:custom_radio_grouped_button/custom_radio_grouped_button.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:mh/app/common/utils/exports.dart';
-import 'package:mh/app/common/values/my_color.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
-
 import '../controllers/policy_controller.dart';
 
 class PolicyView extends GetView<PolicyController> {
-  const PolicyView({Key? key}) : super(key: key);
+  const PolicyView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,6 +16,7 @@ class PolicyView extends GetView<PolicyController> {
             children: [
               CustomRadioButton(
                   autoWidth: true,
+                  buttonTextStyle: ButtonTextStyle(unSelectedColor: MyColors.l111111_dwhite(context)),
                   shapeRadius: 5,
                   elevation: 0.0,
                   height: 45,
@@ -32,8 +29,8 @@ class PolicyView extends GetView<PolicyController> {
                   radioButtonValue: controller.onButtonTapped,
                   unSelectedColor: MyColors.c_C6A34F.withOpacity(0.2),
                   selectedColor: MyColors.c_C6A34F),
-               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.0),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: Obx(() => Text(controller.policyText.value, style: MyColors.l111111_dwhite(context).medium15)),
               )
             ],

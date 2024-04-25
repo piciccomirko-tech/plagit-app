@@ -1,10 +1,63 @@
 import 'package:get/get.dart';
 
 class PolicyController extends GetxController {
-  List<String> policyLabels = <String>['Delivery Policy', 'Refund Policy', 'Cancellation Policy', 'Address Details'];
-  List<int> policyValue = <int>[1, 2, 3, 4];
+  List<String> policyLabels = <String>[
+    'Privacy Policy',
+    'Delivery Policy',
+    'Refund Policy',
+    'Cancellation Policy',
+    'Address Details'
+  ];
+  List<int> policyValue = <int>[1, 2, 3, 4, 5];
   RxString policyText = '''
   
+Introduction
+
+At Plagit, we value our customers' privacy and are committed to protecting their personal information. This Privacy Policy outlines the types of information we collect, how it is used, and the measures we take to ensure your personal data is treated with the highest standards of security and confidentiality.
+
+Information Collection and Use
+
+We may collect information from you when you use our website, including but not limited to your name, email address, contact information, and payment details when you make a purchase or register on our site. The information collected is used to process transactions, provide the requested services, and enhance your experience with our services.
+
+Payment Information
+
+Plagit takes the following approach regarding the security of payment information:
+
+- Credit/Debit Card Details: Plagit confirms that all credit/debit card details and personally identifiable information will NOT be stored, sold, shared, rented, or leased to any third parties.
+
+Third-Party Disclosure
+
+We do not sell, trade, or transfer your personally identifiable information to outside parties. This does not include trusted third parties who assist us in operating our website, conducting our business, or serving you, so long as those parties agree to keep this information confidential.
+
+Cookies and Tracking Technology
+
+Our website may use cookies and tracking technology depending on the features offered. Cookies and tracking technology are functional for gathering information such as browser type and operating system, tracking the number of visitors to the site, and understanding how visitors use the site.
+
+Policy Changes and Updates
+
+The following applies to our policy changes:
+
+- Updates to Policies: The Website Policies and Terms and Conditions may be changed or updated occasionally to meet the requirements and standards. Therefore, customers are encouraged to frequently visit these sections to be updated on the changes on the website.
+
+- Effective Date: Modifications will be effective on the day they are posted.
+
+Your Consent
+
+By using our site, you consent to our Privacy Policy.
+
+Contacting Us
+
+If you have any questions regarding this Privacy Policy, you may contact us using the information below:
+
+Support@plagit.com
+
+'''
+      .obs;
+
+  void onButtonTapped(int value) {
+    if (value == 2) {
+      policyText.value = '''
+      
 Scope of Delivery
 
 Plagit is committed to complying with international trade regulations and laws, including those about the United Arab Emirates (UAE). In alignment with our commitment to corporate responsibility and legal compliance, the following policy applies to our delivery and shipping services:
@@ -30,27 +83,10 @@ Customer Support
 • Queries and Clarifications: Customers are encouraged to contact our customer support team with any questions or clarifications related to our Delivery and Shipping policy.
 
 Plagit endeavours to provide efficient delivery services while upholding legal and ethical standards. We appreciate our customers' trust and strive to meet their expectations responsibly.
-
-'''
-      .obs;
-
-  @override
-  void onInit() {
-    super.onInit();
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void onButtonTapped(int value) {
-    if (value == 2) {
+       
+       ''';
+    }
+   else if (value == 3) {
       policyText.value = '''
       
 - Policy Statement: Plagit's policy is to handle refunds with integrity and transparency. If refunds are applicable based on our terms and conditions, they will be processed in the following manner:
@@ -73,7 +109,7 @@ Customer Support
 Plagit is committed to ensuring our customers are well-informed about their purchases and the policies that govern transactions on our website. We strive to provide clarity and convenience to enhance our customers' experience.
 
       ''';
-    } else if (value == 3) {
+    } else if (value == 4) {
       policyText.value = '''
       
 1. Cancellation Policy
@@ -119,7 +155,7 @@ c. Applicability: This policy applies to all products purchased via our website,
 This cancellation and replacement policy ensures that our customers receive products in their best condition and as per their expectations. If you have any questions or require further assistance, please contact our customer service team.
        
        ''';
-    } else if (value == 4) {
+    } else if (value == 5) {
       policyText.value = '''
       
       Phone: +971524033856.
@@ -133,31 +169,45 @@ This cancellation and replacement policy ensures that our customers receive prod
     } else {
       policyText.value = '''
       
-Scope of Delivery
+Introduction
 
-Plagit is committed to complying with international trade regulations and laws, including those about the United Arab Emirates (UAE). In alignment with our commitment to corporate responsibility and legal compliance, the following policy applies to our delivery and shipping services:
+At Plagit, we value our customers' privacy and are committed to protecting their personal information. This Privacy Policy outlines the types of information we collect, how it is used, and the measures we take to ensure your personal data is treated with the highest standards of security and confidentiality.
 
-OFAC Sanctioned Countries
+Information Collection and Use
 
-- Compliance Statement: Plagit will NOT deal with or provide any services or products to any OFAC (Office of Foreign Assets Control) sanctioned countries by the law of the UAE.
+We may collect information from you when you use our website, including but not limited to your name, email address, contact information, and payment details when you make a purchase or register on our site. The information collected is used to process transactions, provide the requested services, and enhance your experience with our services.
 
-Product and Service Availability
+Payment Information
 
-- Website Listings: Our website lists all products and services available for purchase and shipping. Each product or service's availability and delivery options are subject to compliance with our Delivery & Shipping Policy.
+Plagit takes the following approach regarding the security of payment information:
 
-Shipping Restrictions
+- Credit/Debit Card Details: Plagit confirms that all credit/debit card details and personally identifiable information will NOT be stored, sold, shared, rented, or leased to any third parties.
 
-- Transparent Communication: Any shipping restrictions related to specific products or regions will be clearly communicated on our product pages and during checkout.
+Third-Party Disclosure
 
-Legal Framework
+We do not sell, trade, or transfer your personally identifiable information to outside parties. This does not include trusted third parties who assist us in operating our website, conducting our business, or serving you, so long as those parties agree to keep this information confidential.
 
-- UAE Law: We operate under the strict legal framework of the UAE and ensure that all our shipping and delivery practices comply fully with the relevant laws and regulations.
+Cookies and Tracking Technology
 
-Customer Support
+Our website may use cookies and tracking technology depending on the features offered. Cookies and tracking technology are functional for gathering information such as browser type and operating system, tracking the number of visitors to the site, and understanding how visitors use the site.
 
-• Queries and Clarifications: Customers are encouraged to contact our customer support team with any questions or clarifications related to our Delivery and Shipping policy.
+Policy Changes and Updates
 
-Plagit endeavours to provide efficient delivery services while upholding legal and ethical standards. We appreciate our customers' trust and strive to meet their expectations responsibly.
+The following applies to our policy changes:
+
+- Updates to Policies: The Website Policies and Terms and Conditions may be changed or updated occasionally to meet the requirements and standards. Therefore, customers are encouraged to frequently visit these sections to be updated on the changes on the website.
+
+- Effective Date: Modifications will be effective on the day they are posted.
+
+Your Consent
+
+By using our site, you consent to our Privacy Policy.
+
+Contacting Us
+
+If you have any questions regarding this Privacy Policy, you may contact us using the information below:
+
+Support@plagit.com
 
 ''';
     }

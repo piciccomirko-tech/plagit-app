@@ -6,7 +6,7 @@ class AppInfo {
 
   static const String appName = "Plagit";
 
-  static const String version = "2.6.5";
+  static const String version = "2.6.6";
 
   static const ReleaseMode releaseMode = ReleaseMode.release;
 
