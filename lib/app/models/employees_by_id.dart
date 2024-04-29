@@ -52,6 +52,7 @@ class Employee {
   Employee(
       {this.id,
       this.firstName,
+        this.bio,
       this.lastName,
       this.positionId,
       this.positionName,
@@ -119,6 +120,7 @@ class Employee {
 
   final bool? certified;
   final String? firstName;
+  final String? bio;
   final String? lastName;
   final String? positionId;
   final String? positionName;
@@ -193,6 +195,7 @@ class Employee {
             ? []
             : List<CalenderDataModel>.from(json["unavailableDate"]!.map((x) => CalenderDataModel.fromJson(x))),
         firstName: json["firstName"],
+        bio: json["bio"],
         lastName: json["lastName"],
         positionId: json["positionId"],
     sourceOfFunds: json["sourceOfFunds"],
@@ -261,6 +264,7 @@ class Employee {
         "_id": id,
         "certified": certified,
         "firstName": firstName,
+        "bio": bio,
         "lastName": lastName,
         "sourceOfFunds": sourceOfFunds,
         "positionId": positionId,

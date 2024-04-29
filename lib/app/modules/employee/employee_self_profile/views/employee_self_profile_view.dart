@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/common/widgets/profile_picture_widget.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/vlog_carsousel_slider.dart';
@@ -170,6 +171,20 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                         validator: (String? value) => Validators.emptyValidator(
                           controller.tecEmergencyContact.text,
                           MyStrings.required.tr,
+                        ),
+                      ),
+                      SizedBox(height: 20.h),
+                      _item(
+                        logo: CupertinoIcons.person,
+                        fieldName: MyStrings.bio.tr,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text((controller.tecBio.text.isEmpty) ? "Bio has not been added yet" : controller.tecBio.text),
+                            InkResponse(
+                              onTap: controller.onBioTapped,
+                                child: const Icon(CupertinoIcons.pencil_outline, color: MyColors.c_C6A34F, size: 16))
+                          ],
                         ),
                       ),
                       SizedBox(height: 20.h),

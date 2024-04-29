@@ -3,6 +3,7 @@ import '../values/my_strings.dart';
 Map<String, String> italian = <String, String>{
   MyStrings.required: "Obbligatorio",
   MyStrings.requests: "Richieste",
+  MyStrings.bio: "Biografia",
   MyStrings.todaysEmployees: "Dipendenti di Oggi",
   MyStrings.foundNothing: "Nessun Risultato!",
   MyStrings.contractorPerHoursRate: "Tariffa Contractor Per Ore",

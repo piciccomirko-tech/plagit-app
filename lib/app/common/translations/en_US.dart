@@ -101,6 +101,7 @@ Map<String, String> english = <String, String>{
   MyStrings.licensesNo: "Licenses No",
   MyStrings.certificationsName: "Certifications Name",
   MyStrings.emergencyContact: "Emergency Contact",
+  MyStrings.bio: "Bio",
   MyStrings.skills: "Skills",
   MyStrings.hiRestaurant: "Hi @restaurantName Restaurant",
   MyStrings.exploreTheFeaturesOfMhAppBelow: "Explore the features of MH App bellow",

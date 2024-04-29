@@ -56,11 +56,13 @@ class MyDecoration {
     required BuildContext context,
     required String label,
     IconData? prefixIcon,
+    String? errorText,
     String? selectedIcon,
   }) =>
       InputDecoration(
         errorStyle: const TextStyle(fontSize: 0.01),
         filled: true,
+        errorText: errorText,
         fillColor: MyColors.lightCard(context),
         labelText: label,
         labelStyle: const TextStyle(

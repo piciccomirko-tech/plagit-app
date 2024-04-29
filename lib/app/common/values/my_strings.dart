@@ -161,6 +161,7 @@ class MyStrings {
   static const String licensesNo = "licensesNo";
   static const String certificationsName = "certificationsName";
   static const String emergencyContact = "emergencyContact";
+  static const String bio = "bio";
   static const String skills = "skills";
   static const String hiRestaurant = "hiRestaurant";
   static const String exploreTheFeaturesOfMhAppBelow = "exploreTheFeaturesOfMhAppBelow";

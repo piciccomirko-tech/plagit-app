@@ -3,6 +3,7 @@ import 'package:mh/app/common/values/my_strings.dart';
 Map<String, String> arabic = <String, String>{
   MyStrings.required: "مطلوب",
   MyStrings.requests: "الطلبات",
+  MyStrings.bio: "سيرة ذاتية",
   MyStrings.todaysEmployees: "الموظفين اليوم",
   MyStrings.foundNothing: "لم يتم العثور على شيء!",
   MyStrings.features: "الميزات",

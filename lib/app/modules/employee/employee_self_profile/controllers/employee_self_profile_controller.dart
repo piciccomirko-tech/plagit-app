@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/models/custom_error.dart';
+import 'package:mh/app/modules/employee/employee_self_profile/widgets/bio_widget.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/employee_full_details.dart';
@@ -20,6 +21,8 @@ class EmployeeSelfProfileController extends GetxController {
   TextEditingController tecPresentAddress = TextEditingController();
   TextEditingController tecPermanentAddress = TextEditingController();
   TextEditingController tecEmergencyContact = TextEditingController();
+  TextEditingController tecBio = TextEditingController();
+  RxString bioErrorText = ''.obs;
   TextEditingController tecDob = TextEditingController();
 
   RxString selectedCountry = "United Kingdom".obs;
@@ -27,6 +30,8 @@ class EmployeeSelfProfileController extends GetxController {
   Rx<EmployeeFullDetails> employee = EmployeeFullDetails().obs;
   RxBool loading = false.obs;
   RxString rating = ''.obs;
+
+  final GlobalKey<FormState> formKeyBio = GlobalKey<FormState>();
 
   @override
   void onInit() {
@@ -53,6 +58,7 @@ class EmployeeSelfProfileController extends GetxController {
       employee.refresh();
 
       tecFirstName.text = employee.value.details?.firstName ?? "";
+      tecBio.text = employee.value.details?.bio ?? "";
       tecLastName.text = employee.value.details?.lastName ?? "";
       tecCountry.text = employee.value.details?.countryName ?? "";
       tecDob.text = employee.value.details?.dateOfBirth == null
@@ -65,5 +71,10 @@ class EmployeeSelfProfileController extends GetxController {
       tecEmergencyContact.text = employee.value.details?.phoneNumber ?? "";
       rating.value = '${employee.value.details?.rating ?? 0.0} (${employee.value.details?.totalRating ?? 0})';
     });
+  }
+
+  void onBioTapped() => Get.bottomSheet(const BioWidget());
+  void onUpdateTapped(){
+
   }
 }
