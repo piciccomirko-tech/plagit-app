@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/modules/employee/employee_self_profile/controllers/employee_self_profile_controller.dart';
 
@@ -12,6 +13,7 @@ class BioWidget extends GetWidget<EmployeeSelfProfileController> {
           color: MyColors.lightCard(context),
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
       child: SingleChildScrollView(
+        physics: const ScrollPhysics(),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 20.0),
           child: Form(
@@ -22,6 +24,10 @@ class BioWidget extends GetWidget<EmployeeSelfProfileController> {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10.0),
                   child: TextFormField(
+                      inputFormatters: [
+                        FilteringTextInputFormatter.deny(
+                            RegExp(r"[\d@]|(http(s)?://[^\s]+)|(www\.[^\s]+)|(facebook|twitter|instagram|linkedin|youtube)")),
+                      ],
                     keyboardType: TextInputType.multiline,
                       minLines: 3,
                       maxLines: null,
@@ -41,6 +47,7 @@ class BioWidget extends GetWidget<EmployeeSelfProfileController> {
                         fillColor: context.theme.highlightColor,
                         contentPadding: const EdgeInsets.all(15.0),
                         border: InputBorder.none,
+
                         hintText: 'Enter bio...',
                         hintStyle: const TextStyle(color: Colors.grey, fontSize: 15),
                       ),
@@ -71,7 +78,7 @@ class BioWidget extends GetWidget<EmployeeSelfProfileController> {
 
   bool _isValid(String value) {
     RegExp regExp = RegExp(
-        r'(https?://(?:www\.)?\w+\.\w{2,})(?:[/\w\s.-]*)?|(?:\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b)|(?:\+\d{1,3}[- ]?\d{2,4}[- ]?\d{2,4}[- ]?\d{2,4})|(?:\w+@\w+\.\w{2,})'
+        r'(https?://(?:www\.)?\w+\.\w{2,})(?:[/\w\s.-]*)?|(?:\b\d{3}\b\s?[-.\s]?\d{5}\b)'
     );
     if (regExp.hasMatch(value)) {
       return false;
