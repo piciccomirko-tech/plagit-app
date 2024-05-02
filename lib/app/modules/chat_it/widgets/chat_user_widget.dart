@@ -11,6 +11,7 @@ class ChatUserWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkResponse(
+      onLongPress: () => Get.find<ChatItController>().onLongTapped(conversationId: conversation.id ?? ""),
       onTap: () => Get.find<ChatItController>().onUserTapped(member: (conversation.members ?? []).first),
       child: Container(
         decoration: MyDecoration.cardBoxDecoration(context: context),
@@ -22,7 +23,7 @@ class ChatUserWidget extends StatelessWidget {
             backgroundColor: Colors.transparent,
             backgroundImage: NetworkImage(((conversation.members ?? []).first.profilePicture ?? "").imageUrl),
           ),
-          title: Text((conversation.members ?? []).first.name ??"Guest",
+          title: Text((conversation.members ?? []).first.name ?? "Guest",
               style: MyColors.l111111_dwhite(context).semiBold15),
           subtitle: Text(conversation.latestMessage?.text ?? "No message",
               style: (conversation.latestMessage?.read ?? false) == false
@@ -33,7 +34,8 @@ class ChatUserWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text((conversation.members ?? []).first.role ?? "", style: MyColors.l111111_dwhite(context).medium12),
-              Text(DateFormat('dd MMM yyyy, hh:mm a').format(conversation.latestMessage?.dateTime ?? DateTime.now()), style: MyColors.c_C6A34F.medium10),
+              Text(DateFormat('dd MMM yyyy, hh:mm a').format(conversation.latestMessage?.dateTime ?? DateTime.now()),
+                  style: MyColors.c_C6A34F.medium10),
             ],
           ),
         ),

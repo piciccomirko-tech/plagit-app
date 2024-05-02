@@ -11,7 +11,7 @@ class ChatItView extends GetView<ChatItController> {
   @override
   Widget build(BuildContext context) {
     controller.context = context;
-   Utils.unFocus();
+    Utils.unFocus();
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CustomAppbar.appbar(
@@ -35,18 +35,19 @@ class ChatItView extends GetView<ChatItController> {
               const ChatUserSearchWidget(),
               SizedBox(height: 15.h),
               Obx(() {
-                if (controller.conversationDataLoaded.value == false) {
+                if (controller.adminHomeController.conversationDataLoaded.value == false) {
                   return Center(child: ShimmerWidget.clientMyEmployeesShimmerWidget(height: 90));
-                } else if (controller.conversationDataLoaded.value == true && controller.filteredConversationList.isEmpty) {
+                } else if (controller.adminHomeController.conversationDataLoaded.value == true &&
+                    controller.adminHomeController.conversationList.isEmpty) {
                   return const Center(child: NoItemFound());
                 } else {
                   return ListView.builder(
-                      itemCount: controller.filteredConversationList.length,
+                      itemCount: controller.adminHomeController.conversationList.length,
                       shrinkWrap: true,
                       primary: false,
                       padding: EdgeInsets.zero,
                       itemBuilder: (BuildContext context, int index) =>
-                          ChatUserWidget(conversation: controller.filteredConversationList[index]));
+                          ChatUserWidget(conversation: controller.adminHomeController.conversationList[index]));
                 }
               }),
             ],

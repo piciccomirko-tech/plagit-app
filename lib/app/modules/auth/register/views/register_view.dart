@@ -529,7 +529,7 @@ class RegisterView extends GetView<RegisterController> {
                         recognizer: TapGestureRecognizer()..onTap = controller.onTermsAndConditionPressed,
                       ),
                       TextSpan(
-                        text: "${MyStrings.mhApp.tr}  ",
+                        text: "${MyStrings.plagItApp.tr}  ",
                         style: MyColors.l50555C_dtext(controller.context!).regular15,
                       ),
                     ],

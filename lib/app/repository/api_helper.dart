@@ -240,4 +240,5 @@ abstract class ApiHelper {
   EitherModel<Response> updateEmployeeBio({required BioRequestModel bioRequestModel});
   EitherModel<UnreadMessageResponseModelForAdmin> getUnreadMessageForAdmin();
   EitherModel<ChatItModel> getConversations();
+  EitherModel<CommonResponseModel> deleteConversation({required String conversationId});
 }

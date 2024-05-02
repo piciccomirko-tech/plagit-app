@@ -1517,4 +1517,16 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       UnreadMessageResponseModelForAdmin.fromJson,
     ).fold((CustomError l) => left(l), (UnreadMessageResponseModelForAdmin r) => right(r));
   }
+
+  @override
+  EitherModel<CommonResponseModel> deleteConversation({required String conversationId}) async {
+    Response response = await delete("conversations/$conversationId");
+    if (response.statusCode == null) response = await delete("conversations/$conversationId");;
+    if (response.statusCode == null) response = await delete("conversations/$conversationId");
+    if (response.statusCode == null) response = await delete("conversations/$conversationId");
+    return _convert<CommonResponseModel>(
+      response,
+      CommonResponseModel.fromJson,
+    ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
 }

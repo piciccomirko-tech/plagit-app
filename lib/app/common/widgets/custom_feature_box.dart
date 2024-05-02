@@ -53,7 +53,7 @@ class CustomFeatureBox extends StatelessWidget {
                   Visibility(
                     visible: visibleMH,
                     child: Text(
-                      MyStrings.mh.tr,
+                      MyStrings.plagIt.tr,
                       style: MyColors.c_C6A34F.semiBold16,
                     ),
                   ),

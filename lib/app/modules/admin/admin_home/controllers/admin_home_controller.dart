@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/modules/admin/admin_home/models/unread_message_response_model_for_admin.dart';
+import 'package:mh/app/modules/chat_it/models/chat_it_model.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -30,6 +31,9 @@ class AdminHomeController extends GetxController {
   RxList<Map<String, dynamic>> employeeChatDetails = <Map<String, dynamic>>[].obs;
   RxList<Map<String, dynamic>> clientChatDetails = <Map<String, dynamic>>[].obs;
   RxList<String> chatUserIds = <String>[].obs;
+
+  RxList<Conversation> conversationList = <Conversation>[].obs;
+  RxBool conversationDataLoaded = false.obs;
 
   @override
   void onInit() async {
@@ -92,8 +96,9 @@ class AdminHomeController extends GetxController {
 
   Future<void> homeMethods() async {
     notificationsController.getNotificationList();
-    await _fetchRequest();
+    await _getConversationList();
     await _unreadMessageCount();
+    await _fetchRequest();
   }
 
   void calculateNumberOfRequestFromClient() {
@@ -124,5 +129,19 @@ class AdminHomeController extends GetxController {
         unreadMessageCount = response.unreadMsg ?? 0;
       }
     });
+  }
+
+  Future<void> _getConversationList() async {
+    conversationDataLoaded.value = false;
+    Either<CustomError, ChatItModel> responseData = await _apiHelper.getConversations();
+    responseData.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError);
+    }, (ChatItModel response) {
+      if ([200, 201].contains(response.statusCode) && response.status == "success") {
+        conversationList.value = response.conversations ?? [];
+        conversationList.refresh();
+      }
+    });
+    conversationDataLoaded.value = true;
   }
 }

@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:mh/app/common/widgets/custom_menu.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/dropdown_item.dart';
@@ -49,7 +48,6 @@ class ClientHomeController extends GetxController {
   RxInt unreadMessageFromAdmin = 0.obs;
   RxInt unreadMessageFromEmployee= 0.obs;
 
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
   @override
   void onInit() {
     homeMethods();

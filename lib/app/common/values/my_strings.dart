@@ -116,7 +116,7 @@ class MyStrings {
   static const String noNeed = "noNeed";
   static const String uniform = "uniform";
   static const String termsConditions = "termsConditions";
-  static const String mhApp = "mhApp";
+  static const String plagItApp = "plagit";
   static const String alreadyHaveAnAccount = "alreadyHaveAnAccount";
   static const String continue_ = "continue";
   static const String confirmPassword = "Confirm Password";
@@ -165,7 +165,7 @@ class MyStrings {
   static const String skills = "skills";
   static const String hiRestaurant = "hiRestaurant";
   static const String exploreTheFeaturesOfMhAppBelow = "exploreTheFeaturesOfMhAppBelow";
-  static const String mh = "mh";
+  static const String plagIt = "plagIt";
   static const String employees = "employees";
   static const String active = "active";
   static const String refund = "refund";
