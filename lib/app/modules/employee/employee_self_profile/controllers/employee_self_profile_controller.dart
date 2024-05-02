@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
+import 'package:mh/app/common/widgets/custom_loader.dart';
 import 'package:mh/app/models/custom_error.dart';
+import 'package:mh/app/modules/employee/employee_self_profile/models/bio_request_model.dart';
 import 'package:mh/app/modules/employee/employee_self_profile/widgets/bio_widget.dart';
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
@@ -74,7 +76,19 @@ class EmployeeSelfProfileController extends GetxController {
   }
 
   void onBioTapped() => Get.bottomSheet(const BioWidget());
-  void onUpdateTapped(){
-
+  void onUpdateTapped() {
+    Get.back();
+    CustomLoader.show(context!);
+    BioRequestModel bioRequestModel = BioRequestModel(id: appController.user.value.userId, bio: tecBio.text);
+    _apiHelper.updateEmployeeBio(bioRequestModel: bioRequestModel).then((responseData) {
+      CustomLoader.hide(context!);
+      responseData.fold((CustomError l) {
+        Logcat.msg(l.msg);
+      }, (r) {
+        if ([200, 201].contains(r.statusCode)) {
+          Utils.showSnackBar(message: "Bio has been updated successfully", isTrue: true);
+        }
+      });
+    });
   }
 }

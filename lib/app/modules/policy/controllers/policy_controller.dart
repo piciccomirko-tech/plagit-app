@@ -6,9 +6,13 @@ class PolicyController extends GetxController {
     'Delivery Policy',
     'Refund Policy',
     'Cancellation Policy',
-    'Address Details'
+    'Address Details',
+    "Pricing Policy",
+    "Goods and Services Description",
+    "Payment Methods",
+    "Governing Law"
   ];
-  List<int> policyValue = <int>[1, 2, 3, 4, 5];
+  List<int> policyValue = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
   RxString policyText = '''
   
 Introduction
@@ -85,8 +89,7 @@ Customer Support
 Plagit endeavours to provide efficient delivery services while upholding legal and ethical standards. We appreciate our customers' trust and strive to meet their expectations responsibly.
        
        ''';
-    }
-   else if (value == 3) {
+    } else if (value == 3) {
       policyText.value = '''
       
 - Policy Statement: Plagit's policy is to handle refunds with integrity and transparency. If refunds are applicable based on our terms and conditions, they will be processed in the following manner:
@@ -166,6 +169,105 @@ This cancellation and replacement policy ensures that our customers receive prod
       Downtown Dubai.
       
       ''';
+    } else if (value == 6) {
+      policyText.value = '''
+      
+Introduction
+
+At Plagit, we believe in transparency and straightforwardness when pricing our services and products. Our pricing structure is designed to reflect our offerings' value and quality while being competitive and fair.
+
+Hourly Service Rates
+
+Our services are priced on an hourly basis. This ensures that you only pay for the time you need and the services you use. Here are the key points about our hourly service rates:
+
+- We staff our services to provide efficient and high-quality results, ensuring the best value for the time you pay for.
+- Our hourly rates are determined by the service's complexity and nature.
+- We provide detailed breakdowns of our hourly rates upon request to ensure complete transparency.
+
+Pricing for Items and Products
+
+The pricing for items and products offered by Plagit is as follows:
+
+- All product pricing will be clearly listed on our website or provided at the point of inquiry.
+- Our products are priced competitively, reflecting their quality and value.
+- Discounts and promotions may be offered at our discretion and will be clearly communicated when available.
+
+Mandatory Inclusion
+
+- The inclusion of pricing for all items, products, and services is mandatory and will always be presented clearly to our customers before any commitment is made.
+- We are committed to providing complete pricing information without hidden fees or charges.
+
+Review and Adjustments
+
+- Plagit reserves the right to review and adjust pricing to remain competitive and reflect market changes.
+- Any pricing adjustments will be communicated to our customers with adequate notice.
+
+Inquiries
+
+If you have any inquiries or need further clarification on our pricing, please do not hesitate to contact us. Our customer service team is always ready to provide the information you need to make an informed decision.
+
+
+Plagit aims to maintain trust and ensure customer satisfaction by outlining our pricing policy. We are dedicated to providing our customers with the highest level of service at the best possible price.
+
+       ''';
+    } else if (value == 7) {
+      policyText.value = '''
+    
+Plagit ensures that a complete and detailed description of all the goods or services offered is available and easily accessible to all visitors, including the Acquiring RISK & Fraud team conducting reviews:
+
+1. Accessibility of Information: Detailed descriptions of our goods or services can be accessed directly on our website. This includes comprehensive information regarding each product or service's features, benefits, and specifications.
+
+2. Transparency in Descriptions: We ensure that all descriptions are honest and accurate, giving our customers a true representation of what they can expect.
+
+3. Review by RISK & Fraud Team: As our website undergoes review by the Acquiring RISK & Fraud team, we guarantee full cooperation by maintaining open access to all necessary documentation and descriptions that facilitate a thorough assessment.
+
+4. Availability: Our descriptions are kept up-to-date and always present on the website, immediately reflecting any changes or updates to our goods or services.
+
+5. Customer Support: If you have additional inquiries or need further explanation regarding our goods and services, our customer support team is available to provide assistance and clarify any information.
+
+Plagit is committed to upholding the highest standards of transparency and accuracy in presenting our goods and services, ensuring our customers and partners can always rely on the information provided.
+
+       ''';
+    } else if (value == 8) {
+      policyText.value = '''
+      
+We at Plagit value your security and convenience. To ensure a seamless transaction process, we have established the following payment methods:
+
+- Online Payments: Customers can complete their purchases online, utilizing a secure and reliable payment system.
+
+Accepted Card Types
+
+- Visa and MasterCard: We accept Visa and MasterCard credit/debit cards to accommodate many customers. We understand the importance of flexibility in payment options and have integrated these widely accepted card types into our payment system.
+
+Currency
+
+- AED and Other Currencies: Transactions can be processed in AED, the currency of the United Arab Emirates. We are also open to processing payments in other agreed-upon currencies to accommodate our international customers.
+
+Secure Transactions
+
+- Security Measures: The security of your financial information is paramount. Our website employs robust encryption and security protocols to protect all online transactions against fraud and unauthorized access.
+
+We would like to encourage our customers to review their payment options and contact our customer support for any assistance or clarification regarding payment methods and currency options.
+
+       ''';
+    } else if (value == 9) {
+      policyText.value = '''
+      
+1. Governing Law
+
+Any purchase, dispute, or claim arising out of or in connection with this website shall be governed and construed in accordance with the laws of the United Arab Emirates (UAE).
+
+2. Jurisdiction
+
+a. Exclusive Jurisdiction: All disputes or claims that arise under or relate to this website, its usability, or any transactions conducted through it, will be resolved exclusively in the competent courts of the United Arab Emirates. By using this website, you consent to the jurisdiction and venue of these courts in any such legal action or proceeding.
+
+b. Legal Compliance: Users are responsible for compliance with local laws, if and to the extent local laws are applicable. You agree not to access this website in any jurisdiction where doing so would be prohibited or illegal.
+
+c. Binding Agreement: This provision acts as a binding agreement between you and PLAGIT, determining the legal environment under which transactions and disputes are managed.
+
+This governing law and jurisdiction clause ensures that both the customer and the company adhere to the legal standards and practices upheld in the UAE, promoting a secure and reliable environment for online transactions. For any further clarification or legal assistance, please consult with a legal advisor who specializes in UAE law.
+
+       ''';
     } else {
       policyText.value = '''
       

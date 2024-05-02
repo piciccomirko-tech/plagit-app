@@ -37,6 +37,7 @@ import 'package:mh/app/modules/employee/employee_home/models/booking_history_mod
 import 'package:mh/app/modules/employee/employee_home/models/single_booking_details_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/todays_work_schedule_model.dart';
 import 'package:mh/app/modules/employee/employee_job_posts_details/models/interested_request_model.dart';
+import 'package:mh/app/modules/employee/employee_self_profile/models/bio_request_model.dart';
 import 'package:mh/app/modules/employee_booked_history_details/models/rejected_date_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
@@ -1487,5 +1488,18 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
       response,
       ChatItModel.fromJson,
     ).fold((CustomError l) => left(l), (ChatItModel r) => right(r));
+  }
+
+  @override
+  EitherModel<Response> updateEmployeeBio({required BioRequestModel bioRequestModel}) async {
+    Response response = await put("users/update-employee-bio", bioRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("users/update-employee-bio", bioRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("users/update-employee-bio", bioRequestModel.toRawJson());
+    if (response.statusCode == null) response = await put("users/update-employee-bio", bioRequestModel.toRawJson());
+    return _convert<Response>(
+      response,
+          (Map<String, dynamic> data) {},
+      onlyErrorCheck: true,
+    ).fold((CustomError l) => left(l), (Response r) => right(r));
   }
 }

@@ -8,7 +8,7 @@ class BioWidget extends GetWidget<EmployeeSelfProfileController> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: context.width * 0.5,
+      height: context.width*0.6,
       decoration: BoxDecoration(
           color: MyColors.lightCard(context),
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
