@@ -10,6 +10,7 @@ import 'package:mh/app/common/translations/translations_service.dart';
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
 import 'package:mh/app/modules/admin/admin_dashboard/models/update_refund_model.dart';
+import 'package:mh/app/modules/admin/admin_home/models/unread_message_response_model_for_admin.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
@@ -1498,8 +1499,22 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
     if (response.statusCode == null) response = await put("users/update-employee-bio", bioRequestModel.toRawJson());
     return _convert<Response>(
       response,
-          (Map<String, dynamic> data) {},
+      (Map<String, dynamic> data) {},
       onlyErrorCheck: true,
     ).fold((CustomError l) => left(l), (Response r) => right(r));
+  }
+
+  @override
+  EitherModel<UnreadMessageResponseModelForAdmin> getUnreadMessageForAdmin() async {
+    String url = "conversations/unread-count";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<UnreadMessageResponseModelForAdmin>(
+      response,
+      UnreadMessageResponseModelForAdmin.fromJson,
+    ).fold((CustomError l) => left(l), (UnreadMessageResponseModelForAdmin r) => right(r));
   }
 }

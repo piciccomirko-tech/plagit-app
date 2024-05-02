@@ -31,30 +31,25 @@ class AdminHomeView extends GetView<AdminHomeController> {
             Obx(() => controller.notificationsController.unreadCount.value == 0
                 ? InkResponse(onTap: () => Get.toNamed(Routes.notifications), child: const Icon(CupertinoIcons.bell))
                 : InkResponse(
-              onTap: () => Get.toNamed(Routes.notifications),
-              child: Badge(
-                backgroundColor: MyColors.c_C6A34F,
-                label: Obx(() {
-                  return Text(
-                      controller.notificationsController.unreadCount.value == 20
-                          ? '20+'
-                          : controller.notificationsController.unreadCount.toString(),
-                      style: MyColors.white.semiBold12);
-                }),
-                child: const Icon(CupertinoIcons.bell, size: 20),
-              ),
-            )),
+                    onTap: () => Get.toNamed(Routes.notifications),
+                    child: Badge(
+                      backgroundColor: MyColors.c_C6A34F,
+                      label: Obx(() {
+                        return Text(
+                            controller.notificationsController.unreadCount.value == 20
+                                ? '20+'
+                                : controller.notificationsController.unreadCount.toString(),
+                            style: MyColors.white.semiBold12);
+                      }),
+                      child: const Icon(CupertinoIcons.bell, size: 20),
+                    ),
+                  )),
             const SizedBox(width: 20),
             InkResponse(
               onTap: () {
-                CustomMenu.accountMenu(
-                  context
-                );
+                CustomMenu.accountMenu(context);
               },
-              child: const Icon(
-                  CupertinoIcons.person,
-                  size: 20
-              ),
+              child: const Icon(CupertinoIcons.person, size: 20),
             ),
             const SizedBox(width: 10)
           ],
@@ -72,32 +67,13 @@ class AdminHomeView extends GetView<AdminHomeController> {
                     Expanded(
                         flex: 10,
                         child: _restaurantName("Hi, ${controller.appController.user.value.admin?.name ?? "-"}")),
-                     SizedBox(width: 15.w),
+                    SizedBox(width: 15.w),
                     Expanded(flex: 1, child: RefreshWidget(onTap: controller.reloadPage))
                   ],
                 ),
                 SizedBox(height: 20.h),
                 _promotionText,
                 SizedBox(height: 40.h),
-                /*Obx(() => controller.loading.value == true
-                    ? ShimmerWidget.clientMyEmployeesShimmerWidget()
-                    : AnimationLimiter(
-                        child: ListView.builder(
-                            itemCount: adminHomeCardList.length,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            primary: false,
-                            itemBuilder: (context, index) {
-                              return AnimationConfiguration.staggeredList(
-                                  position: index,
-                                  duration: const Duration(milliseconds: 800),
-                                  child: SlideAnimation(
-                                      horizontalOffset: 50.0,
-                                      child: FadeInAnimation(
-                                          child: AdminHomeCardWidget(
-                                              adminHomeCardModel: adminHomeCardList[index], index: index))));
-                            }),
-                      ))*/
                 Row(
                   children: [
                     Expanded(
@@ -137,48 +113,18 @@ class AdminHomeView extends GetView<AdminHomeController> {
                 Row(
                   children: [
                     Expanded(
-                      child: Obx(
-                        () => Stack(
-                          children: [
-                            CustomFeatureBox(
-                              title: MyStrings.employees.tr,
-                              icon: MyAssets.myEmployees,
-                              onTap: controller.onEmployeeClick,
-                            ),
-                            Positioned(
-                              top: 4,
-                              right: 5,
-                              child: Visibility(
-                                visible: controller.unreadMsgFromEmployee.value != 0,
-                                child: CustomBadge(controller.unreadMsgFromEmployee.value.toString()),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                        child: CustomFeatureBox(
+                      title: MyStrings.employees.tr,
+                      icon: MyAssets.myEmployees,
+                      onTap: controller.onEmployeeClick,
+                    )),
                     SizedBox(width: 15.w),
                     Expanded(
-                      child: Obx(
-                        () => Stack(
-                          children: [
-                            CustomFeatureBox(
-                              title: MyStrings.client.tr,
-                              icon: MyAssets.clientFixedLogo,
-                              onTap: controller.onClientClick,
-                            ),
-                            Positioned(
-                              top: 4,
-                              right: 5,
-                              child: Visibility(
-                                visible: controller.unreadMsgFromClient.value != 0,
-                                child: CustomBadge(controller.unreadMsgFromClient.value.toString()),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                        child: CustomFeatureBox(
+                      title: MyStrings.client.tr,
+                      icon: MyAssets.clientFixedLogo,
+                      onTap: controller.onClientClick,
+                    )),
                   ],
                 ),
                 SizedBox(height: 15.h),
@@ -193,12 +139,24 @@ class AdminHomeView extends GetView<AdminHomeController> {
                     ),
                     SizedBox(width: 15.w),
                     Expanded(
-                      child: CustomFeatureBox(
-                        title: "Chat It",
-                        icon: MyAssets.chat,
-                        onTap: controller.onChatPressed,
-                      ),
-                    ),
+                        child: Obx(() => Stack(
+                              children: [
+                                CustomFeatureBox(
+                                  title: "Chat It",
+                                  icon: MyAssets.chat,
+                                  loading: controller.unreadMessageLoading.value,
+                                  onTap: controller.onChatPressed,
+                                ),
+                                Positioned(
+                                  top: 4,
+                                  right: 5,
+                                  child: Visibility(
+                                    visible: controller.unreadMessageCount > 0,
+                                    child: CustomBadge(controller.unreadMessageCount.toString()),
+                                  ),
+                                ),
+                              ],
+                            )))
                   ],
                 ),
               ],

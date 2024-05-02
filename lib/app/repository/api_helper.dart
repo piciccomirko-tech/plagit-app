@@ -1,6 +1,7 @@
 import 'package:mh/app/models/hourly_rate_model.dart';
 import 'package:mh/app/models/nationality_model.dart';
 import 'package:mh/app/modules/admin/admin_dashboard/models/update_refund_model.dart';
+import 'package:mh/app/modules/admin/admin_home/models/unread_message_response_model_for_admin.dart';
 import 'package:mh/app/modules/admin/admin_todays_employees/models/todays_employees_model.dart';
 import 'package:mh/app/modules/auth/register/models/employee_extra_field_model.dart';
 import 'package:mh/app/modules/calender/models/calender_model.dart';
@@ -237,5 +238,6 @@ abstract class ApiHelper {
   EitherModel<Response> sendMessage({required SendMessageRequestModel sendMessageRequestModel});
   EitherModel<UnreadMessageResponseModel> getUnreadMessage({required String conversationId});
   EitherModel<Response> updateEmployeeBio({required BioRequestModel bioRequestModel});
+  EitherModel<UnreadMessageResponseModelForAdmin> getUnreadMessageForAdmin();
   EitherModel<ChatItModel> getConversations();
 }

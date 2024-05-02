@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:mh/app/modules/admin/admin_home/models/unread_message_response_model_for_admin.dart';
 import 'package:mh/app/modules/notifications/controllers/notifications_controller.dart';
-
 import '../../../../common/controller/app_controller.dart';
 import '../../../../common/utils/exports.dart';
 import '../../../../models/custom_error.dart';
@@ -20,8 +20,8 @@ class AdminHomeController extends GetxController {
   Rx<RequestedEmployees> requestedEmployees = RequestedEmployees().obs;
 
   // unread msg track
-  RxInt unreadMsgFromEmployee = 0.obs;
-  RxInt unreadMsgFromClient = 0.obs;
+  int unreadMessageCount = 0;
+  RxBool unreadMessageLoading = true.obs;
 
   int numberOfRequestFromClient = 0;
 
@@ -93,6 +93,7 @@ class AdminHomeController extends GetxController {
   Future<void> homeMethods() async {
     notificationsController.getNotificationList();
     await _fetchRequest();
+    await _unreadMessageCount();
   }
 
   void calculateNumberOfRequestFromClient() {
@@ -110,5 +111,18 @@ class AdminHomeController extends GetxController {
 
   void onChatPressed() {
     Get.toNamed(Routes.chatIt);
+  }
+
+  Future<void> _unreadMessageCount() async {
+    unreadMessageLoading.value = true;
+    Either<CustomError, UnreadMessageResponseModelForAdmin> response = await _apiHelper.getUnreadMessageForAdmin();
+    unreadMessageLoading.value = false;
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError);
+    }, (UnreadMessageResponseModelForAdmin response) async {
+      if (response.status == "success" && response.statusCode == 200) {
+        unreadMessageCount = response.unreadMsg ?? 0;
+      }
+    });
   }
 }
