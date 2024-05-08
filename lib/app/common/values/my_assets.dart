@@ -37,6 +37,9 @@ class MyAssets {
   static const user = "assets/icons/user.png";
   static const support = "assets/icons/support.png";
   static const weight = "assets/icons/weight.png";
+  static const email = "assets/icons/email.png";
+  static const phone = "assets/icons/phone.png";
+  static const web = "assets/icons/web.png";
   static const job = "assets/icons/job.png";
   static const checkIn = "assets/icons/checkin.png";
   static const checkOut = "assets/icons/checkout.png";

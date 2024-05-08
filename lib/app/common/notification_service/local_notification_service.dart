@@ -31,12 +31,12 @@ class LocalNotificationService {
 
     _notificationsPlugin.initialize(
       initializationSettings,
-     /* onDidReceiveBackgroundNotificationResponse: (NotificationResponse notificationResponse) {
+      onDidReceiveBackgroundNotificationResponse: (NotificationResponse notificationResponse) {
         // when app running click
         if (notificationResponse.payload != null && notificationResponse.payload!.isNotEmpty) {
           NotificationClickHelper.goToRoute(notificationResponse.payload);
         }
-      }*/
+      },
       onDidReceiveNotificationResponse: (NotificationResponse notificationResponse) {
         // when app running click
         if (notificationResponse.payload != null && notificationResponse.payload!.isNotEmpty) {
@@ -87,7 +87,7 @@ class LocalNotificationService {
           } else if (Get.isRegistered<AdminHomeController>()) {
             Get.find<AdminHomeController>().homeMethods();
           } else if (Get.isRegistered<ClientHomeController>()) {
-            Get.find<ClientHomeController>().homeMethods();
+            Get.find<ClientHomeController>().getMessages();
           }
         }
       },

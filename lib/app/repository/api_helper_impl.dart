@@ -259,7 +259,6 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<Response> updateFcmToken({bool isLogin = true}) async {
     String? token;
     String? deviceIdentifier;
-
     if (isLogin) {
       await FirebaseMessaging.instance.getToken().then((fcmToken) async {
         token = fcmToken;
@@ -1521,12 +1520,26 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   @override
   EitherModel<CommonResponseModel> deleteConversation({required String conversationId}) async {
     Response response = await delete("conversations/$conversationId");
-    if (response.statusCode == null) response = await delete("conversations/$conversationId");;
+    if (response.statusCode == null) response = await delete("conversations/$conversationId");
     if (response.statusCode == null) response = await delete("conversations/$conversationId");
     if (response.statusCode == null) response = await delete("conversations/$conversationId");
     return _convert<CommonResponseModel>(
       response,
       CommonResponseModel.fromJson,
     ).fold((CustomError l) => left(l), (CommonResponseModel r) => right(r));
+  }
+
+  @override
+  EitherModel<UnreadMessageResponseModelForAdmin> getUnreadMessageForClient() async {
+    String url = "conversations/unread-count-client";
+    Response response = await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+    if (response.statusCode == null) await get(url);
+
+    return _convert<UnreadMessageResponseModelForAdmin>(
+      response,
+      UnreadMessageResponseModelForAdmin.fromJson,
+    ).fold((CustomError l) => left(l), (UnreadMessageResponseModelForAdmin r) => right(r));
   }
 }

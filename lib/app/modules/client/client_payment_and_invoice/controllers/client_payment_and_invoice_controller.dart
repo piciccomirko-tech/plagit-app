@@ -24,7 +24,6 @@ class ClientPaymentAndInvoiceController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   Rx<DateTime> dashboardDate = DateTime.now().obs;
 
-
   Rx<ClientUpdateStatusModel> clientUpdateStatusModel = ClientUpdateStatusModel().obs;
   TextEditingController tecComment = TextEditingController();
 
@@ -35,14 +34,14 @@ class ClientPaymentAndInvoiceController extends GetxController {
   }
 
   void onViewInvoicePress({required CheckInCheckOutHistoryElement invoice}) async {
-    if ((Get.find<AppController>().user.value.client?.countryName?.toLowerCase() ?? '') == 'united kingdom') {
+    /*if ((Get.find<AppController>().user.value.client?.countryName?.toLowerCase() ?? '') == 'united kingdom') {
       invoiceFile = await Utils.generatePdfWithImageAndTextForUk(invoice: invoice, companyName: companyName);
     } else {
       invoiceFile = await Utils.generatePdfWithImageAndText(invoice: invoice);
-    }
+    }*/
+    invoiceFile = await Utils.generatePdfWithImageAndText(invoice: invoice, companyName: companyName);
     Get.toNamed(Routes.invoicePdf, arguments: [invoiceFile]);
   }
-
 
   void getBankInfo() {
     _apiHelper.getBankInfo().then((Either<CustomError, ClientBankInfoModel> responseData) {
@@ -127,9 +126,11 @@ class ClientPaymentAndInvoiceController extends GetxController {
   }
 
   String getComment(int index) {
-    CheckInCheckOutDetails? check = clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory?[index].checkInCheckOutDetails;
+    CheckInCheckOutDetails? check =
+        clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory?[index].checkInCheckOutDetails;
     return check?.clientComment ?? '';
   }
+
   void onClockPressed({required int index, required String tag}) {
     Get.dialog(Dialog(
       child: Container(
@@ -145,23 +146,23 @@ class ClientPaymentAndInvoiceController extends GetxController {
                 width: 300,
                 centerHighlightColor: MyColors.c_DDBD68.withOpacity(0.4),
                 initialTime: DateTime.parse(tag == 'checkIn'
-                    ? (clientHomeController.clientPaymentInvoice
-                    .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.clientCheckInTime ??
-                    clientHomeController.clientPaymentInvoice
-                        .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.checkInTime)
-                    .toString()
-                    : (clientHomeController.clientPaymentInvoice
-                    .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.clientCheckOutTime ??
-                    clientHomeController.clientPaymentInvoice
-                        .value.checkInCheckOutHistory?[index].checkInCheckOutDetails?.checkOutTime)
-                    .toString()),
+                    ? (clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory?[index]
+                                .checkInCheckOutDetails?.clientCheckInTime ??
+                            clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory?[index]
+                                .checkInCheckOutDetails?.checkInTime)
+                        .toString()
+                    : (clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory?[index]
+                                .checkInCheckOutDetails?.clientCheckOutTime ??
+                            clientHomeController.clientPaymentInvoice.value.checkInCheckOutHistory?[index]
+                                .checkInCheckOutDetails?.checkOutTime)
+                        .toString()),
                 onTimeChanged: (String time) {
                   if (tag == "checkIn") {
                     clientUpdateStatusModel.value.clientCheckInTime =
-                    "${dashboardDate.value.toString().split(" ").first} $time";
+                        "${dashboardDate.value.toString().split(" ").first} $time";
                   } else {
                     clientUpdateStatusModel.value.clientCheckOutTime =
-                    "${dashboardDate.value.toString().split(" ").first} $time";
+                        "${dashboardDate.value.toString().split(" ").first} $time";
                   }
                   clientUpdateStatusModel.refresh();
                 },

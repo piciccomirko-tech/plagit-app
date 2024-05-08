@@ -3,6 +3,7 @@ import 'package:mh/app/common/widgets/custom_menu.dart';
 import 'package:mh/app/common/widgets/rating_review_widget.dart';
 import 'package:mh/app/models/check_in_out_histories.dart';
 import 'package:mh/app/models/dropdown_item.dart';
+import 'package:mh/app/modules/admin/admin_home/models/unread_message_response_model_for_admin.dart';
 import 'package:mh/app/modules/client/job_requests/models/job_post_request_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/common_response_model.dart';
 import 'package:mh/app/modules/employee/employee_home/models/review_dialog_model.dart';
@@ -46,7 +47,8 @@ class ClientHomeController extends GetxController {
   Rx<CheckInCheckOutHistory> clientPaymentInvoice = CheckInCheckOutHistory().obs;
 
   RxInt unreadMessageFromAdmin = 0.obs;
-  RxInt unreadMessageFromEmployee= 0.obs;
+  RxInt unreadMessageFromEmployee = 0.obs;
+  RxBool unreadMessageFromEmployeeLoading = true.obs;
 
   @override
   void onInit() {
@@ -64,7 +66,6 @@ class ClientHomeController extends GetxController {
   @override
   void onReady() {
     Future.delayed(const Duration(seconds: 2), () => showReviewBottomSheet());
-    _createConversation();
     super.onReady();
   }
 
@@ -72,7 +73,7 @@ class ClientHomeController extends GetxController {
     Get.toNamed(Routes.mhEmployees);
   }
 
-  void onProfileTapped({required BuildContext context}){
+  void onProfileTapped({required BuildContext context}) {
     CustomMenu.accountMenu(
       context,
       onSettingsTap: onSettingsClick,
@@ -216,12 +217,17 @@ class ClientHomeController extends GetxController {
     );
   }
 
-
   void homeMethods() {
-    notificationsController.getNotificationList();
     clientPaymentInvoiceMethod();
     fetchRequestEmployees();
     getJobRequests();
+    getMessages();
+  }
+
+  void getMessages() {
+    _getUnreadMessageFromEmployee();
+    _createConversation();
+    notificationsController.getNotificationList();
   }
 
   void refreshPage() {
@@ -239,13 +245,12 @@ class ClientHomeController extends GetxController {
             response.reviewDialogDetailsModel != null &&
             response.reviewDialogDetailsModel!.isNotEmpty) {
           Get.bottomSheet(RatingReviewWidget(
-                  reviewFor: 'employee',
-                  onCancelClick: onCancelClick,
-                  onRatingUpdate: onRatingUpdate,
-                  onReviewSubmit: onReviewSubmitClick,
-                  reviewDialogDetailsModel: response.reviewDialogDetailsModel!.first,
-                  tecReview: tecReview)
-              );
+              reviewFor: 'employee',
+              onCancelClick: onCancelClick,
+              onRatingUpdate: onRatingUpdate,
+              onReviewSubmit: onReviewSubmitClick,
+              reviewDialogDetailsModel: response.reviewDialogDetailsModel!.first,
+              tecReview: tecReview));
         }
       });
     });
@@ -348,7 +353,7 @@ class ClientHomeController extends GetxController {
 
   void _createConversation() {
     ConversationCreateRequestModel conversationCreateRequestModel =
-    ConversationCreateRequestModel(isAdmin: true, senderId: appController.user.value.userId);
+        ConversationCreateRequestModel(isAdmin: true, senderId: appController.user.value.userId);
 
     _apiHelper
         .createConversation(conversationCreateRequestModel: conversationCreateRequestModel)
@@ -377,4 +382,16 @@ class ClientHomeController extends GetxController {
     });
   }
 
+  Future<void> _getUnreadMessageFromEmployee() async {
+    unreadMessageFromEmployeeLoading.value = true;
+    Either<CustomError, UnreadMessageResponseModelForAdmin> response = await _apiHelper.getUnreadMessageForClient();
+    unreadMessageFromEmployeeLoading.value = false;
+    response.fold((CustomError customError) {
+      Utils.errorDialog(context!, customError);
+    }, (UnreadMessageResponseModelForAdmin response) async {
+      if (response.status == "success" && response.statusCode == 200) {
+        unreadMessageFromEmployee.value = response.unreadMsg ?? 0;
+      }
+    });
   }
+}

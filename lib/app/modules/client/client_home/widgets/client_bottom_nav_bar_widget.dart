@@ -1,4 +1,5 @@
 import 'package:mh/app/common/utils/exports.dart';
+import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
 
 class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
@@ -21,15 +22,27 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            InkResponse(
-              onTap: controller.onHelpAndSupportClick,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image.asset(MyAssets.support, height: 25, width: 25),
-                  Text(MyStrings.helpSupport.tr.split("&").last, style: MyColors.l111111_dwhite(context).medium16)
-                ],
-              ),
+            Stack(
+              children: [
+                InkResponse(
+                  onTap: controller.onHelpAndSupportClick,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Image.asset(MyAssets.support, height: 25, width: 25),
+                      Text(MyStrings.helpSupport.tr.split("&").last, style: MyColors.l111111_dwhite(context).medium16)
+                    ],
+                  ),
+                ),
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: Obx(() => Visibility(
+                    visible: controller.unreadMessageFromAdmin.value > 0,
+                    child: CustomBadge(controller.unreadMessageFromAdmin.value.toString()),
+                  )),
+                )
+              ],
             ),
             const SizedBox(), // This is the space for the notch
             InkResponse(

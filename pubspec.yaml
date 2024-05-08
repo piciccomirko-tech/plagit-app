@@ -14,7 +14,7 @@ dependencies:
 
   flip_card: ^0.7.0
 
-  appsflyer_sdk: ^6.14.2
+  appsflyer_sdk: ^6.14.3
 
   # better error handle helper
   dartz: ^0.10.1
@@ -22,7 +22,7 @@ dependencies:
   # state management, routing
   get: ^4.6.6
 
-  flutter_widget_from_html: ^0.14.10+1
+  flutter_widget_from_html: ^0.15.0
 
   chewie: ^1.8.1
 
@@ -93,10 +93,10 @@ dependencies:
 
   google_maps_flutter: ^2.6.1
   geolocator: ^11.0.0
-  firebase_core: ^2.30.1
+  firebase_core: ^2.31.0
   carousel_slider: ^4.2.1
-  firebase_messaging: ^14.9.1
-  flutter_local_notifications: ^17.1.1
+  firebase_messaging: ^14.9.2
+  flutter_local_notifications: ^17.1.2
   device_info_plus: ^10.1.0
   http: ^1.2.1
   flutter_staggered_animations: ^1.1.1

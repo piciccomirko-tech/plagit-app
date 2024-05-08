@@ -30,8 +30,8 @@ class ClientMyEmployeeController extends GetxController {
   Rx<DateTime> selectedDate = DateTime.now().obs;
   RxList<RequestDateModel> prevDateList = <RequestDateModel>[].obs;
   @override
-  void onInit() async {
-    await _getAllHiredEmployees();
+  void onInit() {
+    getAllHiredEmployees();
     super.onInit();
   }
 
@@ -41,8 +41,7 @@ class ClientMyEmployeeController extends GetxController {
     super.onReady();
   }
 
-
-  Future<void> _getAllHiredEmployees() async {
+  void getAllHiredEmployees() async {
     isLoading.value = true;
     Either<CustomError, ClientMyEmployeesModel> response = await _apiHelper.getClientMyEmployees(
         startDate: startDate.value, endDate: endDate.value, hiredBy: appController.user.value.client?.id ?? '');
@@ -115,7 +114,7 @@ class ClientMyEmployeeController extends GetxController {
     if (value.isNotEmpty) {
       _selectDate(context!);
     }
-    _getAllHiredEmployees();
+    getAllHiredEmployees();
   }
 
   void onDatePicked(DateTime dateTime) {
@@ -125,7 +124,7 @@ class ClientMyEmployeeController extends GetxController {
     startDate.refresh();
     endDate.refresh();
 
-    _getAllHiredEmployees();
+    getAllHiredEmployees();
   }
 
   Future<void> _selectDate(BuildContext context) async {

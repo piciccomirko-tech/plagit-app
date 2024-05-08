@@ -34,7 +34,7 @@ class NotificationClickHelper {
         } else if (Get.isRegistered<AdminHomeController>()) {
           Get.find<AdminHomeController>().homeMethods();
         } else if (Get.isRegistered<ClientHomeController>()) {
-          Get.find<ClientHomeController>().homeMethods();
+          Get.find<ClientHomeController>().getMessages();
         }
       }
     } else {
@@ -45,7 +45,7 @@ class NotificationClickHelper {
       } else if (Get.isRegistered<AdminHomeController>()) {
         Get.find<AdminHomeController>().homeMethods();
       } else if (Get.isRegistered<ClientHomeController>()) {
-        Get.find<ClientHomeController>().homeMethods();
+        Get.find<ClientHomeController>().getMessages();
       }
     }
   }

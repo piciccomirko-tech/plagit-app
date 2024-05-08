@@ -31,28 +31,13 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                   ),
                   SizedBox(width: 24.w),
                   Expanded(
-                    child: Obx(
-                      () => Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          CustomFeatureBox(
-                            height: 130.h,
-                            iconHeight: 50.h,
-                            title: MyStrings.dashboard.tr,
-                            icon: MyAssets.dashboard,
-                            onTap: controller.onDashboardClick,
-                          ),
-                          Positioned(
-                            top: 4,
-                            right: 5,
-                            child: Visibility(
-                              visible: controller.unreadMessageFromEmployee.value > 0,
-                              child: CustomBadge(controller.unreadMessageFromEmployee.value.toString()),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    child: CustomFeatureBox(
+                      height: 130.h,
+                      iconHeight: 50.h,
+                      title: MyStrings.dashboard.tr,
+                      icon: MyAssets.dashboard,
+                      onTap: controller.onDashboardClick,
+                    )
                   ),
                 ],
               ),
@@ -76,13 +61,14 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                                   iconHeight: 50.h,
                                   title: MyStrings.myEmployees.tr,
                                   icon: MyAssets.myEmployees,
+                                  loading: controller.unreadMessageFromEmployeeLoading.value,
                                   onTap: controller.onMyEmployeeClick,
                                 ),
                                 Positioned(
                                   top: 4,
                                   right: 5,
                                   child: Visibility(
-                                    visible: controller.unreadMessageFromEmployee > 0,
+                                    visible: controller.unreadMessageFromEmployee.value > 0,
                                     child: CustomBadge(controller.unreadMessageFromEmployee.value.toString()),
                                   ),
                                 ),

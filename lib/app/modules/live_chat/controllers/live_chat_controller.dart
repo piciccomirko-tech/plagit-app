@@ -6,6 +6,8 @@ import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/models/custom_error.dart';
 import 'package:mh/app/modules/admin/admin_home/controllers/admin_home_controller.dart';
+import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
+import 'package:mh/app/modules/client/client_my_employee/controllers/client_my_employee_controller.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_create_request_model.dart';
 import 'package:mh/app/modules/live_chat/models/conversation_response_model.dart';
 import 'package:mh/app/modules/live_chat/models/live_chat_data_transfer_model.dart';
@@ -157,6 +159,11 @@ class LiveChatController extends GetxController {
   void onBackPressed(bool h) {
     if (Get.isRegistered<AdminHomeController>()) {
       Get.find<AdminHomeController>().homeMethods();
+    } else if (Get.isRegistered<ClientHomeController>()) {
+      Get.find<ClientHomeController>().getMessages();
+      if (Get.isRegistered<ClientMyEmployeeController>()) {
+        Get.find<ClientMyEmployeeController>().getAllHiredEmployees();
+      }
     }
   }
 }

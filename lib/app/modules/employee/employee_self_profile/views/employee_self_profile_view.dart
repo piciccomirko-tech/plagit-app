@@ -180,7 +180,7 @@ class EmployeeSelfProfileView extends GetView<EmployeeSelfProfileController> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text((controller.tecBio.text.isEmpty) ? "Bio has not been added yet" : controller.tecBio.text),
+                            Text((controller.tecBio.text.isEmpty) ? "Bio has not been added yet" : controller.tecBio.text, style: MyColors.l111111_dwhite(controller.context!).regular16_5),
                             InkResponse(
                               onTap: controller.onBioTapped,
                                 child: const Icon(CupertinoIcons.pencil_outline, color: MyColors.c_C6A34F, size: 16))

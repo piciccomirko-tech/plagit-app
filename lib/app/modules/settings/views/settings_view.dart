@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/values/my_assets.dart';
+import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/common/widgets/header_image_widget.dart';
 import 'package:mh/app/common/widgets/welcome_back_text_widget.dart';
@@ -15,24 +16,27 @@ class SettingsView extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     controller.context = context;
     return Scaffold(
-      appBar: CustomAppbar.appbar(title: "Settings", context: context),
+      appBar: CustomAppbar.appbar(title: MyStrings.settings.tr, context: context),
       body: SingleChildScrollView(
         child: Form(
           key: controller.formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              HeaderImageWidget(imageUrl: MyAssets.lottie.changePasswordLottie),
-              const WelcomeBackTextWidget(subTitle: 'Change your password with strong characters'),
-              const SizedBox(height: 50),
-              const CurrentPasswordFieldWidget(),
-              const SizedBox(height: 20),
-              const NewPasswordFieldWidget(),
-              const SizedBox(height: 50),
-              const ButtonWidget()
-            ],
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                HeaderImageWidget(imageUrl: MyAssets.lottie.changePasswordLottie),
+                const WelcomeBackTextWidget(subTitle: 'Change your password with strong characters'),
+                const SizedBox(height: 50),
+                const CurrentPasswordFieldWidget(),
+                const SizedBox(height: 20),
+                const NewPasswordFieldWidget(),
+                const SizedBox(height: 50),
+                const ButtonWidget()
+              ],
+            ),
           ),
         ),
       ),

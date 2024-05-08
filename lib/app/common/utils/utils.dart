@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -262,7 +260,7 @@ class Utils {
   }
 
   // Function to generate the PDF
-  static Future<File> generatePdfWithImageAndText({required CheckInCheckOutHistoryElement invoice}) async {
+/*  static Future<File> generatePdfWithImageAndText({required CheckInCheckOutHistoryElement invoice}) async {
     final pw.Document pdf = pw.Document();
     pw.MemoryImage? image;
     File file;
@@ -361,16 +359,28 @@ class Utils {
     await sFile.writeAsBytes(await pdf.save());
 
     return sFile;
-  }
+  }*/
 
-  static Future<File> generatePdfWithImageAndTextForUk(
+  static Future<File> generatePdfWithImageAndText(
       {required CheckInCheckOutHistoryElement invoice, required String companyName}) async {
     final pw.Document pdf = pw.Document();
-    pw.MemoryImage? image;
-    File file;
-    file = await assetToFile(MyAssets.logo);
-    if (file.existsSync()) {
-      image = pw.MemoryImage(file.readAsBytesSync());
+    pw.MemoryImage? image1, image2, image3, image4;
+    File file1, file2, file3, file4;
+    file1 = await assetToFile(MyAssets.logo);
+    if (file1.existsSync()) {
+      image1 = pw.MemoryImage(file1.readAsBytesSync());
+    }
+    file2 = await assetToFile(MyAssets.web);
+    if (file2.existsSync()) {
+      image2 = pw.MemoryImage(file2.readAsBytesSync());
+    }
+    file3 = await assetToFile(MyAssets.phone);
+    if (file3.existsSync()) {
+      image3 = pw.MemoryImage(file3.readAsBytesSync());
+    }
+    file4 = await assetToFile(MyAssets.email);
+    if (file4.existsSync()) {
+      image4 = pw.MemoryImage(file4.readAsBytesSync());
     }
 
     // Add a page to the PDF
@@ -385,162 +395,185 @@ class Utils {
               children: [
                 pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
                   pw.Row(children: [
-                    pw.Image(image!, height: 80, width: 80),
+                    pw.Image(image1!, height: 80, width: 80),
                     pw.Text("Plagit",
                         style: pw.TextStyle(
                             fontSize: 30, fontWeight: pw.FontWeight.bold, color: PdfColor.fromHex('58c8c8'))),
                   ]),
-                  pw.Text("INVOICE",
-                      style: const pw.TextStyle(
-                          fontSize: 25)),
+                  pw.Text("INVOICE", style: const pw.TextStyle(fontSize: 25)),
                 ]),
                 pw.SizedBox(height: 30),
                 pw.Padding(
-                  padding: const pw.EdgeInsets.symmetric(horizontal: 40.0),
-                  child: pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                          pw.Text(
-                            'Payable To',
-                            style:  pw.TextStyle(
-                                color: PdfColors.black, // Set the text color to blue.
-                                fontSize: 16,
-                                fontWeight: pw.FontWeight.bold
-                            ),
-                          ),
-                          pw.SizedBox(height: 10),
-                          pw.Text('48 Warwick St, Regent St', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                          pw.Text('London, W1B SAW', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                          pw.Text('VAT number: 450105738', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                        ]),
-                        pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                          pw.Text('Invoice No: ${invoice.invoiceNumber}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                          pw.SizedBox(height: 10),
-                          pw.Text('Date: ${DateFormat('d MMM y').format(invoice.createdAt!)}', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black))
-                        ])
+                    padding: const pw.EdgeInsets.symmetric(horizontal: 40.0),
+                    child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
+                      pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                        pw.Text(
+                          'Payable To',
+                          style: pw.TextStyle(
+                              color: PdfColors.black, // Set the text color to blue.
+                              fontSize: 16,
+                              fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.SizedBox(height: 10),
+                        pw.Text('48 Warwick St, Regent St',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                        pw.Text('London, W1B SAW',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                        pw.Text('VAT number: 450105738',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                      ]),
+                      pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                        pw.Text('Invoice No: ${invoice.invoiceNumber}',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                        pw.SizedBox(height: 10),
+                        pw.Text('Date: ${DateFormat('d MMM y').format(invoice.createdAt!)}',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black))
                       ])
-                ),
+                    ])),
                 pw.SizedBox(height: 30),
                 pw.Padding(
-                  padding: const pw.EdgeInsets.symmetric(horizontal: 40.0),
-                  child: pw.Row(children: [
-                    pw.Expanded(
-                      flex: 1,
-                      child: pw.Column(
-                          mainAxisAlignment: pw.MainAxisAlignment.start,
-                          crossAxisAlignment: pw.CrossAxisAlignment.start,
-                          children: [
-                            pw.Text('To',
-                                style:  pw.TextStyle(
-                                    color: PdfColors.black, // Set the text color to blue.
-                                    fontSize: 16,
-                                    fontWeight: pw.FontWeight.bold
-                                ))
-                          ]),
-                    ),
-                    pw.Expanded(
-                        flex: 5,
-                        child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
-                          pw.Text(invoice.restaurantDetails?.restaurantName ?? "", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                          pw.SizedBox(height: 10),
-                          pw.Text(companyName, style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                          pw.Text(invoice.restaurantDetails?.restaurantAddress ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                          pw.Text(invoice.restaurantDetails?.email ?? '', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black))
-                        ])),
-                  ])
-                ),
+                    padding: const pw.EdgeInsets.symmetric(horizontal: 40.0),
+                    child: pw.Row(children: [
+                      pw.Expanded(
+                        flex: 1,
+                        child: pw.Column(
+                            mainAxisAlignment: pw.MainAxisAlignment.start,
+                            crossAxisAlignment: pw.CrossAxisAlignment.start,
+                            children: [
+                              pw.Text('To',
+                                  style: pw.TextStyle(
+                                      color: PdfColors.black, // Set the text color to blue.
+                                      fontSize: 16,
+                                      fontWeight: pw.FontWeight.bold))
+                            ]),
+                      ),
+                      pw.Expanded(
+                          flex: 5,
+                          child: pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+                            pw.Text(invoice.restaurantDetails?.restaurantName ?? "",
+                                style:
+                                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                            pw.SizedBox(height: 10),
+                            pw.Text(companyName,
+                                style:
+                                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                            pw.Text(invoice.restaurantDetails?.restaurantAddress ?? '',
+                                style:
+                                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                            pw.Text(invoice.restaurantDetails?.email ?? '',
+                                style:
+                                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black))
+                          ])),
+                    ])),
                 pw.SizedBox(height: 30),
                 pw.Container(
                     padding: const pw.EdgeInsets.all(10.0),
                     decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
                     child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-                      pw.Text('NAME', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
-                      pw.Text('POSITION', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
-                    pw.Text('RATE', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
-                      pw.Text('TOTAL HOUR', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
-                      pw.Text('AMOUNT', style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white))
+                      pw.Text('NAME',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
+                      pw.Text('POSITION',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
+                      pw.Text('RATE',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
+                      pw.Text('TOTAL HOUR',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white)),
+                      pw.Text('AMOUNT',
+                          style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold, color: PdfColors.white))
                     ])),
                 pw.SizedBox(height: 10),
                 pw.Row(children: [
-                  pw.Text(
-                    invoice.employeeDetails?.name??"", style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)
-                  ),
+                  pw.Text(invoice.employeeDetails?.name ?? "",
+                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
                   pw.SizedBox(width: 20),
-                  pw.Text(invoice.employeeDetails?.positionName??"", style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
+                  pw.Text(invoice.employeeDetails?.positionName ?? "",
+                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
                   pw.SizedBox(width: 60),
-
-                  pw.Text("${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.employeeAmount??0.0}", style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
-                  pw.SizedBox(width: 80),
-
-                  pw.Text(invoice.workedHour??"", style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
-                  pw.SizedBox(width: 110),
-
                   pw.Text(
-                      '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.clientAmount?.toStringAsFixed(2)}  ', style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black))
+                      "${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.employeeDetails?.hourlyRate ?? 0.0}",
+                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
+                  pw.SizedBox(width: 80),
+                  pw.Text(invoice.workedHour ?? "",
+                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black)),
+                  pw.SizedBox(width: 110),
+                  pw.Text(
+                      '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.clientAmount?.toStringAsFixed(2)}  ',
+                      style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold, color: PdfColors.black))
                 ]),
                 pw.SizedBox(height: 10),
-                pw.Divider(color: PdfColors.black, height: 0.0),
+                pw.Divider(color: PdfColors.grey400, height: 0.0, thickness: 0.1),
                 pw.SizedBox(height: 10),
                 pw.Row(children: [
                   pw.Expanded(flex: 1, child: pw.Wrap()),
                   pw.Expanded(
                       flex: 1,
-                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-                        pw.Text('VAT', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
+                        pw.Text('VAT: ',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                        pw.Text('${invoice.vat}% = ',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
                         pw.Text(
-                          '${invoice.vat}%', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)
-                        ),
-                        pw.Text(
-                            '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.vatAmount?.toStringAsFixed(2)}  ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black))
+                            '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.vatAmount?.toStringAsFixed(2)}  ',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black))
                       ]))
                 ]),
-                pw.SizedBox(height: 10),
-                pw.Divider(color: PdfColors.grey400, height: 0.0),
                 pw.SizedBox(height: 10),
                 pw.Row(children: [
                   pw.Expanded(flex: 1, child: pw.Wrap()),
                   pw.Expanded(
                       flex: 1,
-                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceBetween, children: [
-                        pw.Text('Platform Fee', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
+                      child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
+                        pw.Text('Platform Fee: ',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
                         pw.Text(
-                            '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.platformFee?.toStringAsFixed(2)}  ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13, color: PdfColors.black))
+                            '${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.platformFee?.toStringAsFixed(2)}  ',
+                            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13, color: PdfColors.black))
                       ]))
                 ]),
                 pw.SizedBox(height: 10),
-                pw.Divider(color: PdfColors.grey400, height: 0.0),
-                pw.Container(
-                    padding: const pw.EdgeInsets.symmetric(vertical: 10.0),
-                    decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
-                    child: pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
-                      pw.Text(
-                          'TOTAL: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.totalAmount?.toStringAsFixed(2)}  ',
-                          style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15)),
-                    ])),
+                pw.Divider(color: PdfColors.grey900, height: 0.0,indent: 400, thickness: 2.0),
+                pw.SizedBox(height: 10),
+                pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
+                  pw.Text(
+                      'TOTAL: ${getCurrencySymbol(Get.find<AppController>().user.value.client?.countryName ?? '')}${invoice.totalAmount?.toStringAsFixed(2)}  ',
+                      style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 15)),
+                ]),
                 pw.SizedBox(height: 80),
                 pw.Center(
                     child: pw.Container(
-                      height: 130,
+                        height: 130,
                         width: double.infinity,
                         decoration: pw.BoxDecoration(color: PdfColor.fromHex('58c8c8').shade(0.2)),
                         child: pw.Container(
                           margin: const pw.EdgeInsets.all(20.0),
                           padding: const pw.EdgeInsets.all(20.0),
-                          child: pw.Column(
-                            children: [
-                              pw.Row(
-                                mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    pw.Text("www.plagit.com", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white)),
-                                    pw.Text("07960966110", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white))
-                                  ]
-                              ),
-                              pw.SizedBox(height: 10),
-                              pw.Text("support@plagit.com", style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white)),
-                            ]
-                          ),
-                          decoration:  pw.BoxDecoration(color: PdfColors.black, borderRadius: pw.BorderRadius.circular(50.0)),
+                          child: pw.Column(children: [
+                            pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly, children: [
+                              pw.Row(children: [
+                                pw.Image(image2!, height: 20, width: 20),
+                                pw.Text("www.plagit.com",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white)),
+                              ]),
+                              pw.Row(children: [
+                                pw.Image(image3!, height: 20, width: 20),
+                                pw.Text("07960966110",
+                                    style: pw.TextStyle(
+                                        fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white))
+                              ])
+                            ]),
+                            pw.SizedBox(height: 10),
+                            pw.Row(
+                                mainAxisAlignment: pw.MainAxisAlignment.center,
+                                children: [
+                              pw.Image(image4!, height: 20, width: 20),
+                              pw.Text("support@plagit.com",
+                                  style: pw.TextStyle(
+                                      fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white))
+                            ])
+                          ]),
+                          decoration:
+                              pw.BoxDecoration(color: PdfColors.black, borderRadius: pw.BorderRadius.circular(50.0)),
                         ))),
                 pw.SizedBox(height: 10)
               ],

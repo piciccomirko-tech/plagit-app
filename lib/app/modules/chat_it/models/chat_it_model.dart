@@ -31,6 +31,7 @@ class Conversation {
   final DateTime? updatedAt;
   final int? v;
   final LatestMessage? latestMessage;
+  final int? unreadMsg;
 
   Conversation({
     this.id,
@@ -42,6 +43,7 @@ class Conversation {
     this.updatedAt,
     this.v,
     this.latestMessage,
+    this.unreadMsg
   });
 
   factory Conversation.fromRawJson(String str) => Conversation.fromJson(json.decode(str));
@@ -52,6 +54,7 @@ class Conversation {
     active: json["active"],
     isAdmin: json["isAdmin"],
     country: json["country"],
+    unreadMsg: json["unreadMsg"],
     createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
     updatedAt: json["updatedAt"] == null ? null : DateTime.parse(json["updatedAt"]),
     v: json["__v"],
