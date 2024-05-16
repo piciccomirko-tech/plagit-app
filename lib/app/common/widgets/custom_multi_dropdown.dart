@@ -41,7 +41,7 @@ class _SelectRow extends StatelessWidget {
 
             const SizedBox(width: 17),
             Text(text,
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             )
           ],
         ),
@@ -207,7 +207,7 @@ class _DropDownMultiSelectState extends State<DropDownMultiSelect> {
                     widget.selectedValues.isNotEmpty
                         ? widget.selectedValues.reduce((a, b) => '$a , $b')
                         : '',
-                    style: Theme.of(context).textTheme.bodyText1,
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ))),
 

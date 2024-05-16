@@ -158,7 +158,7 @@ Map<String, String> italian = <String, String>{
   MyStrings.emergencyContact: "Contatto di emergenza",
   MyStrings.skills: "Competenze",
   MyStrings.hiRestaurant: "Ciao Ristorante @restaurantName",
-  MyStrings.exploreTheFeaturesOfMhAppBelow: "Scopri le funzionalità di MH App qui sotto",
+  MyStrings.exploreTheFeaturesOfPlagitAppBelow: "Scopri le funzionalità di Plagit App qui sotto",
   MyStrings.plagIt: "Plagit",
   MyStrings.paymentHistory: "Storico dei\npagamenti",
   MyStrings.bookedHistory: "Storico delle\nprenotazioni",

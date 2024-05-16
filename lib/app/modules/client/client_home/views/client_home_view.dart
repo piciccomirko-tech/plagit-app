@@ -78,7 +78,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
                             padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 15),
                             width: Get.width,
                             decoration: BoxDecoration(
-                                gradient:  LinearGradient(
+                                gradient: LinearGradient(
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
                                   colors: [MyColors.c_C6A34F, Colors.blueGrey.shade900], // Gradient colors
@@ -168,7 +168,7 @@ class ClientHomeView extends GetView<ClientHomeController> {
   );
 
   Widget get _promotionText => Text(
-    MyStrings.exploreTheFeaturesOfMhAppBelow.tr,
+    MyStrings.exploreTheFeaturesOfPlagitAppBelow.tr,
     style: MyColors.white.medium15,
   );
 

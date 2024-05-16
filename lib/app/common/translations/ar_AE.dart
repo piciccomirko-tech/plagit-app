@@ -112,7 +112,7 @@ Map<String, String> arabic = <String, String>{
   MyStrings.hiredHistory: "تاريخ التوظيف",
   MyStrings.calendar: "التقويم",
   MyStrings.hiRestaurant: "مرحبًا @restaurantName مطعم",
-  MyStrings.exploreTheFeaturesOfMhAppBelow: "استكشف ميزات تطبيق MH أدناه",
+  MyStrings.exploreTheFeaturesOfPlagitAppBelow: "استكشف ميزات تطبيق Plagit أدناه",
   MyStrings.noEmployeeFound: "لم يتم العثور على موظف",
   MyStrings.allEmployees: "جميع الموظفين",
   MyStrings.noInvoiceFound: "لم يتم العثور على فاتورة",

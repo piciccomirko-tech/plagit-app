@@ -175,7 +175,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
       );
 
   Widget get _promotionText => Text(
-        MyStrings.exploreTheFeaturesOfMhAppBelow.tr,
+        MyStrings.exploreTheFeaturesOfPlagitAppBelow.tr,
         style: MyColors.l777777_dtext(controller.context!).medium15,
       );
 }

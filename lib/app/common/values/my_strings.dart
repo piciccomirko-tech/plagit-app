@@ -164,7 +164,7 @@ class MyStrings {
   static const String bio = "bio";
   static const String skills = "skills";
   static const String hiRestaurant = "hiRestaurant";
-  static const String exploreTheFeaturesOfMhAppBelow = "exploreTheFeaturesOfMhAppBelow";
+  static const String exploreTheFeaturesOfPlagitAppBelow = "exploreTheFeaturesOfPlagitAppBelow";
   static const String plagIt = "plagIt";
   static const String employees = "employees";
   static const String active = "active";

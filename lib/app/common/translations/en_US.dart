@@ -104,7 +104,7 @@ Map<String, String> english = <String, String>{
   MyStrings.bio: "Bio",
   MyStrings.skills: "Skills",
   MyStrings.hiRestaurant: "Hi @restaurantName Restaurant",
-  MyStrings.exploreTheFeaturesOfMhAppBelow: "Explore the features of Plagit App bellow",
+  MyStrings.exploreTheFeaturesOfPlagitAppBelow: "Explore the features of Plagit App bellow",
   MyStrings.plagIt: "Plagit",
   MyStrings.employees: " Employees",
   MyStrings.dashboard: "Dashboard",
