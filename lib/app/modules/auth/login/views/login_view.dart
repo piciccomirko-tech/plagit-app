@@ -173,7 +173,7 @@ class LoginView extends GetView<LoginController> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(2.0),
                 ),
-                side: MaterialStateBorderSide.resolveWith(
+                side: WidgetStateBorderSide.resolveWith(
                   (Set<MaterialState> states) => const BorderSide(width: 2.0, color: MyColors.c_C6A34F),
                 ),
                 value: controller.rememberMe.value,

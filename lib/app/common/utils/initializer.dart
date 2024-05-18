@@ -3,7 +3,6 @@ import 'package:appsflyer_sdk/appsflyer_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:mh/app/common/controller/app_error_controller.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
 import '../../repository/api_helper.dart';
@@ -22,8 +21,6 @@ class Initializer {
 
   Future<void> init() async {
     await runZonedGuarded(() async {
-      WidgetsFlutterBinding.ensureInitialized();
-
       FlutterError.onError = (details) {
         FlutterError.dumpErrorToConsole(details);
         Logcat.msg(details.stack.toString());
@@ -53,7 +50,6 @@ class Initializer {
   Future<void> _initServices() async {
     try {
       _initScreenPreference();
-      _initStorage();
       _initAppsFlyerSdk();
       Get.put(AppController());
       Get.put(AppLifecycleController());
@@ -68,10 +64,6 @@ class Initializer {
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
     ]);
-  }
-
-  Future<void> _initStorage() async {
-    await GetStorage.init();
   }
 
   void _initAppsFlyerSdk() async {

@@ -1,5 +1,5 @@
 name: mh
-version: 2.6.9+69
+version: 2.7.0+70
 publish_to: none
 description: A new Flutter project.
 
@@ -79,7 +79,7 @@ dependencies:
 
   url_launcher: ^6.2.6
 
-  lottie: ^3.1.1
+  lottie: ^3.1.2
 
   another_xlider: ^3.0.2
 
@@ -92,7 +92,7 @@ dependencies:
   horizontal_data_table: ^4.3.1
 
   google_maps_flutter: ^2.6.1
-  geolocator: ^11.1.0
+  geolocator: ^12.0.0
   firebase_core: ^2.31.0
   carousel_slider: ^4.2.1
   firebase_messaging: ^14.9.2

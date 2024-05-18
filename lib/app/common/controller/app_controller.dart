@@ -46,7 +46,6 @@ class AppController extends GetxService {
     if (StorageHelper.hasToken && StorageHelper.getToken.isNotEmpty) {
       if (!_isTokenExpire()) {
         Client temp = Client.fromJson(JwtDecoder.decode(StorageHelper.getToken));
-
         if (temp.role == "CLIENT") {
           user.value.userType = UserType.client;
           user.value.client = temp;

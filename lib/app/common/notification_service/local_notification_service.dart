@@ -31,7 +31,7 @@ class LocalNotificationService {
 
     _notificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveBackgroundNotificationResponse: (NotificationResponse notificationResponse) {
+    /*  onDidReceiveBackgroundNotificationResponse: (NotificationResponse notificationResponse) {
         // when app running click
         if (notificationResponse.payload != null && notificationResponse.payload!.isNotEmpty) {
           NotificationClickHelper.goToRoute(notificationResponse.payload);
@@ -42,7 +42,7 @@ class LocalNotificationService {
         if (notificationResponse.payload != null && notificationResponse.payload!.isNotEmpty) {
           NotificationClickHelper.goToRoute(notificationResponse.payload);
         }
-      },
+      },*/
     );
 
     FirebaseMessaging.instance.getInitialMessage().then(

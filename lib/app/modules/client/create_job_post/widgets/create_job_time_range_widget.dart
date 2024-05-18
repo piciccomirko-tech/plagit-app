@@ -60,7 +60,7 @@ class CreateJobTimeRangeWidget extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(2.0),
                             ),
-                            side: MaterialStateBorderSide.resolveWith(
+                            side: WidgetStateBorderSide.resolveWith(
                               (states) => const BorderSide(width: 2.0, color: MyColors.c_C6A34F),
                             ),
                             value: Get.find<CreateJobPostController>().sameAsStartDate.value,

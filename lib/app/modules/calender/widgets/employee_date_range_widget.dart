@@ -50,7 +50,7 @@ class EmployeeDateRangeWidget extends GetWidget<CalenderController> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(2.0),
                               ),
-                              side: MaterialStateBorderSide.resolveWith(
+                              side: WidgetStateBorderSide.resolveWith(
                                 (states) =>  BorderSide(width: 2.0.w, color: MyColors.c_C6A34F),
                               ),
                               value: controller.sameAsStartDate.value,
