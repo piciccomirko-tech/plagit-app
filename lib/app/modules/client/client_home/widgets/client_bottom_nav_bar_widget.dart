@@ -26,12 +26,14 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
               children: [
                 InkResponse(
                   onTap: controller.onHelpAndSupportClick,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Image.asset(MyAssets.support, height: 25, width: 25),
-                      Text(MyStrings.helpSupport.tr.split("&").last, style: MyColors.l111111_dwhite(context).medium16)
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Image.asset(MyAssets.support, height: 25.h, width: 25.w),
+                        Text(MyStrings.helpSupport.tr.split("&").last, style: MyColors.l111111_dwhite(context).medium15)
+                      ],
+                    ),
                   ),
                 ),
                 Positioned(
@@ -47,9 +49,11 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
             const SizedBox(), // This is the space for the notch
             InkResponse(
               onTap: () => controller.onProfileTapped(context: context),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [Image.asset(MyAssets.user, height: 25, width: 25), Text(MyStrings.profile.tr, style: MyColors.l111111_dwhite(context).medium16)],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [Image.asset(MyAssets.user, height: 25.h, width: 25.w), Text(MyStrings.profile.tr, style: MyColors.l111111_dwhite(context).medium15)],
+                ),
               ),
             )
           ],

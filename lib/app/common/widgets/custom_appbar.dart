@@ -35,7 +35,7 @@ class CustomAppbar {
                 : Container(
                     margin: EdgeInsets.fromLTRB(
                         StorageHelper.getLanguage == "ar" ? 0 : 10, 0, StorageHelper.getLanguage == "ar" ? 10 : 0, 0),
-                    child: Image.asset(MyAssets.logo),
+                    child: Image.asset(MyAssets.logo, height: 30.h, width: 30.w),
                   ),
             title: Row(
               mainAxisAlignment: centerTitle
