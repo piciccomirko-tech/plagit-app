@@ -20,7 +20,7 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
           return const Center(child: NoItemFound());
         } else {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            padding:  EdgeInsets.symmetric(horizontal: 15.0.sp),
             child: ListView.builder(
                 shrinkWrap: true,
                 itemCount: controller.employeeHomeController.bookingHistoryList.length,
@@ -29,10 +29,10 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
                   return Stack(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(top: 15.0),
+                        margin: EdgeInsets.only(top: 15.0.sp),
                         height: 130,
                         width: double.infinity,
-                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 30),
+                        padding:  EdgeInsets.only(left: 15.sp, right: 15.sp, bottom: 30.sp),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             image: DecorationImage(
@@ -41,7 +41,7 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
                                 image: const AssetImage(MyAssets.restaurant))),
                         child: Center(
                             child: Text(bookingDetails.text ?? '',
-                                style: MyColors.white.semiBold15, overflow: TextOverflow.ellipsis, maxLines: 3)),
+                                style: Get.width>600?MyColors.white.semiBold9:MyColors.white.semiBold15, overflow: TextOverflow.ellipsis, maxLines: 3)),
                       ),
                       Positioned.fill(
                           child: Align(
@@ -49,7 +49,7 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
                         child: CustomButtons.button(
                             onTap: ()=>controller.onDetailsClick(notificationId: bookingDetails.id??""),
                             height: 35,
-                            margin: const EdgeInsets.only(left: 250),
+                            margin:  EdgeInsets.only(left: 250.sp),
                             text: MyStrings.details.tr,
                             fontSize: 12,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),

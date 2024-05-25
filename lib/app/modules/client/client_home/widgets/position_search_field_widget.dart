@@ -9,8 +9,8 @@ class PositionSearchFieldWidget extends GetWidget<ClientHomeController> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      //height: 50,
       decoration: MyDecoration.cardBoxDecoration(context: context),
-      height: 50,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),
         child: TextFormField(
@@ -35,10 +35,10 @@ class PositionSearchFieldWidget extends GetWidget<ClientHomeController> {
               ),
               filled: true,
               fillColor: MyColors.lightCard(context),
-              contentPadding: const EdgeInsets.all(15.0),
+              contentPadding:  EdgeInsets.all(15.0.sp),
               border: InputBorder.none,
               hintText: MyStrings.searchByPositionName.tr,
-              hintStyle: MyColors.c_7B7B7B.medium15),
+              hintStyle: Get.width>600?MyColors.c_7B7B7B.medium12:MyColors.c_7B7B7B.medium15),
           onChanged: controller.onSearchChanged,
         ),
       ),

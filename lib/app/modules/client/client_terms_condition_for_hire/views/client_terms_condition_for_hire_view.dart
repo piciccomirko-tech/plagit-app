@@ -49,6 +49,8 @@ class ClientTermsConditionForHireView extends GetView<ClientTermsConditionForHir
     return controller.obx(
       (state) => CustomBottomBar(
         child: CustomButtons.button(
+          height: 48.h,
+          fontSize: 13.sp,
           onTap: controller.onIAgreeClick,
           text: MyStrings.agree.tr,
           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
@@ -57,6 +59,8 @@ class ClientTermsConditionForHireView extends GetView<ClientTermsConditionForHir
       onLoading: CustomBottomBar(
         child: CustomButtons.button(
           onTap: null,
+          height: 48.h,
+          fontSize: 13.sp,
           text: MyStrings.agree.tr,
           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
         ),

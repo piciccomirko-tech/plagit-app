@@ -37,7 +37,7 @@ class NationalityDropDownWidget extends GetWidget<CreateJobPostController> {
                         mainAxisSize: MainAxisSize.min,
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(skill, style: MyColors.black.medium14),
+                          Text(skill, style: Get.width>600?MyColors.black.medium9:MyColors.black.medium14),
                           SizedBox(width: 5.w),
                           InkWell(
                               onTap: () => controller.onNationalityClearClick(index: index),

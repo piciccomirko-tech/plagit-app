@@ -22,7 +22,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                 children: [
                   Expanded(
                     child: CustomFeatureBox(
-                        height: 120,
+                        height: Get.width>600?200:120,
                         iconHeight: 40,
                         title: MyStrings.myDashboard.tr,
                         icon: MyAssets.mhEmployees,
@@ -33,7 +33,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                     child: Stack(
                       children: [
                         CustomFeatureBox(
-                            height: 120,
+                            height: Get.width>600?200:120,
                             iconHeight: 40,
                             title: MyStrings.bookedHistory.tr,
                             icon: MyAssets.bookedHistory,
@@ -58,7 +58,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                     child: Stack(
                       children: [
                         CustomFeatureBox(
-                            height: 120,
+                            height: Get.width>600?200:120,
                             iconHeight: 40,
                             title: MyStrings.hiredHistory.tr,
                             icon: MyAssets.hiredHistory,
@@ -85,14 +85,14 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                 children: [
                   Expanded(
                     child: CustomFeatureBox(
-                        height: 120,
+                        height: Get.width>600?200:120,
                         iconHeight: 40,
                         title: MyStrings.calendar.tr, icon: MyAssets.calender2, onTap: controller.onCalenderClick),
                   ),
                   SizedBox(width: 15.w),
                   Expanded(
                     child: CustomFeatureBox(
-                        height: 120,
+                        height: Get.width>600?200:120,
                         iconHeight: 40,
                         title: MyStrings.paymentHistory.tr,
                         icon: MyAssets.invoicePayment,
@@ -103,7 +103,7 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                     child: Stack(
                       children: [
                         CustomFeatureBox(
-                            height: 120,
+                            height: Get.width>600?200:120,
                             iconHeight: 40,
                             title: MyStrings.helpSupport.tr,
                             icon: MyAssets.helpSupport,

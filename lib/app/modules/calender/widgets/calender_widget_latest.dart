@@ -14,7 +14,7 @@ class CalenderWidgetLatest extends GetWidget<CalenderController> {
            SizedBox(height: 15.h),
           Obx(() => Text(
                 controller.selectedDate.value.formatMonthYear(),
-                style: MyColors.l111111_dwhite(context).semiBold18,
+                style: Get.width>600?MyColors.l111111_dwhite(context).semiBold15:MyColors.l111111_dwhite(context).semiBold18,
               )),
            SizedBox(height: 15.h),
           Container(
@@ -27,7 +27,7 @@ class CalenderWidgetLatest extends GetWidget<CalenderController> {
               children: controller.dayNames
                   .map((String dayName) => Text(
                         dayName,
-                        style: MyColors.l111111_dwhite(context).semiBold16,
+                        style: Get.width>600?MyColors.l111111_dwhite(context).semiBold9:MyColors.l111111_dwhite(context).semiBold16,
                       ))
                   .toList(),
             ),

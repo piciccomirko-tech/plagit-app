@@ -30,7 +30,7 @@ class EmployeeDashboardView extends GetView<EmployeeDashboardController> {
                     controller.isInitial.value == true
                         ? MyStrings.filterByDateRange.tr.toUpperCase()
                         : "${controller.selectedStartDate.value.dMMMy} - ${controller.selectedEndDate.value.dMMMy}",
-                    style: Colors.blue.semiBold18)),
+                    style: Get.width>600?Colors.blue.semiBold13:Colors.blue.semiBold18)),
                 SizedBox(width: 15.w),
                 Image.asset(MyAssets.calendar, height: 30, width: 30)
               ],

@@ -30,7 +30,7 @@ class CalenderView extends GetView<CalenderController> {
                 height: MediaQuery.of(context).size.height,
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 15.0.w, vertical: 15.0.h),
+                    padding: EdgeInsets.symmetric(horizontal: 15.0.sp, vertical: 15.0.sp),
                     child: const Column(
                       children: [CalenderHeaderWidget(), CalenderWidgetLatest()],
                     ),

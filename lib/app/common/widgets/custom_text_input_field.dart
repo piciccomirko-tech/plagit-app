@@ -83,7 +83,7 @@ class _CustomTextInputFieldState extends State<CustomTextInputField> {
               onChanged: widget.onChange,
               textInputAction: TextInputAction.done,
               autovalidateMode: AutovalidateMode.onUserInteraction,
-              style: MyColors.l111111_dwhite(context).regular16_5,
+              style: Get.width>600?MyColors.l111111_dwhite(context).regular9:MyColors.l111111_dwhite(context).regular16_5,
               onTap: widget.onTap,
               onFieldSubmitted: (value) => _onSubmit(),
               decoration: MyDecoration.inputFieldDecoration(

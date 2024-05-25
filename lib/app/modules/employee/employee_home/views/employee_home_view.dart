@@ -37,9 +37,9 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
                         controller.notificationsController.unreadCount.value == 20
                             ? '20+'
                             : controller.notificationsController.unreadCount.toString(),
-                        style: MyColors.white.semiBold12);
+                        style:  TextStyle(fontSize: Get.width>600?13:12, color: MyColors.white));
                   }),
-                  child: const Icon(CupertinoIcons.bell, size: 20),
+                  child:  Icon(CupertinoIcons.bell, size: Get.width>600?30:21),
                 ),
               )),
               const SizedBox(width: 20),
@@ -50,9 +50,9 @@ class EmployeeHomeView extends GetView<EmployeeHomeController> {
                     onProfileTap: controller.onProfileClick,
                   );
                 },
-                child: const Icon(
+                child:  Icon(
                     CupertinoIcons.person,
-                    size: 20
+                    size: Get.width>600?30:21
                 ),
               ),
               const SizedBox(width: 10),

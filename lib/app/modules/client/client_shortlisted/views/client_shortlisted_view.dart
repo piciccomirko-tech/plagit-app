@@ -55,7 +55,7 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
           padding: EdgeInsets.fromLTRB(15.w, 0, 15.w, 12.h),
           child: Text(
             "${Utils.getPositionName(positionId)} (${employees.length})",
-            style: MyColors.l111111_dwhite(controller.context!).semiBold16,
+            style: Get.width>600?MyColors.l111111_dwhite(controller.context!).semiBold13:MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
         ),
         ...employees.map((e) {
@@ -295,6 +295,8 @@ class ClientShortlistedView extends GetView<ClientShortlistedController> {
           visible: controller.shortlistController.shortList.isNotEmpty,
           child: CustomBottomBar(
             child: CustomButtons.button(
+              height: 48.h,
+              fontSize: 13.sp,
               onTap: controller.onBookAllClick,
               text: controller.shortlistController.selectedForHire.isEmpty ||
                       controller.shortlistController.selectedForHire.length ==

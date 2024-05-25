@@ -29,7 +29,7 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                 visible: controller.shortlistController.totalShortlisted.value > 0,
                 child: Center(
                   child: badge.Badge(
-                    position: badge.BadgePosition.topEnd(top: -9, end: -4),
+                    position: badge.BadgePosition.topEnd(top: -9.sp, end: -4.sp),
                     onTap: controller.goToShortListedPage,
                     ignorePointer: false,
                     badgeContent: Text(
@@ -42,7 +42,7 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                     ),
                     child: GestureDetector(
                       onTap: controller.goToShortListedPage,
-                      child: const Icon(Icons.bookmark_outline_rounded),
+                      child:  Icon(Icons.bookmark_outline_rounded, size: Get.width>600?35:25),
                     ),
                   ),
                 ),
@@ -82,16 +82,16 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
 
   Widget _resultCountWithFilter() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(15, 10.h, 15, 0),
+      padding: EdgeInsets.fromLTRB(15.sp, 10.h, 15.sp, 0),
       child: Row(
         children: [
           Text(
             (controller.employees.value.users?.length ?? 0).toString(),
-            style: MyColors.c_C6A34F.semiBold16,
+            style: Get.width>600?MyColors.c_C6A34F.semiBold13:MyColors.c_C6A34F.semiBold16,
           ),
           Text(
             " ${controller.position.name ?? "Employees"} ${MyStrings.areShowing.tr}",
-            style: MyColors.l111111_dwhite(controller.context!).semiBold16,
+            style: Get.width>600?MyColors.l111111_dwhite(controller.context!).semiBold13:MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
           const Spacer(),
           Obx(() => Visibility(
@@ -106,8 +106,8 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                   onResetClick: controller.onResetClick,
                 ),
                 child: Container(
-                  width: 36.w,
-                  height: 36.w,
+                  width: 36,
+                  height: 36,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: MyColors.c_C6A34F,
@@ -218,8 +218,8 @@ class MhEmployeesByIdView extends GetView<MhEmployeesByIdController> {
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           CustomButtons.button(
-                            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                            height: 23,
+                            padding:  EdgeInsets.symmetric(horizontal: 15.0.sp),
+                            height: 23.h,
                             text: (user.available == null || int.parse(user.available!.split(' ').first) <= 0)
                                 ? MyStrings.booked.tr
                                 : MyStrings.bookNow.tr,

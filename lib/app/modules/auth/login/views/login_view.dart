@@ -75,6 +75,7 @@ class LoginView extends GetView<LoginController> {
             CustomButtons.button(
               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
               text: MyStrings.login.tr,
+              fontSize: 12.sp,
               height: 48.h,
               onTap: controller.onLoginPressed,
               margin: const EdgeInsets.symmetric(horizontal: 18),
@@ -95,7 +96,7 @@ class LoginView extends GetView<LoginController> {
 
   Widget get _welcomeBack => Text(
         MyStrings.welcomeBack.tr,
-        style: MyColors.l111111_dwhite(controller.context!).semiBold22,
+        style: Get.width>600?MyColors.l111111_dwhite(controller.context!).semiBold16:MyColors.l111111_dwhite(controller.context!).semiBold22,
       );
 
   Widget get _userIdField => Obx(() => CustomTextInputField(
@@ -127,7 +128,7 @@ class LoginView extends GetView<LoginController> {
             onTap: () => Get.toNamed(Routes.emailInput),
             child: Text(
               MyStrings.forgotPassword.tr,
-              style: MyColors.c_C6A34F.semiBold16,
+              style: Get.width>600?MyColors.c_C6A34F.semiBold13:MyColors.c_C6A34F.semiBold16,
             ),
           ),
         ),
@@ -138,7 +139,7 @@ class LoginView extends GetView<LoginController> {
         child: Text.rich(
           TextSpan(
             text: "${MyStrings.dontHaveAnAccount.tr}  ",
-            style: MyColors.l50555C_dtext(controller.context!).regular16,
+            style: Get.width>600?MyColors.l50555C_dtext(controller.context!).regular13:MyColors.l50555C_dtext(controller.context!).regular16,
             children: [
               TextSpan(
                 text: MyStrings.register.tr,
@@ -178,7 +179,7 @@ class LoginView extends GetView<LoginController> {
                 ),
                 value: controller.rememberMe.value,
                 onChanged: controller.onRememberMePressed),
-            Text(MyStrings.rememberMeText.tr, style: MyColors.l111111_dwhite(controller.context!).semiBold15),
+            Text(MyStrings.rememberMeText.tr, style: Get.width>600?MyColors.l111111_dwhite(controller.context!).semiBold12:MyColors.l111111_dwhite(controller.context!).semiBold15),
           ],
         ),
       ));

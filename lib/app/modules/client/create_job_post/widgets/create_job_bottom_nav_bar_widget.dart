@@ -9,6 +9,8 @@ class CreateJobBottomNavBarWidget extends GetWidget<CreateJobPostController> {
   Widget build(BuildContext context) {
     return CustomBottomBar(
       child: CustomButtons.button(
+        height: 48.h,
+          fontSize: 12.sp,
           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
           text: controller.type == "create"
               ? MyStrings.postJobOffer.tr.toUpperCase()

@@ -10,6 +10,7 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
     return ClipRRect(
       borderRadius: const BorderRadius.only(topRight: Radius.circular(30.0), topLeft: Radius.circular(30.0)),
       child: BottomAppBar(
+       height: 0.18.sw,
         elevation: 20,
         surfaceTintColor: MyColors.lightCard(context),
         shadowColor: MyColors.c_A6A6A6,
@@ -31,7 +32,7 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Image.asset(MyAssets.support, height: 25.h, width: 25.w),
-                        Text(MyStrings.helpSupport.tr.split("&").last, style: MyColors.l111111_dwhite(context).medium15)
+                        Text(MyStrings.helpSupport.tr.split("&").last, style: Get.width>600?MyColors.l111111_dwhite(context).medium12:MyColors.l111111_dwhite(context).medium15)
                       ],
                     ),
                   ),
@@ -52,7 +53,7 @@ class ClientBottomNavBarWidget extends GetWidget<ClientHomeController> {
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [Image.asset(MyAssets.user, height: 25.h, width: 25.w), Text(MyStrings.profile.tr, style: MyColors.l111111_dwhite(context).medium15)],
+                  children: [Image.asset(MyAssets.user, height: 25.h, width: 25.w), Text(MyStrings.profile.tr, style: Get.width>600?MyColors.l111111_dwhite(context).medium12:MyColors.l111111_dwhite(context).medium15)],
                 ),
               ),
             )

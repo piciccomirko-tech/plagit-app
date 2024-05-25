@@ -412,6 +412,7 @@ class CalenderController extends GetxController {
                   SizedBox(height: 30.h),
                   CustomButtons.button(
                     text: MyStrings.done.tr,
+                    height: 48.h,
                     onTap: () {
                       if (requestDateList[index].startTime == requestDateList[index].endTime) {
                         CustomDialogue.information(
@@ -422,9 +423,9 @@ class CalenderController extends GetxController {
                         Get.back(); // hide modal
                       }
                     },
-                    margin: const EdgeInsets.symmetric(horizontal: 18),
+                    margin:  EdgeInsets.symmetric(horizontal: 18.sp),
                   ),
-                  SizedBox(height: 20.h),
+                  SizedBox(height: 30.h),
                 ],
               ),
             ),

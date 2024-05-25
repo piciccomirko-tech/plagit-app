@@ -410,14 +410,14 @@ class CustomFilter {
                           },
                           child: Text(
                             MyStrings.resetData.tr,
-                            style: MyColors.c_FF5029.semiBold16,
+                            style: Get.width>600?MyColors.c_FF5029.semiBold12:MyColors.c_FF5029.semiBold16,
                           ),
                         ),
                       ),
                       Expanded(
                         flex: 7,
                         child: CustomButtons.button(
-                          height: 52.h,
+                          height: 48.h,
                           onTap: () {
                             Get.back();
                             onApplyClick(
@@ -433,6 +433,7 @@ class CustomFilter {
                                 maxSelectedHourlyRate);
                           },
                           text: MyStrings.apply.tr,
+                          fontSize: 13.sp,
                           margin: EdgeInsets.zero,
                           customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                         ),
@@ -458,12 +459,12 @@ class CustomFilter {
 
   static Widget _title(BuildContext context, String text) => Text(
         text,
-        style: MyColors.l111111_dwhite(context).semiBold16,
+        style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold16,
       );
 
   static Widget _sliderHatchMarkLabel(BuildContext context, String text) => Text(
         text,
-        style: MyColors.l111111_dwhite(context).regular16_5,
+        style: Get.width>600?MyColors.l111111_dwhite(context).regular9:MyColors.l111111_dwhite(context).regular16_5,
       );
 
   static FlutterSliderTrackBar _sliderTrackbar(BuildContext context) => FlutterSliderTrackBar(

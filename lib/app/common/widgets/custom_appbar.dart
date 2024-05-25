@@ -13,7 +13,7 @@ class CustomAppbar {
     required BuildContext context,
   }) =>
       PreferredSize(
-        preferredSize: Size.fromHeight(54.h),
+        preferredSize:  Size.fromHeight( Get.width>600?0.1.sw:kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(boxShadow: [
             BoxShadow(
@@ -35,7 +35,7 @@ class CustomAppbar {
                 : Container(
                     margin: EdgeInsets.fromLTRB(
                         StorageHelper.getLanguage == "ar" ? 0 : 10, 0, StorageHelper.getLanguage == "ar" ? 10 : 0, 0),
-                    child: Image.asset(MyAssets.logo, height: 30.h, width: 30.w),
+                    child: Image.asset(MyAssets.logo),
                   ),
             title: Row(
               mainAxisAlignment: centerTitle
@@ -49,12 +49,14 @@ class CustomAppbar {
                   visible: visibleMH,
                   child: Text(
                     MyStrings.plagIt.tr,
-                    style: MyColors.c_C6A34F.semiBold18,
+                    style: Get.width > 600 ? MyColors.c_C6A34F.semiBold15 : MyColors.c_C6A34F.semiBold18,
                   ),
                 ),
                 Text(
                   title.tr,
-                  style: MyColors.l111111_dwhite(context).semiBold18,
+                  style: Get.width > 600
+                      ? MyColors.l111111_dwhite(context).semiBold15
+                      : MyColors.l111111_dwhite(context).semiBold18,
                 ),
               ],
             ),

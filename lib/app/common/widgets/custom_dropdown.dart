@@ -26,7 +26,7 @@ class CustomDropdown extends StatelessWidget {
     return SizedBox(
       height: 48.h,
       child: Padding(
-        padding: padding ?? EdgeInsets.symmetric(horizontal: 18.w),
+        padding: padding ?? EdgeInsets.symmetric(horizontal: 18.sp),
         child: DropdownButtonFormField(
           dropdownColor: MyColors.lightCard(context),
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -36,7 +36,7 @@ class CustomDropdown extends StatelessWidget {
           //itemHeight: 58.h,
           isDense: true,
           hint: Text(hints ?? "Select form here",
-            style: MyColors.l7B7B7B_dtext(context).regular18,
+            style: Get.width>600?MyColors.l7B7B7B_dtext(context).regular9:MyColors.l7B7B7B_dtext(context).regular18,
           ),
           value: (value ?? '').isEmpty ? null : value,
           items: items.map((e) {
@@ -44,7 +44,7 @@ class CustomDropdown extends StatelessWidget {
               value: e,
               child: Text(
                 e,
-                style: MyColors.l111111_dwhite(context).regular16_5,
+                style: Get.width>600? MyColors.l111111_dwhite(context).regular9:MyColors.l111111_dwhite(context).regular16_5,
               ),
             );
           }).toList(),

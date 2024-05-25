@@ -18,6 +18,7 @@ class CalenderMonthWidget extends StatelessWidget {
 
     return GridView.builder(
       itemCount: weeks * 7,
+      padding: EdgeInsets.zero,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 7),
       itemBuilder: (context, index) {
         final int day = index + 1 - firstDayWeekday;
@@ -84,7 +85,7 @@ class CalenderMonthWidget extends StatelessWidget {
               textColor = Colors.green;
             }
             return Container(
-              margin: const EdgeInsets.all(5.0),
+              margin:  EdgeInsets.all(10.0.sp),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -96,7 +97,7 @@ class CalenderMonthWidget extends StatelessWidget {
                 style: TextStyle(
                     color: textColor,
                     fontWeight: FontWeight.bold,
-                    fontSize: 15), // Text color based on textColor variable
+                    fontSize: Get.width > 600 ? 20 : 15), // Text color based on textColor variable
               ),
             );
           }),

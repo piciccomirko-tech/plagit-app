@@ -21,13 +21,13 @@ class CustomSliderWidget extends GetWidget<CreateJobPostController> {
           color: MyColors.lightCard(context),
           borderRadius: const BorderRadius.only(topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0))),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding:  EdgeInsets.all(20.0.sp),
         child: SingleChildScrollView(
           child: Column(
             children: [
               SizedBox(height: 10.h),
               Text("Select Range for ${controller.customSliderModel.value.typeName ?? ""}".toUpperCase(),
-                  style: MyColors.l111111_dwhite(context).semiBold18),
+                  style: Get.width>600?MyColors.l111111_dwhite(context).semiBold13:MyColors.l111111_dwhite(context).semiBold18),
               SizedBox(height: 40.h),
               FlutterSlider(
                 min: controller.customSliderModel.value.minValue,
@@ -97,7 +97,9 @@ class CustomSliderWidget extends GetWidget<CreateJobPostController> {
               ),
               SizedBox(height: 40.h),
               CustomButtons.button(
-                  text: 'Submit',
+                  text: MyStrings.submit.tr,
+                  height: 48.h,
+                  fontSize: 16,
                   onTap: controller.customSliderModel.value.onTap,
                   margin: EdgeInsets.zero,
                   customButtonStyle: CustomButtonStyle.radiusTopBottomCorner)
@@ -110,7 +112,7 @@ class CustomSliderWidget extends GetWidget<CreateJobPostController> {
 
   Widget _sliderHatchMarkLabel(BuildContext context, String text) => Text(
         text,
-        style: MyColors.l111111_dwhite(context).regular16_5,
+        style: Get.width>600?MyColors.l111111_dwhite(context).regular9:MyColors.l111111_dwhite(context).regular16_5,
       );
 
   FlutterSliderTrackBar _sliderTrackbar(BuildContext context) => FlutterSliderTrackBar(

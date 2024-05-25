@@ -18,9 +18,9 @@ class LanguageDropdown extends StatelessWidget {
             value: language.languageCode,
             child: Row(
               children: [
-                Text(language.imageUrl, style: const TextStyle(fontSize: 20)), // Assuming imageUrl is a URL
+                Text(language.imageUrl, style:  TextStyle(fontSize: Get.width>600?30:20)), // Assuming imageUrl is a URL
                 const SizedBox(width: 5),
-                Text(language.languageCode, style: MyColors.l5C5C5C_dwhite(context).medium16),
+                Text(language.languageCode, style: Get.width>600? MyColors.l5C5C5C_dwhite(context).medium13: MyColors.l5C5C5C_dwhite(context).medium16),
               ],
             ),
           );
@@ -29,10 +29,10 @@ class LanguageDropdown extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(TranslationsService.languageList.singleWhere((element) => element.languageCode == StorageHelper.getLanguage).imageUrl, style: const TextStyle(fontSize: 20)),
+          Text(TranslationsService.languageList.singleWhere((element) => element.languageCode == StorageHelper.getLanguage).imageUrl, style:  TextStyle(fontSize: Get.width>600?30:20)),
           const SizedBox(width: 5),
           Text(
-              StorageHelper.getLanguage, style: MyColors.l5C5C5C_dwhite(context).medium16),
+              StorageHelper.getLanguage, style: Get.width>600? MyColors.l5C5C5C_dwhite(context).medium13:MyColors.l5C5C5C_dwhite(context).medium16),
           const Icon(Icons.arrow_drop_down, color: MyColors.c_C6A34F),
         ],
       ),

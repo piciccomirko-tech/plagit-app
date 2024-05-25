@@ -21,7 +21,7 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                 children: [
                   Expanded(
                     child: CustomFeatureBox(
-                      height: 130.h,
+                      height: 0.3.sw,
                       iconHeight: 50.h,
                       title: MyStrings.employees.tr,
                       icon: MyAssets.mhEmployees,
@@ -29,10 +29,10 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                       onTap: controller.onMhEmployeeClick,
                     ),
                   ),
-                  SizedBox(width: 24.w),
+                  SizedBox(width: 0.04.sw),
                   Expanded(
                     child: CustomFeatureBox(
-                      height: 130.h,
+                      height: 0.3.sw,
                       iconHeight: 50.h,
                       title: MyStrings.dashboard.tr,
                       icon: MyAssets.dashboard,
@@ -41,14 +41,14 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                   ),
                 ],
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 0.02.sh),
               Row(
                 children: [
                   Expanded(
                     child: Stack(
                       children: [
                         CustomFeatureBox(
-                          height: 130.h,
+                          height: 0.3.sw,
                           iconHeight: 50.h,
                           title: MyStrings.myEmployees.tr,
                           icon: MyAssets.myEmployees,
@@ -57,7 +57,7 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                         Obx(() => Stack(
                               children: [
                                 CustomFeatureBox(
-                                  height: 130.h,
+                                  height: 0.3.sw,
                                   iconHeight: 50.h,
                                   title: MyStrings.myEmployees.tr,
                                   icon: MyAssets.myEmployees,
@@ -77,15 +77,15 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                       ],
                     ),
                   ),
-                  SizedBox(width: 24.w),
+                  SizedBox(width: 0.04.sw),
                   Expanded(
                     child: Obx(
                       () => Stack(
                         clipBehavior: Clip.none,
                         children: [
                           CustomFeatureBox(
-                            height: 130.h,
-                            iconHeight: 50.h,
+                            height: 0.3.sw,
+                            iconHeight: 0.05.sh,
                             title: MyStrings.invoicePayment.tr,
                             icon: MyAssets.invoicePayment,
                             onTap: controller.onInvoiceAndPaymentClick,
@@ -106,25 +106,25 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                   ),
                 ],
               ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 0.02.sh),
               Row(
                 children: [
                   Expanded(
                     child: CustomFeatureBox(
-                      height: 130.h,
+                      height: 0.3.sw,
                       iconHeight: 50.h,
                       title: MyStrings.createJobPost.tr,
                       icon: MyAssets.createPost,
                       onTap: controller.onCreateJobPostClick,
                     ),
                   ),
-                  SizedBox(width: 24.w),
+                  SizedBox(width: 0.04.sw),
                   Expanded(
                       child: Obx(() => Stack(
                             clipBehavior: Clip.none,
                             children: [
                               CustomFeatureBox(
-                                height: 130.h,
+                                height: 0.3.sw,
                                 iconHeight: 50.h,
                                 title: MyStrings.jobRequests.tr,
                                 icon: MyAssets.jobRequest,

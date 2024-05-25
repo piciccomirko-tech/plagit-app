@@ -10,7 +10,7 @@ class SelectedDaysCountWidget extends GetWidget<CalenderController> {
     return Container(
       margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.01),
       width: MediaQuery.of(context).size.width * 0.7,
-      padding:  EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
+      padding:  EdgeInsets.symmetric(horizontal: 10.w, vertical: 2.h),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(30.0), color: MyColors.c_C6A34F),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

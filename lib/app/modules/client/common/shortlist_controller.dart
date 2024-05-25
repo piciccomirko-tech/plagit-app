@@ -169,14 +169,12 @@ class ShortlistController extends GetxService {
               ),
             )
           : _isEmployeeAddedInShortlist(employeeId)
-              ? const Icon(
+              ? Icon(
                   Icons.bookmark,
                   color: MyColors.c_C6A34F,
+                  size: Get.width > 600 ? 35 : 25,
                 )
-              : const Icon(
-                  Icons.bookmark_outline_rounded,
-                  color: Colors.grey,
-                ),
+              : Icon(Icons.bookmark_outline_rounded, color: Colors.grey, size: Get.width > 600 ? 35 : 25),
     );
   }
 

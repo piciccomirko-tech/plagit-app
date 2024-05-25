@@ -19,14 +19,14 @@ class HireStatusView extends GetView<HireStatusController> {
                 Expanded(
                   flex: 3,
                   child: Padding(
-                    padding: const EdgeInsets.all(15.0),
+                    padding:  EdgeInsets.all(15.0.sp),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Lottie.asset(MyAssets.lottie.registrationDone),
+                        Lottie.asset(MyAssets.lottie.registrationDone, height: 300.w, width: 300.w),
                         Text(
                           "${MyStrings.booked.tr} ${MyStrings.successfully.tr}",
-                          style: MyColors.l111111_dwhite(context).semiBold22,
+                          style: MyColors.l111111_dwhite(context).semiBold20,
                         ),
                         const SizedBox(height: 30),
                         Text(
@@ -48,7 +48,7 @@ class HireStatusView extends GetView<HireStatusController> {
                     child: GestureDetector(
                       onTap: Get.back,
                       child: Container(
-                        padding: const EdgeInsets.all(15),
+                        padding: EdgeInsets.all(10.0.sp),
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
                           color: MyColors.c_C6A34F,
@@ -57,15 +57,15 @@ class HireStatusView extends GetView<HireStatusController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const Icon(
+                             Icon(
                               CupertinoIcons.home,
-                              size: 25,
+                              size: 24.w,
                               color: MyColors.white,
                             ),
                             SizedBox(height: 3.h),
                             Text(
                               "Home",
-                              style: MyColors.white.semiBold15,
+                              style: Get.width>600?MyColors.white.semiBold12:MyColors.white.semiBold15,
                             ),
                           ],
                         ),

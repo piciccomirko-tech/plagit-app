@@ -75,7 +75,7 @@ class MhEmployeesView extends GetView<MhEmployeesController> {
               SizedBox(height: 9.h),
               Text(
                 position.name ?? "-",
-                style: MyColors.l111111_dwhite(controller.context!).medium14,
+                style: Get.width>600?MyColors.l111111_dwhite(controller.context!).medium12:MyColors.l111111_dwhite(controller.context!).medium14,
               ),
             ],
           ),

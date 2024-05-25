@@ -14,6 +14,8 @@ class CalenderBottomNavBarWidget extends GetWidget<CalenderController> {
         : Get.isRegistered<EmployeeHomeController>()
             ? Obx(() => CustomBottomBar(
                   child: CustomButtons.button(
+                    height: 48.h,
+                    fontSize: 15.sp,
                     onTap: controller.disableSubmitButton == true ? null : controller.updateUnavailableDates,
                     backgroundColor: controller.disableSubmitButton == true ? MyColors.c_A6A6A6 : MyColors.c_C6A34F,
                     text: MyStrings.submit.tr,
@@ -22,6 +24,8 @@ class CalenderBottomNavBarWidget extends GetWidget<CalenderController> {
                 ))
             : Obx(() => CustomBottomBar(
                   child: CustomButtons.button(
+                    height: 48.h,
+                    fontSize: 15.sp,
                     onTap: controller.disabledBookButton == true ? null : controller.onBookNowClick,
                     backgroundColor: controller.disabledBookButton == true ? MyColors.c_A6A6A6 : MyColors.c_C6A34F,
                     text: MyStrings.bookNow.tr,
