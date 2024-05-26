@@ -13,12 +13,12 @@ class ChatUserSearchWidget extends GetWidget<ChatItController> {
   Widget build(BuildContext context) {
     return Container(
       decoration: MyDecoration.cardBoxDecoration(context: context),
-      height: 50,
+      height: Get.width>600?60:50,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(10.0),
         child: TextFormField(
           cursorColor: MyColors.c_C6A34F,
-          style: MyColors.l111111_dwhite(context).medium15,
+          style: Get.width>600?MyColors.l111111_dwhite(context).medium12:MyColors.l111111_dwhite(context).medium15,
           controller: controller.tecSearch,
           autofocus: false,
           decoration: InputDecoration(
@@ -41,7 +41,7 @@ class ChatUserSearchWidget extends GetWidget<ChatItController> {
               contentPadding: const EdgeInsets.all(15.0),
               border: InputBorder.none,
               hintText: "Search by user name...",
-              hintStyle: MyColors.c_7B7B7B.medium15),
+              hintStyle: Get.width>600?MyColors.c_7B7B7B.medium12:MyColors.c_7B7B7B.medium15),
           onChanged: controller.onSearchChatUser,
         ),
       ),

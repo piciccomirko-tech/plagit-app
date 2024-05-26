@@ -34,8 +34,8 @@ class AdminClientRequestView extends GetView<AdminClientRequestController> {
   Widget _item(int index) => GestureDetector(
         onTap: () => controller.onItemClick(index),
         child: Container(
-          margin: const EdgeInsets.all(14).copyWith(top: 0, bottom: 12),
-          padding: const EdgeInsets.all(12),
+          margin:  EdgeInsets.all(14.sp).copyWith(top: 0.sp, bottom: 12.sp),
+          padding:  EdgeInsets.all(12.sp),
           decoration: BoxDecoration(
             color: MyColors.lightCard(controller.context!),
             border: Border.all(
@@ -50,12 +50,12 @@ class AdminClientRequestView extends GetView<AdminClientRequestController> {
                 children: [
                   Text(
                     controller.getRestaurantName(index),
-                    style: MyColors.l111111_dtext(controller.context!).semiBold16,
+                    style: Get.width>600?MyColors.l111111_dtext(controller.context!).semiBold13:MyColors.l111111_dtext(controller.context!).semiBold16,
                   ),
                   const SizedBox(height: 5),
                   Text(
                     controller.getSuggested(index),
-                    style: MyColors.l7B7B7B_dtext(controller.context!).regular12,
+                    style: Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).regular9:MyColors.l7B7B7B_dtext(controller.context!).regular12,
                   ),
                 ],
               ),
@@ -63,14 +63,14 @@ class AdminClientRequestView extends GetView<AdminClientRequestController> {
               Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(7),
+                    padding:  EdgeInsets.all(7.sp),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: MyColors.c_C6A34F.withOpacity(.1),
                     ),
-                    child: const Icon(
+                    child:  Icon(
                       Icons.arrow_forward,
-                      size: 15,
+                      size: 15.w,
                       color: MyColors.c_C6A34F,
                     ),
                   ),
@@ -79,10 +79,10 @@ class AdminClientRequestView extends GetView<AdminClientRequestController> {
                     onTap: () => controller.onCancelClick(
                         requestId:
                             controller.adminHomeController.requestedEmployees.value.requestEmployeeList?[index].id ?? ''),
-                    child: const Icon(
+                    child:  Icon(
                       Icons.cancel,
                       color: Colors.red,
-                      size: 25,
+                      size: 25.w,
                     ),
                   ),
                 ],

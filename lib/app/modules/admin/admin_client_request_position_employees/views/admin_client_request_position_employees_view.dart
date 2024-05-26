@@ -19,7 +19,7 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
     return Scaffold(
       appBar: CustomAppbar.appbar(
         context: context,
-        title: "Employees",
+        title: MyStrings.employees.tr,
       ),
       body: Obx(
         () => (controller.employees.value.users ?? []).isEmpty
@@ -61,11 +61,11 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
         children: [
           Text(
             (controller.employees.value.users?.length ?? 0).toString(),
-            style: MyColors.c_C6A34F.semiBold16,
+            style: Get.width>600?MyColors.c_C6A34F.semiBold13:MyColors.c_C6A34F.semiBold16,
           ),
           Text(
-            " ${controller.clientRequestDetail.positionName ?? "Employees"} are showing",
-            style: MyColors.l111111_dwhite(controller.context!).semiBold16,
+            " ${controller.clientRequestDetail.positionName ?? MyStrings.employees.tr} ${MyStrings.areShowing.tr}",
+            style: Get.width>600?MyColors.l111111_dwhite(controller.context!).semiBold13:MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
           const Spacer(),
           Obx(() => Visibility(
@@ -83,11 +83,12 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
                   height: 36.w,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
-                    color: MyColors.c_DDBD68,
+                    color: MyColors.c_C6A34F,
                   ),
-                  child: const Icon(
+                  child:  Icon(
                     Icons.filter_list_rounded,
                     color: Colors.white,
+                    size: 20.w,
                   ),
                 ),
               ))),
@@ -97,7 +98,7 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
   }
 
   Widget _employeeItem(Employee user) {
-    return Container(
+     return Container(
       margin: EdgeInsets.symmetric(horizontal: 15.w).copyWith(
         bottom: 20.h,
       ),
@@ -135,7 +136,7 @@ class AdminClientRequestPositionEmployeesView extends GetView<AdminClientRequest
                                 ? "Suggested"
                                 : "Suggest",
                         margin: EdgeInsets.zero,
-                        fontSize: 12,
+                        fontSize: Get.width>600?16:13,
                         customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                         onTap: (user.isHired ?? false) || (user.isSuggested != null && user.isSuggested == true)
                             ? null

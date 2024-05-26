@@ -50,27 +50,27 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                               children: [
                                 Container(
                                     width: Get.width * 0.8,
-                                    padding: const EdgeInsets.all(10.0),
+                                    padding:  EdgeInsets.all(10.0.sp),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(30.0), color: MyColors.c_C6A34F),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Text('${MyStrings.bookedFor.tr} ', style: MyColors.white.semiBold15),
+                                        Text('${MyStrings.bookedFor.tr} ', style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15),
                                         Text('${controller.bookingDetails.value.requestDateList?.calculateTotalDays()}',
-                                            style: MyColors.white.semiBold24),
-                                        Text(' ${MyStrings.days.tr}', style: MyColors.white.semiBold15),
+                                            style: Get.width>600?MyColors.white.semiBold15:MyColors.white.semiBold24),
+                                        Text(' ${MyStrings.days.tr}', style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15),
                                       ],
                                     )),
                                 CarouselSlider(
                                   options: CarouselOptions(
-                                    height: 120,
+                                    height: Get.width>600?200:120,
                                     autoPlay: controller.bookingDetails.value.requestDateList!.length > 1 ? true : false,
                                     viewportFraction: 1.0,
                                   ),
                                   items: controller.bookingDetails.value.requestDateList!.map((RequestDateModel url) {
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                      padding:  EdgeInsets.symmetric(horizontal: 20.0.sp),
                                       child: TimeRangeWidget(
                                           requestDate: url,
                                           hasDeleteOption: true,
@@ -90,11 +90,11 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                       child: Icon(Icons.notifications_active_outlined, color: MyColors.white),
                                     ),
                                     title: Text('${controller.bookingDetails.value.text}',
-                                        style: MyColors.l111111_dwhite(context).semiBold15),
+                                        style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15),
                                     subtitle: Padding(
                                       padding: const EdgeInsets.only(top: 5),
                                       child: Text(controller.bookingDetails.value.restaurantAddress ?? '',
-                                          style: MyColors.c_A6A6A6.semiBold13),
+                                          style: Get.width>600?MyColors.c_A6A6A6.semiBold12:MyColors.c_A6A6A6.semiBold13),
                                     ),
                                   ),
                                 ),
@@ -110,7 +110,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                       ),
                                       title: Text(
                                           '${MyStrings.restaurantDistance.tr} ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609.34).toStringAsFixed(2)} ${MyStrings.milesLocation.tr}',
-                                          style: MyColors.l111111_dwhite(context).semiBold15)),
+                                          style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15)),
                                 ),
                                 const SizedBox(height: 10),
                                 if(controller.bookingDetails.value.uniformMandatory == true)
@@ -132,7 +132,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                       ),
                                       title: Text(
                                         MyStrings.provideUniform.tr,
-                                          style: MyColors.l111111_dwhite(context).semiBold15)),
+                                          style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15)),
                                 )
                                 else
                                   Material(
@@ -146,7 +146,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         ),
                                         title: Text(
                                             MyStrings.noUniform.tr,
-                                            style: MyColors.l111111_dwhite(context).semiBold15)),
+                                            style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15)),
                                   ),
                                 SizedBox(height: MediaQuery.sizeOf(context).width*0.2)
                               ],
@@ -168,8 +168,8 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                               .updateNotification(id: controller.bookingDetails.value.id ?? '', hiredStatus: "ALLOW"),
                           child: Container(
                             color: MyColors.c_C6A34F,
-                            height: 50,
-                            child: Center(child: Text(MyStrings.allowAll.tr.toUpperCase(), style: MyColors.white.semiBold15)),
+                            height: 60.h,
+                            child: Center(child: Text(MyStrings.allowAll.tr.toUpperCase(), style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15)),
                           ),
                         ),
                       ),
@@ -181,8 +181,8 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                               .updateNotification(id: controller.bookingDetails.value.id ?? '', hiredStatus: "DENY"),
                           child: Container(
                             color: Colors.red,
-                            height: 50,
-                            child: Center(child: Text(MyStrings.denyAll.tr.toUpperCase(), style: MyColors.white.semiBold15)),
+                            height: 60.h,
+                            child: Center(child: Text(MyStrings.denyAll.tr.toUpperCase(), style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15)),
                           ),
                         ),
                       ),

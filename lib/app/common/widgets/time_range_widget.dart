@@ -18,8 +18,8 @@ class TimeRangeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 110.h,
-      padding: EdgeInsets.symmetric(horizontal: 10.0.w, vertical: 10.w),
+      height: Get.width>600?150.h:110.h,
+      padding: EdgeInsets.symmetric(horizontal: 10.0.sp, vertical: 10.sp),
       margin: EdgeInsets.only(top: 15.0.h),
       decoration: BoxDecoration(
           color: Get.isDarkMode ? Colors.grey.shade800 : Colors.grey.shade200,
@@ -32,10 +32,10 @@ class TimeRangeWidget extends StatelessWidget {
             children: [
               Image.asset(MyAssets.calender2, height: 20.w, width: 20.w),
               Text(DateFormat('E, dd MMM, yyyy').format(DateTime.parse(requestDate.startDate ?? '')),
-                  style: MyColors.l111111_dwhite(context).medium13),
+                  style: Get.width>600?MyColors.l111111_dwhite(context).medium10:MyColors.l111111_dwhite(context).medium13),
               Container(width: 12.w, color: Colors.grey, height: 2.h),
               Text(DateFormat('E, dd MMM, yyyy').format(DateTime.parse(requestDate.endDate ?? '')),
-                  style: MyColors.l111111_dwhite(context).medium13),
+                  style: Get.width>600?MyColors.l111111_dwhite(context).medium10:MyColors.l111111_dwhite(context).medium13),
               if (hasDeleteOption == true)
                 Material(
                     color: Colors.transparent,
@@ -45,7 +45,7 @@ class TimeRangeWidget extends StatelessWidget {
           ),
           Text(
               '${DateTime.parse(requestDate.startDate ?? '').daysUntil(DateTime.parse(requestDate.endDate ?? ''))} ${DateTime.parse(requestDate.startDate ?? '').daysUntil(DateTime.parse(requestDate.endDate ?? '')) == 1 ? MyStrings.day.tr : MyStrings.days.tr}',
-              style: MyColors.c_C6A34F.semiBold15),
+              style: Get.width>600?MyColors.c_C6A34F.semiBold12:MyColors.c_C6A34F.semiBold15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -71,7 +71,7 @@ class TimeRangeWidget extends StatelessWidget {
         children: [
           Image.asset(MyAssets.clock, height: 16.h, width: 16.w),
           SizedBox(width: 10.w),
-          Text(time, style: MyColors.l111111_dwhite(Get.context!).medium13)
+          Text(time, style: Get.width>600?MyColors.l111111_dwhite(Get.context!).medium10:MyColors.l111111_dwhite(Get.context!).medium13)
         ],
       ),
     );

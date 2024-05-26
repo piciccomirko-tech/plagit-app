@@ -67,7 +67,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
           children: [
             Image.asset(imageSource == "Camera" ? MyAssets.liveCamera : MyAssets.gallery, height: 30, width: 30),
             SizedBox(height: 10.h),
-            Text(imageSource, style: MyColors.l111111_dwhite(context).medium16)
+            Text(imageSource, style: Get.width>600?MyColors.l111111_dwhite(context).medium12:MyColors.l111111_dwhite(context).medium16)
           ],
         ),
       );
@@ -82,7 +82,7 @@ class _ProfilePictureWidgetState extends State<ProfilePictureWidget> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            Text("Take a picture from".toUpperCase(), style: MyColors.c_C6A34F.semiBold18),
+            Text("Take a picture from".toUpperCase(), style: Get.width>600?MyColors.c_C6A34F.semiBold13:MyColors.c_C6A34F.semiBold18),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

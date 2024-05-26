@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/utils/utils.dart';
 import 'package:mh/app/modules/live_chat/controllers/live_chat_controller.dart';
@@ -19,7 +20,7 @@ class ConversationWidget extends GetWidget<LiveChatController> {
         return InkWell(
           onTap: () => Utils.unFocus(),
           child: Padding(
-            padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+            padding:  EdgeInsets.only(left: 15.0.sp, right: 15.0.sp, top: 15.0.sp),
             child: ListView.builder(
                 reverse: true,
                 controller: controller.scrollController,

@@ -18,16 +18,16 @@ class ChatUserWidget extends StatelessWidget {
         children: [
           Container(
             decoration: MyDecoration.cardBoxDecoration(context: context),
-            margin: const EdgeInsets.only(bottom: 10),
+            margin:  EdgeInsets.only(bottom: 10.sp),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+              contentPadding:  EdgeInsets.symmetric(horizontal: 10.sp),
               leading: CircleAvatar(
                 radius: 25,
                 backgroundColor: Colors.transparent,
                 backgroundImage: NetworkImage(((conversation.members ?? []).first.profilePicture ?? "").imageUrl),
               ),
               title: Text((conversation.members ?? []).first.name ?? "Guest",
-                  style: MyColors.l111111_dwhite(context).semiBold15),
+                  style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15),
               subtitle: Text(conversation.latestMessage?.text ?? "No message",
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -38,10 +38,10 @@ class ChatUserWidget extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text((conversation.members ?? []).first.role ?? "", style: MyColors.l111111_dwhite(context).medium12),
+                  Text((conversation.members ?? []).first.role ?? "", style: Get.width>600?MyColors.l111111_dwhite(context).medium9:MyColors.l111111_dwhite(context).medium12),
                   Text(
                       DateFormat('dd MMM yyyy, hh:mm a').format(conversation.latestMessage?.dateTime ?? DateTime.now()),
-                      style: MyColors.c_C6A34F.medium10),
+                      style:TextStyle(fontSize: Get.width>600?13:9, color: MyColors.c_C6A34F, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),

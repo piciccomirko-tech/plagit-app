@@ -23,10 +23,7 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
           margin: EdgeInsets.only(bottom: 15.h),
           padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 15.0.w),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Colors.blue.withOpacity(0.6),
-              Colors.black
-            ]),
+              gradient: LinearGradient(colors: [Colors.blue.withOpacity(0.6), Colors.black]),
               boxShadow: [
                 BoxShadow(
                   color: Get.theme.dividerColor.withOpacity(0.05),
@@ -43,12 +40,14 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                 children: [
                   const Icon(CupertinoIcons.location_solid, color: MyColors.white),
                   Text(restaurantDetails?.restaurantName ?? '',
-                      maxLines: 1, overflow: TextOverflow.ellipsis, style: MyColors.white.semiBold16)
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Get.width > 600 ? MyColors.white.semiBold12 : MyColors.white.semiBold16)
                 ],
               ),
               Text(
                 restaurantDetails?.restaurantAddress ?? '',
-                style: MyColors.white.medium15,
+                style: Get.width > 600 ? MyColors.white.medium12 : MyColors.white.medium15,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -71,11 +70,11 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                                             1609.34)
                                         .toStringAsFixed(2)
                                     : 'xxx',
-                                style: MyColors.white.semiBold26,
+                                style: Get.width > 600 ? MyColors.white.semiBold20 : MyColors.white.semiBold26,
                               ),
                               TextSpan(
                                 text: ' ${MyStrings.milesAway.tr}',
-                                style: MyColors.white.medium12,
+                                style: Get.width > 600 ? MyColors.white.medium9 : MyColors.white.medium12,
                               ),
                             ]))),
                     const VerticalDivider(color: Colors.transparent, thickness: 2),
@@ -95,11 +94,11 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                               children: [
                                 Text(
                                     ' ${controller.todayWorkSchedule.value.todayWorkScheduleDetailsModel?.startTime ?? ''}',
-                                    style: MyColors.white.medium15),
+                                    style: Get.width > 600 ? MyColors.white.medium12 : MyColors.white.medium15),
                                 const SizedBox(height: 18),
                                 Text(
                                     ' ${controller.todayWorkSchedule.value.todayWorkScheduleDetailsModel?.endTime ?? ''}',
-                                    style: MyColors.white.medium15),
+                                    style: Get.width > 600 ? MyColors.white.medium12 : MyColors.white.medium15),
                               ],
                             )
                           ],
@@ -112,8 +111,10 @@ class EmployeeTodayWorkScheduleWidget extends GetWidget<EmployeeHomeController> 
                             TextSpan(
                                 text:
                                     '${(controller.todayWorkSchedule.value.todayWorkScheduleDetailsModel?.startTime)?.hoursDifference(controller.todayWorkSchedule.value.todayWorkScheduleDetailsModel?.endTime ?? '')}',
-                                style: MyColors.white.semiBold26),
-                            TextSpan(text: ' ${MyStrings.hours.tr}', style: MyColors.white.medium12)
+                                style: Get.width > 600 ? MyColors.white.semiBold22 : MyColors.white.semiBold26),
+                            TextSpan(
+                                text: ' ${MyStrings.hours.tr}',
+                                style: Get.width > 600 ? MyColors.white.medium9 : MyColors.white.medium12)
                           ]),
                         ))
                   ],

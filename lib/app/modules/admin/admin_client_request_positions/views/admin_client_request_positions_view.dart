@@ -1,3 +1,4 @@
+import 'package:mh/app/common/widgets/custom_network_image.dart';
 import 'package:mh/app/models/dropdown_item.dart';
 
 import '../../../../common/style/my_decoration.dart';
@@ -70,11 +71,10 @@ class AdminClientRequestPositionsView extends GetView<AdminClientRequestPosition
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      position.logo!,
-                      width: 50.w,
-                      height: 50.w,
-                    ),
+                    SizedBox(
+                        width: 50.w,
+                        height: 50.w,
+                        child: CustomNetworkImage(url: (position.logo ?? '').uniformImageUrl)),
 
                     SizedBox(height: 9.h),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mh/app/common/extensions/extensions.dart';
@@ -22,21 +23,21 @@ class EmployeeHiredHistoryDetailsWidget extends StatelessWidget {
           decoration: BoxDecoration(color: MyColors.lightCard(Get.context!), borderRadius: BorderRadius.circular(10.0)),
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              padding:  EdgeInsets.symmetric(horizontal: 20.0.sp, vertical: 10.0.sp),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 2.0),
+                    padding:  EdgeInsets.symmetric(horizontal: 15.0.sp, vertical: 2.0.sp),
                     decoration: const BoxDecoration(
                         borderRadius:
                             BorderRadius.only(topRight: Radius.circular(10.0), bottomLeft: Radius.circular(10.0)),
                         color: MyColors.c_C6A34F),
                     child: RichText(
                         text: TextSpan(children: [
-                      TextSpan(text: '${MyStrings.totalWorkSchedule.tr} ', style: MyColors.white.semiBold15),
-                      TextSpan(text: '${requestDateList.calculateTotalDays()}', style: MyColors.white.semiBold24),
-                      TextSpan(text: ' ${MyStrings.days.tr}', style: MyColors.white.semiBold15),
+                      TextSpan(text: '${MyStrings.totalWorkSchedule.tr} ', style: Get.width>600?MyColors.white.semiBold12:MyColors.white.semiBold15),
+                      TextSpan(text: '${requestDateList.calculateTotalDays()}', style: Get.width>600?MyColors.white.semiBold16:MyColors.white.semiBold24),
+                      TextSpan(text: ' ${MyStrings.days.tr}', style: Get.width>600?MyColors.white.semiBold11:MyColors.white.semiBold15),
                     ])),
                   ),
                   SizedBox(

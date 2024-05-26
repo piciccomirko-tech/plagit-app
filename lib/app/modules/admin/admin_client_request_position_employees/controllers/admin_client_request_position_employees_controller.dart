@@ -54,8 +54,14 @@ class AdminClientRequestPositionEmployeesController extends GetxController {
   }
 
   void onEmployeeClick(Employee employee) {
-    Get.toNamed(Routes.employeeDetails,
-        arguments: {MyStrings.arg.data: employee, MyStrings.arg.showAsAdmin: true, MyStrings.arg.fromWhere: ''});
+    Get.toNamed(Routes.employeeDetails, arguments: {
+      MyStrings.arg.employeeAvailableDays: employee.available ?? "",
+      MyStrings.arg.data: employee.id,
+      MyStrings.arg.showAsAdmin: true,
+      MyStrings.arg.fromWhere: ''
+    });
+/*    Get.toNamed(Routes.employeeDetails,
+        arguments: {MyStrings.arg.data: employee, MyStrings.arg.showAsAdmin: true, MyStrings.arg.fromWhere: ''});*/
   }
 
   List<SuggestedEmployeeDetail> suggestedEmployees() {

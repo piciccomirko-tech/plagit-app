@@ -75,11 +75,11 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
         children: [
           Text(
             "${controller.employees.value.users?.length ?? 0}",
-            style: MyColors.c_C6A34F.semiBold16,
+            style: Get.width>600?MyColors.c_C6A34F.semiBold13:MyColors.c_C6A34F.semiBold16,
           ),
           Text(
             " ${MyStrings.employees.tr}${MyStrings.areShowing.tr}",
-            style: MyColors.l111111_dwhite(controller.context!).semiBold16,
+            style: Get.width>600?MyColors.l111111_dwhite(controller.context!).semiBold13:MyColors.l111111_dwhite(controller.context!).semiBold16,
           ),
           const Spacer(),
           Obx(() => Visibility(
@@ -158,7 +158,7 @@ class AdminAllEmployeesView extends GetView<AdminAllEmployeesController> {
                     text:
                         "${Utils.getCurrencySymbol(Get.find<AppController>().user.value.admin?.countryName ?? '')}${user.hourlyRate ?? 0} / hour",
                     margin: EdgeInsets.zero,
-                    fontSize: 12,
+                    fontSize: Get.width>600?16:12,
                     customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                     onTap: () {},
                   ),

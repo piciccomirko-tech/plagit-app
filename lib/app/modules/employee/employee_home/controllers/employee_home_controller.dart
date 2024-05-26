@@ -500,8 +500,8 @@ class EmployeeHomeController extends GetxController {
                 Dialog(
                   insetPadding: const EdgeInsets.symmetric(horizontal: 0.0, vertical: 0.0),
                   child: Container(
-                    height: 370,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    height: 370.h,
+                    padding:  EdgeInsets.symmetric(horizontal: 20.sp),
                     decoration:
                         BoxDecoration(color: MyColors.lightCard(context!), borderRadius: BorderRadius.circular(10.0)),
                     child: Column(
@@ -509,23 +509,25 @@ class EmployeeHomeController extends GetxController {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Lottie.asset(MyAssets.lottie.calenderLottie, height: 220, width: 220),
-                        Text(MyStrings.updateCalendar.tr, style: MyColors.c_C6A34F.semiBold18, maxLines: 2),
+                        Text(MyStrings.updateCalendar.tr, style: Get.width>600?MyColors.c_C6A34F.semiBold13:MyColors.c_C6A34F.semiBold18, maxLines: 2),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomButtons.button(
-                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                padding:  EdgeInsets.symmetric(horizontal: 30.0.sp),
                                 margin: EdgeInsets.zero,
                                 text: MyStrings.update.tr,
+                                fontSize: Get.width>600?10.sp:16.sp,
                                 onTap: () => onCalenderUpdatePressed(tag: 'update'),
                                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                             const SizedBox(width: 20),
                             CustomButtons.button(
-                                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                                padding:  EdgeInsets.symmetric(horizontal: 30.0.sp),
                                 margin: EdgeInsets.zero,
                                 backgroundColor: Colors.grey.shade400,
                                 text: MyStrings.close.tr,
+                                fontSize: Get.width>600?10.sp:16.sp,
                                 onTap: () => onCalenderUpdatePressed(tag: 'close'),
                                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                           ],

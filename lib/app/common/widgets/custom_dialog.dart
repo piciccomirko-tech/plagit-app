@@ -257,7 +257,7 @@ class CustomDialogue {
                         Text(
                           title,
                           textAlign: TextAlign.center,
-                          style: MyColors.l111111_dtext(context).semiBold22,
+                          style: Get.width>600?MyColors.l111111_dtext(context).semiBold15:MyColors.l111111_dtext(context).semiBold22,
                         ),
                         SizedBox(height: 30.h),
                         Expanded(
@@ -268,13 +268,13 @@ class CustomDialogue {
                               textAlign: TextAlign.center,
                               maxLines: 10,
                               overflow: TextOverflow.ellipsis,
-                              style: MyColors.l50555C_dtext(context).regular15,
+                              style: Get.width>600?MyColors.l50555C_dtext(context).regular12:MyColors.l50555C_dtext(context).regular15,
                             ),
                           ),
                         ),
                         SizedBox(height: 15.h),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          padding:   EdgeInsets.symmetric(horizontal: 20.sp),
                           child: Row(
                             children: [
                               GestureDetector(
@@ -283,7 +283,7 @@ class CustomDialogue {
                                 },
                                 child: Text(
                                   MyStrings.close.tr,
-                                  style: MyColors.text.semiBold16,
+                                  style: Get.width>600?MyColors.text.semiBold12:MyColors.text.semiBold16,
                                 ),
                               ),
                               const SizedBox(width: 40),
@@ -292,6 +292,7 @@ class CustomDialogue {
                                   height: 50.h,
                                   text: confirmButtonText,
                                   margin: EdgeInsets.zero,
+                                  fontSize: Get.width>600?10.sp:16.sp,
                                   customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
                                   onTap: onConfirm,
                                 ),

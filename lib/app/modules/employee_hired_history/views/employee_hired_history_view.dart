@@ -20,7 +20,7 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
           return const Center(child: NoItemFound());
         } else {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            padding:  EdgeInsets.symmetric(horizontal: 15.0.sp),
             child: ListView.builder(
                 shrinkWrap: true,
                 padding: EdgeInsets.zero,
@@ -30,10 +30,10 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                   return Stack(
                     children: [
                       Container(
-                        margin: const EdgeInsets.only(top: 15.0),
+                        margin:  EdgeInsets.only(top: 15.0.sp),
                         height: 120,
                         width: double.infinity,
-                        padding: const EdgeInsets.only(left: 15, right: 15, bottom: 30),
+                        padding:  EdgeInsets.only(left: 15.sp, right: 15.sp, bottom: 30.sp),
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
                             image: DecorationImage(
@@ -45,14 +45,14 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                                 maxLines: 3,
                                 overflow: TextOverflow.ellipsis,
                                 text: TextSpan(children: [
-                                  TextSpan(text: 'You have been booked by ', style: MyColors.white.semiBold12),
+                                  TextSpan(text: 'You have been booked by ', style: Get.width>600?MyColors.white.semiBold9:MyColors.white.semiBold12),
                                   TextSpan(
                                       text: '${data.restaurantDetails?.restaurantName}',
-                                      style: MyColors.white.semiBold16),
-                                  TextSpan(text: ' which is located at ', style: MyColors.white.semiBold12),
+                                      style: Get.width>600?MyColors.white.semiBold12:MyColors.white.semiBold15),
+                                  TextSpan(text: ' which is located at ', style: Get.width>600?MyColors.white.semiBold9:MyColors.white.semiBold12),
                                   TextSpan(
                                       text: '${data.restaurantDetails?.restaurantAddress}',
-                                      style: MyColors.white.semiBold15),
+                                      style: Get.width>600?MyColors.white.semiBold12:MyColors.white.semiBold15),
                                 ]))),
                       ),
                       Positioned.fill(
@@ -61,9 +61,9 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                         child: CustomButtons.button(
                             onTap: () => controller.onDetailsClick(bookedDateList: data.bookedDate ?? []),
                             height: 35,
-                            margin: const EdgeInsets.only(left: 250),
+                            margin:  EdgeInsets.only(left: Get.width>600?650:250),
                             text: MyStrings.details.tr,
-                            fontSize: 12,
+                            fontSize: Get.width>600?15:12,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                       )),
                       Positioned.fill(
@@ -72,9 +72,9 @@ class EmployeeHiredHistoryView extends GetView<EmployeeHiredHistoryController> {
                             child: CustomButtons.button(
                                 onTap: () => controller.onPrevDateClicked(hiredBy: data.hiredBy??''),
                                 height: 35,
-                                margin: const EdgeInsets.only(right: 220),
+                                margin:  EdgeInsets.only(right:  Get.width>550?600:220),
                                 text: MyStrings.previousDates.tr,
-                                fontSize: 12,
+                                fontSize: Get.width>600?15:12,
                                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                           ))
                     ],

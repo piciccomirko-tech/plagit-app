@@ -14,7 +14,7 @@ class LiveChatView extends GetView<LiveChatController> {
       onPopInvoked: controller.onBackPressed,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(54),
+          preferredSize:  Size.fromHeight(Get.width>600?90:54),
           child: Container(
             decoration: BoxDecoration(
               boxShadow: [
@@ -34,29 +34,32 @@ class LiveChatView extends GetView<LiveChatController> {
               ),
               leading: const Align(child: CustomAppbarBackButton()),
               centerTitle: true,
-              title: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: MyColors.c_C6A34F,
-                    radius: 19,
-                    child: CircleAvatar(
-                      radius: 18,
-                      backgroundImage: NetworkImage(controller.liveChatDataTransferModel.toProfilePicture),
+              title: Padding(
+                padding:  EdgeInsets.only(top: Get.width>600?10:0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: MyColors.c_C6A34F,
+                      radius: 19,
+                      child: CircleAvatar(
+                        radius: 18,
+                        backgroundImage: NetworkImage(controller.liveChatDataTransferModel.toProfilePicture),
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(controller.liveChatDataTransferModel.toName,
-                            style: MyColors.l111111_dwhite(context).semiBold16, overflow: TextOverflow.ellipsis, maxLines: 2),
-                        SizedBox(height: 3.h),
-                        Text("Online", style: MyColors.c_A6A6A6.medium10)
-                      ],
-                    ),
-                  )
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(controller.liveChatDataTransferModel.toName,
+                              style: Get.width>600?MyColors.l111111_dwhite(context).semiBold10:MyColors.l111111_dwhite(context).semiBold16, overflow: TextOverflow.ellipsis, maxLines: 2),
+                          SizedBox(height: 3.h),
+                          Text("Online", style: Get.width>600?MyColors.c_A6A6A6.medium9:MyColors.c_A6A6A6.medium10)
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),

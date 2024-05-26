@@ -75,7 +75,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
             child: CustomNetworkImage(
               url: (controller.employee.value.profilePicture ?? "").imageUrl,
               radius: 20,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
           const Spacer(),
@@ -404,6 +404,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
         child: controller.fromWhere == MyStrings.arg.mhEmployeeViewByIdText
             ? CustomBottomBar(
           child: CustomButtons.button(
+            height: 48.h,
             onTap: (controller.available.isEmpty || int.parse(controller.available.split(' ').first) <= 0)
                 ? null
                 : controller.onBookNowClick,
@@ -415,6 +416,7 @@ class EmployeeDetailsView extends GetView<EmployeeDetailsController> {
         )
             : CustomBottomBar(
             child: CustomButtons.button(
+              height: 48.h,
                 onTap: controller.onViewCalenderClick,
                 text: MyStrings.viewCalendar.tr,
                 customButtonStyle: CustomButtonStyle.radiusTopBottomCorner))));

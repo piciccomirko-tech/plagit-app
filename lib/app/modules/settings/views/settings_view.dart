@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:mh/app/common/values/my_assets.dart';
-import 'package:mh/app/common/values/my_strings.dart';
+import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar.dart';
 import 'package:mh/app/common/widgets/header_image_widget.dart';
 import 'package:mh/app/common/widgets/welcome_back_text_widget.dart';
@@ -22,7 +19,7 @@ class SettingsView extends GetView<SettingsController> {
           key: controller.formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Padding(
-            padding: const EdgeInsets.all(10.0),
+            padding:  EdgeInsets.all(10.0.sp),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,

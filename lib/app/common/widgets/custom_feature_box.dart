@@ -59,7 +59,7 @@ class CustomFeatureBox extends StatelessWidget {
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: Get.width>600?MyColors.l111111_dwhite(context).medium10:MyColors.l111111_dwhite(context).medium12,
+                  style: Get.width>600?MyColors.l111111_dwhite(context).medium10:MyColors.l111111_dwhite(context).medium13,
                 ),
               ],
             ),

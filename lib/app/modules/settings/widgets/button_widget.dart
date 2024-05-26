@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:mh/app/common/values/my_strings.dart';
 import 'package:mh/app/common/widgets/custom_buttons.dart';
@@ -13,9 +14,9 @@ class ButtonWidget extends GetWidget<SettingsController> {
     return CustomButtons.button(
       customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
       text: MyStrings.submit,
-      height: 48,
+      height: 48.h,
       onTap: controller.onSubmitPressed, //controller.onLoginPressed,
-      margin: const EdgeInsets.symmetric(horizontal: 18),
+      margin:  EdgeInsets.symmetric(horizontal: 18.sp),
     );
   }
 }

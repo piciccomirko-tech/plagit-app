@@ -75,10 +75,10 @@ class LoginView extends GetView<LoginController> {
             CustomButtons.button(
               customButtonStyle: CustomButtonStyle.radiusTopBottomCorner,
               text: MyStrings.login.tr,
-              fontSize: 12.sp,
+              fontSize: Get.width>600?12.sp:16.sp,
               height: 48.h,
               onTap: controller.onLoginPressed,
-              margin: const EdgeInsets.symmetric(horizontal: 18),
+              margin:  EdgeInsets.symmetric(horizontal: 18.sp),
             ),
 
           ],

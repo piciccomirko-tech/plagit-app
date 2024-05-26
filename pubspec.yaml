@@ -4,7 +4,7 @@ publish_to: none
 description: A new Flutter project.
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.4.1 <4.0.0'
 
 dependencies:
 
@@ -68,7 +68,7 @@ dependencies:
 
   dropdown_button2: ^2.3.9
 
-  webview_flutter: ^4.7.0
+  webview_flutter: ^4.8.0
 
   expandable_page_view: ^1.0.17
 

@@ -16,7 +16,7 @@ class OtpView extends GetView<OtpController> {
       appBar: CustomAppbar.appbar(title: 'OTP Check', context: context, centerTitle: true),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          padding:  EdgeInsets.symmetric(horizontal: 20.0.sp),
           child: Column(
             children: [
               HeaderImageWidget(imageUrl: MyAssets.lottie.otpCheckLottie),

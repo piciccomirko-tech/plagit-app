@@ -20,7 +20,7 @@ class MessageWidget extends StatelessWidget {
           child: Container(
               margin: const EdgeInsets.only(
                   bottom: 10.0),
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+              padding:  EdgeInsets.symmetric(horizontal: 10.0.sp, vertical: 5.0.sp),
               decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(12.0),
                   color: messageModel.senderId == Get.find<AppController>().user.value.userId
@@ -32,7 +32,7 @@ class MessageWidget extends StatelessWidget {
                 children: [
                   Flexible(
                     flex: 3,
-                      child: Text('${messageModel.text}', style: MyColors.white.medium15)),
+                      child: Text('${messageModel.text}', style: Get.width>600?MyColors.white.medium12:MyColors.white.medium15)),
                   const SizedBox(width: 10),
                   Flexible(
                     flex: 1,
@@ -40,7 +40,7 @@ class MessageWidget extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 10.0),
                     child: Text(
                         DateFormat.jm().format(messageModel.dateTime ?? DateTime.now()),
-                        style: Colors.grey.shade100.medium10),
+                        style: Get.width>600?Colors.grey.shade100.medium9:Colors.grey.shade100.medium10),
                   )),
                 /*  Row(
                     mainAxisAlignment: MainAxisAlignment.end,

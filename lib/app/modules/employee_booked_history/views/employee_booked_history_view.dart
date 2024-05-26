@@ -49,9 +49,9 @@ class EmployeeBookedHistoryView extends GetView<EmployeeBookedHistoryController>
                         child: CustomButtons.button(
                             onTap: ()=>controller.onDetailsClick(notificationId: bookingDetails.id??""),
                             height: 35,
-                            margin:  EdgeInsets.only(left: 250.sp),
+                            margin:  EdgeInsets.only(left: Get.width>600?300.sp:250.sp),
                             text: MyStrings.details.tr,
-                            fontSize: 12,
+                            fontSize: Get.width>600?9.sp:15.sp,
                             customButtonStyle: CustomButtonStyle.radiusTopBottomCorner),
                       ))
                     ],

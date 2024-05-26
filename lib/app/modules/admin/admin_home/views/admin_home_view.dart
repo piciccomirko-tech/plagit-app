@@ -39,9 +39,9 @@ class AdminHomeView extends GetView<AdminHomeController> {
                             controller.notificationsController.unreadCount.value == 20
                                 ? '20+'
                                 : controller.notificationsController.unreadCount.toString(),
-                            style: MyColors.white.semiBold12);
+                            style: TextStyle(fontSize: Get.width > 600 ? 13 : 12, color: MyColors.white));
                       }),
-                      child: const Icon(CupertinoIcons.bell, size: 20),
+                      child: Icon(CupertinoIcons.bell, size: Get.width > 600 ? 30 : 21),
                     ),
                   )),
             const SizedBox(width: 20),
@@ -49,13 +49,13 @@ class AdminHomeView extends GetView<AdminHomeController> {
               onTap: () {
                 CustomMenu.accountMenu(context);
               },
-              child: const Icon(CupertinoIcons.person, size: 20),
+              child: Icon(CupertinoIcons.person, size: Get.width > 600 ? 30 : 21),
             ),
             const SizedBox(width: 10)
           ],
         ),
         body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.sp),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -78,6 +78,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                   children: [
                     Expanded(
                       child: CustomFeatureBox(
+                        iconHeight:Get.width>600?50.w:60.w,
                         title: MyStrings.dashboard.tr,
                         icon: MyAssets.dashboard,
                         onTap: controller.onAdminDashboardClick,
@@ -90,6 +91,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                           clipBehavior: Clip.none,
                           children: [
                             CustomFeatureBox(
+                              iconHeight: Get.width>600?50.w:60.w,
                               title: MyStrings.requests.tr,
                               icon: MyAssets.request,
                               loading: controller.loading.value,
@@ -114,6 +116,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                   children: [
                     Expanded(
                         child: CustomFeatureBox(
+                      iconHeight: Get.width>600?50.w:60.w,
                       title: MyStrings.employees.tr,
                       icon: MyAssets.myEmployees,
                       onTap: controller.onEmployeeClick,
@@ -121,6 +124,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                     SizedBox(width: 15.w),
                     Expanded(
                         child: CustomFeatureBox(
+                      iconHeight: Get.width>600?50.w:60.w,
                       title: MyStrings.client.tr,
                       icon: MyAssets.clientFixedLogo,
                       onTap: controller.onClientClick,
@@ -132,6 +136,7 @@ class AdminHomeView extends GetView<AdminHomeController> {
                   children: [
                     Expanded(
                       child: CustomFeatureBox(
+                       iconHeight:  Get.width>600?50.w:60.w,
                         title: MyStrings.todaysEmployees.tr,
                         icon: MyAssets.manager,
                         onTap: controller.onTodaysEmployeesPressed,
@@ -142,6 +147,8 @@ class AdminHomeView extends GetView<AdminHomeController> {
                         child: Obx(() => Stack(
                               children: [
                                 CustomFeatureBox(
+                                  iconHeight:  Get.width>600?50.w:60.w,
+
                                   title: "Chat It",
                                   icon: MyAssets.chat,
                                   loading: controller.unreadMessageLoading.value,
@@ -171,11 +178,15 @@ class AdminHomeView extends GetView<AdminHomeController> {
         name,
         maxLines: 2,
         overflow: TextOverflow.ellipsis,
-        style: MyColors.l111111_dwhite(controller.context!).semiBold20,
+        style: Get.width > 600
+            ? MyColors.l111111_dwhite(controller.context!).semiBold15
+            : MyColors.l111111_dwhite(controller.context!).semiBold20,
       );
 
   Widget get _promotionText => Text(
         MyStrings.exploreTheFeaturesOfPlagitAppBelow.tr,
-        style: MyColors.l777777_dtext(controller.context!).medium15,
+        style: Get.width > 600
+            ? MyColors.l777777_dtext(controller.context!).medium12
+            : MyColors.l777777_dtext(controller.context!).medium15,
       );
 }
