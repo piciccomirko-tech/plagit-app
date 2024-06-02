@@ -246,7 +246,7 @@ class Utils {
     }
     employeePayment.restaurantName = element.restaurantDetails?.restaurantName ?? '';
     employeePayment.position = element.employeeDetails?.positionName ?? '';
-    employeePayment.contractorPerHoursRate = element.employeeAmount ?? 0.0; //TODO:
+    employeePayment.contractorPerHoursRate = element.employeeDetails?.contractorHourlyRate ?? 0.0; //TODO:
     employeePayment.totalHours = element.workedHour ?? '0.0';
     employeePayment.employeeAmount = element.employeeAmount ?? 0.0;
     employeePayment.status = element.status ?? '';
@@ -415,9 +415,9 @@ class Utils {
                               fontWeight: pw.FontWeight.bold),
                         ),
                         pw.SizedBox(height: 10),
-                        pw.Text('48 Warwick St, Regent St',
+                        pw.Text('202 Souk Al Bahar Saaha C,',
                             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
-                        pw.Text('London, W1B SAW',
+                        pw.Text('Downtown Dubai',
                             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
                         pw.Text('VAT number: 450105738',
                             style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12, color: PdfColors.black)),
@@ -531,7 +531,7 @@ class Utils {
                       ]))
                 ]),
                 pw.SizedBox(height: 10),
-                pw.Divider(color: PdfColors.grey900, height: 0.0,indent: 400, thickness: 2.0),
+                pw.Divider(color: PdfColors.grey900, height: 0.0, indent: 400, thickness: 2.0),
                 pw.SizedBox(height: 10),
                 pw.Row(mainAxisAlignment: pw.MainAxisAlignment.end, children: [
                   pw.Text(
@@ -548,29 +548,14 @@ class Utils {
                           margin: const pw.EdgeInsets.all(20.0),
                           padding: const pw.EdgeInsets.all(20.0),
                           child: pw.Column(children: [
-                            pw.Row(mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly, children: [
-                              pw.Row(children: [
-                                pw.Image(image2!, height: 20, width: 20),
-                                pw.Text("www.plagit.com",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white)),
-                              ]),
-                              pw.Row(children: [
-                                pw.Image(image3!, height: 20, width: 20),
-                                pw.Text("07960966110",
-                                    style: pw.TextStyle(
-                                        fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white))
-                              ])
-                            ]),
+                            pw.Text("www.plagit.com",
+                                style:
+                                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white)),
                             pw.SizedBox(height: 10),
-                            pw.Row(
-                                mainAxisAlignment: pw.MainAxisAlignment.center,
-                                children: [
-                              pw.Image(image4!, height: 20, width: 20),
-                              pw.Text("support@plagit.com",
-                                  style: pw.TextStyle(
-                                      fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white))
-                            ])
+                            pw.Text("support@plagit.com",
+                                style:
+                                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16, color: PdfColors.white)),
+                            pw.SizedBox(height: 10),
                           ]),
                           decoration:
                               pw.BoxDecoration(color: PdfColors.black, borderRadius: pw.BorderRadius.circular(50.0)),
@@ -608,15 +593,29 @@ class Utils {
     return tempFile;
   }
 
-  static String getCurrencySymbol(String countryName) {
+ /* static String getCurrencySymbol(String countryName) {
     switch (countryName.toLowerCase()) {
       case 'united kingdom':
         return '£';
       case 'united arab emirates':
         return 'د.إ';
-      // Add more cases for other countries as needed
+      case 'italy':
+        return '€';
       default:
         return '\$';
+    }
+  }*/
+
+  static String getCurrencySymbol(String countryName) {
+    switch (countryName.toLowerCase()) {
+      case 'united kingdom':
+        return '\u00A3'; // Unicode for £
+      case 'united arab emirates':
+        return 'AED ';//'\u062F\u002E\u0625'; // Unicode for د.إ
+      case 'italy':
+        return '\u20AC'; // Unicode for €
+      default:
+        return '\u0024'; // Unicode for $
     }
   }
 

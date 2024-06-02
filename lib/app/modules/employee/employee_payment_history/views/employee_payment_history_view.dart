@@ -78,7 +78,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
         child: Text(
           label,
           textAlign: TextAlign.center,
-          style: MyColors.lffffff_dframeBg(controller.context!).semiBold14,
+          style: Get.width>600?MyColors.lffffff_dframeBg(controller.context!).semiBold10:MyColors.lffffff_dframeBg(controller.context!).semiBold14,
         ),
       ),
     );
@@ -96,7 +96,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
-            style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+            style: Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).semiBold9:MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
           )),
     );
   }
@@ -111,7 +111,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+              style: Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).semiBold9:MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
         _cell(
             width: 150.w,
@@ -120,7 +120,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+              style: Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).semiBold9:MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
         _cell(
             width: 100.w,
@@ -129,7 +129,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+              style: Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).semiBold9:MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
         _cell(
             width: 100.w,
@@ -140,7 +140,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+              style:Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).semiBold9:MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
         _cell(
             width: 100.w,
@@ -149,7 +149,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
+              style: Get.width>600?MyColors.l7B7B7B_dtext(controller.context!).semiBold9:MyColors.l7B7B7B_dtext(controller.context!).semiBold13,
             )),
         _cell(
             width: 100.w,
@@ -160,7 +160,7 @@ class EmployeePaymentHistoryView extends GetView<EmployeePaymentHistoryControlle
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: controller.employeePaymentHistory(index).status == 'DUE' ? Colors.red : Colors.green,
-                  fontWeight: FontWeight.bold),
+                  fontWeight: FontWeight.bold, fontSize: Get.width>600?16:12),
             )),
         _cell(
             width: 100.w,

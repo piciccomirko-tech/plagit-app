@@ -61,7 +61,7 @@ class LoginRegisterHintsView extends GetView<LoginRegisterHintsController> {
           ),
           SizedBox(height: 10.h),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 37.0.w),
+            padding: EdgeInsets.symmetric(horizontal: 37.0.sp),
             child:  HorizontalDividerWithText(
               text: AppInfo.appName.toUpperCase(),
             ),

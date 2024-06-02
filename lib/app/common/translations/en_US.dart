@@ -196,7 +196,7 @@ Map<String, String> english = <String, String>{
   MyStrings.interested: "I'm interested",
   MyStrings.restaurantDistance: "This restaurant is situated at a distance of",
   MyStrings.milesLocation: "miles from your location",
-  MyStrings.contractorPerHoursRate: "Contactor Per Hours Rate",
+  MyStrings.contractorPerHoursRate: "Contractor Per Hours Rate",
   MyStrings.age: "Age",
   MyStrings.details: "Details",
   MyStrings.bookedFor: "You have been booked for",

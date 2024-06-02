@@ -28,7 +28,7 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  pod 'GoogleMaps', '7.4.0.0'
+  pod 'GoogleMaps', '8.4.0.0'
   pod 'AppsFlyerFramework', '6.14.3'
   use_frameworks!
   use_modular_headers!
