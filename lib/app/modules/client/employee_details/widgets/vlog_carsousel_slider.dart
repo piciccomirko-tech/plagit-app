@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/models/employees_by_id.dart';
@@ -16,13 +15,51 @@ class VlogCarouselSlider extends StatefulWidget {
 }
 
 class VlogCarouselSliderState extends State<VlogCarouselSlider> {
-  late CarouselController _carouselController;
+  late PageController _pageController;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _carouselController = CarouselController();
+    _pageController = PageController();
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _previousPage() {
+    if (_currentIndex > 0) {
+      _pageController.animateToPage(
+        _currentIndex - 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _pageController.animateToPage(
+        widget.vlogs.length - 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
+  void _nextPage() {
+    if (_currentIndex < widget.vlogs.length - 1) {
+      _pageController.animateToPage(
+        _currentIndex + 1,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    } else {
+      _pageController.animateToPage(
+        0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
   }
 
   @override
@@ -33,65 +70,62 @@ class VlogCarouselSliderState extends State<VlogCarouselSlider> {
         children: [
           Stack(
             children: [
-              CarouselSlider.builder(
-                carouselController: _carouselController,
-                itemCount: widget.vlogs.length,
-                itemBuilder: (context, index, realIndex) {
-                  final VlogModel vlog = widget.vlogs[index];
-
-                  Widget mediaWidget;
-
-                  if (vlog.type == "image") {
-                    mediaWidget = CustomImageWidget(
-                      fit: BoxFit.cover,
-                      radius: 10,
-                      height: widget.height,
-                      width: double.infinity,
-                      imgUrl: (vlog.link ?? "").uniformImageUrl,
-                    );
-                  } else if (vlog.type == "video") {
-                    mediaWidget = CustomVideoWidget(videoUrl: (vlog.link ?? "").uniformImageUrl, height: widget.height);
-                  } else {
-                    mediaWidget = Container();
-                  }
-
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 12.0.h),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Stack(
-                      children: [
-                        mediaWidget,
-                        Positioned.fill(
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: Container(
-                              margin: const EdgeInsets.only(top: 10.0),
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20.0),
-                                color: Colors.black.withOpacity(0.5),
-                              ),
-                              child: Text(vlog.title ?? '', style: MyColors.white.semiBold14),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                options: CarouselOptions(
-                  height: widget.height,
-                  enableInfiniteScroll: true,
-                  autoPlay: true,
-                  autoPlayInterval: const Duration(seconds: 15),
-                  enlargeCenterPage: true,
-                  viewportFraction: 1.0,
-                  onPageChanged: (int index, CarouselPageChangedReason reason) {
+              SizedBox(
+                height: widget.height,
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: widget.vlogs.length,
+                  onPageChanged: (index) {
                     setState(() {
                       _currentIndex = index;
                     });
+                  },
+                  itemBuilder: (context, index) {
+                    final VlogModel vlog = widget.vlogs[index];
+                    Widget mediaWidget;
+
+                    if (vlog.type == "image") {
+                      mediaWidget = CustomImageWidget(
+                        fit: BoxFit.cover,
+                        radius: 10,
+                        height: widget.height,
+                        width: double.infinity,
+                        imgUrl: (vlog.link ?? "").uniformImageUrl,
+                      );
+                    } else if (vlog.type == "video") {
+                      mediaWidget = CustomVideoWidget(
+                        videoUrl: (vlog.link ?? "").uniformImageUrl,
+                        height: widget.height,
+                      );
+                    } else {
+                      mediaWidget = Container();
+                    }
+
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 12.0.h),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      child: Stack(
+                        children: [
+                          mediaWidget,
+                          Positioned.fill(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: Container(
+                                margin: const EdgeInsets.only(top: 10.0),
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  color: Colors.black.withOpacity(0.5),
+                                ),
+                                child: Text(vlog.title ?? '', style: MyColors.white.semiBold14),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
                   },
                 ),
               ),
@@ -107,9 +141,7 @@ class VlogCarouselSliderState extends State<VlogCarouselSlider> {
                     backgroundColor: MyColors.white,
                     child: IconButton(
                       icon: const Icon(CupertinoIcons.chevron_back, color: MyColors.c_C6A34F),
-                      onPressed: () {
-                        _carouselController.previousPage();
-                      },
+                      onPressed: _previousPage,
                     ),
                   ),
                 ),
@@ -126,9 +158,7 @@ class VlogCarouselSliderState extends State<VlogCarouselSlider> {
                     backgroundColor: MyColors.white,
                     child: IconButton(
                       icon: const Icon(CupertinoIcons.chevron_forward, color: MyColors.c_C6A34F),
-                      onPressed: () {
-                        _carouselController.nextPage();
-                      },
+                      onPressed: _nextPage,
                     ),
                   ),
                 ),
@@ -173,7 +203,6 @@ class CircleIndicator extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
-            // shape: index == currentIndex ? BoxShape.rectangle : BoxShape.circle,
             color: index == currentIndex ? selectedColor : color,
           ),
         );
