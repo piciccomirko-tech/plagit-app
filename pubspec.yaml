@@ -4,7 +4,7 @@ publish_to: none
 description: A new Flutter project.
 
 environment:
-  sdk: '>=3.4.0 <4.0.0'
+  sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
 
@@ -88,7 +88,8 @@ dependencies:
   badges: ^3.1.2
 
   intl: ^0.20.2
-
+  archive: ^3.6.1
+  uuid: ^4.3.3
   horizontal_data_table: ^4.3.1
 
   google_maps_flutter: ^2.6.1
