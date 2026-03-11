@@ -28,17 +28,17 @@ class NotificationClickHelper {
         );
 
       // Navigate to support chat
-      } else if (clickAction == MyStrings.payloadScreen.supportChat) {
-        Get.delete<NotificationsController>();
-        Get.toNamed(
-          Routes.supportChat,
-          arguments: {
-            MyStrings.arg.receiverName: data[MyStrings.arg.receiverName],
-            MyStrings.arg.fromId: data[MyStrings.arg.fromId],
-            MyStrings.arg.toId: data[MyStrings.arg.toId],
-            MyStrings.arg.supportChatDocId: data[MyStrings.arg.supportChatDocId],
-          },
-        );
+      // } else if (clickAction == MyStrings.payloadScreen.supportChat) {
+        //Get.delete<NotificationsController>();
+        //Get.toNamed(
+          //Routes.supportChat,
+          //arguments: {
+            //MyStrings.arg.receiverName: data[MyStrings.arg.receiverName],
+            //MyStrings.arg.fromId: data[MyStrings.arg.fromId],
+            //MyStrings.arg.toId: data[MyStrings.arg.toId],
+            //MyStrings.arg.supportChatDocId: data[MyStrings.arg.supportChatDocId],
+          //},
+        //);
 
       // Navigate to booking requests (for employees - new job offer)
       } else if (clickAction == "booking_request") {
