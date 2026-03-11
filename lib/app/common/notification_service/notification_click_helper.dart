@@ -14,18 +14,18 @@ class NotificationClickHelper {
       final String clickAction = data["click_action"] ?? "";
 
       // Navigate to client-employee chat
-      if (clickAction == MyStrings.payloadScreen.clientEmployeeChat) {
-        Get.delete<NotificationsController>();
-        Get.toNamed(
+      //if (clickAction == MyStrings.payloadScreen.clientEmployeeChat) {
+        //Get.delete<NotificationsController>();
+        //Get.toNamed(
           //Routes.clientEmployeeChat,
-          arguments: {
-            MyStrings.arg.receiverName: data[MyStrings.arg.receiverName],
-            MyStrings.arg.fromId: data[MyStrings.arg.fromId],
-            MyStrings.arg.toId: data[MyStrings.arg.toId],
-            MyStrings.arg.clientId: data[MyStrings.arg.clientId],
-            MyStrings.arg.employeeId: data[MyStrings.arg.employeeId],
-          },
-        );
+          //arguments: {
+            //MyStrings.arg.receiverName: data[MyStrings.arg.receiverName],
+            //MyStrings.arg.fromId: data[MyStrings.arg.fromId],
+            //MyStrings.arg.toId: data[MyStrings.arg.toId],
+            //MyStrings.arg.clientId: data[MyStrings.arg.clientId],
+            //MyStrings.arg.employeeId: data[MyStrings.arg.employeeId],
+          //},
+        //);
 
       // Navigate to support chat
       // } else if (clickAction == MyStrings.payloadScreen.supportChat) {
