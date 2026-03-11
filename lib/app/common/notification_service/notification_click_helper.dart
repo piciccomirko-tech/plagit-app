@@ -41,7 +41,7 @@ class NotificationClickHelper {
         //);
 
       // Navigate to booking requests (for employees - new job offer)
-      } else if (clickAction == "booking_request") {
+      if (clickAction == "booking_request") {
         Get.delete<NotificationsController>();
         Get.toNamed(Routes.notifications);
         if (Get.isRegistered<EmployeeHomeController>()) {
