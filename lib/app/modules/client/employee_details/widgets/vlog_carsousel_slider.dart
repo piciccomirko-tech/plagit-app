@@ -1,4 +1,5 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' hide CarouselController;
+import 'package:carousel_slider/carousel_controller.dart' as cs;
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/models/employees_by_id.dart';
@@ -15,14 +16,14 @@ class VlogCarouselSlider extends StatefulWidget {
   VlogCarouselSliderState createState() => VlogCarouselSliderState();
 }
 
-class VlogCarouselSliderState extends State<VlogCarouselSlider> {
-  late CarouselController _carouselController;
+late cs.CarouselController _carouselController;
+  
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _carouselController = CarouselController();
+    _carouselController = cs.CarouselController();
   }
 
   @override
