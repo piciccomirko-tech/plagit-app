@@ -87,7 +87,7 @@ dependencies:
 
   badges: ^3.1.2
 
-  intl: ^0.19.0
+  intl: 0.20.2
 
   horizontal_data_table: ^4.3.1
 
