@@ -17,7 +17,7 @@ class NotificationClickHelper {
       if (clickAction == MyStrings.payloadScreen.clientEmployeeChat) {
         Get.delete<NotificationsController>();
         Get.toNamed(
-          Routes.clientEmployeeChat,
+          //Routes.clientEmployeeChat,
           arguments: {
             MyStrings.arg.receiverName: data[MyStrings.arg.receiverName],
             MyStrings.arg.fromId: data[MyStrings.arg.fromId],
