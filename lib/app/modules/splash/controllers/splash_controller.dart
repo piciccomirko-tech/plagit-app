@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
@@ -28,11 +29,15 @@ class SplashController extends GetxController {
     Future.delayed(const Duration(seconds: 1), _getCommonData);
   }
 
-  Future<void> _goToNextPage() async {
-    if (!StorageHelper.getOnboardingSeen) {
+  void _goToNextPage() {
+    try {
+      if (!StorageHelper.getOnboardingSeen) {
+        Get.offAllNamed(Routes.onboarding);
+      } else {
+        _appController.setTokenFromLocal();
+      }
+    } catch (_) {
       Get.offAllNamed(Routes.onboarding);
-    } else {
-      _appController.setTokenFromLocal();
     }
   }
 
@@ -41,39 +46,47 @@ class SplashController extends GetxController {
       final response = await _apiHelper
           .commons()
           .timeout(const Duration(seconds: 10));
-      response.fold((CustomError customError) {
-        _goToNextPage();
-      }, (Commons commons) {
-        _appController.setCommons(commons);
 
-        if (commons.appVersion!.first.serverMaintenance!) {
-          CustomDialogue.information(
-            context: context!,
-            title: "Server Maintenance",
-            description: commons.appVersion!.first.serverMaintenanceMsg ?? "We will come back soon",
-            buttonText: MyStrings.exit.tr,
-            onTap: () {
-              Utils.exitApp;
-            },
-          );
-        } else if ((commons.appVersion!.first.updateRequired ?? false) &&
-            (commons.appVersion!.first.appVersion != AppInfo.version)) {
-          CustomDialogue.information(
-            context: context!,
-            title: "${MyStrings.update.tr} ${MyStrings.available.tr}!",
-            description:
-                "${MyStrings.newVersion.tr} (${commons.appVersion!.first.appVersion}) ${MyStrings.updateApp.tr}",
-            buttonText: MyStrings.update.tr,
-            onTap: () {
-              launchApp(
-                  playStoreLink: commons.appVersion?.first.playStoreLink ?? '',
-                  appStoreLink: commons.appVersion?.first.appStoreLink ?? '');
-            },
-          );
-        } else {
-          _goToNextPage();
-        }
-      });
+      final isError = response.isLeft();
+
+      if (isError) {
+        _goToNextPage();
+        return;
+      }
+
+      final commons = response.getOrElse(() => throw Exception());
+      _appController.setCommons(commons);
+
+      final appVersion = commons.appVersion?.first;
+
+      if (appVersion != null && (appVersion.serverMaintenance ?? false)) {
+        CustomDialogue.information(
+          context: context!,
+          title: "Server Maintenance",
+          description: appVersion.serverMaintenanceMsg ?? "We will come back soon",
+          buttonText: MyStrings.exit.tr,
+          onTap: () {
+            Utils.exitApp;
+          },
+        );
+      } else if (appVersion != null &&
+          (appVersion.updateRequired ?? false) &&
+          (appVersion.appVersion != AppInfo.version)) {
+        CustomDialogue.information(
+          context: context!,
+          title: "${MyStrings.update.tr} ${MyStrings.available.tr}!",
+          description:
+              "${MyStrings.newVersion.tr} (${appVersion.appVersion}) ${MyStrings.updateApp.tr}",
+          buttonText: MyStrings.update.tr,
+          onTap: () {
+            launchApp(
+                playStoreLink: appVersion.playStoreLink ?? '',
+                appStoreLink: appVersion.appStoreLink ?? '');
+          },
+        );
+      } else {
+        _goToNextPage();
+      }
     } catch (_) {
       _goToNextPage();
     }
