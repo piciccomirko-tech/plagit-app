@@ -1,0 +1,64 @@
+import 'package:mh/app/common/utils/exports.dart';
+import 'package:mh/app/common/widgets/custom_appbar.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/age_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/comment_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/create_job_bottom_nav_bar_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/end_date_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/experience_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/language_drop_down_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/nationality_drop_down_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/hourly_rate_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/position_drop_down_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/publish_date_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/selected_dates_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/skills_drop_down_widget.dart';
+import 'package:mh/app/modules/client/create_job_post/widgets/vacancy_widget.dart';
+import '../controllers/create_job_post_controller.dart';
+
+class CreateJobPostView extends GetView<CreateJobPostController> {
+  const CreateJobPostView({super.key});
+  @override
+  Widget build(BuildContext context) {
+    controller.context = context;
+
+    return Scaffold(
+      appBar: CustomAppbar.appbar(
+        title: controller.type == "create" ? MyStrings.createJobPost.tr.replaceAll("\n", " ") : MyStrings.updateJobPost.tr.replaceAll("\n", " "),
+        centerTitle: true,
+        context: context,
+      ),
+      bottomNavigationBar: const CreateJobBottomNavBarWidget(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(height: 20.h),
+            const PositionDropDownWidget(),
+            SizedBox(height: 20.h),
+            const HourlyRateWidget(),
+            SizedBox(height: 15.h),
+            const SkillsDropDownWidget(),
+            SizedBox(height: 15.h),
+            const SelectedDatesWidget(),
+            SizedBox(height: 15.h),
+            const NationalityDropDownWidget(),
+            SizedBox(height: 15.h),
+            const ExperienceWidget(),
+            SizedBox(height: 15.h),
+            const LanguageDropDownWidget(),
+            SizedBox(height: 15.h),
+            const AgeWidget(),
+            SizedBox(height: 15.h),
+            const VacancyWidget(),
+            SizedBox(height: 15.h),
+            const Row(
+              children: [Expanded(flex: 1, child: PublishDateWidget()), Expanded(flex: 1, child: EndDateWidget())],
+            ),
+            SizedBox(height: 15.h),
+            const CommentWidget(),
+            SizedBox(height: 15.h),
+          ],
+        ),
+      ),
+    );
+  }
+}

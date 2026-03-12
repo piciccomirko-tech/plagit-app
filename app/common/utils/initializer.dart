@@ -1,0 +1,93 @@
+import 'dart:async';
+import 'package:appsflyer_sdk/appsflyer_sdk.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:mh/app/common/controller/app_error_controller.dart';
+import 'package:mh/app/common/controller/socket_controller.dart';
+import '../../repository/api_helper.dart';
+import '../../repository/api_helper_impl.dart';
+import '../controller/app_controller.dart';
+import '../controller/app_life_cycle_controller.dart';
+import '../widgets/custom_error_widget.dart';
+import 'logcat.dart';
+
+class Initializer {
+  static const Initializer instance = Initializer._internal();
+
+  factory Initializer() => instance;
+
+  const Initializer._internal();
+
+  Future<void> init() async {
+    await runZonedGuarded(() async {
+      FlutterError.onError = (details) {
+        FlutterError.dumpErrorToConsole(details);
+        Logcat.msg(details.stack.toString());
+        AppErrorController.submitAutomaticError(
+          errorName: "From: initializer.dart > FlutterError.onError",
+          description: details.stack.toString(),
+        );
+      };
+
+      ErrorWidget.builder = (errorDetails) {
+        AppErrorController.submitAutomaticError(
+          errorName: "From: initializer.dart > ErrorWidget.builder",
+          description: errorDetails.exceptionAsString(),
+        );
+        return CustomErrorWidget(
+          error: errorDetails.exceptionAsString(),
+        );
+      };
+
+      await _initServices();
+    }, (error, StackTrace stackTrace) {
+      Logcat.msg('runZonedGuarded: $error');
+      Logcat.stack(stackTrace);
+    });
+  }
+
+  Future<void> _initServices() async {
+    try {
+      _initScreenPreference();
+      _initAppsFlyerSdk();
+      Get.put(AppController());
+      Get.put(AppLifecycleController());
+      Get.put(SocketController());
+    } catch (err) {
+      rethrow;
+    }
+  }
+
+  void _initScreenPreference() {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  }
+
+  void _initAppsFlyerSdk() async {
+    //  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    AppsFlyerOptions appsFlyerOptions = AppsFlyerOptions(
+        afDevKey: "HJkjJuWPSncZJfMu6eyCpU",
+        showDebug: true,
+        appId: GetPlatform.isAndroid ? "com.invain.mh" : "6446052294",
+        timeToWaitForATTUserAuthorization: 50, // for iOS 14.5
+        disableAdvertisingIdentifier: false, // Optional field
+        disableCollectASA: false); // Optional field
+
+    AppsflyerSdk appsflyerSdk = AppsflyerSdk(appsFlyerOptions);
+
+    appsflyerSdk.initSdk(
+        registerConversionDataCallback: true,
+        registerOnAppOpenAttributionCallback: true,
+        registerOnDeepLinkingCallback: true);
+  }
+}
+
+class InitialBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.put<ApiHelper>(ApiHelperImpl());
+  }
+}
