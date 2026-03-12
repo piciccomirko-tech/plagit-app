@@ -1,4 +1,4 @@
-﻿import 'package:mh/app/modules/auth/login/model/login_credentials_model.dart';
+import 'package:mh/app/modules/auth/login/model/login_credentials_model.dart';
 
 import '../values/my_constant_value.dart';
 import 'storage.dart';
@@ -13,7 +13,6 @@ class StorageHelper {
   static const String _password = "password";
 
   static String get getLanguage => Storage.getValue<String>(_language) ?? "en";
-      //MyConstantValue.defaultAppLanguage;
   static set setLanguage(String lan) => Storage.saveValue(_language, lan);
 
   static String get getTheme => Storage.getValue<String>(_theme) ?? MyConstantValue.defaultAppTheme;
@@ -34,9 +33,8 @@ class StorageHelper {
     final String password = Storage.getValue<String>(_password) ?? '';
     return LoginCredentialsModel(username: username, password: password);
   }
-}
+
   static const String _onboardingSeen = "onboarding_seen";
   static bool get getOnboardingSeen => Storage.getValue<bool>(_onboardingSeen) ?? false;
   static set setOnboardingSeen(bool val) => Storage.saveValue(_onboardingSeen, val);
-
 }
