@@ -39,7 +39,7 @@ class SplashController extends GetxController {
   Future<void> _getCommonData() async {
     await _apiHelper.commons().then((response) {
       response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = _getCommonData);
+        _goToNextPage();
       }, (Commons commons) {
         _appController.setCommons(commons);
 
