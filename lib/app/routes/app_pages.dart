@@ -121,11 +121,14 @@ class AppPages {
 
   static final routes = [
     GetPage(
-     name: _Paths.onboarding,
-     page: () => const OnboardingView(),
-     binding: OnboardingBinding(), 
-      
-    
+      name: _Paths.splash,
+      page: () => const SplashView(),
+      binding: SplashBinding(),
+    ),
+    GetPage(
+      name: _Paths.onboarding,
+      page: () => const OnboardingView(),
+      binding: OnboardingBinding(),
     ),
     GetPage(
       name: _Paths.loginRegisterHints,
