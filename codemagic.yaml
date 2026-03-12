@@ -16,7 +16,10 @@ workflows:
       - name: Get dependencies
         script: flutter pub get
       - name: Build iOS
-        script: flutter build ipa --release
+        script: |
+          flutter build ipa --release \
+            --dart-define=CI=true \
+            --export-method app-store
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
