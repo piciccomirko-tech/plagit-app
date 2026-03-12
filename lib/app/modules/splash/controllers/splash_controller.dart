@@ -37,7 +37,10 @@ class SplashController extends GetxController {
   }
 
   Future<void> _getCommonData() async {
-    await _apiHelper.commons().then((response) {
+    try {
+      final response = await _apiHelper
+          .commons()
+          .timeout(const Duration(seconds: 10));
       response.fold((CustomError customError) {
         _goToNextPage();
       }, (Commons commons) {
@@ -65,18 +68,15 @@ class SplashController extends GetxController {
               launchApp(
                   playStoreLink: commons.appVersion?.first.playStoreLink ?? '',
                   appStoreLink: commons.appVersion?.first.appStoreLink ?? '');
-              /*if ((commons.appVersion!.first.updateRequired ?? false)) {
-                Utils.exitApp;
-              } else {
-                _goToNextPage();
-              }*/
             },
           );
         } else {
           _goToNextPage();
         }
       });
-    });
+    } catch (_) {
+      _goToNextPage();
+    }
   }
 
   void launchApp({required String playStoreLink, required String appStoreLink}) async {
