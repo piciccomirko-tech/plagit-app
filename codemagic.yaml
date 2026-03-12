@@ -15,11 +15,21 @@ workflows:
     scripts:
       - name: Get dependencies
         script: flutter pub get
+      - name: Set code signing to manual
+        script: |
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' ios/Runner.xcodeproj/project.pbxproj
       - name: Build iOS
         script: |
           flutter build ipa --release \
-            --dart-define=CI=true \
-            --export-method app-store
+            --no-codesign
+      - name: Sign and export IPA
+        script: |
+          xcode-project use-profiles
+          cd build/ios/archive
+          xcodebuild -exportArchive \
+            -archivePath Runner.xcarchive \
+            -exportOptionsPlist $CM_EXPORT_OPTIONS_PATH \
+            -exportPath ../ipa
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
