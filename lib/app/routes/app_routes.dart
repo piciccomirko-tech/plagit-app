@@ -2,6 +2,7 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
+  static const onboarding = _Paths.onboarding;
 
   static const splash = _Paths.splash;
 
@@ -72,7 +73,7 @@ abstract class _Paths {
   _Paths._();
 
   static const splash = '/splash';
-
+  static const onboarding = '/onboarding';
   static const loginRegisterHints = '/login-register-hints';
   static const login = '/login';
   static const register = '/register';

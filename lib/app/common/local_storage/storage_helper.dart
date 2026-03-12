@@ -35,3 +35,7 @@ class StorageHelper {
     return LoginCredentialsModel(username: username, password: password);
   }
 }
+  static const String _onboardingSeen = "onboarding_seen";
+  static bool get getOnboardingSeen => Storage.getValue<bool>(_onboardingSeen) ?? false;
+  static set setOnboardingSeen(bool val) => Storage.saveValue(_onboardingSeen, val);
+}

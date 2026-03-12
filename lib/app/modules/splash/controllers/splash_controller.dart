@@ -27,8 +27,14 @@ class SplashController extends GetxController {
   }
 
   Future<void> _goToNextPage() async {
+  if (!StorageHelper.getOnboardingSeen) {
+    Get.offAllNamed(Routes.onboarding);
+  } else {
     _appController.setTokenFromLocal();
   }
+}
+  
+
 
   Future<void> _getCommonData() async {
     await _apiHelper.commons().then((response) {

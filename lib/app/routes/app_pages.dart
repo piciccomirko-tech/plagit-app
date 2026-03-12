@@ -105,6 +105,8 @@ import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
+import '../modules/onboarding/bindings/onboarding_binding.dart';
+import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/stripe_payment/bindings/stripe_payment_binding.dart';
 import '../modules/stripe_payment/views/stripe_payment_view.dart';
 import '../modules/terms_and_condition/bindings/terms_and_condition_binding.dart';
@@ -119,9 +121,11 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.splash,
-      page: () => const SplashView(),
-      binding: SplashBinding(),
+     name: _Paths.onboarding,
+     page: () => const OnboardingView(),
+     binding: OnboardingBinding(), 
+      
+    
     ),
     GetPage(
       name: _Paths.loginRegisterHints,
