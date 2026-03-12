@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar_back_button.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
@@ -22,7 +21,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                 SliverAppBar(
                     stretch: true,
                     iconTheme: const IconThemeData(
-                      color: MyColors.white, //change your color here
+                      color: MyColors.white,
                     ),
                     pinned: true,
                     floating: false,
@@ -50,33 +49,31 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                               children: [
                                 Container(
                                     width: Get.width * 0.8,
-                                    padding:  EdgeInsets.all(10.0.sp),
+                                    padding: EdgeInsets.all(10.0.sp),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(30.0), color: MyColors.c_C6A34F),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
-                                        Text('${MyStrings.bookedFor.tr} ', style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15),
+                                        Text('${MyStrings.bookedFor.tr} ', style: Get.width > 600 ? MyColors.white.semiBold10 : MyColors.white.semiBold15),
                                         Text('${controller.bookingDetails.value.requestDateList?.calculateTotalDays()}',
-                                            style: Get.width>600?MyColors.white.semiBold15:MyColors.white.semiBold24),
-                                        Text(' ${MyStrings.days.tr}', style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15),
+                                            style: Get.width > 600 ? MyColors.white.semiBold15 : MyColors.white.semiBold24),
+                                        Text(' ${MyStrings.days.tr}', style: Get.width > 600 ? MyColors.white.semiBold10 : MyColors.white.semiBold15),
                                       ],
                                     )),
-                                CarouselSlider(
-                                  options: CarouselOptions(
-                                    height: Get.width>600?200:120,
-                                    autoPlay: controller.bookingDetails.value.requestDateList!.length > 1 ? true : false,
-                                    viewportFraction: 1.0,
+                                SizedBox(
+                                  height: Get.width > 600 ? 200 : 120,
+                                  child: PageView(
+                                    children: controller.bookingDetails.value.requestDateList!.map((RequestDateModel url) {
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 20.0.sp),
+                                        child: TimeRangeWidget(
+                                            requestDate: url,
+                                            hasDeleteOption: true,
+                                            onTap: () => controller.updateRequestDate(rejectedDate: url)),
+                                      );
+                                    }).toList(),
                                   ),
-                                  items: controller.bookingDetails.value.requestDateList!.map((RequestDateModel url) {
-                                    return Padding(
-                                      padding:  EdgeInsets.symmetric(horizontal: 20.0.sp),
-                                      child: TimeRangeWidget(
-                                          requestDate: url,
-                                          hasDeleteOption: true,
-                                          onTap: () => controller.updateRequestDate(rejectedDate: url)),
-                                    );
-                                  }).toList(),
                                 ),
                                 const SizedBox(height: 20),
                                 Material(
@@ -90,11 +87,11 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                       child: Icon(Icons.notifications_active_outlined, color: MyColors.white),
                                     ),
                                     title: Text('${controller.bookingDetails.value.text}',
-                                        style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15),
+                                        style: Get.width > 600 ? MyColors.l111111_dwhite(context).semiBold12 : MyColors.l111111_dwhite(context).semiBold15),
                                     subtitle: Padding(
                                       padding: const EdgeInsets.only(top: 5),
                                       child: Text(controller.bookingDetails.value.restaurantAddress ?? '',
-                                          style: Get.width>600?MyColors.c_A6A6A6.semiBold12:MyColors.c_A6A6A6.semiBold13),
+                                          style: Get.width > 600 ? MyColors.c_A6A6A6.semiBold12 : MyColors.c_A6A6A6.semiBold13),
                                     ),
                                   ),
                                 ),
@@ -110,45 +107,45 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                       ),
                                       title: Text(
                                           '${MyStrings.restaurantDistance.tr} ${(Get.find<EmployeeHomeController>().restaurantDistanceFromEmployee(targetLat: double.parse(controller.bookingDetails.value.hiredByLat.toString()), targetLng: double.parse(controller.bookingDetails.value.hiredByLong.toString())) / 1609.34).toStringAsFixed(2)} ${MyStrings.milesLocation.tr}',
-                                          style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15)),
+                                          style: Get.width > 600 ? MyColors.l111111_dwhite(context).semiBold12 : MyColors.l111111_dwhite(context).semiBold15)),
                                 ),
                                 const SizedBox(height: 10),
-                                if(controller.bookingDetails.value.uniformMandatory == true)
-                                Material(
-                                  color: Colors.transparent,
-                                  child: ListTile(
-                                      minVerticalPadding: 0.0,
-                                      minLeadingWidth: 0.0,
-                                      trailing: InkWell(
-                                        onTap: controller.onViewUniformClick,
-                                        child: const CircleAvatar(
-                                          backgroundColor: Colors.transparent,
-                                          child: Icon(Icons.remove_red_eye, color: MyColors.c_C6A34F),
+                                if (controller.bookingDetails.value.uniformMandatory == true)
+                                  Material(
+                                    color: Colors.transparent,
+                                    child: ListTile(
+                                        minVerticalPadding: 0.0,
+                                        minLeadingWidth: 0.0,
+                                        trailing: InkWell(
+                                          onTap: controller.onViewUniformClick,
+                                          child: const CircleAvatar(
+                                            backgroundColor: Colors.transparent,
+                                            child: Icon(Icons.remove_red_eye, color: MyColors.c_C6A34F),
+                                          ),
                                         ),
-                                      ),
-                                      leading:  CircleAvatar(
-                                        backgroundColor: Colors.purple,
-                                        child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
-                                      ),
-                                      title: Text(
-                                        MyStrings.provideUniform.tr,
-                                          style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15)),
-                                )
+                                        leading: CircleAvatar(
+                                          backgroundColor: Colors.purple,
+                                          child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
+                                        ),
+                                        title: Text(
+                                            MyStrings.provideUniform.tr,
+                                            style: Get.width > 600 ? MyColors.l111111_dwhite(context).semiBold12 : MyColors.l111111_dwhite(context).semiBold15)),
+                                  )
                                 else
                                   Material(
                                     color: Colors.transparent,
                                     child: ListTile(
                                         minVerticalPadding: 0.0,
                                         minLeadingWidth: 0.0,
-                                        leading:  CircleAvatar(
+                                        leading: CircleAvatar(
                                           backgroundColor: Colors.purple,
                                           child: Image.asset(MyAssets.uniform, color: Colors.white, height: 22, width: 22),
                                         ),
                                         title: Text(
                                             MyStrings.noUniform.tr,
-                                            style: Get.width>600?MyColors.l111111_dwhite(context).semiBold12:MyColors.l111111_dwhite(context).semiBold15)),
+                                            style: Get.width > 600 ? MyColors.l111111_dwhite(context).semiBold12 : MyColors.l111111_dwhite(context).semiBold15)),
                                   ),
-                                SizedBox(height: MediaQuery.sizeOf(context).width*0.2)
+                                SizedBox(height: MediaQuery.sizeOf(context).width * 0.2)
                               ],
                             ),
                         )))
@@ -169,7 +166,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                           child: Container(
                             color: MyColors.c_C6A34F,
                             height: 60.h,
-                            child: Center(child: Text(MyStrings.allowAll.tr.toUpperCase(), style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15)),
+                            child: Center(child: Text(MyStrings.allowAll.tr.toUpperCase(), style: Get.width > 600 ? MyColors.white.semiBold10 : MyColors.white.semiBold15)),
                           ),
                         ),
                       ),
@@ -182,7 +179,7 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                           child: Container(
                             color: Colors.red,
                             height: 60.h,
-                            child: Center(child: Text(MyStrings.denyAll.tr.toUpperCase(), style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15)),
+                            child: Center(child: Text(MyStrings.denyAll.tr.toUpperCase(), style: Get.width > 600 ? MyColors.white.semiBold10 : MyColors.white.semiBold15)),
                           ),
                         ),
                       ),
