@@ -30,7 +30,6 @@ flutter_ios_podfile_setup
 target 'Runner' do
   pod 'GoogleMaps', '8.4.0.0'
   pod 'AppsFlyerFramework', '6.14.3'
-  use_frameworks!
   use_modular_headers!
   pod 'Firebase', :modular_headers => true
   pod 'FirebaseCoreInternal', :modular_headers => true
