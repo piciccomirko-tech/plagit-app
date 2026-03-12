@@ -19,17 +19,14 @@ workflows:
         script: |
           sed -i '' 's/CODE_SIGN_STYLE = Automatic/CODE_SIGN_STYLE = Manual/g' ios/Runner.xcodeproj/project.pbxproj
       - name: Build iOS
-        script: |
-          flutter build ipa --release \
-            --no-codesign
+        script: flutter build ipa --release --no-codesign
       - name: Sign and export IPA
         script: |
           xcode-project use-profiles
-          cd build/ios/archive
           xcodebuild -exportArchive \
-            -archivePath Runner.xcarchive \
-            -exportOptionsPlist $CM_EXPORT_OPTIONS_PATH \
-            -exportPath ../ipa
+            -archivePath build/ios/archive/Runner.xcarchive \
+            -exportOptionsPlist /Users/builder/export_options.plist \
+            -exportPath build/ios/ipa
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
