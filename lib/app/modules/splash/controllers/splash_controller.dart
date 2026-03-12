@@ -1,6 +1,4 @@
 ﻿import 'dart:io';
-import 'package:mh/app/common/local_storage/storage_helper.dart';
-import 'package:mh/app/routes/app_routes.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -29,14 +27,12 @@ class SplashController extends GetxController {
   }
 
   Future<void> _goToNextPage() async {
-  if (!StorageHelper.getOnboardingSeen) {
-    Get.offAllNamed(Routes.onboarding);
-  } else {
-    _appController.setTokenFromLocal();
+    if (!StorageHelper.getOnboardingSeen) {
+      Get.offAllNamed(Routes.onboarding);
+    } else {
+      _appController.setTokenFromLocal();
+    }
   }
-}
-  
-
 
   Future<void> _getCommonData() async {
     await _apiHelper.commons().then((response) {
