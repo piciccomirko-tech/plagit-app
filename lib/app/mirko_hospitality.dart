@@ -8,6 +8,7 @@ import 'common/controller/app_controller.dart';
 import 'common/local_storage/storage_helper.dart';
 import 'common/style/theme.dart';
 import 'common/utils/initializer.dart';
+import 'common/widgets/floating_avatar.dart';
 import 'routes/app_pages.dart';
 
 class MirkoHospitality extends StatelessWidget {
@@ -42,6 +43,9 @@ class MirkoHospitality extends StatelessWidget {
           theme: AppTheme.light,
           darkTheme: AppTheme.dark,
           themeMode: ThemeMode.system,
+          builder: (context, child) {
+            return FloatingAvatar(child: child ?? const SizedBox.shrink());
+          },
           supportedLocales: const [
             Locale('en', 'US'),
             Locale('ar', 'AE'),

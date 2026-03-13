@@ -1,5 +1,5 @@
 name: mh
-version: 3.2.8+95
+version: 3.2.8+96
 publish_to: none
 description: A new Flutter project.
 
@@ -126,6 +126,7 @@ flutter:
     - assets/payment/
     - assets/map_style/
     - assets/lottie/
+    - assets/animations/
     - assets/html/
 
   fonts:
