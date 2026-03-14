@@ -91,11 +91,12 @@ class LoginController extends GetxController implements LoginViewInterface {
       response.fold((CustomError customError) {
         Utils.errorDialog(context!, customError..onRetry = _login);
       }, (LoginResponse loginResponse) {
-        if (loginResponse.statusCode == 200) {
+        // If we have a token, login succeeded — go to next route
+        if (loginResponse.token != null && loginResponse.token!.isNotEmpty) {
           if (rememberMe.value == true) {
             _saveLoginCredentials(login: login);
           }
-          _goToNextRoute(loginResponse.token ?? "");
+          _goToNextRoute(loginResponse.token!);
         } else if (loginResponse.statusCode == 401) {
           _accountBan();
         } else {
