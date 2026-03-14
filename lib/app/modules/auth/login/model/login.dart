@@ -9,9 +9,10 @@ class Login {
     required this.password,
   });
 
-  Map<String, String?> get toJson => {
-        "userIdNumber": userIdNumber,
-        "email": email,
-        "password": password,
-      };
+  Map<String, String> get toJson {
+    final map = <String, String>{"password": password};
+    if (email != null && email!.isNotEmpty) map["email"] = email!;
+    if (userIdNumber != null && userIdNumber!.isNotEmpty) map["userIdNumber"] = userIdNumber!;
+    return map;
+  }
 }
