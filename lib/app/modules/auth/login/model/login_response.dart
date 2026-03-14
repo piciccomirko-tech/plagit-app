@@ -21,13 +21,21 @@ class LoginResponse {
 
   String toRawJson() => json.encode(toJson());
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    status: json["status"],
-    statusCode: json["statusCode"],
-    message: json["message"],
-    token: json["token"],
-    errors: json["errors"] == null ? [] : List<ApiErrors>.from(json["errors"]!.map((x) => ApiErrors.fromJson(x))),
-  );
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    // Token can be at root level or nested inside "data"
+    String? token = json["token"];
+    if (token == null && json["data"] is Map) {
+      token = (json["data"] as Map<String, dynamic>)["token"];
+    }
+
+    return LoginResponse(
+      status: json["status"],
+      statusCode: json["statusCode"],
+      message: json["message"],
+      token: token,
+      errors: json["errors"] == null ? [] : List<ApiErrors>.from(json["errors"]!.map((x) => ApiErrors.fromJson(x))),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "status": status,
