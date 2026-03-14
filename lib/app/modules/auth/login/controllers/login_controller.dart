@@ -82,7 +82,7 @@ class LoginController extends GetxController implements LoginViewInterface {
       if (kDebugMode) {
         print('=============== LOGIN RESPONSE =================');
         response.fold(
-          (err) => print('Error: ${err.message}'),
+          (err) => print('Error: ${err.msg}'),
           (res) => print('Status: ${res.statusCode}, Message: ${res.message}, Token: ${res.token != null ? "present" : "null"}'),
         );
         print('=============== LOGIN RESPONSE =================');
