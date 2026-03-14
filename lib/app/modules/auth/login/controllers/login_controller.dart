@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:dartz/dartz.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mh/app/common/controller/socket_controller.dart';
 import 'package:mh/app/common/local_storage/storage_helper.dart';
 import 'package:mh/app/modules/auth/login/model/login_credentials_model.dart';
@@ -64,10 +66,27 @@ class LoginController extends GetxController implements LoginViewInterface {
       login.userIdNumber = tecUserId.value.text.trim();
     }
 
+    if (kDebugMode) {
+      print('=============== LOGIN REQUEST =================');
+      print('Input field: ${tecUserId.value.text}');
+      print('Is email: ${GetUtils.isEmail(tecUserId.value.text.trim())}');
+      print('Request body: ${jsonEncode(login.toJson)}');
+      print('=============== LOGIN REQUEST =================');
+    }
+
     CustomLoader.show(context!);
 
     await _apiHelper.login(login).then((Either<CustomError, LoginResponse> response) {
       CustomLoader.hide(context!);
+
+      if (kDebugMode) {
+        print('=============== LOGIN RESPONSE =================');
+        response.fold(
+          (err) => print('Error: ${err.message}'),
+          (res) => print('Status: ${res.statusCode}, Message: ${res.message}, Token: ${res.token != null ? "present" : "null"}'),
+        );
+        print('=============== LOGIN RESPONSE =================');
+      }
 
       response.fold((CustomError customError) {
         Utils.errorDialog(context!, customError..onRetry = _login);
