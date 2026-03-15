@@ -1,28 +1,28 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/models/employees_by_id.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/custom_image_widget.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/custom_video_widget.dart';
 
-class VlogCarouselSlider extends StatefulWidget {
+class Vlogcs.CarouselSlider extends StatefulWidget {
   final List<VlogModel> vlogs;
   final double height;
 
-  const VlogCarouselSlider({super.key, required this.vlogs, required this.height});
+  const Vlogcs.CarouselSlider({super.key, required this.vlogs, required this.height});
 
   @override
-  VlogCarouselSliderState createState() => VlogCarouselSliderState();
+  Vlogcs.CarouselSliderState createState() => Vlogcs.CarouselSliderState();
 }
 
-class VlogCarouselSliderState extends State<VlogCarouselSlider> {
-  late CarouselController _carouselController;
+class Vlogcs.CarouselSliderState extends State<Vlogcs.CarouselSlider> {
+  late cs.CarouselController _carouselController;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _carouselController = CarouselController();
+    _carouselController = cs.CarouselController();
   }
 
   @override
@@ -33,7 +33,7 @@ class VlogCarouselSliderState extends State<VlogCarouselSlider> {
         children: [
           Stack(
             children: [
-              CarouselSlider.builder(
+              cs.CarouselSlider.builder(
                 carouselController: _carouselController,
                 itemCount: widget.vlogs.length,
                 itemBuilder: (context, index, realIndex) {
@@ -81,14 +81,14 @@ class VlogCarouselSliderState extends State<VlogCarouselSlider> {
                     ),
                   );
                 },
-                options: CarouselOptions(
+                options: cs.CarouselOptions(
                   height: widget.height,
                   enableInfiniteScroll: true,
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 15),
                   enlargeCenterPage: true,
                   viewportFraction: 1.0,
-                  onPageChanged: (int index, CarouselPageChangedReason reason) {
+                  onPageChanged: (int index, cs.CarouselPageChangedReason reason) {
                     setState(() {
                       _currentIndex = index;
                     });

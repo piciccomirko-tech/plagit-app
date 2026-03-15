@@ -1,4 +1,4 @@
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:carousel_slider/carousel_slider.dart' as cs;
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar_back_button.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
@@ -62,8 +62,8 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         Text(' ${MyStrings.days.tr}', style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15),
                                       ],
                                     )),
-                                CarouselSlider(
-                                  options: CarouselOptions(
+                                cs.CarouselSlider(
+                                  options: cs.CarouselOptions(
                                     height: Get.width>600?200:120,
                                     autoPlay: controller.bookingDetails.value.requestDateList!.length > 1 ? true : false,
                                     viewportFraction: 1.0,
