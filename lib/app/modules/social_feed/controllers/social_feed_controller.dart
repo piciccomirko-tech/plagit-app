@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -34,13 +35,10 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
     hasError.value = false;
 
     try {
-      print('TOKEN: ${StorageHelper.getToken}');
       final response = await http.get(
         Uri.parse(_baseUrl),
         headers: _headers,
       ).timeout(const Duration(seconds: 15));
-      print('STATUS: ${response.statusCode}');
-      print('BODY: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final body = json.decode(response.body);
@@ -50,18 +48,36 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
         } else if (body is List) {
           posts.value = body.map((x) => SocialPost.fromJson(x as Map<String, dynamic>)).toList();
         }
+        // Debug: show info if parsing succeeded but list is empty
+        if (posts.isEmpty) {
+          final snippet = response.body.substring(0, min(200, response.body.length));
+          Get.snackbar(
+            'Debug: 0 posts',
+            'Status: ${response.statusCode} | TokenEmpty: ${StorageHelper.getToken.isEmpty} | Body: $snippet',
+            duration: const Duration(seconds: 10),
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
       } else {
         hasError.value = true;
-        try {
-          final body = json.decode(response.body);
-          errorMessage.value = body['message'] ?? 'Failed to load feed';
-        } catch (_) {
-          errorMessage.value = 'Failed to load feed';
-        }
+        final snippet = response.body.substring(0, min(200, response.body.length));
+        errorMessage.value = 'Status ${response.statusCode}: $snippet';
+        Get.snackbar(
+          'Debug: non-200',
+          'Status: ${response.statusCode} | TokenEmpty: ${StorageHelper.getToken.isEmpty} | Body: $snippet',
+          duration: const Duration(seconds: 10),
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } catch (e) {
       hasError.value = true;
-      errorMessage.value = 'Connection error. Please try again.';
+      errorMessage.value = 'Error: $e';
+      Get.snackbar(
+        'Debug: exception',
+        'TokenEmpty: ${StorageHelper.getToken.isEmpty} | Error: $e',
+        duration: const Duration(seconds: 10),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
 
     isLoading.value = false;
