@@ -103,12 +103,8 @@ import '../modules/reset_password/bindings/reset_password_binding.dart';
 import '../modules/reset_password/views/reset_password_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
-import '../modules/social_feed/bindings/social_feed_binding.dart';
-import '../modules/social_feed/views/social_feed_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
-import '../modules/onboarding/bindings/onboarding_binding.dart';
-import '../modules/onboarding/views/onboarding_view.dart';
 import '../modules/stripe_payment/bindings/stripe_payment_binding.dart';
 import '../modules/stripe_payment/views/stripe_payment_view.dart';
 import '../modules/terms_and_condition/bindings/terms_and_condition_binding.dart';
@@ -126,11 +122,6 @@ class AppPages {
       name: _Paths.splash,
       page: () => const SplashView(),
       binding: SplashBinding(),
-    ),
-    GetPage(
-      name: _Paths.onboarding,
-      page: () => const OnboardingView(),
-      binding: OnboardingBinding(),
     ),
     GetPage(
       name: _Paths.loginRegisterHints,
@@ -456,12 +447,6 @@ class AppPages {
       name: _Paths.policy,
       page: () => const PolicyView(),
       binding: PolicyBinding(),
-    ),
-    GetPage(
-      name: _Paths.socialFeed,
-      page: () => const SocialFeedView(),
-      binding: SocialFeedBinding(),
-      middlewares: [AuthMiddleware()],
     ),
   ];
 }

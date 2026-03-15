@@ -7,7 +7,6 @@ import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/custom_feature_box.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/employee/employee_home/controllers/employee_home_controller.dart';
-import 'package:mh/app/routes/app_pages.dart';
 
 class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
   const EmployeeHomeCardWidget({super.key});
@@ -124,23 +123,6 @@ class EmployeeHomeCardWidget extends GetWidget<EmployeeHomeController> {
                       ],
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: 15.h),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomFeatureBox(
-                        height: Get.width>600?200:120,
-                        iconHeight: 40,
-                        title: 'Social Feed',
-                        icon: MyAssets.createPost,
-                        onTap: () => Get.toNamed(Routes.socialFeed)),
-                  ),
-                  SizedBox(width: 15.w),
-                  const Expanded(child: SizedBox()),
-                  SizedBox(width: 15.w),
-                  const Expanded(child: SizedBox()),
                 ],
               ),
               SizedBox(height: 15.h),

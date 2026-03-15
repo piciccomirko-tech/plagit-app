@@ -43,7 +43,6 @@ class ClientHomeController extends GetxController {
 
   Rx<JobPostRequestModel> jobPostRequest = JobPostRequestModel().obs;
   RxBool jobPostDataLoading = false.obs;
-  RxInt selectedTab = 0.obs;
 
   Rx<CheckInCheckOutHistory> clientPaymentInvoice = CheckInCheckOutHistory().obs;
 

@@ -2,7 +2,6 @@ part of 'app_pages.dart';
 
 abstract class Routes {
   Routes._();
-  static const onboarding = _Paths.onboarding;
 
   static const splash = _Paths.splash;
 
@@ -67,14 +66,13 @@ abstract class Routes {
   static const chatIt = _Paths.chatIt;
   static const addChatUser = _Paths.addChatUser;
   static const policy = _Paths.policy;
-  static const socialFeed = _Paths.socialFeed;
 }
 
 abstract class _Paths {
   _Paths._();
 
   static const splash = '/splash';
-  static const onboarding = '/onboarding';
+
   static const loginRegisterHints = '/login-register-hints';
   static const login = '/login';
   static const register = '/register';
@@ -138,5 +136,4 @@ abstract class _Paths {
   static const chatIt = '/chat-it';
   static const addChatUser = '/add-chat-user';
   static const policy = '/policy';
-  static const socialFeed = '/social-feed';
 }
