@@ -18,15 +18,21 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
 
   String get _currentUserId => Get.find<AppController>().user.value.userId;
 
-  Map<String, String> get _authHeaders => {
-    'Authorization': 'Bearer ${StorageHelper.getToken}',
-    'Content-Type': 'application/json',
-  };
-
   @override
   void onInit() {
     super.onInit();
-    _connect.timeout = const Duration(seconds: 15);
+    _connect.httpClient.baseUrl = _baseUrl;
+    _connect.httpClient.timeout = const Duration(seconds: 15);
+
+    // Use the same request modifier pattern as ApiHelperImpl
+    _connect.httpClient.addRequestModifier<dynamic>((Request request) {
+      if (StorageHelper.hasToken) {
+        request.headers['Authorization'] = 'Bearer ${StorageHelper.getToken}';
+      }
+      request.headers['Content-Type'] = 'application/json';
+      return request;
+    });
+
     fetchPosts();
   }
 
@@ -35,10 +41,7 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
     hasError.value = false;
 
     try {
-      final response = await _connect.get(
-        _baseUrl,
-        headers: _authHeaders,
-      );
+      final response = await _connect.get(_baseUrl);
 
       if (response.statusCode == null) {
         hasError.value = true;
@@ -81,7 +84,6 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
       await _connect.post(
         '${_baseUrl}like-unlike',
         json.encode({'postId': postId}),
-        headers: _authHeaders,
         contentType: 'application/json',
       );
       await fetchPosts();
@@ -95,7 +97,6 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
       await _connect.post(
         '${_baseUrl}create-comment',
         json.encode({'postId': postId, 'content': content}),
-        headers: _authHeaders,
         contentType: 'application/json',
       );
       await fetchPosts();
@@ -108,7 +109,6 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
     try {
       final response = await _connect.delete(
         '$_baseUrl$postId',
-        headers: _authHeaders,
         contentType: 'application/json',
       );
       if (response.statusCode == 200 || response.statusCode == 201) {
