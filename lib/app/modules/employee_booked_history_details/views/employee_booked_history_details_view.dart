@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart' hide CarouselController;
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/common/widgets/custom_appbar_back_button.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
@@ -62,21 +61,21 @@ class EmployeeBookedHistoryDetailsView extends GetView<EmployeeBookedHistoryDeta
                                         Text(' ${MyStrings.days.tr}', style: Get.width>600?MyColors.white.semiBold10:MyColors.white.semiBold15),
                                       ],
                                     )),
-                                CarouselSlider(
-                                  options: CarouselOptions(
-                                    height: Get.width>600?200:120,
-                                    autoPlay: controller.bookingDetails.value.requestDateList!.length > 1 ? true : false,
-                                    viewportFraction: 1.0,
+                                SizedBox(
+                                  height: Get.width>600?200:120,
+                                  child: PageView.builder(
+                                    itemCount: controller.bookingDetails.value.requestDateList!.length,
+                                    itemBuilder: (context, index) {
+                                      final RequestDateModel url = controller.bookingDetails.value.requestDateList![index];
+                                      return Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 20.0.sp),
+                                        child: TimeRangeWidget(
+                                            requestDate: url,
+                                            hasDeleteOption: true,
+                                            onTap: () => controller.updateRequestDate(rejectedDate: url)),
+                                      );
+                                    },
                                   ),
-                                  items: controller.bookingDetails.value.requestDateList!.map((RequestDateModel url) {
-                                    return Padding(
-                                      padding:  EdgeInsets.symmetric(horizontal: 20.0.sp),
-                                      child: TimeRangeWidget(
-                                          requestDate: url,
-                                          hasDeleteOption: true,
-                                          onTap: () => controller.updateRequestDate(rejectedDate: url)),
-                                    );
-                                  }).toList(),
                                 ),
                                 const SizedBox(height: 20),
                                 Material(

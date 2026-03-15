@@ -11,7 +11,6 @@
         "appsflyer_sdk",
         "badges",
         "cached_network_image",
-        "carousel_slider",
         "chewie",
         "cupertino_icons",
         "custom_radio_grouped_button",
@@ -580,13 +579,6 @@
       "name": "dartz",
       "version": "0.10.1",
       "dependencies": []
-    },
-    {
-      "name": "carousel_slider",
-      "version": "4.2.1",
-      "dependencies": [
-        "flutter"
-      ]
     },
     {
       "name": "appsflyer_sdk",
