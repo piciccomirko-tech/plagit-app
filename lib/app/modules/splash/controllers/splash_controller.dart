@@ -16,10 +16,8 @@ class SplashController extends GetxController {
     try {
       if (!StorageHelper.getOnboardingSeen) {
         Get.offAllNamed(Routes.onboarding);
-      } else if (StorageHelper.hasToken) {
-        _appController.setTokenFromLocal();
       } else {
-        Get.offAllNamed(Routes.login);
+        _appController.setTokenFromLocal();
       }
     } catch (_) {
       Get.offAllNamed(Routes.onboarding);
