@@ -14,7 +14,7 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
   final RxString errorMessage = ''.obs;
 
   final GetConnect _connect = GetConnect();
-  final String _baseUrl = 'http://52.86.43.146:3001/api/v1/social-feed/';
+  final String _baseUrl = 'http://52.86.43.146:3002/api/v1/social-feed/';
 
   String get _currentUserId => Get.find<AppController>().user.value.userId;
 

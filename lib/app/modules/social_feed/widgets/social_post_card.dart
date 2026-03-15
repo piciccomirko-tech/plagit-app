@@ -24,11 +24,12 @@ class SocialPostCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: MyColors.lightCard(context),
+        color: Colors.white,
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withOpacity(0.04),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -37,51 +38,45 @@ class SocialPostCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User header
+          // User header with "..." menu
           Padding(
-            padding: EdgeInsets.all(12.sp),
+            padding: EdgeInsets.fromLTRB(14.w, 14.h, 8.w, 8.h),
             child: Row(
               children: [
                 _buildAvatar(),
                 SizedBox(width: 10.w),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
                     children: [
-                      Text(
-                        post.user?.name ?? 'Unknown',
-                        style: MyColors.l111111_dwhite(context).semiBold15,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      Flexible(
+                        child: Text(
+                          post.user?.name ?? 'Unknown',
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      SizedBox(height: 2.h),
-                      Row(
-                        children: [
-                          if (post.user?.positionName != null) ...[
-                            Flexible(
-                              child: Text(
-                                post.user!.positionName!,
-                                style: MyColors.c_A6A6A6.regular12,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (post.user?.countryName != null)
-                              Text(' · ', style: MyColors.c_A6A6A6.regular12),
-                          ],
-                          if (post.user?.countryName != null)
-                            Text(
-                              post.user!.countryName!,
-                              style: MyColors.c_A6A6A6.regular12,
-                            ),
-                        ],
+                      Text(
+                        '  \u00B7  ${controller.timeAgo(post.createdAt)}',
+                        style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade500),
                       ),
                     ],
                   ),
                 ),
-                Text(
-                  controller.timeAgo(post.createdAt),
-                  style: MyColors.c_A6A6A6.regular11,
+                PopupMenuButton<String>(
+                  icon: Icon(Icons.more_horiz, color: Colors.grey.shade600, size: 22),
+                  onSelected: (value) {
+                    if (value == 'delete' && post.id != null) {
+                      controller.deletePost(post.id!);
+                    }
+                  },
+                  itemBuilder: (context) => [
+                    const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                  ],
                 ),
               ],
             ),
@@ -90,10 +85,10 @@ class SocialPostCard extends StatelessWidget {
           // Content text
           if (post.content != null && post.content!.isNotEmpty)
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.w),
+              padding: EdgeInsets.symmetric(horizontal: 14.w),
               child: Text(
                 post.content!,
-                style: MyColors.l111111_dwhite(context).regular14,
+                style: TextStyle(fontSize: 14.sp, color: Colors.black87, height: 1.4),
                 maxLines: 5,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -103,70 +98,86 @@ class SocialPostCard extends StatelessWidget {
           if (post.media != null && post.media!.isNotEmpty)
             Padding(
               padding: EdgeInsets.only(top: 10.h),
-              child: ClipRRect(
-                child: CachedNetworkImage(
-                  imageUrl: post.media!.first.uniformImageUrl,
-                  width: double.infinity,
+              child: CachedNetworkImage(
+                imageUrl: post.media!.first.uniformImageUrl,
+                width: double.infinity,
+                height: 200.h,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
                   height: 200.h,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    height: 200.h,
-                    color: Colors.grey.shade200,
-                    child: const Center(
-                      child: CircularProgressIndicator(
-                        color: MyColors.c_C6A34F,
-                        strokeWidth: 2,
-                      ),
-                    ),
+                  color: Colors.grey.shade100,
+                  child: const Center(
+                    child: CircularProgressIndicator(color: MyColors.c_C6A34F, strokeWidth: 2),
                   ),
-                  errorWidget: (context, url, error) => Container(
-                    height: 200.h,
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.broken_image, color: Colors.grey),
-                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  height: 200.h,
+                  color: Colors.grey.shade100,
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
                 ),
               ),
             ),
 
-          // Stats bar (likes, comments, views)
+          // Stats + actions bar
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-            child: Row(
+            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 10.h),
+            child: Column(
               children: [
-                _statItem(Icons.thumb_up_outlined, post.likeCount, context),
-                SizedBox(width: 20.w),
-                _statItem(Icons.comment_outlined, post.commentCount, context),
-                SizedBox(width: 20.w),
-                _statItem(Icons.visibility_outlined, post.views ?? 0, context),
-                const Spacer(),
-              ],
-            ),
-          ),
-
-          // Divider + action buttons
-          Divider(height: 1, color: Colors.grey.withOpacity(0.2)),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 4.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _actionButton(
-                  liked ? Icons.thumb_up : Icons.thumb_up_outlined,
-                  'Like',
-                  context,
-                  color: liked ? MyColors.c_C6A34F : MyColors.c_A6A6A6,
-                  onTap: () => controller.likeUnlike(post.id!),
-                ),
-                _actionButton(
-                  Icons.comment_outlined,
-                  'Comment',
-                  context,
-                  onTap: () => _showCommentDialog(context),
-                ),
-                _actionButton(
-                  Icons.share_outlined,
-                  'Share',
-                  context,
+                Divider(height: 1, color: Colors.grey.shade200),
+                SizedBox(height: 8.h),
+                Row(
+                  children: [
+                    // Like
+                    InkWell(
+                      onTap: () {
+                        if (post.id != null) controller.likeUnlike(post.id!);
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            liked ? Icons.thumb_up : Icons.thumb_up_outlined,
+                            size: 18,
+                            color: liked ? MyColors.c_C6A34F : Colors.grey.shade500,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            _formatCount(post.likeCount),
+                            style: TextStyle(fontSize: 13.sp, color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 24.w),
+                    // Comment
+                    InkWell(
+                      onTap: () => _showCommentDialog(context),
+                      child: Row(
+                        children: [
+                          Icon(Icons.chat_bubble_outline, size: 18, color: MyColors.c_C6A34F),
+                          SizedBox(width: 4.w),
+                          Text(
+                            _formatCount(post.commentCount),
+                            style: TextStyle(fontSize: 13.sp, color: MyColors.c_C6A34F),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 24.w),
+                    // Share
+                    InkWell(
+                      onTap: () {},
+                      child: Row(
+                        children: [
+                          Icon(Icons.ios_share_outlined, size: 18, color: Colors.grey.shade500),
+                          SizedBox(width: 4.w),
+                          Text(
+                            'Share',
+                            style: TextStyle(fontSize: 13.sp, color: Colors.grey.shade600),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -235,49 +246,21 @@ class SocialPostCard extends StatelessWidget {
     final url = post.user?.profilePicture;
     if (url != null && url.isNotEmpty) {
       return CircleAvatar(
-        radius: 22,
-        backgroundColor: MyColors.c_C6A34F,
-        child: CircleAvatar(
-          radius: 20,
-          backgroundImage: CachedNetworkImageProvider(url.uniformImageUrl),
-        ),
+        radius: 20,
+        backgroundColor: Colors.grey.shade200,
+        backgroundImage: CachedNetworkImageProvider(url.uniformImageUrl),
       );
     }
     return CircleAvatar(
-      radius: 22,
+      radius: 20,
       backgroundColor: MyColors.c_C6A34F,
       child: Text(
         (post.user?.name ?? 'U')[0].toUpperCase(),
         style: const TextStyle(
           color: Colors.white,
           fontWeight: FontWeight.bold,
-          fontSize: 18,
+          fontSize: 16,
         ),
-      ),
-    );
-  }
-
-  Widget _statItem(IconData icon, int count, BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 16, color: MyColors.c_A6A6A6),
-        SizedBox(width: 4.w),
-        Text(
-          _formatCount(count),
-          style: MyColors.c_A6A6A6.regular12,
-        ),
-      ],
-    );
-  }
-
-  Widget _actionButton(IconData icon, String label, BuildContext context, {Color? color, VoidCallback? onTap}) {
-    final c = color ?? MyColors.c_A6A6A6;
-    return TextButton.icon(
-      onPressed: onTap ?? () {},
-      icon: Icon(icon, size: 18, color: c),
-      label: Text(label, style: MyColors.c_A6A6A6.regular12),
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
       ),
     );
   }
