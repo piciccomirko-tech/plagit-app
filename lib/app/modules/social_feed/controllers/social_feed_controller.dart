@@ -34,10 +34,13 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
     hasError.value = false;
 
     try {
+      print('TOKEN: ${StorageHelper.getToken}');
       final response = await http.get(
         Uri.parse(_baseUrl),
         headers: _headers,
       ).timeout(const Duration(seconds: 15));
+      print('STATUS: ${response.statusCode}');
+      print('BODY: ${response.body}');
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final body = json.decode(response.body);
