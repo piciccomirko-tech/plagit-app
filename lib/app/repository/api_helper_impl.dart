@@ -209,28 +209,11 @@ class ApiHelperImpl extends GetConnect implements ApiHelper {
   EitherModel<LoginResponse> login(
     Login login,
   ) async {
-    final url = '${httpClient.baseUrl}users/login';
-    final body = jsonEncode(login.toJson);
+    Response response = await post("users/login", jsonEncode(login.toJson));
 
-    print('=============== LOGIN API DEBUG =================');
-    print('URL: $url');
-    print('Request body: $body');
-    print('Headers: ${httpClient.defaultContentType}');
-    print('Has token: ${StorageHelper.hasToken}');
-    if (StorageHelper.hasToken) print('Auth: Bearer ${StorageHelper.getToken.substring(0, 20)}...');
-
-    Response response = await post("users/login", body);
-
-    if (response.statusCode == null) response = await post("users/login", body);
-    if (response.statusCode == null) response = await post("users/login", body);
-    if (response.statusCode == null) response = await post("users/login", body);
-
-    print('HTTP Status: ${response.statusCode}');
-    print('Status Text: ${response.statusText}');
-    print('Response headers: ${response.headers}');
-    print('Raw body: ${response.bodyString}');
-    print('Parsed body: ${response.body}');
-    print('=============== LOGIN API DEBUG =================');
+    if (response.statusCode == null) response = await post("users/login", jsonEncode(login.toJson));
+    if (response.statusCode == null) response = await post("users/login", jsonEncode(login.toJson));
+    if (response.statusCode == null) response = await post("users/login", jsonEncode(login.toJson));
 
     return _convert<LoginResponse>(
       response,
