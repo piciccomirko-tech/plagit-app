@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "mh",
-      "version": "3.2.9+111",
+      "version": "3.2.9+118",
       "dependencies": [
         "another_xlider",
         "appsflyer_sdk",
