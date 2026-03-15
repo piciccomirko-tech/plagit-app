@@ -8,7 +8,7 @@ class SplashView extends GetView<SplashController> {
 
   @override
   Widget build(BuildContext context) {
-
+    Get.find<SplashController>();
     StorageHelper.setLanguage = "en";
 
     return WillPopScope(

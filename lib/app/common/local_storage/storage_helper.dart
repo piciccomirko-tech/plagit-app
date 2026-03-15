@@ -13,7 +13,6 @@ class StorageHelper {
   static const String _password = "password";
 
   static String get getLanguage => Storage.getValue<String>(_language) ?? "en";
-      //MyConstantValue.defaultAppLanguage;
   static set setLanguage(String lan) => Storage.saveValue(_language, lan);
 
   static String get getTheme => Storage.getValue<String>(_theme) ?? MyConstantValue.defaultAppTheme;
