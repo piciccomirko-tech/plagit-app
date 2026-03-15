@@ -67,6 +67,7 @@ abstract class Routes {
   static const chatIt = _Paths.chatIt;
   static const addChatUser = _Paths.addChatUser;
   static const policy = _Paths.policy;
+  static const socialFeed = _Paths.socialFeed;
 }
 
 abstract class _Paths {
@@ -137,4 +138,5 @@ abstract class _Paths {
   static const chatIt = '/chat-it';
   static const addChatUser = '/add-chat-user';
   static const policy = '/policy';
+  static const socialFeed = '/social-feed';
 }

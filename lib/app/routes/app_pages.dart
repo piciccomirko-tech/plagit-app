@@ -103,6 +103,8 @@ import '../modules/reset_password/bindings/reset_password_binding.dart';
 import '../modules/reset_password/views/reset_password_view.dart';
 import '../modules/settings/bindings/settings_binding.dart';
 import '../modules/settings/views/settings_view.dart';
+import '../modules/social_feed/bindings/social_feed_binding.dart';
+import '../modules/social_feed/views/social_feed_view.dart';
 import '../modules/splash/bindings/splash_binding.dart';
 import '../modules/splash/views/splash_view.dart';
 import '../modules/onboarding/bindings/onboarding_binding.dart';
@@ -454,6 +456,12 @@ class AppPages {
       name: _Paths.policy,
       page: () => const PolicyView(),
       binding: PolicyBinding(),
+    ),
+    GetPage(
+      name: _Paths.socialFeed,
+      page: () => const SocialFeedView(),
+      binding: SocialFeedBinding(),
+      middlewares: [AuthMiddleware()],
     ),
   ];
 }

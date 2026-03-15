@@ -7,6 +7,7 @@ import 'package:mh/app/common/widgets/custom_badge.dart';
 import 'package:mh/app/common/widgets/custom_feature_box.dart';
 import 'package:mh/app/common/widgets/shimmer_widget.dart';
 import 'package:mh/app/modules/client/client_home/controllers/client_home_controller.dart';
+import 'package:mh/app/routes/app_pages.dart';
 
 class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
   const ClientHomeItemsWidget({super.key});
@@ -141,7 +142,23 @@ class ClientHomeItemsWidget extends GetWidget<ClientHomeController> {
                             ],
                           ))),
                 ],
-              )
+              ),
+              SizedBox(height: 0.02.sh),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomFeatureBox(
+                      height: 0.3.sw,
+                      iconHeight: 50.h,
+                      title: 'Social Feed',
+                      icon: MyAssets.createPost,
+                      onTap: () => Get.toNamed(Routes.socialFeed),
+                    ),
+                  ),
+                  SizedBox(width: 0.04.sw),
+                  const Expanded(child: SizedBox()),
+                ],
+              ),
             ],
           ));
   }
