@@ -1,14 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../common/app_info/app_info.dart';
 import '../../../common/controller/app_controller.dart';
+import '../../../common/local_storage/storage_helper.dart';
 import '../../../common/utils/exports.dart';
 import '../../../common/widgets/custom_dialog.dart';
 import '../../../models/commons.dart';
 import '../../../models/custom_error.dart';
 import '../../../repository/api_helper.dart';
+import '../../../routes/app_pages.dart';
 
 class SplashController extends GetxController {
   BuildContext? context;
@@ -26,51 +29,77 @@ class SplashController extends GetxController {
     Future.delayed(const Duration(seconds: 1), _getCommonData);
   }
 
-  Future<void> _goToNextPage() async {
-    _appController.setTokenFromLocal();
+  void _goToNextPage() {
+    try {
+      if (StorageHelper.hasToken) {
+        _appController.setTokenFromLocal();
+      } else {
+        Get.offAllNamed(Routes.login);
+      }
+    } catch (_) {
+      Get.offAllNamed(Routes.login);
+    }
   }
 
   Future<void> _getCommonData() async {
-    await _apiHelper.commons().then((response) {
+    try {
+      final response = await _apiHelper.commons().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw TimeoutException('Commons API timed out'),
+      );
+
       response.fold((CustomError customError) {
-        Utils.errorDialog(context!, customError..onRetry = _getCommonData);
+        _goToNextPage();
       }, (Commons commons) {
         _appController.setCommons(commons);
 
-        if (commons.appVersion!.first.serverMaintenance!) {
-          CustomDialogue.information(
-            context: context!,
-            title: "Server Maintenance",
-            description: commons.appVersion!.first.serverMaintenanceMsg ?? "We will come back soon",
-            buttonText: MyStrings.exit.tr,
-            onTap: () {
-              Utils.exitApp;
-            },
-          );
-        } else if ((commons.appVersion!.first.updateRequired ?? false) &&
-            (commons.appVersion!.first.appVersion != AppInfo.version)) {
-          CustomDialogue.information(
-            context: context!,
-            title: "${MyStrings.update.tr} ${MyStrings.available.tr}!",
-            description:
-                "${MyStrings.newVersion.tr} (${commons.appVersion!.first.appVersion}) ${MyStrings.updateApp.tr}",
-            buttonText: MyStrings.update.tr,
-            onTap: () {
-              launchApp(
-                  playStoreLink: commons.appVersion?.first.playStoreLink ?? '',
-                  appStoreLink: commons.appVersion?.first.appStoreLink ?? '');
-              /*if ((commons.appVersion!.first.updateRequired ?? false)) {
+        final appVersion = commons.appVersion;
+        if (appVersion == null || appVersion.isEmpty) {
+          _goToNextPage();
+          return;
+        }
+
+        final version = appVersion.first;
+
+        if (version.serverMaintenance == true) {
+          if (context != null) {
+            CustomDialogue.information(
+              context: context!,
+              title: "Server Maintenance",
+              description: version.serverMaintenanceMsg ?? "We will come back soon",
+              buttonText: MyStrings.exit.tr,
+              onTap: () {
                 Utils.exitApp;
-              } else {
-                _goToNextPage();
-              }*/
-            },
-          );
+              },
+            );
+          } else {
+            _goToNextPage();
+          }
+        } else if ((version.updateRequired ?? false) &&
+            (version.appVersion != AppInfo.version)) {
+          if (context != null) {
+            CustomDialogue.information(
+              context: context!,
+              title: "${MyStrings.update.tr} ${MyStrings.available.tr}!",
+              description:
+                  "${MyStrings.newVersion.tr} (${version.appVersion}) ${MyStrings.updateApp.tr}",
+              buttonText: MyStrings.update.tr,
+              onTap: () {
+                launchApp(
+                    playStoreLink: version.playStoreLink ?? '',
+                    appStoreLink: version.appStoreLink ?? '');
+              },
+            );
+          } else {
+            _goToNextPage();
+          }
         } else {
           _goToNextPage();
         }
       });
-    });
+    } catch (_) {
+      _goToNextPage();
+    }
   }
 
   void launchApp({required String playStoreLink, required String appStoreLink}) async {
