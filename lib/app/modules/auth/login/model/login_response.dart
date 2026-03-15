@@ -8,6 +8,7 @@ class LoginResponse {
     this.statusCode,
     this.message,
     this.token,
+    this.refreshToken,
     this.errors,
   });
 
@@ -15,6 +16,7 @@ class LoginResponse {
   final int? statusCode;
   final String? message;
   final String? token;
+  final String? refreshToken;
   final List<ApiErrors>? errors;
 
   factory LoginResponse.fromRawJson(String str) => LoginResponse.fromJson(json.decode(str));
@@ -22,10 +24,17 @@ class LoginResponse {
   String toRawJson() => json.encode(toJson());
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
-    // Token can be at root level or nested inside "data"
-    String? token = json["token"];
-    if (token == null && json["data"] is Map) {
-      token = (json["data"] as Map<String, dynamic>)["token"];
+    String? token;
+    String? refreshToken;
+
+    // Server returns token as an object: {"accessToken": "...", "refreshToken": "..."}
+    if (json["token"] is Map) {
+      final tokenMap = json["token"] as Map<String, dynamic>;
+      token = tokenMap["accessToken"];
+      refreshToken = tokenMap["refreshToken"];
+    } else if (json["token"] is String) {
+      // Fallback: token as a plain string
+      token = json["token"];
     }
 
     return LoginResponse(
@@ -33,6 +42,7 @@ class LoginResponse {
       statusCode: json["statusCode"],
       message: json["message"],
       token: token,
+      refreshToken: refreshToken,
       errors: json["errors"] == null ? [] : List<ApiErrors>.from(json["errors"]!.map((x) => ApiErrors.fromJson(x))),
     );
   }
