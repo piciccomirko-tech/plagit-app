@@ -1,28 +1,29 @@
-import 'package:carousel_slider/carousel_slider.dart' as cs;
+import 'package:carousel_slider/carousel_slider.dart' hide CarouselController;
+import 'package:carousel_slider/carousel_slider.dart' as carousel_slider;
 import 'package:flutter/cupertino.dart';
 import 'package:mh/app/common/utils/exports.dart';
 import 'package:mh/app/models/employees_by_id.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/custom_image_widget.dart';
 import 'package:mh/app/modules/client/employee_details/widgets/custom_video_widget.dart';
 
-class Vlogcs.CarouselSlider extends StatefulWidget {
+class VlogCarouselSlider extends StatefulWidget {
   final List<VlogModel> vlogs;
   final double height;
 
-  const Vlogcs.CarouselSlider({super.key, required this.vlogs, required this.height});
+  const VlogCarouselSlider({super.key, required this.vlogs, required this.height});
 
   @override
-  Vlogcs.CarouselSliderState createState() => Vlogcs.CarouselSliderState();
+  VlogCarouselSliderState createState() => VlogCarouselSliderState();
 }
 
-class Vlogcs.CarouselSliderState extends State<Vlogcs.CarouselSlider> {
-  late cs.CarouselController _carouselController;
+class VlogCarouselSliderState extends State<VlogCarouselSlider> {
+  late carousel_slider.CarouselController _carouselController;
   int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _carouselController = cs.CarouselController();
+    _carouselController = carousel_slider.CarouselController();
   }
 
   @override
@@ -33,7 +34,7 @@ class Vlogcs.CarouselSliderState extends State<Vlogcs.CarouselSlider> {
         children: [
           Stack(
             children: [
-              cs.CarouselSlider.builder(
+              CarouselSlider.builder(
                 carouselController: _carouselController,
                 itemCount: widget.vlogs.length,
                 itemBuilder: (context, index, realIndex) {
@@ -81,14 +82,14 @@ class Vlogcs.CarouselSliderState extends State<Vlogcs.CarouselSlider> {
                     ),
                   );
                 },
-                options: cs.CarouselOptions(
+                options: CarouselOptions(
                   height: widget.height,
                   enableInfiniteScroll: true,
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 15),
                   enlargeCenterPage: true,
                   viewportFraction: 1.0,
-                  onPageChanged: (int index, cs.CarouselPageChangedReason reason) {
+                  onPageChanged: (int index, CarouselPageChangedReason reason) {
                     setState(() {
                       _currentIndex = index;
                     });
@@ -173,7 +174,6 @@ class CircleIndicator extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 4.0),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
-            // shape: index == currentIndex ? BoxShape.rectangle : BoxShape.circle,
             color: index == currentIndex ? selectedColor : color,
           ),
         );
