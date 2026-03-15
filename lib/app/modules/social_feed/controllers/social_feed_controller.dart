@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:mh/app/common/controller/app_controller.dart';
 import 'package:mh/app/common/local_storage/storage_helper.dart';
 import '../models/social_feed_model.dart';
 
@@ -13,7 +14,14 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
   final RxString errorMessage = ''.obs;
 
   final GetConnect _connect = GetConnect();
-  final String _baseUrl = 'http://52.86.43.146:3002/api/v1/social-feed/';
+  final String _baseUrl = 'http://52.86.43.146:3001/api/v1/social-feed/';
+
+  String get _currentUserId => Get.find<AppController>().user.value.userId;
+
+  Map<String, String> get _authHeaders => {
+    'Authorization': 'Bearer ${StorageHelper.getToken}',
+    'Content-Type': 'application/json',
+  };
 
   @override
   void onInit() {
@@ -27,13 +35,9 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
     hasError.value = false;
 
     try {
-      final token = StorageHelper.getToken;
       final response = await _connect.get(
         _baseUrl,
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
+        headers: _authHeaders,
       );
 
       if (response.statusCode == null) {
@@ -61,6 +65,60 @@ class SocialFeedController extends GetxController with GetSingleTickerProviderSt
     }
 
     isLoading.value = false;
+  }
+
+  bool isLikedByMe(SocialPost post) {
+    if (post.likes == null) return false;
+    return post.likes!.any((like) =>
+      (like is String && like == _currentUserId) ||
+      (like is Map && like['_id'] == _currentUserId) ||
+      (like is Map && like['user'] == _currentUserId)
+    );
+  }
+
+  Future<void> likeUnlike(String postId) async {
+    try {
+      await _connect.post(
+        '${_baseUrl}like-unlike',
+        json.encode({'postId': postId}),
+        headers: _authHeaders,
+        contentType: 'application/json',
+      );
+      await fetchPosts();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to like/unlike post');
+    }
+  }
+
+  Future<void> addComment(String postId, String content) async {
+    try {
+      await _connect.post(
+        '${_baseUrl}create-comment',
+        json.encode({'postId': postId, 'content': content}),
+        headers: _authHeaders,
+        contentType: 'application/json',
+      );
+      await fetchPosts();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to add comment');
+    }
+  }
+
+  Future<void> deletePost(String postId) async {
+    try {
+      final response = await _connect.delete(
+        '$_baseUrl$postId',
+        headers: _authHeaders,
+        contentType: 'application/json',
+      );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        posts.removeWhere((p) => p.id == postId);
+      } else {
+        Get.snackbar('Error', 'Failed to delete post');
+      }
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to delete post');
+    }
   }
 
   String timeAgo(DateTime? date) {

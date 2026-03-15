@@ -19,6 +19,8 @@ class SocialPostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final liked = controller.isLikedByMe(post);
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
@@ -148,13 +150,83 @@ class SocialPostCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _actionButton(Icons.thumb_up_outlined, 'Like', context),
-                _actionButton(Icons.comment_outlined, 'Comment', context),
-                _actionButton(Icons.share_outlined, 'Share', context),
+                _actionButton(
+                  liked ? Icons.thumb_up : Icons.thumb_up_outlined,
+                  'Like',
+                  context,
+                  color: liked ? MyColors.c_C6A34F : MyColors.c_A6A6A6,
+                  onTap: () => controller.likeUnlike(post.id!),
+                ),
+                _actionButton(
+                  Icons.comment_outlined,
+                  'Comment',
+                  context,
+                  onTap: () => _showCommentDialog(context),
+                ),
+                _actionButton(
+                  Icons.share_outlined,
+                  'Share',
+                  context,
+                ),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showCommentDialog(BuildContext context) {
+    final textController = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (ctx) => Padding(
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          left: 16,
+          right: 16,
+          top: 16,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Add Comment', style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600)),
+            SizedBox(height: 12.h),
+            TextField(
+              controller: textController,
+              autofocus: true,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Write a comment...',
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  final text = textController.text.trim();
+                  if (text.isNotEmpty && post.id != null) {
+                    Navigator.pop(ctx);
+                    controller.addComment(post.id!, text);
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: MyColors.c_C6A34F,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  padding: EdgeInsets.symmetric(vertical: 12.h),
+                ),
+                child: const Text('Post Comment', style: TextStyle(color: Colors.white)),
+              ),
+            ),
+            SizedBox(height: 16.h),
+          ],
+        ),
       ),
     );
   }
@@ -198,10 +270,11 @@ class SocialPostCard extends StatelessWidget {
     );
   }
 
-  Widget _actionButton(IconData icon, String label, BuildContext context) {
+  Widget _actionButton(IconData icon, String label, BuildContext context, {Color? color, VoidCallback? onTap}) {
+    final c = color ?? MyColors.c_A6A6A6;
     return TextButton.icon(
-      onPressed: () {},
-      icon: Icon(icon, size: 18, color: MyColors.c_A6A6A6),
+      onPressed: onTap ?? () {},
+      icon: Icon(icon, size: 18, color: c),
       label: Text(label, style: MyColors.c_A6A6A6.regular12),
       style: TextButton.styleFrom(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
