@@ -48,3 +48,4 @@ app.*.map.json
 /ios/build/
 ios/Podfile.lock
 *.lock
+assets/dialog_flow_auth.json
