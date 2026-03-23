@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Plagit</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>MH</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>3.2.10</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb483041177413677</string>
+				<string>com.googleusercontent.apps.831689638350-bme9b266v6vnp20295j6poehvm1hrevq</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.invain.mh</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>plagit</string>
+			</array>
+		</dict>
+	</array>
+	<key>CFBundleVersion</key>
+	<string>132</string>
+	<key>FacebookAppID</key>
+	<string>483041177413677</string>
+	<key>FacebookClientToken</key>
+	<string>034fa75127f7524b835b7843d03c3f24</string>
+	<key>FacebookDisplayName</key>
+	<string>Plagit</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>sms</string>
+		<string>tel</string>
+		<string>fbapi</string>
+		<string>fb-messenger-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+		<string>myapp</string>
+	</array>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses Bluetooth to communicate with nearby devices.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We use camera to take user profile photos and Upload their certificate.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>This app requires access to the local network for synchronization and notifications.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need you location for check you are in correct place</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need you location for check you are in correct place</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app does not use the microphone.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save photos and videos to your library for your convenience.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need permission to access your photo library to view and select your photos and videos.</string>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>This app uses notifications to keep you informed about updates and alerts.</string>
+	<key>Transport Sec</key>
+	<string></string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
+	<key>UIFileSharingEnabled</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
+	<key>UIRequiresPersistentWiFi</key>
+	<true/>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<key>io.flutter.embedded_views_preview</key>
+	<string>YES</string>
+</dict>
+</plist>

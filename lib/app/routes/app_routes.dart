@@ -1,0 +1,191 @@
+part of 'app_pages.dart';
+
+abstract class Routes {
+  Routes._();
+
+  static const splash = _Paths.splash;
+
+  static const loginRegisterHints = _Paths.loginRegisterHints;
+  static const login = _Paths.login;
+  static const register = _Paths.register;
+
+  static const adminHome = _Paths.adminHome;
+  static const adminAllClients = _Paths.adminAllClients;
+  static const adminAllEmployees = _Paths.adminAllEmployees;
+  static const adminDashboard = _Paths.adminDashboard;
+  static const adminClientRequest = _Paths.adminClientRequest;
+  static const adminClientRequestPositions = _Paths.adminClientRequestPositions;
+  static const adminClientRequestPositionEmployees =
+      _Paths.adminClientRequestPositionEmployees;
+
+  static const employeeHome = _Paths.employeeHome;
+  static const employeeDashboard = _Paths.employeeDashboard;
+
+  static const clientMyEmployee = _Paths.clientMyEmployee;
+  static const clientDashboard = _Paths.clientDashboard;
+  static const clientPaymentAndInvoice = _Paths.clientPaymentAndInvoice;
+  static const clientShortlisted = _Paths.clientShortlisted;
+  static const clientRequestForEmployee = _Paths.clientRequestForEmployee;
+  static const clientSuggestedEmployees = _Paths.clientSuggestedEmployees;
+
+  static const mhEmployees = _Paths.mhEmployees;
+  static const employeeDetails = _Paths.employeeDetails;
+  static const employeeRegisterSuccess = _Paths.employeeRegisterSuccess;
+  static const termsAndCondition = _Paths.termsAndCondition;
+  static const mhEmployeesById = _Paths.mhEmployeesById;
+  static const clientTermsConditionForHire = _Paths.clientTermsConditionForHire;
+  static const payment = _Paths.paymentForHire;
+  static const hireStatus = _Paths.hireStatus;
+  static const contactUs = _Paths.contactUs;
+  static const blocking = _Paths.blocking;
+
+  static const restaurantLocation = _Paths.restaurantLocation;
+  static const employeeProfile = _Paths.employeeProfile;
+  static const clientEditProfile = _Paths.clientEditProfile;
+  static const clientAccessControl = _Paths.clientAccessControl;
+  static const notifications = _Paths.notifications;
+  static const invoicePdf = _Paths.invoicePdf;
+  static const stripePayment = _Paths.stripePayment;
+  static const employeePaymentHistory = _Paths.employeePaymentHistory;
+  static const calender = _Paths.calender;
+  static const employeeBookedHistory = _Paths.employeeBookedHistory;
+  static const employeeHiredHistory = _Paths.employeeHiredHistory;
+  static const employeeBookedHistoryDetails =
+      _Paths.employeeBookedHistoryDetails;
+  static const settings = _Paths.settings;
+  static const emailInput = _Paths.emailInput;
+  static const otp = _Paths.otp;
+  static const resetPassword = _Paths.resetPassword;
+  static const adminTodaysEmployees = _Paths.adminTodaysEmployees;
+  static const liveLocation = _Paths.liveLocation;
+  static const createJobPost = _Paths.createJobPost;
+  static const jobRequests = _Paths.jobRequests;
+  static const jobPostDetails = _Paths.jobPostDetails;
+  static const cardAdd = _Paths.cardAdd;
+  static const liveChat = _Paths.liveChat;
+  static const chatIt = _Paths.chatIt;
+  static const addChatUser = _Paths.addChatUser;
+  static const policy = _Paths.policy;
+  static const employeeRoot = _Paths.employeeRoot;
+  static const employeeSearch = _Paths.employeeSearch;
+  static const adminSearch = _Paths.adminSearch;
+  static const employeeEditProfile = _Paths.employeeEditProfile;
+  static const employeePlagitPlus = _Paths.employeePlagitPlus;
+  static const createPost = _Paths.createPost;
+  static const updatePost = _Paths.updatePost;
+  static const clientHomePremium = _Paths.clientHomePremium;
+  static const clientPremiumRoot = _Paths.clientPremiumRoot;
+  static const clientProfile = _Paths.clientProfile;
+  static const adminRoot = _Paths.adminRoot;
+  static const mySocialFeeds = _Paths.mySocialFeeds;
+  static const individualSocialFeeds = _Paths.individualSocialFeeds;
+  static const socialPostDetails = _Paths.socialPostDetails;
+  static const aboutUs = _Paths.aboutUs;
+  static const commonJobPosts = _Paths.commonJobPosts;
+  static const commonSearch = _Paths.commonSearch;
+
+  static const clientSavedPost = _Paths.clientSavedPost;
+  static const chatBot = _Paths.chatBot;
+
+  static const location = _Paths.location;
+  static const clientSubscriptionPlans = _Paths.clientSubscriptionPlans;
+  static const language = _Paths.language;
+
+  static const userProfile = _Paths.userProfile;
+}
+
+abstract class _Paths {
+  _Paths._();
+
+  static const splash = '/splash';
+  static const employeeRoot = '/employee-root';
+
+  static const loginRegisterHints = '/login-register-hints';
+  static const login = '/login';
+  static const register = '/register';
+
+  static const adminHome = '/admin-home';
+  static const adminAllClients = '/admin-all-clients';
+  static const adminAllEmployees = '/admin-all-employees';
+  static const adminDashboard = '/admin-dashboard';
+  static const adminClientRequest = '/admin-client-request';
+
+  static const employeeRegisterSuccess = '/employee-register-success';
+  static const employeeHome = '/employee-home';
+  static const employeeDashboard = '/employee-dashboard';
+  static const employeeEditProfile = '/employee-edit-profile';
+  static const clientMyEmployee = '/client-my-employee';
+  static const clientDashboard = '/client-dashboard';
+  static const clientPaymentAndInvoice = '/client-payment-and-invoice';
+  static const clientShortlisted = '/client-shortlisted';
+  static const clientTermsConditionForHire = '/client-terms-condition-for-hire';
+  static const paymentForHire = '/payment-for-hire';
+  static const hireStatus = '/hire-status';
+  static const clientRequestForEmployee = '/client-request-for-employee';
+  static const clientSuggestedEmployees = '/client-suggested-employees';
+  static const clientEditProfile = '/client-edit-profile';
+  static const clientAccessControl = '/client-access-control';
+  static const clientProfile = '/client-profile';
+
+  static const mhEmployees = '/mh-employees';
+  static const employeeDetails = '/employee-details';
+
+  static const termsAndCondition = '/terms-and-condition';
+  static const mhEmployeesById = '/mh-employees-by-id';
+
+  static const contactUs = '/contact-us';
+  static const blocking = '/blocking';
+
+  static const restaurantLocation = '/restaurant-location';
+  static const adminClientRequestPositions = '/admin-client-request-positions';
+  static const adminClientRequestPositionEmployees =
+      '/admin-client-request-position-employees';
+  static const notifications = '/notifications';
+  static const invoicePdf = '/invoice-pdf';
+  static const stripePayment = '/stripe-payment';
+  static const employeePaymentHistory = '/employee-payment-history';
+  static const calender = '/calender';
+  static const employeeBookedHistory = '/employee-booked-history';
+  static const employeeHiredHistory = '/employee-hired-history';
+  static const employeeBookedHistoryDetails =
+      '/employee-booked-history-details';
+  static const settings = '/settings';
+  static const emailInput = '/email-input';
+  static const otp = '/otp';
+  static const resetPassword = '/reset-password';
+  static const adminTodaysEmployees = '/admin-todays-employees';
+  static const liveLocation = '/live-location';
+  static const createJobPost = '/create-job-post';
+  static const jobRequests = '/job-requests';
+  static const jobPostDetails = '/job-post-details';
+  static const cardAdd = '/card-add';
+  static const liveChat = '/live-chat';
+  static const chatIt = '/chat-it';
+  static const addChatUser = '/add-chat-user';
+  static const policy = '/policy';
+  static const employeeSearch = '/employee-search';
+  static const adminSearch = '/admin-search';
+  static const employeeProfile = '/employee-profile';
+  static const employeePlagitPlus = '/employee-plagit-plus';
+  static const createPost = '/create-post';
+  static const updatePost = '/update-post';
+  static const clientHomePremium = '/client-home-premium';
+  static const clientPremiumRoot = '/client-premium-root';
+  static const clientSearch = '/client-search';
+  static const adminRoot = '/admin-root';
+  static const mySocialFeeds = '/my-social_feeds';
+  static const individualSocialFeeds = '/individual-social_feeds';
+  static const socialPostDetails = '/social-post_details';
+  static const aboutUs = '/about-us';
+  static const commonJobPosts = '/common-job-posts';
+  static const commonSearch = '/common-search';
+
+  static const clientSavedPost = '/client-saved-post';
+  static const chatBot = '/chat-bot';
+
+  static const location = '/location';
+  static const clientSubscriptionPlans = '/clientSubscriptionPlans';
+  static const language = '/language';
+
+  static const userProfile = '/user-profile';
+}
