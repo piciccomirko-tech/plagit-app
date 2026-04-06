@@ -32,6 +32,17 @@ class RegisterController extends GetxController implements RegisterInterface {
 
   final AppController appController = Get.find();
 
+  /// Strips the leading flag emoji (e.g. "🇬🇧 United Kingdom" → "United Kingdom")
+  String _stripFlag(String value) {
+    final trimmed = value.trim();
+    // Flag emoji are 4 bytes (2 regional indicators). Skip them + the space.
+    if (trimmed.length > 3 && trimmed.codeUnitAt(0) >= 0xD800) {
+      final spaceIdx = trimmed.indexOf(' ');
+      if (spaceIdx > 0) return trimmed.substring(spaceIdx + 1);
+    }
+    return trimmed;
+  }
+
   /// user type will change when user click on employee or client
   /// or swipe page
   Rx<UserType> userType = UserType.client.obs;
@@ -60,7 +71,7 @@ class RegisterController extends GetxController implements RegisterInterface {
   TextEditingController tecClientConfirmPassword = TextEditingController();
   TextEditingController tecClientCountry = TextEditingController();
 
-  RxString selectedClientCountry = "United Kingdom".obs;
+  RxString selectedClientCountry = "🇬🇧 United Kingdom".obs;
 
   // fetch sources
   Sources? sources;
@@ -83,7 +94,7 @@ class RegisterController extends GetxController implements RegisterInterface {
   TextEditingController tecEmployeeEmail = TextEditingController();
   TextEditingController tecEmployeePhone = TextEditingController();
 
-  RxString selectedEmployeeCountry = "United Kingdom".obs;
+  RxString selectedEmployeeCountry = "🇬🇧 United Kingdom".obs;
 
   // Rx<DateTime> dateOfBirth = DateTime.now().obs;
 
@@ -198,7 +209,7 @@ class RegisterController extends GetxController implements RegisterInterface {
         password: tecClientPassword.text.trim(),
         lat: restaurantLat.toString(),
         long: restaurantLong.toString(),
-        countryName: selectedClientCountry.value);
+        countryName: _stripFlag(selectedClientCountry.value));
 
     CustomLoader.show(context!);
 
@@ -297,7 +308,7 @@ class RegisterController extends GetxController implements RegisterInterface {
         lastName: tecEmployeeLastName.text.trim(),
         email: tecEmployeeEmail.text.trim(),
         phoneNumber: tecEmployeePhone.text.trim(),
-        countryName: selectedEmployeeCountry.value,
+        countryName: _stripFlag(selectedEmployeeCountry.value),
         positionId: Utils.getPositionId(selectedPosition.value.trim()),
         documents: documentString);
 
@@ -580,7 +591,7 @@ class RegisterController extends GetxController implements RegisterInterface {
   Future<void> _getEmployeeExtraField() async {
     employeeExtraFieldDataLoading.value = true;
     Either<CustomError, ExtraFieldModel> responseData =
-        await _apiHelper.getEmployeeExtraField(countryName: selectedEmployeeCountry.value.trim());
+        await _apiHelper.getEmployeeExtraField(countryName: _stripFlag(selectedEmployeeCountry.value));
     employeeExtraFieldDataLoading.value = false;
     responseData.fold((CustomError customError) {
       Utils.errorDialog(context!, customError);

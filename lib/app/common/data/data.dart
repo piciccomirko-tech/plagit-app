@@ -4,6 +4,15 @@ import '../../models/country_code.dart';
 import '../../models/dropdown_item.dart';
 import '../../models/gender.dart';
 
+/// Converts an ISO 3166-1 alpha-2 country code (e.g. "IT") into a flag emoji (e.g. 🇮🇹).
+String flagEmoji(String countryCode) {
+  final code = countryCode.toUpperCase();
+  if (code.length != 2) return '';
+  final first = code.codeUnitAt(0) - 0x41 + 0x1F1E6;
+  final second = code.codeUnitAt(1) - 0x41 + 0x1F1E6;
+  return String.fromCharCode(first) + String.fromCharCode(second);
+}
+
 class Data {
   static final Data _instance = Data._();
 
