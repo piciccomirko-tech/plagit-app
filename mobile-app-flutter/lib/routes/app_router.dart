@@ -82,7 +82,29 @@ import 'package:plagit/features/feed/views/saved_posts_view.dart';
 
 // Admin
 import 'package:plagit/features/admin/views/admin_root_view.dart';
-import 'package:plagit/features/admin/views/super_admin_home_view.dart';
+import 'package:plagit/features/admin/views/admin_shell_view.dart';
+import 'package:plagit/features/admin/views/admin_dashboard_view.dart';
+import 'package:plagit/features/admin/views/admin_candidates_view.dart';
+import 'package:plagit/features/admin/views/admin_candidate_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_businesses_view.dart';
+import 'package:plagit/features/admin/views/admin_business_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_jobs_view.dart';
+import 'package:plagit/features/admin/views/admin_job_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_applications_view.dart';
+import 'package:plagit/features/admin/views/admin_application_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_interviews_view.dart';
+import 'package:plagit/features/admin/views/admin_interview_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_verifications_view.dart';
+import 'package:plagit/features/admin/views/admin_verification_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_moderation_view.dart';
+import 'package:plagit/features/admin/views/admin_moderation_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_subscriptions_view.dart';
+import 'package:plagit/features/admin/views/admin_subscription_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_support_view.dart';
+import 'package:plagit/features/admin/views/admin_support_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_analytics_view.dart';
+import 'package:plagit/features/admin/views/admin_audit_view.dart';
+import 'package:plagit/features/admin/views/admin_audit_detail_view.dart';
 
 class AppRouter {
   AppRouter._();
@@ -104,7 +126,7 @@ class AppRouter {
       GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordView()),
       GoRoute(path: '/business/login', builder: (context, state) => const BusinessLoginView()),
       GoRoute(path: '/business/signup', builder: (context, state) => const BusinessSignupView()),
-      GoRoute(path: '/admin/login', builder: (context, state) => AdminLoginView(onLoginSuccess: () => const AdminRootView())),
+      GoRoute(path: '/admin/login', builder: (context, state) => const AdminLoginView()),
       GoRoute(path: '/admin/change-password', builder: (context, state) => const AdminChangePasswordView()),
 
       // ══════════════════════════════════════════
@@ -204,7 +226,29 @@ class AppRouter {
       // ── Admin ──
       // ══════════════════════════════════════════
       GoRoute(path: '/admin/home', builder: (context, state) => const AdminRootView()),
-      GoRoute(path: '/admin/dashboard', builder: (context, state) => SuperAdminHomeView(onLogout: () {})),
+      GoRoute(path: '/admin/dashboard', builder: (context, state) => const AdminShellView()),
+      GoRoute(path: '/admin/candidates', builder: (context, state) => const AdminCandidatesView()),
+      GoRoute(path: '/admin/candidates/:id', builder: (context, state) => AdminCandidateDetailView(candidateId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/businesses', builder: (context, state) => const AdminBusinessesView()),
+      GoRoute(path: '/admin/businesses/:id', builder: (context, state) => AdminBusinessDetailView(businessId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/jobs', builder: (context, state) => const AdminJobsView()),
+      GoRoute(path: '/admin/jobs/:id', builder: (context, state) => AdminJobDetailView(jobId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/applications', builder: (context, state) => const AdminApplicationsView()),
+      GoRoute(path: '/admin/applications/:id', builder: (context, state) => AdminApplicationDetailView(applicationId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/interviews', builder: (context, state) => const AdminInterviewsView()),
+      GoRoute(path: '/admin/interviews/:id', builder: (context, state) => AdminInterviewDetailView(interviewId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/verifications', builder: (context, state) => const AdminVerificationsView()),
+      GoRoute(path: '/admin/verifications/:id', builder: (context, state) => AdminVerificationDetailView(verificationId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/moderation', builder: (context, state) => const AdminModerationView()),
+      GoRoute(path: '/admin/moderation/:id', builder: (context, state) => AdminModerationDetailView(reportId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/subscriptions', builder: (context, state) => const AdminSubscriptionsView()),
+      GoRoute(path: '/admin/subscriptions/:id', builder: (context, state) => AdminSubscriptionDetailView(subscriptionId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/support', builder: (context, state) => const AdminSupportView()),
+      GoRoute(path: '/admin/support/:id', builder: (context, state) => AdminSupportDetailView(issueId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/analytics', builder: (context, state) => const AdminAnalyticsView()),
+      GoRoute(path: '/admin/audit', builder: (context, state) => const AdminAuditView()),
+      GoRoute(path: '/admin/audit/:id', builder: (context, state) => AdminAuditDetailView(auditId: state.pathParameters['id']!)),
+      GoRoute(path: '/admin/notifications', builder: (context, state) => const AdminShellView()),
     ],
   );
 }

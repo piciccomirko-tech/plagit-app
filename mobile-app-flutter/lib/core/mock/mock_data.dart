@@ -641,4 +641,112 @@ class MockData {
     'Restaurant', 'Bar', 'Hotel', 'Beach Club', 'Cafe', 'Catering',
     'Events', 'Private Dining', 'Bakery', 'Club', 'Other',
   ];
+
+  // ══════════════════════════════════════════
+  // ── ADMIN MOCK DATA ──
+  // ══════════════════════════════════════════
+
+  static const admin = {
+    'name': 'Admin User',
+    'initials': 'AU',
+    'email': 'admin@test.com',
+    'role': 'Super Admin',
+  };
+
+  static const adminStats = {
+    'totalCandidates': 1247,
+    'totalBusinesses': 89,
+    'activeJobs': 34,
+    'applicationsToday': 23,
+    'interviewsThisWeek': 12,
+    'pendingVerifications': 7,
+    'reportedContent': 3,
+    'premiumSubscribers': 156,
+  };
+
+  static const adminCandidates = [
+    {'id': 'ac1', 'name': 'Test Candidate', 'initials': 'TC', 'location': 'London', 'role': 'Waiter', 'status': 'Active', 'completion': 65, 'plan': 'Free', 'verified': 'Unverified', 'email': 'candidate@test.com', 'phone': '+44 7700 900123', 'joined': 'Jan 2026'},
+    {'id': 'ac2', 'name': 'Sarah Johnson', 'initials': 'SJ', 'location': 'Dubai', 'role': 'Bartender', 'status': 'Active', 'completion': 90, 'plan': 'Premium', 'verified': 'Verified', 'email': 'sarah@test.com', 'phone': '+971 50 123 4567', 'joined': 'Dec 2025'},
+    {'id': 'ac3', 'name': 'Marco Rossi', 'initials': 'MR', 'location': 'London', 'role': 'Chef', 'status': 'Suspended', 'completion': 45, 'plan': 'Free', 'verified': 'Unverified', 'email': 'marco@test.com', 'phone': '+44 7700 900456', 'joined': 'Feb 2026'},
+    {'id': 'ac4', 'name': 'Aisha Al-Farsi', 'initials': 'AA', 'location': 'Dubai', 'role': 'Manager', 'status': 'Active', 'completion': 100, 'plan': 'Premium', 'verified': 'Verified', 'email': 'aisha@test.com', 'phone': '+971 55 987 6543', 'joined': 'Nov 2025'},
+    {'id': 'ac5', 'name': 'Tom Baker', 'initials': 'TB', 'location': 'London', 'role': 'Host', 'status': 'Active', 'completion': 75, 'plan': 'Free', 'verified': 'Pending', 'email': 'tom@test.com', 'phone': '+44 7700 900789', 'joined': 'Mar 2026'},
+    {'id': 'ac6', 'name': 'Emma Clarke', 'initials': 'EC', 'location': 'London', 'role': 'Barista', 'status': 'Active', 'completion': 80, 'plan': 'Premium', 'verified': 'Verified', 'email': 'emma@test.com', 'phone': '+44 7700 900012', 'joined': 'Jan 2026'},
+  ];
+
+  static const adminBusinesses = [
+    {'id': 'ab1', 'name': 'The Grand London', 'initials': 'TG', 'category': 'Restaurant', 'location': 'Mayfair, London', 'status': 'Active', 'verified': 'Verified', 'plan': 'Premium', 'activeJobs': 3, 'email': 'info@grandlondon.com', 'size': '50-100', 'joined': 'Oct 2025'},
+    {'id': 'ab2', 'name': 'Nobu Dubai', 'initials': 'ND', 'category': 'Bar/Restaurant', 'location': 'Dubai', 'status': 'Active', 'verified': 'Verified', 'plan': 'Premium', 'activeJobs': 1, 'email': 'hr@nobu.ae', 'size': '100-200', 'joined': 'Nov 2025'},
+    {'id': 'ab3', 'name': 'Sketch London', 'initials': 'SL', 'category': 'Cafe', 'location': 'Mayfair, London', 'status': 'Active', 'verified': 'Unverified', 'plan': 'Free', 'activeJobs': 1, 'email': 'team@sketch.london', 'size': '20-50', 'joined': 'Feb 2026'},
+    {'id': 'ab4', 'name': 'Suspicious Co', 'initials': 'SC', 'category': 'Unknown', 'location': 'N/A', 'status': 'Suspended', 'verified': 'Unverified', 'plan': 'Free', 'activeJobs': 0, 'email': 'contact@suspicious.co', 'size': 'Unknown', 'joined': 'Mar 2026'},
+  ];
+
+  static const adminJobs = [
+    {'id': 'aj1', 'title': 'Waiter', 'business': 'The Grand London', 'businessId': 'ab1', 'status': 'Active', 'applicants': 3, 'featured': true, 'urgent': false, 'flagged': false, 'location': 'London', 'salary': '£14/hr', 'contract': 'Full-time', 'posted': '3 days ago'},
+    {'id': 'aj2', 'title': 'Bartender', 'business': 'Nobu Dubai', 'businessId': 'ab2', 'status': 'Active', 'applicants': 1, 'featured': false, 'urgent': false, 'flagged': false, 'location': 'Dubai', 'salary': '£16/hr', 'contract': 'Full-time', 'posted': '5 days ago'},
+    {'id': 'aj3', 'title': 'Chef', 'business': 'Sketch London', 'businessId': 'ab3', 'status': 'Paused', 'applicants': 0, 'featured': false, 'urgent': false, 'flagged': false, 'location': 'London', 'salary': '£18/hr', 'contract': 'Full-time', 'posted': '1 week ago'},
+    {'id': 'aj4', 'title': 'Host', 'business': 'The Grand London', 'businessId': 'ab1', 'status': 'Active', 'applicants': 2, 'featured': false, 'urgent': true, 'flagged': false, 'location': 'London', 'salary': '£12/hr', 'contract': 'Part-time', 'posted': '1 day ago'},
+    {'id': 'aj5', 'title': 'Manager', 'business': 'Suspicious Co', 'businessId': 'ab4', 'status': 'Flagged', 'applicants': 0, 'featured': false, 'urgent': false, 'flagged': true, 'location': 'N/A', 'salary': '£25/hr', 'contract': 'Full-time', 'posted': '2 days ago'},
+  ];
+
+  static const adminApplications = [
+    {'id': 'aa1', 'candidateName': 'Test Candidate', 'candidateId': 'ac1', 'jobTitle': 'Waiter', 'business': 'The Grand London', 'businessId': 'ab1', 'status': 'Applied', 'date': '2 days ago'},
+    {'id': 'aa2', 'candidateName': 'Sarah Johnson', 'candidateId': 'ac2', 'jobTitle': 'Bartender', 'business': 'Nobu Dubai', 'businessId': 'ab2', 'status': 'Under Review', 'date': '3 days ago'},
+    {'id': 'aa3', 'candidateName': 'Aisha Al-Farsi', 'candidateId': 'ac4', 'jobTitle': 'Waiter', 'business': 'The Grand London', 'businessId': 'ab1', 'status': 'Interview', 'date': '5 days ago'},
+    {'id': 'aa4', 'candidateName': 'Tom Baker', 'candidateId': 'ac5', 'jobTitle': 'Host', 'business': 'The Grand London', 'businessId': 'ab1', 'status': 'Shortlisted', 'date': '1 day ago'},
+    {'id': 'aa5', 'candidateName': 'Emma Clarke', 'candidateId': 'ac6', 'jobTitle': 'Waiter', 'business': 'The Grand London', 'businessId': 'ab1', 'status': 'Rejected', 'date': '1 week ago'},
+    {'id': 'aa6', 'candidateName': 'Marco Rossi', 'candidateId': 'ac3', 'jobTitle': 'Chef', 'business': 'Sketch London', 'businessId': 'ab3', 'status': 'Hired', 'date': '2 weeks ago'},
+  ];
+
+  static const adminInterviews = [
+    {'id': 'ai1', 'candidateName': 'Aisha Al-Farsi', 'candidateId': 'ac4', 'business': 'The Grand London', 'jobTitle': 'Waiter', 'date': 'Sat, Apr 11', 'time': '2:00 PM', 'format': 'Video', 'status': 'Confirmed'},
+    {'id': 'ai2', 'candidateName': 'Tom Baker', 'candidateId': 'ac5', 'business': 'The Grand London', 'jobTitle': 'Host', 'date': 'Mon, Apr 14', 'time': '11:00 AM', 'format': 'In Person', 'status': 'Upcoming'},
+    {'id': 'ai3', 'candidateName': 'Sarah Johnson', 'candidateId': 'ac2', 'business': 'Nobu Dubai', 'jobTitle': 'Bartender', 'date': 'Fri, Apr 4', 'time': '3:00 PM', 'format': 'Video', 'status': 'Completed'},
+    {'id': 'ai4', 'candidateName': 'Emma Clarke', 'candidateId': 'ac6', 'business': 'The Grand London', 'jobTitle': 'Waiter', 'date': 'Wed, Apr 2', 'time': '10:00 AM', 'format': 'Phone', 'status': 'No-Show'},
+  ];
+
+  static const adminVerificationQueue = [
+    {'id': 'av1', 'name': 'Tom Baker', 'type': 'Candidate', 'status': 'Pending', 'submitted': '2 days ago', 'initials': 'TB'},
+    {'id': 'av2', 'name': 'Sketch London', 'type': 'Business', 'status': 'Pending', 'submitted': '1 day ago', 'initials': 'SL'},
+    {'id': 'av3', 'name': 'Marco Rossi', 'type': 'Candidate', 'status': 'Pending', 'submitted': '3 days ago', 'initials': 'MR'},
+  ];
+
+  static const adminModerationReports = [
+    {'id': 'am1', 'title': 'Suspicious job posting', 'entity': 'Suspicious Co', 'entityType': 'Job', 'priority': 'High', 'status': 'Open', 'date': '1 day ago', 'description': 'This job posting appears to be fake. No real business address, vague job description, and requesting personal banking details from applicants.'},
+    {'id': 'am2', 'title': 'Inappropriate message content', 'entity': 'User #445', 'entityType': 'Message', 'priority': 'Medium', 'status': 'Open', 'date': '2 days ago', 'description': 'User sent inappropriate and harassing messages to multiple candidates. Screenshots attached by reporter.'},
+    {'id': 'am3', 'title': 'Duplicate business profile', 'entity': 'London Cafe', 'entityType': 'Business', 'priority': 'Low', 'status': 'Resolved', 'date': '5 days ago', 'description': 'Duplicate business profile created, possibly to circumvent free plan job posting limits.'},
+  ];
+
+  static const adminSupportIssues = [
+    {'id': 'as1', 'title': "Can't upload CV", 'userName': 'Test Candidate', 'userType': 'Candidate', 'status': 'Open', 'priority': 'Medium', 'created': '1 day ago', 'updated': '1 day ago', 'description': 'I keep getting an error when trying to upload my CV in PDF format. The file is 2MB which should be within limits.'},
+    {'id': 'as2', 'title': 'Payment not processed', 'userName': 'The Grand London', 'userType': 'Business', 'status': 'In Review', 'priority': 'High', 'created': '2 days ago', 'updated': '1 day ago', 'description': 'Our premium subscription payment was charged but the account still shows as Free plan. Transaction ID: TXN-2026-0408.'},
+    {'id': 'as3', 'title': 'Account suspended wrongly', 'userName': 'Marco Rossi', 'userType': 'Candidate', 'status': 'Waiting', 'priority': 'High', 'created': '3 days ago', 'updated': '2 days ago', 'description': 'My account was suspended without explanation. I have not violated any terms of service and need this resolved urgently for job applications.'},
+  ];
+
+  static const adminSubscriptions = [
+    {'id': 'asub1', 'userName': 'Sarah Johnson', 'userType': 'Candidate', 'plan': 'Candidate Premium', 'price': '£9.99/month', 'startDate': 'Jan 15, 2026', 'renewalDate': 'Apr 15, 2026', 'status': 'Active'},
+    {'id': 'asub2', 'userName': 'The Grand London', 'userType': 'Business', 'plan': 'Business Pro', 'price': '£59.99/month', 'startDate': 'Nov 1, 2025', 'renewalDate': 'May 1, 2026', 'status': 'Active'},
+    {'id': 'asub3', 'userName': 'Aisha Al-Farsi', 'userType': 'Candidate', 'plan': 'Candidate Premium', 'price': '£89.99/year', 'startDate': 'Dec 1, 2025', 'renewalDate': 'Dec 1, 2026', 'status': 'Active'},
+    {'id': 'asub4', 'userName': 'Nobu Dubai', 'userType': 'Business', 'plan': 'Business Premium', 'price': '£499/year', 'startDate': 'Oct 1, 2025', 'renewalDate': 'Oct 1, 2026', 'status': 'Active'},
+    {'id': 'asub5', 'userName': 'Emma Clarke', 'userType': 'Candidate', 'plan': 'Candidate Premium', 'price': '£9.99/month', 'startDate': 'Mar 1, 2026', 'renewalDate': 'Apr 1, 2026', 'status': 'Expired'},
+    {'id': 'asub6', 'userName': 'Test Candidate', 'userType': 'Candidate', 'plan': 'Candidate Premium', 'price': '£9.99/month', 'startDate': 'Feb 1, 2026', 'renewalDate': 'Mar 1, 2026', 'status': 'Cancelled'},
+  ];
+
+  static const adminAuditLog = [
+    {'id': 'al1', 'admin': 'Admin User', 'action': 'Verified', 'target': 'Sarah Johnson', 'targetType': 'Candidate', 'timestamp': '2 hours ago', 'reason': 'ID verified successfully'},
+    {'id': 'al2', 'admin': 'Admin User', 'action': 'Suspended', 'target': 'Marco Rossi', 'targetType': 'Candidate', 'timestamp': '5 hours ago', 'reason': 'Multiple complaints from businesses'},
+    {'id': 'al3', 'admin': 'Admin User', 'action': 'Featured', 'target': 'Waiter at The Grand London', 'targetType': 'Job', 'timestamp': '1 day ago', 'reason': 'Premium employer feature request'},
+    {'id': 'al4', 'admin': 'Admin User', 'action': 'Suspended', 'target': 'Suspicious Co', 'targetType': 'Business', 'timestamp': '1 day ago', 'reason': 'Fake business profile suspected'},
+    {'id': 'al5', 'admin': 'Admin User', 'action': 'Verified', 'target': 'Nobu Dubai', 'targetType': 'Business', 'timestamp': '2 days ago', 'reason': 'Trade license verified'},
+    {'id': 'al6', 'admin': 'Admin User', 'action': 'Override', 'target': 'Application #aa3', 'targetType': 'Application', 'timestamp': '3 days ago', 'reason': 'Status corrected per business request'},
+    {'id': 'al7', 'admin': 'Admin User', 'action': 'Resolved', 'target': 'Report: Duplicate business', 'targetType': 'Report', 'timestamp': '5 days ago', 'reason': 'Duplicate removed, original kept'},
+    {'id': 'al8', 'admin': 'Admin User', 'action': 'Verified', 'target': 'Emma Clarke', 'targetType': 'Candidate', 'timestamp': '1 week ago', 'reason': 'ID and certifications verified'},
+  ];
+
+  static const adminRecentActivity = [
+    {'icon': 'person_add', 'color': 'green', 'text': 'New candidate registered: Sarah Johnson', 'time': '5min ago'},
+    {'icon': 'work', 'color': 'teal', 'text': 'New job posted: Waiter at The Grand', 'time': '12min ago'},
+    {'icon': 'verified', 'color': 'amber', 'text': 'Verification request: Tom Baker', 'time': '30min ago'},
+    {'icon': 'flag', 'color': 'red', 'text': 'Content reported: Suspicious Co job', 'time': '1hr ago'},
+    {'icon': 'star', 'color': 'purple', 'text': 'Premium subscription: Aisha Al-Farsi', 'time': '2hr ago'},
+  ];
 }

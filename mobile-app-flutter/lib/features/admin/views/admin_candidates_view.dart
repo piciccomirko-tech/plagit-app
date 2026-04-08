@@ -1,61 +1,228 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
-import 'package:plagit/features/admin/views/admin_candidate_detail_view.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/status_badge.dart';
 
 class AdminCandidatesView extends StatefulWidget {
   const AdminCandidatesView({super.key});
-  @override State<AdminCandidatesView> createState() => _AdminCandidatesViewState();
+  @override
+  State<AdminCandidatesView> createState() => _AdminCandidatesViewState();
 }
 
 class _AdminCandidatesViewState extends State<AdminCandidatesView> {
-  bool _showSearch = false;
-  String _searchText = '';
-  String _selectedFilter = 'All';
-  final _filters = ['All', 'Verified', 'Pending Review', 'Suspended', 'New'];
+  String _search = '';
+  String _filter = 'All';
+  final _filters = ['All', 'Active', 'Suspended', 'Verified', 'Premium'];
 
-  final _candidates = [
-    _Candidate('Elena Rossi', 'ER', 0.52, 'Executive Chef', 'London, UK', 'Full-time', '8 years', 'Italian, English', 'Verified', 'Active since Jan 2025', 245),
-    _Candidate('Marco Bianchi', 'MB', 0.35, 'Sommelier', 'Milan, Italy', 'Full-time', '5 years', 'Italian, English, French', 'Verified', 'Active since Feb 2025', 132),
-    _Candidate('Sofia Andersen', 'SA', 0.72, 'Front Desk Manager', 'Dubai, UAE', 'Full-time', '3 years', 'English, Arabic', 'Pending Review', 'Joined Mar 2026', 0),
-    _Candidate('Ahmed Al-Rashid', 'AA', 0.15, 'Barista', 'Dubai, UAE', 'Part-time', '2 years', 'Arabic, English', 'New', 'Joined today', 0),
-    _Candidate('Liam O\'Brien', 'LO', 0.88, 'Concierge', 'London, UK', 'Full-time', '6 years', 'English, German', 'Suspended', 'Suspended Mar 2026', 89),
-  ];
-
-  List<_Candidate> get _filtered {
-    var list = _candidates.toList();
-    if (_selectedFilter != 'All') list = list.where((c) => c.status == _selectedFilter).toList();
-    if (_searchText.isNotEmpty) list = list.where((c) => c.name.toLowerCase().contains(_searchText.toLowerCase()) || c.role.toLowerCase().contains(_searchText.toLowerCase())).toList();
+  List<Map<String, dynamic>> get _filtered {
+    var list = MockData.adminCandidates.toList();
+    if (_filter == 'Active') {
+      list = list.where((c) => c['status'] == 'Active').toList();
+    } else if (_filter == 'Suspended') {
+      list = list.where((c) => c['status'] == 'Suspended').toList();
+    } else if (_filter == 'Verified') {
+      list = list.where((c) => c['verified'] == 'Verified').toList();
+    } else if (_filter == 'Premium') {
+      list = list.where((c) => c['plan'] == 'Premium').toList();
+    }
+    if (_search.isNotEmpty) {
+      final q = _search.toLowerCase();
+      list = list
+          .where((c) =>
+              (c['name'] as String).toLowerCase().contains(q) ||
+              (c['role'] as String).toLowerCase().contains(q) ||
+              (c['location'] as String).toLowerCase().contains(q))
+          .toList();
+    }
     return list;
   }
 
-  int _countFor(String f) => f == 'All' ? _candidates.length : _candidates.where((c) => c.status == f).count;
-
   @override
   Widget build(BuildContext context) {
+    final results = _filtered;
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
+          onPressed: () => context.pop(),
+        ),
+        title: Row(
           children: [
-            AdminTopBar(title: 'Candidates', onBack: () => Navigator.pop(context), trailing: GestureDetector(
-              onTap: () => setState(() { _showSearch = !_showSearch; if (!_showSearch) _searchText = ''; }),
-              child: Icon(_showSearch ? Icons.close : Icons.search, size: 22, color: _showSearch ? AppColors.teal : AppColors.charcoal),
-            )),
-            if (_showSearch) AdminSearchBar(hint: 'Search by name, role, or location...', text: _searchText, onChanged: (v) => setState(() => _searchText = v), onClear: () => setState(() => _searchText = '')),
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.xs),
-              child: AdminFilterChips(filters: _filters, selected: _selectedFilter, onSelected: (f) => setState(() => _selectedFilter = f), counts: {for (var f in _filters) f: _countFor(f)}),
+            const Text('Candidates',
+                style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.charcoal)),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(
+                color: AppColors.teal.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: const Text('1,247',
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.teal)),
             ),
-            Expanded(
-              child: _filtered.isEmpty
-                ? AdminEmptyState(icon: Icons.people, title: _searchText.isNotEmpty ? 'No results for "$_searchText"' : 'No candidates found', subtitle: 'Try adjusting your filters or search.', onShowAll: () => setState(() { _selectedFilter = 'All'; _searchText = ''; }))
-                : ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.sectionGap, AppSpacing.xl, AppSpacing.xxxl),
-                    itemCount: _filtered.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.lg),
-                    itemBuilder: (_, i) => _candidateCard(_filtered[i]),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          // Search bar
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+            child: TextField(
+              onChanged: (v) => setState(() => _search = v),
+              decoration: InputDecoration(
+                hintText: 'Search candidates...',
+                hintStyle:
+                    const TextStyle(fontSize: 14, color: AppColors.tertiary),
+                prefixIcon: const Icon(Icons.search,
+                    size: 20, color: AppColors.tertiary),
+                filled: true,
+                fillColor: AppColors.background,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none),
+              ),
+            ),
+          ),
+          // Filter chips
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: _filters.map((f) {
+                final sel = _filter == f;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: GestureDetector(
+                    onTap: () => setState(() => _filter = f),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 7),
+                      decoration: BoxDecoration(
+                        color: sel
+                            ? AppColors.teal
+                            : AppColors.teal.withValues(alpha: 0.08),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(f,
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: sel ? Colors.white : AppColors.teal)),
+                    ),
                   ),
+                );
+              }).toList(),
+            ),
+          ),
+          // List
+          Expanded(
+            child: results.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.people_outline,
+                            size: 48, color: AppColors.tertiary),
+                        const SizedBox(height: 12),
+                        const Text('No candidates found',
+                            style: TextStyle(
+                                fontSize: 15, color: AppColors.secondary)),
+                      ],
+                    ),
+                  )
+                : ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+                    itemCount: results.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 10),
+                    itemBuilder: (_, i) => _candidateCard(results[i]),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _candidateCard(Map<String, dynamic> c) {
+    final verified = c['verified'] as String;
+    final plan = c['plan'] as String;
+    return GestureDetector(
+      onTap: () => context.push('/admin/candidates/${c['id']}'),
+      child: Container(
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [AppColors.cardShadow],
+        ),
+        child: Row(
+          children: [
+            // Avatar
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.teal.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              alignment: Alignment.center,
+              child: Text(c['initials'] as String,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.teal)),
+            ),
+            const SizedBox(width: 12),
+            // Info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(c['name'] as String,
+                      style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.charcoal)),
+                  const SizedBox(height: 2),
+                  Text(c['role'] as String,
+                      style: const TextStyle(
+                          fontSize: 12, color: AppColors.secondary)),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on_outlined,
+                          size: 11, color: AppColors.tertiary),
+                      const SizedBox(width: 2),
+                      Text(c['location'] as String,
+                          style: const TextStyle(
+                              fontSize: 11, color: AppColors.tertiary)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            // Right badges
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                StatusBadge(status: c['status'] as String),
+                const SizedBox(height: 4),
+                _verifiedBadge(verified),
+                const SizedBox(height: 4),
+                _planBadge(plan),
+              ],
             ),
           ],
         ),
@@ -63,86 +230,46 @@ class _AdminCandidatesViewState extends State<AdminCandidatesView> {
     );
   }
 
-  Widget _candidateCard(_Candidate c) {
-    final statusColor = c.status == 'Verified' ? AppColors.online : c.status == 'Pending Review' ? AppColors.amber : c.status == 'Suspended' ? AppColors.urgent : AppColors.teal;
+  Widget _verifiedBadge(String verified) {
+    IconData icon;
+    Color color;
+    if (verified == 'Verified') {
+      icon = Icons.check_circle;
+      color = AppColors.teal;
+    } else if (verified == 'Pending') {
+      icon = Icons.access_time;
+      color = AppColors.amber;
+    } else {
+      icon = Icons.cancel_outlined;
+      color = AppColors.secondary;
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 12, color: color),
+        const SizedBox(width: 3),
+        Text(verified,
+            style: TextStyle(
+                fontSize: 10, fontWeight: FontWeight.w600, color: color)),
+      ],
+    );
+  }
+
+  Widget _planBadge(String plan) {
+    final isPremium = plan == 'Premium';
     return Container(
-      decoration: BoxDecoration(color: AppColors.cardBackground, borderRadius: BorderRadius.circular(AppRadius.xl), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 0),
-            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              AvatarCircle(initials: c.initials, hue: c.hue, verified: c.status == 'Verified'),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Flexible(child: Text(c.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal))),
-                  const SizedBox(width: AppSpacing.sm),
-                  StatusPill(text: c.status, color: statusColor),
-                ]),
-                const SizedBox(height: AppSpacing.xs),
-                Row(children: [
-                  Expanded(child: Text('${c.role} · ${c.location}', style: const TextStyle(fontSize: 13, color: AppColors.secondary))),
-                  if (c.jobType.isNotEmpty) StatusPill(text: c.jobType, color: AppColors.teal),
-                ]),
-                const SizedBox(height: AppSpacing.xs),
-                Row(children: [
-                  Text(c.experience, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
-                  const Text(' · ', style: TextStyle(color: AppColors.tertiary)),
-                  Expanded(child: Text(c.languages, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                ]),
-              ])),
-            ]),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.sm, AppSpacing.xl, 0),
-            child: Row(children: [
-              Text(c.activeSince, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
-              if (c.profileViews > 0) ...[const SizedBox(width: AppSpacing.md), Icon(Icons.visibility, size: 10, color: AppColors.tertiary), const SizedBox(width: 3), Text('${c.profileViews} views', style: const TextStyle(fontSize: 10, color: AppColors.tertiary))],
-            ]),
-          ),
-          const Padding(padding: EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, 0), child: Divider(height: 1, color: AppColors.divider)),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.md, AppSpacing.xl, AppSpacing.xl),
-            child: Row(children: [
-              Expanded(child: _actionBtn('View Profile', AppColors.teal, Colors.white, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminCandidateDetailView())))),
-              const SizedBox(width: AppSpacing.md),
-              if (c.status == 'Verified') Expanded(child: _actionBtn('Suspend', AppColors.urgent, AppColors.urgent, () {}, filled: false))
-              else if (c.status == 'Suspended') Expanded(child: _actionBtn('Activate', AppColors.online, AppColors.online, () {}, filled: false))
-              else Expanded(child: _actionBtn('Verify', AppColors.teal, AppColors.teal, () {}, filled: false)),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: _actionBtn('Review', AppColors.teal, AppColors.teal, () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdminCandidateDetailView())), filled: false)),
-            ]),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: isPremium
+            ? AppColors.purple.withValues(alpha: 0.10)
+            : AppColors.secondary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(100),
       ),
+      child: Text(plan,
+          style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: isPremium ? AppColors.purple : AppColors.secondary)),
     );
   }
-
-  Widget _actionBtn(String text, Color bg, Color fg, VoidCallback onTap, {bool filled = true}) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: filled ? bg : bg.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(AppRadius.full),
-        ),
-        alignment: Alignment.center,
-        child: Text(text, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: filled ? fg : bg)),
-      ),
-    );
-  }
-}
-
-extension _IterableExt<T> on Iterable<T> {
-  int get count => length;
-}
-
-class _Candidate {
-  final String name, initials, role, location, jobType, experience, languages, status, activeSince;
-  final double hue;
-  final int profileViews;
-  _Candidate(this.name, this.initials, this.hue, this.role, this.location, this.jobType, this.experience, this.languages, this.status, this.activeSince, this.profileViews);
 }

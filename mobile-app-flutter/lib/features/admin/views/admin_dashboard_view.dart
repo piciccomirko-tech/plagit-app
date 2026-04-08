@@ -1,82 +1,490 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
 
-/// Admin Dashboard -- Platform Control Center with KPIs, activity, and funnel views.
-class AdminDashboardView extends StatefulWidget {
+class AdminDashboardView extends StatelessWidget {
   const AdminDashboardView({super.key});
-  @override
-  State<AdminDashboardView> createState() => _AdminDashboardViewState();
-}
 
-class _AdminDashboardViewState extends State<AdminDashboardView> {
-  bool _showSearch = false;
-  String _searchText = '';
-  String _selectedRange = 'Today';
-  final _dateRanges = ['Today', '7 Days', '30 Days', '90 Days', 'Year'];
+  String _greeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  }
+
+  Color _activityColor(String color) {
+    switch (color) {
+      case 'green':
+        return AppColors.green;
+      case 'teal':
+        return AppColors.teal;
+      case 'amber':
+        return AppColors.amber;
+      case 'red':
+        return AppColors.red;
+      case 'purple':
+        return AppColors.purple;
+      default:
+        return AppColors.secondary;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final stats = MockData.adminStats;
+    final activities = MockData.adminRecentActivity;
+    final issues = MockData.adminSupportIssues;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 32),
           children: [
-            AdminTopBar(
-              title: 'Admin Dashboard',
-              subtitle: 'Super Admin',
-              onBack: () => Navigator.of(context).pop(),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+            // ── HEADER ──
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                color: AppColors.navy,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () => setState(() { _showSearch = !_showSearch; if (!_showSearch) _searchText = ''; }),
-                    child: Icon(_showSearch ? Icons.close : Icons.search, size: 22, color: AppColors.charcoal),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: const Text(
+                      'AU',
+                      style: TextStyle(
+                        color: AppColors.navy,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
                   ),
-                  const SizedBox(width: AppSpacing.lg),
-                  Stack(
-                    clipBehavior: Clip.none,
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Admin Portal',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        Text(
+                          '${_greeting()}, Admin',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => context.push('/admin/notifications'),
+                    child: const Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                      size: 26,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── STATS GRID ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Column(
+                children: [
+                  Row(
                     children: [
-                      const Icon(Icons.notifications_outlined, size: 22, color: AppColors.charcoal),
-                      Positioned(right: -2, top: -2, child: Container(width: 7, height: 7, decoration: const BoxDecoration(color: AppColors.urgent, shape: BoxShape.circle))),
+                      Expanded(
+                        child: _StatCard(
+                          icon: Icons.person,
+                          iconBg: AppColors.teal,
+                          value: '${stats['totalCandidates']}',
+                          label: 'Candidates',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _StatCard(
+                          icon: Icons.business,
+                          iconBg: AppColors.purple,
+                          value: '${stats['totalBusinesses']}',
+                          label: 'Businesses',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _StatCard(
+                          icon: Icons.work,
+                          iconBg: AppColors.amber,
+                          value: '${stats['activeJobs']}',
+                          label: 'Active Jobs',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _StatCard(
+                          icon: Icons.description,
+                          iconBg: AppColors.green,
+                          value: '${stats['applicationsToday']}',
+                          label: 'Applications Today',
+                        ),
+                      ),
                     ],
                   ),
                 ],
               ),
             ),
-            if (_showSearch) AdminSearchBar(hint: 'Search users, jobs, businesses...', text: _searchText, onChanged: (v) => setState(() => _searchText = v), onClear: () => setState(() => _searchText = '')),
-            Expanded(
-              child: SingleChildScrollView(
+
+            // ── ALERT CARDS ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Column(
+                children: [
+                  // Pending Verifications
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: const Border(
+                        left: BorderSide(color: AppColors.amber, width: 3),
+                      ),
+                      boxShadow: [AppColors.cardShadow],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '\u26A0 ${stats['pendingVerifications']} Pending Verifications',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: AppColors.charcoal,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Review and approve verifications',
+                                style: TextStyle(
+                                  color: AppColors.secondary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => context.push('/admin/verifications'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.amber.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'Review Now',
+                              style: TextStyle(
+                                color: AppColors.amber,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  // Reported Content
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: const Border(
+                        left: BorderSide(color: AppColors.red, width: 3),
+                      ),
+                      boxShadow: [AppColors.cardShadow],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '\uD83D\uDEA8 ${stats['reportedContent']} Reports Need Review',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: AppColors.charcoal,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              const Text(
+                                'Flagged content requiring moderation',
+                                style: TextStyle(
+                                  color: AppColors.secondary,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => context.push('/admin/moderation'),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColors.red.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Text(
+                              'Review Reports',
+                              style: TextStyle(
+                                color: AppColors.red,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── RECENT ACTIVITY ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [AppColors.cardShadow],
+                ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: AppSpacing.md),
-                    _dateRangeFilter(),
-                    const SizedBox(height: AppSpacing.lg),
-                    _primaryKPIs(),
-                    const SizedBox(height: AppSpacing.md),
-                    _secondaryKPIs(),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _needsAttention(),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _recentActivity(),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Users Overview', Icons.people, _usersContent()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Jobs Health', Icons.work, _jobsHealth()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Applications Funnel', Icons.description, _appsFunnel()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Interviews', Icons.calendar_today, _interviewsContent()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Reports & Moderation', Icons.flag, _reportsContent()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Community', Icons.chat_bubble, _communityContent()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _dashboardSection('Billing & Subscriptions', Icons.credit_card, _billingContent()),
-                    const SizedBox(height: AppSpacing.sectionGap),
-                    _quickActions(),
-                    const SizedBox(height: AppSpacing.xxxl),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Recent Activity',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppColors.charcoal,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: const Text(
+                            'View All',
+                            style: TextStyle(
+                              color: AppColors.teal,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 14),
+                    ...List.generate(activities.length, (i) {
+                      final a = activities[i];
+                      return Column(
+                        children: [
+                          if (i > 0) const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: _activityColor(a['color'] as String),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  a['text'] as String,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.charcoal,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                a['time'] as String,
+                                style: const TextStyle(
+                                  color: AppColors.secondary,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+
+            // ── QUICK STATS ROW ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _MiniStatCard(
+                      icon: Icons.calendar_today,
+                      iconColor: AppColors.teal,
+                      value: '${stats['interviewsThisWeek']}',
+                      label: 'Interviews',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _MiniStatCard(
+                      icon: Icons.star,
+                      iconColor: AppColors.amber,
+                      value: '${stats['premiumSubscribers']}',
+                      label: 'Premium',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _MiniStatCard(
+                      icon: Icons.help_outline,
+                      iconColor: AppColors.red,
+                      value: '${MockData.adminSupportIssues.length}',
+                      label: 'Support',
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── SUPPORT PREVIEW ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [AppColors.cardShadow],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          'Open Support Issues',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: AppColors.charcoal,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => context.push('/admin/support'),
+                          child: const Text(
+                            'View All',
+                            style: TextStyle(
+                              color: AppColors.teal,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ...List.generate(issues.length, (i) {
+                      final issue = issues[i];
+                      return Column(
+                        children: [
+                          if (i > 0)
+                            const Divider(color: AppColors.divider, height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      issue['title'] as String,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: AppColors.charcoal,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      issue['userName'] as String,
+                                      style: const TextStyle(
+                                        color: AppColors.secondary,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  _StatusBadge(status: issue['status'] as String),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    issue['created'] as String,
+                                    style: const TextStyle(
+                                      color: AppColors.secondary,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -86,248 +494,153 @@ class _AdminDashboardViewState extends State<AdminDashboardView> {
       ),
     );
   }
+}
 
-  Widget _dateRangeFilter() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Row(
-        children: _dateRanges.map((r) {
-          final active = _selectedRange == r;
-          return Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.sm),
-            child: GestureDetector(
-              onTap: () => setState(() => _selectedRange = r),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-                decoration: BoxDecoration(
-                  color: active ? AppColors.teal : AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppRadius.full),
-                  border: Border.all(color: active ? Colors.transparent : AppColors.border, width: 0.5),
-                ),
-                child: Text(r, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: active ? Colors.white : AppColors.secondary)),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
+// ── Stat Card Widget ──
+class _StatCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconBg;
+  final String value;
+  final String label;
 
-  Widget _primaryKPIs() {
-    final kpis = [
-      ('1,247', 'Total Users', '+8%', Icons.people, AppColors.teal),
-      ('89', 'Active Jobs', '3 need review', Icons.work, AppColors.indigo),
-      ('24', 'Applications Today', '+22%', Icons.description, AppColors.amber),
-      ('8', 'Interviews Scheduled', '2 pending', Icons.calendar_today, AppColors.online),
-    ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: GridView.count(
-        crossAxisCount: 2, mainAxisSpacing: AppSpacing.md, crossAxisSpacing: AppSpacing.md, childAspectRatio: 1.4, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-        children: kpis.map((k) => _kpiCard(k.$1, k.$2, k.$3, k.$4, k.$5)).toList(),
-      ),
-    );
-  }
+  const _StatCard({
+    required this.icon,
+    required this.iconBg,
+    required this.value,
+    required this.label,
+  });
 
-  Widget _kpiCard(String number, String label, String insight, IconData icon, Color color) {
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
-      decoration: BoxDecoration(color: AppColors.cardBackground, borderRadius: BorderRadius.circular(AppRadius.lg), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [AppColors.cardShadow],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Container(width: 30, height: 30, decoration: BoxDecoration(color: color.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(AppRadius.sm)), child: Icon(icon, size: 15, color: color)),
-            const Spacer(),
-            Text(insight, style: TextStyle(fontSize: 10, color: color)),
-          ]),
-          const SizedBox(height: AppSpacing.sm),
-          Text(number, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
-        ],
-      ),
-    );
-  }
-
-  Widget _secondaryKPIs() {
-    final items = [('12', 'New Businesses', AppColors.indigo), ('28', 'New Candidates', AppColors.teal), ('3', 'Open Reports', AppColors.urgent), ('6', 'Active Plans', AppColors.online)];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: GridView.count(
-        crossAxisCount: 2, mainAxisSpacing: AppSpacing.md, crossAxisSpacing: AppSpacing.md, childAspectRatio: 3.2, shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-        children: items.map((i) => Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
-          child: Row(children: [
-            Text(i.$1, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: i.$3)),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(child: Text(i.$2, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 1, overflow: TextOverflow.ellipsis)),
-            const Icon(Icons.chevron_right, size: 12, color: AppColors.tertiary),
-          ]),
-        )).toList(),
-      ),
-    );
-  }
-
-  Widget _needsAttention() {
-    final items = [
-      (Icons.flag, AppColors.urgent, '2 high-priority reports', 'High'),
-      (Icons.work, AppColors.amber, '5 jobs with no applicants', 'Review'),
-      (Icons.business, AppColors.amber, '1 business pending verification', 'Review'),
-      (Icons.calendar_today, AppColors.indigo, '3 interviews pending confirmation', 'Action'),
-      (Icons.credit_card, AppColors.urgent, '2 failed payments', 'Urgent'),
-    ];
-    return AdminCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            const Text('Needs Attention', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-            const SizedBox(width: AppSpacing.sm),
-            Container(width: 20, height: 20, decoration: const BoxDecoration(color: AppColors.urgent, shape: BoxShape.circle), alignment: Alignment.center, child: const Text('7', style: TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold))),
-          ]),
-          const SizedBox(height: AppSpacing.lg),
-          ...items.asMap().entries.map((e) {
-            final i = e.value;
-            return Column(children: [
-              if (e.key > 0) Padding(padding: const EdgeInsets.only(left: 36), child: const Divider(height: 1, color: AppColors.divider)),
-              Padding(padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2), child: Row(children: [
-                Container(width: 24, height: 24, decoration: BoxDecoration(color: i.$2.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(AppRadius.sm)), child: Icon(i.$1, size: 12, color: i.$2)),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(child: Text(i.$3, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                StatusPill(text: i.$4, color: i.$4 == 'High' || i.$4 == 'Urgent' ? AppColors.urgent : AppColors.amber),
-                const SizedBox(width: AppSpacing.sm),
-                const Icon(Icons.chevron_right, size: 12, color: AppColors.tertiary),
-              ])),
-            ]);
-          }),
-        ],
-      ),
-    );
-  }
-
-  Widget _recentActivity() {
-    final items = [
-      (AppColors.online, 'Business verified - The Ritz London', '2m ago'),
-      (AppColors.teal, 'Candidate verified - Elena Rossi', '15m ago'),
-      (AppColors.urgent, 'Report resolved - Spam removed', '32m ago'),
-      (AppColors.indigo, 'Job approved - Senior Chef at Nobu', '1h ago'),
-      (AppColors.amber, 'Account suspended - Suspicious activity', '2h ago'),
-    ];
-    return AdminCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(children: [
-            const Text('Recent Activity', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-            const SizedBox(width: AppSpacing.sm),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
-              decoration: BoxDecoration(color: AppColors.online.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(AppRadius.full)),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                Container(width: 6, height: 6, decoration: const BoxDecoration(color: AppColors.online, shape: BoxShape.circle)),
-                const SizedBox(width: AppSpacing.xs),
-                const Text('Live', style: TextStyle(fontSize: 10, color: AppColors.online)),
-              ]),
+          Container(
+            width: 36,
+            height: 36,
+            decoration: BoxDecoration(
+              color: iconBg.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
             ),
-            const Spacer(),
-            const Text('All Logs', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
-          ]),
-          const SizedBox(height: AppSpacing.lg),
-          ...items.map((i) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm + 2),
-            child: Row(children: [
-              Container(width: 6, height: 6, decoration: BoxDecoration(color: i.$1, shape: BoxShape.circle)),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: Text(i.$2, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 1, overflow: TextOverflow.ellipsis)),
-              Text(i.$3, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
-            ]),
-          )),
-        ],
-      ),
-    );
-  }
-
-  Widget _dashboardSection(String title, IconData icon, Widget content) {
-    return AdminCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AdminSectionTitle(title: title, icon: icon),
-          const SizedBox(height: AppSpacing.lg),
-          content,
-        ],
-      ),
-    );
-  }
-
-  Widget _miniStatRow(List<(String, String, Color)> items) {
-    return Row(
-      children: items.map((i) => Expanded(
-        child: Column(children: [
-          Text(i.$1, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: i.$3)),
+            alignment: Alignment.center,
+            child: Icon(icon, color: iconBg, size: 18),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 24,
+              color: AppColors.charcoal,
+            ),
+          ),
           const SizedBox(height: 2),
-          Text(i.$2, style: const TextStyle(fontSize: 10, color: AppColors.secondary)),
-        ]),
-      )).toList(),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.secondary,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
     );
   }
+}
 
-  Widget _usersContent() => _miniStatRow([('892', 'Candidates', AppColors.teal), ('355', 'Businesses', AppColors.indigo), ('1,100', 'Verified', AppColors.online), ('5', 'Suspended', AppColors.urgent)]);
-  Widget _jobsHealth() => _miniStatRow([('89', 'Active', AppColors.online), ('7', 'Expiring', AppColors.amber), ('5', 'No Applicants', AppColors.urgent), ('3', 'Paused', AppColors.tertiary)]);
+// ── Mini Stat Card Widget ──
+class _MiniStatCard extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String value;
+  final String label;
 
-  Widget _appsFunnel() {
-    final steps = [('Applied', '120', AppColors.teal), ('Review', '68', AppColors.amber), ('Interview', '32', AppColors.indigo), ('Offer', '12', AppColors.online), ('Hired', '8', AppColors.teal)];
-    return Row(children: steps.map((s) => Expanded(
-      child: Column(children: [
-        Text(s.$2, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: s.$3)),
-        const SizedBox(height: AppSpacing.xs),
-        Text(s.$1, style: const TextStyle(fontSize: 10, color: AppColors.secondary)),
-        const SizedBox(height: AppSpacing.xs),
-        Container(height: 4, decoration: BoxDecoration(color: s.$3, borderRadius: BorderRadius.circular(2))),
-      ]),
-    )).toList());
-  }
+  const _MiniStatCard({
+    required this.icon,
+    required this.iconColor,
+    required this.value,
+    required this.label,
+  });
 
-  Widget _interviewsContent() => _miniStatRow([('5', 'Today', AppColors.teal), ('3', 'Tomorrow', AppColors.indigo), ('12', 'This Week', AppColors.amber), ('2', 'Pending', AppColors.urgent)]);
-
-  Widget _reportsContent() {
-    final pills = [('Fake Jobs', '2', AppColors.urgent), ('Spam', '1', AppColors.amber), ('Fake Profiles', '1', AppColors.urgent), ('Abusive Messages', '2', AppColors.amber), ('Community Flags', '0', AppColors.tertiary)];
-    return Wrap(
-      spacing: AppSpacing.md, runSpacing: AppSpacing.sm,
-      children: pills.map((p) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-        decoration: BoxDecoration(color: p.$3.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(AppRadius.md)),
-        child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Text(p.$2, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: p.$3)),
-          const SizedBox(width: AppSpacing.xs),
-          Text(p.$1, style: const TextStyle(fontSize: 10, color: AppColors.secondary)),
-        ]),
-      )).toList(),
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [AppColors.cardShadow],
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: iconColor, size: 22),
+          const SizedBox(height: 6),
+          Text(
+            value,
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: AppColors.charcoal,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.secondary,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
     );
   }
+}
 
-  Widget _communityContent() => _miniStatRow([('18', 'Published', AppColors.online), ('3', 'Drafts', AppColors.tertiary), ('4', 'Featured', AppColors.amber), ('2,100', 'Views', AppColors.teal)]);
-  Widget _billingContent() => _miniStatRow([('6', 'Active', AppColors.online), ('2', 'Trial', AppColors.amber), ('3', 'Renewing', AppColors.indigo), ('1', 'Failed', AppColors.urgent)]);
+// ── Status Badge Widget ──
+class _StatusBadge extends StatelessWidget {
+  final String status;
 
-  Widget _quickActions() {
-    final actions = [
-      (Icons.star, 'Featured Content'), (Icons.star, 'Add Featured Employer'), (Icons.chat_bubble, 'Create Community Post'),
-      (Icons.flag, 'Review Reports'), (Icons.work, 'No-Applicant Jobs'), (Icons.notifications, 'Send Notification'),
-      (Icons.settings, 'Settings'), (Icons.history, 'Admin Logs'),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(padding: EdgeInsets.symmetric(horizontal: AppSpacing.xl), child: Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal))),
-        const SizedBox(height: AppSpacing.md),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          child: Row(children: actions.map((a) => Padding(padding: const EdgeInsets.only(right: AppSpacing.sm), child: QuickActionChip(icon: a.$1, label: a.$2, onTap: () {}))).toList()),
+  const _StatusBadge({required this.status});
+
+  Color get _color {
+    switch (status) {
+      case 'Open':
+        return AppColors.amber;
+      case 'In Review':
+        return AppColors.teal;
+      case 'Waiting':
+        return AppColors.red;
+      case 'Resolved':
+        return AppColors.green;
+      default:
+        return AppColors.secondary;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: _color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        status,
+        style: TextStyle(
+          color: _color,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
         ),
-      ],
+      ),
     );
   }
 }

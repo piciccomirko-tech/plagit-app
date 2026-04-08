@@ -65,8 +65,6 @@ class _AdminRootViewState extends State<AdminRootView> {
       return SuperAdminHomeView(onLogout: _logout);
     }
 
-    return AdminLoginView(onLoginSuccess: () {
-      setState(() => _isAuthenticated = true);
-    });
+    return const AdminLoginView();
   }
 }

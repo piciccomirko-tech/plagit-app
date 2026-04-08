@@ -1,212 +1,707 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/status_badge.dart';
 
 class AdminCandidateDetailView extends StatefulWidget {
-  const AdminCandidateDetailView({super.key});
-  @override State<AdminCandidateDetailView> createState() => _AdminCandidateDetailViewState();
+  final String candidateId;
+  const AdminCandidateDetailView({super.key, required this.candidateId});
+  @override
+  State<AdminCandidateDetailView> createState() =>
+      _AdminCandidateDetailViewState();
 }
 
-class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView> {
-  String _status = 'Verified';
+class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabCtrl;
+  final _noteController = TextEditingController();
+  late Map<String, dynamic> _candidate;
+  bool _flagged = false;
+
+  final _mockActivity = [
+    {'icon': Icons.login, 'text': 'Logged in', 'time': '2 hours ago'},
+    {'icon': Icons.edit, 'text': 'Updated profile photo', 'time': '1 day ago'},
+    {
+      'icon': Icons.send,
+      'text': 'Applied for Waiter at The Grand London',
+      'time': '2 days ago'
+    },
+    {
+      'icon': Icons.person_add,
+      'text': 'Account created',
+      'time': '3 months ago'
+    },
+  ];
+
+  final _mockApps = [
+    {
+      'title': 'Waiter',
+      'business': 'The Grand London',
+      'status': 'Applied',
+      'date': '2 days ago'
+    },
+    {
+      'title': 'Bartender',
+      'business': 'Nobu Dubai',
+      'status': 'Under Review',
+      'date': '5 days ago'
+    },
+    {
+      'title': 'Host',
+      'business': 'Sketch London',
+      'status': 'Interview',
+      'date': '1 week ago'
+    },
+    {
+      'title': 'Barista',
+      'business': 'Cafe Royal',
+      'status': 'Rejected',
+      'date': '2 weeks ago'
+    },
+    {
+      'title': 'Server',
+      'business': 'Zuma Dubai',
+      'status': 'Hired',
+      'date': '1 month ago'
+    },
+  ];
+
+  final _mockNotes = <Map<String, String>>[
+    {
+      'admin': 'Admin User',
+      'text':
+          'Candidate verified via video call. ID documents confirmed authentic.',
+      'date': 'Apr 5, 2026'
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _tabCtrl = TabController(length: 4, vsync: this);
+    _candidate = Map<String, dynamic>.from(
+      MockData.adminCandidates.firstWhere(
+        (c) => c['id'] == widget.candidateId,
+        orElse: () => MockData.adminCandidates.first,
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabCtrl.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final c = _candidate;
+    final status = c['status'] as String;
+    final verified = c['verified'] as String;
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            AdminTopBar(title: 'Candidate Detail', onBack: () => Navigator.pop(context), trailing: const Icon(Icons.more_horiz, size: 22, color: AppColors.charcoal)),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(children: [
-                  const SizedBox(height: AppSpacing.xs),
-                  _summaryCard(),
-                  const SizedBox(height: AppSpacing.sectionGap),
-                  _profileInfoCard(),
-                  const SizedBox(height: AppSpacing.sectionGap),
-                  _workHistoryCard(),
-                  const SizedBox(height: AppSpacing.sectionGap),
-                  _documentsCard(),
-                  const SizedBox(height: AppSpacing.sectionGap),
-                  _activityCard(),
-                  const SizedBox(height: AppSpacing.sectionGap),
-                  _adminActionsCard(),
-                  const SizedBox(height: AppSpacing.xxxl),
-                ]),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.transparent,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(c['name'] as String,
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: AppColors.charcoal)),
+      ),
+      body: Column(
+        children: [
+          // Admin actions
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: Row(
+              children: [
+                if (verified != 'Verified')
+                  Expanded(
+                    child: _actionBtn('Verify', AppColors.teal, true, () {
+                      _showConfirmDialog('Verify Candidate',
+                          'Mark ${c['name']} as verified?', () {
+                        setState(() => _candidate['verified'] = 'Verified');
+                      });
+                    }),
+                  ),
+                if (verified != 'Verified') const SizedBox(width: 8),
+                if (status == 'Active')
+                  Expanded(
+                    child: _actionBtn('Suspend', AppColors.red, false, () {
+                      _showConfirmDialog('Suspend Candidate',
+                          'Suspend ${c['name']}? They will lose access.', () {
+                        setState(() => _candidate['status'] = 'Suspended');
+                      });
+                    }),
+                  )
+                else if (status == 'Suspended')
+                  Expanded(
+                    child:
+                        _actionBtn('Reactivate', AppColors.green, true, () {
+                      _showConfirmDialog('Reactivate Candidate',
+                          'Reactivate ${c['name']}?', () {
+                        setState(() => _candidate['status'] = 'Active');
+                      });
+                    }),
+                  ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _profileCard(c),
+                  const SizedBox(height: 16),
+                  _statsRow(),
+                  const SizedBox(height: 16),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [AppColors.cardShadow],
+                    ),
+                    child: Column(
+                      children: [
+                        TabBar(
+                          controller: _tabCtrl,
+                          labelColor: AppColors.teal,
+                          unselectedLabelColor: AppColors.secondary,
+                          indicatorColor: AppColors.teal,
+                          labelStyle: const TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w600),
+                          tabs: const [
+                            Tab(text: 'Profile'),
+                            Tab(text: 'Activity'),
+                            Tab(text: 'Applications'),
+                            Tab(text: 'Notes'),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 400,
+                          child: TabBarView(
+                            controller: _tabCtrl,
+                            children: [
+                              _profileTab(c),
+                              _activityTab(),
+                              _applicationsTab(),
+                              _notesTab(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Flag account
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => setState(() => _flagged = !_flagged),
+                      icon: Icon(
+                          _flagged ? Icons.flag : Icons.flag_outlined,
+                          size: 18,
+                          color: AppColors.red),
+                      label: Text(
+                          _flagged ? 'Unflag Account' : 'Flag Account',
+                          style: const TextStyle(
+                              color: AppColors.red,
+                              fontWeight: FontWeight.w600)),
+                      style: OutlinedButton.styleFrom(
+                        side: const BorderSide(color: AppColors.red),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _profileCard(Map<String, dynamic> c) {
+    final completion = (c['completion'] as int).toDouble();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [AppColors.cardShadow],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: AppColors.teal.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            alignment: Alignment.center,
+            child: Text(c['initials'] as String,
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.teal)),
+          ),
+          const SizedBox(height: 10),
+          Text(c['name'] as String,
+              style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.charcoal)),
+          const SizedBox(height: 2),
+          Text(c['role'] as String,
+              style:
+                  const TextStyle(fontSize: 13, color: AppColors.secondary)),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.email_outlined,
+                  size: 12, color: AppColors.tertiary),
+              const SizedBox(width: 4),
+              Text(c['email'] as String,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.secondary)),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.phone_outlined,
+                  size: 12, color: AppColors.tertiary),
+              const SizedBox(width: 4),
+              Text(c['phone'] as String,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.secondary)),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.location_on_outlined,
+                  size: 12, color: AppColors.tertiary),
+              const SizedBox(width: 4),
+              Text(c['location'] as String,
+                  style: const TextStyle(
+                      fontSize: 12, color: AppColors.secondary)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              const Text('Profile',
+                  style: TextStyle(fontSize: 11, color: AppColors.secondary)),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: LinearProgressIndicator(
+                    value: completion / 100,
+                    backgroundColor: AppColors.divider,
+                    color: AppColors.teal,
+                    minHeight: 6,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text('${completion.toInt()}%',
+                  style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.teal)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              StatusBadge(status: c['status'] as String),
+              const SizedBox(width: 6),
+              _verifiedBadge(c['verified'] as String),
+              const SizedBox(width: 6),
+              _planBadge(c['plan'] as String),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text('Joined ${c['joined']}',
+              style:
+                  const TextStyle(fontSize: 11, color: AppColors.tertiary)),
+        ],
+      ),
+    );
+  }
+
+  Widget _statsRow() {
+    return Row(
+      children: [
+        _statCard('Applications', '5', AppColors.teal),
+        const SizedBox(width: 10),
+        _statCard('Interviews', '2', AppColors.purple),
+        const SizedBox(width: 10),
+        _statCard('Saved', '3', AppColors.amber),
+      ],
+    );
+  }
+
+  Widget _statCard(String label, String value, Color color) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [AppColors.cardShadow],
+        ),
+        child: Column(
+          children: [
+            Text(value,
+                style: TextStyle(
+                    fontSize: 20, fontWeight: FontWeight.w700, color: color)),
+            const SizedBox(height: 2),
+            Text(label,
+                style: const TextStyle(
+                    fontSize: 11, color: AppColors.secondary)),
           ],
         ),
       ),
     );
   }
 
-  Widget _summaryCard() {
-    final statusColor = _status == 'Verified' ? AppColors.online : _status == 'Suspended' ? AppColors.urgent : AppColors.amber;
-    return AdminCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const AvatarCircle(initials: 'ER', hue: 0.52, size: 64, verified: true),
-        const Spacer(),
-        Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
-          StatusPill(text: _status, color: statusColor),
-          const SizedBox(height: AppSpacing.sm),
-          StatusPill(text: _status == 'Suspended' ? 'Suspended' : 'Active', color: _status == 'Suspended' ? AppColors.urgent : AppColors.online),
-        ]),
-      ]),
-      const SizedBox(height: AppSpacing.xl),
-      const Text('Elena Rossi', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-      const SizedBox(height: AppSpacing.sm),
-      Row(children: [
-        const Text('Executive Chef', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.secondary)),
-        const SizedBox(width: AppSpacing.sm),
-        StatusPill(text: 'Full-time', color: AppColors.teal),
-      ]),
-      const SizedBox(height: AppSpacing.sm),
-      const Row(children: [IconLabel(icon: Icons.location_on, text: 'London, UK'), SizedBox(width: AppSpacing.lg), IconLabel(icon: Icons.calendar_today, text: 'Since Jan 2025')]),
-      const SizedBox(height: AppSpacing.sm),
-      Row(children: [
-        const Text('8 years experience', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
-        const Spacer(),
-        SizedBox(width: 60, child: LinearProgressIndicator(value: 0.85, backgroundColor: AppColors.surface, color: AppColors.online, minHeight: 4, borderRadius: BorderRadius.circular(2))),
-        const SizedBox(width: AppSpacing.sm),
-        const Text('85% complete', style: TextStyle(fontSize: 10, color: AppColors.online)),
-      ]),
-    ]));
-  }
-
-  Widget _profileInfoCard() {
-    return AdminCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const AdminSectionTitle(title: 'Profile Information'),
-      const SizedBox(height: AppSpacing.lg),
-      Container(
-        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
-        child: const Column(children: [
-          AdminInfoRow(icon: Icons.email, label: 'Email', value: 'elena.rossi@email.com'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.phone, label: 'Phone', value: '+44 7700 123456'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.cake, label: 'Date of Birth', value: '15 Mar 1990'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.language, label: 'Languages', value: 'Italian, English'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.public, label: 'Nationality', value: 'Italian'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.work, label: 'Preferred Role', value: 'Executive Chef'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.schedule, label: 'Availability', value: 'Immediate'),
-        ]),
-      ),
-    ]));
-  }
-
-  Widget _workHistoryCard() {
-    final jobs = [
-      ('Head Chef', 'The Dorchester', 'London, UK', '2022 - Present', '2 years'),
-      ('Sous Chef', 'Nobu Restaurant', 'London, UK', '2019 - 2022', '3 years'),
-      ('Chef de Partie', 'Zuma', 'London, UK', '2017 - 2019', '2 years'),
-    ];
-    return AdminCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const AdminSectionTitle(title: 'Work History'),
-      const SizedBox(height: AppSpacing.lg),
-      ...jobs.map((j) => Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.md),
-        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Container(width: 8, height: 8, margin: const EdgeInsets.only(top: 5), decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(4))),
-          const SizedBox(width: AppSpacing.md),
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(j.$1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-            Text('${j.$2} - ${j.$3}', style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
-            Text('${j.$4} · ${j.$5}', style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
-          ])),
-        ]),
-      )),
-    ]));
-  }
-
-  Widget _documentsCard() {
-    final docs = [
-      ('ID / Passport', Icons.badge, 'Verified'), ('Visa / Work Permit', Icons.document_scanner, 'Verified'),
-      ('CV / Resume', Icons.description, 'Verified'), ('Certificates', Icons.school, 'Pending'), ('Right to Work', Icons.verified_user, 'Missing'),
-    ];
-    return AdminCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const AdminSectionTitle(title: 'Verification & Documents'),
-      const SizedBox(height: AppSpacing.lg),
-      Container(
-        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
-        child: Column(children: docs.asMap().entries.map((e) {
-          final d = e.value;
-          final color = d.$3 == 'Verified' ? AppColors.online : d.$3 == 'Pending' ? AppColors.amber : AppColors.urgent;
-          return Column(children: [
-            if (e.key > 0) const Divider(height: 1, color: AppColors.divider),
-            Padding(padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md + 2), child: Row(children: [
-              Icon(d.$2, size: 16, color: AppColors.teal),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(child: Text(d.$1, style: const TextStyle(fontSize: 14, color: AppColors.charcoal))),
-              StatusPill(text: d.$3, color: color),
-              if (d.$3 != 'Missing') ...[const SizedBox(width: AppSpacing.sm), const Text('View', style: TextStyle(fontSize: 10, color: AppColors.teal))],
-            ])),
-          ]);
-        }).toList()),
-      ),
-    ]));
-  }
-
-  Widget _activityCard() {
-    return AdminCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const AdminSectionTitle(title: 'Platform Activity'),
-      const SizedBox(height: AppSpacing.lg),
-      Container(
-        decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
-        child: const Column(children: [
-          AdminInfoRow(icon: Icons.description, label: 'Applications', value: '12 total'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.calendar_today, label: 'Interviews', value: '4 completed'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.visibility, label: 'Profile Views', value: '245'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.access_time, label: 'Last Active', value: '2 hours ago'),
-          Divider(height: 1, color: AppColors.divider),
-          AdminInfoRow(icon: Icons.flag, label: 'Reports', value: '0'),
-        ]),
-      ),
-    ]));
-  }
-
-  Widget _adminActionsCard() {
-    return AdminCard(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const AdminSectionTitle(title: 'Admin Actions'),
-      const SizedBox(height: AppSpacing.lg),
-      if (_status == 'Verified') ...[
-        _adminActionBtn('Suspend Account', Icons.pause_circle, AppColors.urgent, () => setState(() => _status = 'Suspended')),
-        const SizedBox(height: AppSpacing.sm),
-        _adminActionBtn('Reset Password', Icons.lock_reset, AppColors.amber, () {}),
-      ] else if (_status == 'Suspended') ...[
-        _adminActionBtn('Reactivate Account', Icons.play_circle, AppColors.online, () => setState(() => _status = 'Verified')),
-      ] else ...[
-        _adminActionBtn('Verify Account', Icons.verified, AppColors.teal, () => setState(() => _status = 'Verified')),
+  Widget _profileTab(Map<String, dynamic> c) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        _infoRow('Name', c['name'] as String),
+        _infoRow('Role', c['role'] as String),
+        _infoRow('Email', c['email'] as String),
+        _infoRow('Phone', c['phone'] as String),
+        _infoRow('Location', c['location'] as String),
+        _infoRow('Plan', c['plan'] as String),
+        _infoRow('Verified', c['verified'] as String),
+        _infoRow('Status', c['status'] as String),
+        _infoRow('Joined', c['joined'] as String),
+        _infoRow('Profile Completion', '${c['completion']}%'),
       ],
-      const SizedBox(height: AppSpacing.sm),
-      _adminActionBtn('Add Note', Icons.note_add, AppColors.indigo, () {}),
-      const SizedBox(height: AppSpacing.sm),
-      _adminActionBtn('View Applications', Icons.description, AppColors.teal, () {}),
-    ]));
+    );
   }
 
-  Widget _adminActionBtn(String label, IconData icon, Color color, VoidCallback onTap) {
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 120,
+            child: Text(label,
+                style: const TextStyle(
+                    fontSize: 13, color: AppColors.secondary)),
+          ),
+          Expanded(
+            child: Text(value,
+                style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.charcoal)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _activityTab() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _mockActivity.length,
+      separatorBuilder: (_, __) => const Divider(color: AppColors.divider),
+      itemBuilder: (_, i) {
+        final a = _mockActivity[i];
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: AppColors.teal.withValues(alpha: 0.10),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(a['icon'] as IconData,
+                    size: 16, color: AppColors.teal),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(a['text'] as String,
+                    style: const TextStyle(
+                        fontSize: 13, color: AppColors.charcoal)),
+              ),
+              Text(a['time'] as String,
+                  style: const TextStyle(
+                      fontSize: 11, color: AppColors.tertiary)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _applicationsTab() {
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _mockApps.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (_, i) {
+        final a = _mockApps[i];
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(a['title']!,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.charcoal)),
+                    const SizedBox(height: 2),
+                    Text(a['business']!,
+                        style: const TextStyle(
+                            fontSize: 12, color: AppColors.secondary)),
+                    const SizedBox(height: 2),
+                    Text(a['date']!,
+                        style: const TextStyle(
+                            fontSize: 11, color: AppColors.tertiary)),
+                  ],
+                ),
+              ),
+              StatusBadge(status: a['status']!),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _notesTab() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              itemCount: _mockNotes.length,
+              itemBuilder: (_, i) {
+                final n = _mockNotes[i];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.background,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(n['admin']!,
+                              style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.charcoal)),
+                          const Spacer(),
+                          Text(n['date']!,
+                              style: const TextStyle(
+                                  fontSize: 11, color: AppColors.tertiary)),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(n['text']!,
+                          style: const TextStyle(
+                              fontSize: 13, color: AppColors.secondary)),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _noteController,
+                  decoration: InputDecoration(
+                    hintText: 'Add a note...',
+                    hintStyle: const TextStyle(
+                        fontSize: 13, color: AppColors.tertiary),
+                    filled: true,
+                    fillColor: AppColors.background,
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide.none),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () {
+                  if (_noteController.text.isNotEmpty) {
+                    setState(() {
+                      _mockNotes.add({
+                        'admin': 'Admin User',
+                        'text': _noteController.text,
+                        'date': 'Apr 8, 2026',
+                      });
+                      _noteController.clear();
+                    });
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: AppColors.teal,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child:
+                      const Icon(Icons.send, size: 18, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionBtn(
+      String text, Color color, bool filled, VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md, horizontal: AppSpacing.lg),
-        decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(AppRadius.md)),
-        child: Row(children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: AppSpacing.md),
-          Text(label, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: color)),
-          const Spacer(),
-          Icon(Icons.chevron_right, size: 14, color: color),
-        ]),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        decoration: BoxDecoration(
+          color: filled ? color : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          border: filled ? null : Border.all(color: color),
+        ),
+        alignment: Alignment.center,
+        child: Text(text,
+            style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: filled ? Colors.white : color)),
+      ),
+    );
+  }
+
+  Widget _verifiedBadge(String verified) {
+    IconData icon;
+    Color color;
+    if (verified == 'Verified') {
+      icon = Icons.check_circle;
+      color = AppColors.teal;
+    } else if (verified == 'Pending') {
+      icon = Icons.access_time;
+      color = AppColors.amber;
+    } else {
+      icon = Icons.cancel_outlined;
+      color = AppColors.secondary;
+    }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 11, color: color),
+          const SizedBox(width: 3),
+          Text(verified,
+              style: TextStyle(
+                  fontSize: 10, fontWeight: FontWeight.w600, color: color)),
+        ],
+      ),
+    );
+  }
+
+  Widget _planBadge(String plan) {
+    final isPremium = plan == 'Premium';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: isPremium
+            ? AppColors.purple.withValues(alpha: 0.10)
+            : AppColors.secondary.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      child: Text(plan,
+          style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: isPremium ? AppColors.purple : AppColors.secondary)),
+    );
+  }
+
+  void _showConfirmDialog(
+      String title, String message, VoidCallback onConfirm) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(title,
+            style: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+                color: AppColors.charcoal)),
+        content: Text(message,
+            style:
+                const TextStyle(fontSize: 14, color: AppColors.secondary)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel',
+                style: TextStyle(color: AppColors.secondary)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              onConfirm();
+            },
+            child: const Text('Confirm',
+                style: TextStyle(
+                    color: AppColors.teal, fontWeight: FontWeight.w600)),
+          ),
+        ],
       ),
     );
   }
