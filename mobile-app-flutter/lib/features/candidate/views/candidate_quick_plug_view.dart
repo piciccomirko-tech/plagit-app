@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 
+/// Candidate Quick Plug — rebuilt in Community-screen design language.
 class CandidateQuickPlugView extends StatelessWidget {
   const CandidateQuickPlugView({super.key});
 
@@ -14,100 +15,195 @@ class CandidateQuickPlugView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.all(20),
+        child: Column(
           children: [
-            // Header
-            const Center(
-              child: Icon(Icons.bolt, size: 40, color: AppColors.purple),
-            ),
-            const SizedBox(height: 12),
-            const Center(
-              child: Text(
-                'Quick Plug',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.charcoal,
-                ),
+            // ── Top bar ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                children: [
+                  const SizedBox(width: 36),
+                  const Spacer(),
+                  const Text('Quick Plug', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+                  const Spacer(),
+                  Container(
+                    width: 36, height: 36,
+                    decoration: BoxDecoration(color: AppColors.purple.withValues(alpha: 0.08), shape: BoxShape.circle),
+                    child: const Icon(Icons.bolt, size: 18, color: AppColors.purple),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 4),
-            const Center(
-              child: Text(
-                'Premium tools for faster hiring',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: AppColors.secondary,
-                ),
+
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 40),
+                children: [
+                  // ── Hero ──
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: 52, height: 52,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(colors: [AppColors.purple.withValues(alpha: 0.15), AppColors.purple.withValues(alpha: 0.05)]),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.bolt, size: 22, color: AppColors.purple),
+                        ),
+                        const SizedBox(height: 14),
+                        const Text('Premium Speed Tools', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+                        const SizedBox(height: 4),
+                        const Text('Get hired faster with premium features', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Feature cards ──
+                  _featureCard(
+                    context,
+                    icon: Icons.rocket_launch,
+                    color: AppColors.teal,
+                    title: 'Boost My Profile',
+                    subtitle: 'Get seen by more employers today',
+                    active: sub.canBoostProfile,
+                    onTap: () => sub.canBoostProfile ? _activeSnack(context) : _premiumSnack(context),
+                  ),
+                  const SizedBox(height: 12),
+                  _featureCard(
+                    context,
+                    icon: Icons.bolt,
+                    color: AppColors.purple,
+                    title: 'Quick Apply',
+                    subtitle: 'Apply to matching jobs instantly',
+                    active: sub.canQuickApply,
+                    onTap: () => sub.canQuickApply ? _activeSnack(context) : _premiumSnack(context),
+                  ),
+                  const SizedBox(height: 12),
+                  _featureCard(
+                    context,
+                    icon: Icons.notifications_active,
+                    color: AppColors.amber,
+                    title: 'Priority Notifications',
+                    subtitle: 'Be first to know about new jobs',
+                    active: sub.hasPriorityNotifications,
+                    onTap: () => sub.hasPriorityNotifications ? _activeSnack(context) : _premiumSnack(context),
+                  ),
+                  const SizedBox(height: 12),
+                  _featureCard(
+                    context,
+                    icon: Icons.tune,
+                    color: const Color(0xFF3B82F6),
+                    title: 'Advanced Filters',
+                    subtitle: 'Filter by salary, distance, contract',
+                    active: sub.hasAdvancedFilters,
+                    onTap: () => sub.hasAdvancedFilters ? _activeSnack(context) : _premiumSnack(context),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  // ── Upgrade CTA ──
+                  if (!sub.plan.isPremium)
+                    GestureDetector(
+                      onTap: () => context.push('/candidate/subscription'),
+                      child: Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [AppColors.teal.withValues(alpha: 0.06), AppColors.purple.withValues(alpha: 0.04)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.teal.withValues(alpha: 0.15)),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 44, height: 44,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(colors: [AppColors.amber.withValues(alpha: 0.2), AppColors.amber.withValues(alpha: 0.05)]),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(Icons.workspace_premium, size: 20, color: AppColors.amber),
+                            ),
+                            const SizedBox(width: 14),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Go Premium', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                                  SizedBox(height: 2),
+                                  Text('Unlock all features \u00B7 \u00A39.99/month', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(colors: [AppColors.teal, AppColors.darkTeal]),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: const Text('Upgrade', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  else
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 44, height: 44,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(colors: [AppColors.amber.withValues(alpha: 0.2), AppColors.amber.withValues(alpha: 0.05)]),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(Icons.workspace_premium, size: 20, color: AppColors.amber),
+                          ),
+                          const SizedBox(width: 14),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Premium Active', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                                SizedBox(height: 2),
+                                Text('All features are unlocked', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            decoration: BoxDecoration(color: AppColors.green.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(100)),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.check_circle, size: 12, color: AppColors.green),
+                                SizedBox(width: 4),
+                                Text('Active', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.green)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
               ),
-            ),
-            const SizedBox(height: 24),
-
-            // Card 1: Boost My Profile
-            _QuickPlugCard(
-              iconBg: AppColors.teal,
-              icon: Icons.rocket_launch,
-              title: 'Boost My Profile',
-              subtitle: 'Get seen by more employers today',
-              trailing: sub.canBoostProfile ? _ActivePill() : _UnlockPill(),
-              onTap: () => sub.canBoostProfile
-                  ? _showActiveSnack(context)
-                  : _showPremiumSnack(context),
-            ),
-            const SizedBox(height: 12),
-
-            // Card 2: Quick Apply
-            _QuickPlugCard(
-              iconBg: AppColors.purple,
-              icon: Icons.bolt,
-              title: 'Quick Apply',
-              subtitle: 'Apply to matching jobs instantly',
-              trailing: sub.canQuickApply ? _ActivePill() : _LockTrailing(),
-              onTap: () => sub.canQuickApply
-                  ? _showActiveSnack(context)
-                  : _showPremiumSnack(context),
-            ),
-            const SizedBox(height: 12),
-
-            // Card 3: Priority Notifications
-            _QuickPlugCard(
-              iconBg: AppColors.amber,
-              icon: Icons.notifications,
-              title: 'Priority Notifications',
-              subtitle: 'Be first to know about new jobs',
-              trailing: sub.hasPriorityNotifications ? _ActivePill() : _LockTrailing(),
-              onTap: () => sub.hasPriorityNotifications
-                  ? _showActiveSnack(context)
-                  : _showPremiumSnack(context),
-            ),
-            const SizedBox(height: 12),
-
-            // Card 4: Advanced Filters
-            _QuickPlugCard(
-              iconBg: const Color(0xFF3B82F6),
-              icon: Icons.tune,
-              title: 'Advanced Filters',
-              subtitle: 'Filter by salary, distance, contract type',
-              trailing: sub.hasAdvancedFilters ? _ActivePill() : _LockTrailing(),
-              onTap: () => sub.hasAdvancedFilters
-                  ? _showActiveSnack(context)
-                  : _showPremiumSnack(context),
-            ),
-            const SizedBox(height: 12),
-
-            // Card 5: Go Premium
-            _QuickPlugCard(
-              iconBg: AppColors.gold,
-              icon: Icons.workspace_premium,
-              title: 'Go Premium',
-              subtitle: sub.plan.isPremium
-                  ? 'All features unlocked'
-                  : 'Unlock all features \u00b7 \u00a39.99/month',
-              trailing: sub.plan.isPremium ? _PremiumActivePill() : _UpgradeButton(),
-              onTap: () => sub.plan.isPremium
-                  ? _showActiveSnack(context)
-                  : context.push('/candidate/subscription'),
             ),
           ],
         ),
@@ -115,45 +211,14 @@ class CandidateQuickPlugView extends StatelessWidget {
     );
   }
 
-  static void _showPremiumSnack(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Premium feature \u2014 upgrade to unlock'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  static void _showActiveSnack(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Feature is active!'),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-}
-
-// ── Reusable card ──
-class _QuickPlugCard extends StatelessWidget {
-  final Color iconBg;
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final Widget trailing;
-  final VoidCallback onTap;
-
-  const _QuickPlugCard({
-    required this.iconBg,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.trailing,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _featureCard(BuildContext context, {
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String subtitle,
+    required bool active,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -161,165 +226,57 @@ class _QuickPlugCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [AppColors.cardShadow],
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))],
         ),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: iconBg,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: Colors.white, size: 22),
+              width: 40, height: 40,
+              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
+              child: Icon(icon, size: 18, color: color),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.charcoal,
-                    ),
-                  ),
+                  Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
                   const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.secondary,
-                    ),
-                  ),
+                  Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
                 ],
               ),
             ),
             const SizedBox(width: 8),
-            trailing,
+            if (active)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(100)),
+                child: const Text('Active', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.teal)),
+              )
+            else
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.lock_outline, size: 14, color: AppColors.tertiary),
+                  const SizedBox(width: 4),
+                  const Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
+                ],
+              ),
           ],
         ),
       ),
     );
   }
-}
 
-// ── "Active" teal pill ──
-class _ActivePill extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.teal.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: const Text(
-            'Active',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: AppColors.teal,
-            ),
-          ),
-        ),
-        const SizedBox(width: 4),
-        const Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
-      ],
+  static void _premiumSnack(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Premium feature \u2014 upgrade to unlock'), behavior: SnackBarBehavior.floating),
     );
   }
-}
 
-// ── "Premium Active" green pill ──
-class _PremiumActivePill extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.green,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Text(
-        '\u2713 Premium Active',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-}
-
-// ── "Unlock" amber pill ──
-class _UnlockPill extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.amber.withValues(alpha: 0.15),
-            borderRadius: BorderRadius.circular(100),
-          ),
-          child: const Text(
-            'Unlock',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              color: AppColors.amber,
-            ),
-          ),
-        ),
-        const SizedBox(width: 4),
-        const Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
-      ],
-    );
-  }
-}
-
-// ── Lock icon + chevron ──
-class _LockTrailing extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(Icons.lock, size: 16, color: AppColors.tertiary),
-        SizedBox(width: 4),
-        Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
-      ],
-    );
-  }
-}
-
-// ── "Upgrade Now" small teal button ──
-class _UpgradeButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: AppColors.teal,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Text(
-        'Upgrade Now',
-        style: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-          color: Colors.white,
-        ),
-      ),
+  static void _activeSnack(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Feature is active!'), behavior: SnackBarBehavior.floating),
     );
   }
 }

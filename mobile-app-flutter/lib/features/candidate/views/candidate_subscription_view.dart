@@ -4,15 +4,16 @@ import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 
+/// Go Premium — rebuilt in Community-screen design language.
 class CandidateSubscriptionView extends StatefulWidget {
   const CandidateSubscriptionView({super.key});
 
   @override
-  State<CandidateSubscriptionView> createState() => _CandidateSubscriptionViewState();
+  State<CandidateSubscriptionView> createState() => _State();
 }
 
-class _CandidateSubscriptionViewState extends State<CandidateSubscriptionView> {
-  int _selectedPlan = 1; // 0 = monthly, 1 = annual
+class _State extends State<CandidateSubscriptionView> {
+  int _selected = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -21,51 +22,27 @@ class _CandidateSubscriptionViewState extends State<CandidateSubscriptionView> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, size: 18, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
-        ),
-        title: const Text('Go Premium', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-        centerTitle: true,
-      ),
-      body: isPremium ? _buildManageSubscription(sub) : _buildPaywall(),
-    );
-  }
-
-  // ── Already premium ──
-  Widget _buildManageSubscription(dynamic sub) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
+      body: SafeArea(
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.workspace_premium, size: 60, color: AppColors.gold),
-            const SizedBox(height: 16),
-            Text('${sub.plan.displayName} Active', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal)),
-            const SizedBox(height: 8),
-            Text(
-              sub.renewalDate != null
-                  ? 'Your plan renews on ${sub.renewalDate}'
-                  : 'Your premium plan is active',
-              style: const TextStyle(fontSize: 14, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.teal),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                ),
-                child: const Text('Manage Subscription', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.teal)),
+            // ── Top bar ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              child: Row(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.pop(),
+                    child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
+                  ),
+                  const Spacer(),
+                  const Text('Go Premium', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+                  const Spacer(),
+                  const SizedBox(width: 36),
+                ],
               ),
+            ),
+            Expanded(
+              child: isPremium ? _activePlan(sub) : _paywall(),
             ),
           ],
         ),
@@ -73,171 +50,194 @@ class _CandidateSubscriptionViewState extends State<CandidateSubscriptionView> {
     );
   }
 
-  // ── Paywall ──
-  Widget _buildPaywall() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-
-          // Crown icon
-          const Icon(Icons.workspace_premium, size: 60, color: AppColors.gold),
-          const SizedBox(height: 16),
-
-          // Title
-          const Text(
-            'Unlock your full potential',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal),
-            textAlign: TextAlign.center,
+  Widget _activePlan(dynamic sub) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Container(
+          padding: const EdgeInsets.all(28),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Premium tools for hospitality professionals',
-            style: TextStyle(fontSize: 14, color: AppColors.secondary),
-            textAlign: TextAlign.center,
-          ),
-
-          const SizedBox(height: 32),
-
-          // Benefits list
-          _BenefitRow(icon: Icons.star, iconColor: AppColors.gold, text: 'Boost My Profile \u2014 get seen by more employers'),
-          _BenefitRow(icon: Icons.bolt, iconColor: AppColors.purple, text: 'Quick Apply \u2014 apply to jobs instantly'),
-          _BenefitRow(icon: Icons.notifications_active, iconColor: AppColors.amber, text: 'Priority Notifications \u2014 never miss an opportunity'),
-          _BenefitRow(icon: Icons.tune, iconColor: Colors.blue, text: 'Advanced Filters \u2014 find exactly what you need'),
-          _BenefitRow(icon: Icons.visibility, iconColor: AppColors.teal, text: 'Increased Visibility \u2014 appear higher in employer searches'),
-
-          const SizedBox(height: 32),
-
-          // Pricing cards
-          Row(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(child: _buildPlanCard(
-                index: 0,
-                title: 'Monthly',
-                price: '\u00A39.99/month',
-              )),
-              const SizedBox(width: 12),
-              Expanded(child: _buildPlanCard(
-                index: 1,
-                title: 'Annual',
-                price: '\u00A389.99/year',
-                badge: 'Save 25%',
-              )),
+              Container(
+                width: 56, height: 56,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [AppColors.amber.withValues(alpha: 0.2), AppColors.amber.withValues(alpha: 0.05)]),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.workspace_premium, size: 24, color: AppColors.amber),
+              ),
+              const SizedBox(height: 16),
+              Text('${sub.plan.displayName}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+              const SizedBox(height: 6),
+              Text(
+                sub.renewalDate != null ? 'Renews on ${sub.renewalDate}' : 'Your premium plan is active',
+                style: const TextStyle(fontSize: 13, color: AppColors.secondary),
+              ),
+              const SizedBox(height: 24),
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F7),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(child: Text('Manage Subscription', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal))),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
 
-          const SizedBox(height: 32),
+  Widget _paywall() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+      child: Column(
+        children: [
+          // Hero
+          Container(
+            width: 56, height: 56,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [AppColors.amber.withValues(alpha: 0.2), AppColors.amber.withValues(alpha: 0.05)]),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.workspace_premium, size: 24, color: AppColors.amber),
+          ),
+          const SizedBox(height: 16),
+          const Text('Unlock your full potential', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.charcoal), textAlign: TextAlign.center),
+          const SizedBox(height: 6),
+          const Text('Premium tools for hospitality professionals', style: TextStyle(fontSize: 13, color: AppColors.secondary), textAlign: TextAlign.center),
 
-          // Start Free Trial button
-          SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Free trial started!'),
-                    backgroundColor: AppColors.teal,
-                    behavior: SnackBarBehavior.floating,
-                  ),
-                );
-                context.pop();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.teal,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-              ),
-              child: const Text('Start Free Trial', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+          const SizedBox(height: 28),
+
+          // Benefits card
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
+            ),
+            child: Column(
+              children: [
+                _benefit(Icons.rocket_launch, AppColors.teal, 'Boost My Profile', 'Get seen by more employers'),
+                const SizedBox(height: 16),
+                _benefit(Icons.bolt, AppColors.purple, 'Quick Apply', 'Apply to jobs instantly'),
+                const SizedBox(height: 16),
+                _benefit(Icons.notifications_active, AppColors.amber, 'Priority Notifications', 'Never miss an opportunity'),
+                const SizedBox(height: 16),
+                _benefit(Icons.tune, const Color(0xFF3B82F6), 'Advanced Filters', 'Find exactly what you need'),
+                const SizedBox(height: 16),
+                _benefit(Icons.visibility, AppColors.teal, 'Increased Visibility', 'Appear higher in searches'),
+              ],
             ),
           ),
 
-          const SizedBox(height: 12),
+          const SizedBox(height: 24),
 
-          // Maybe later
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text('Maybe later', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
+          // Plan cards
+          Row(
+            children: [
+              Expanded(child: _planCard(0, 'Monthly', '\u00A39.99', '/month', null)),
+              const SizedBox(width: 12),
+              Expanded(child: _planCard(1, 'Annual', '\u00A389.99', '/year', 'Save 25%')),
+            ],
           ),
 
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
+
+          // CTA
+          GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Free trial started!'), backgroundColor: AppColors.teal, behavior: SnackBarBehavior.floating));
+              context.pop();
+            },
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [AppColors.teal, AppColors.darkTeal]),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Center(child: Text('Start Free Trial', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white))),
+            ),
+          ),
+          const SizedBox(height: 12),
+          GestureDetector(
+            onTap: () => context.pop(),
+            child: const Text('Maybe later', style: TextStyle(fontSize: 13, color: AppColors.tertiary)),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPlanCard({
-    required int index,
-    required String title,
-    required String price,
-    String? badge,
-  }) {
-    final selected = _selectedPlan == index;
+  Widget _benefit(IconData icon, Color color, String title, String subtitle) {
+    return Row(
+      children: [
+        Container(
+          width: 36, height: 36,
+          decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
+          child: Icon(icon, size: 16, color: color),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+              Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _planCard(int index, String title, String price, String period, String? badge) {
+    final active = _selected == index;
     return GestureDetector(
-      onTap: () => setState(() => _selectedPlan = index),
+      onTap: () => setState(() => _selected = index),
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
             decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: selected ? AppColors.teal : AppColors.border,
-                width: selected ? 2 : 1,
-              ),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: active ? AppColors.teal : AppColors.border, width: active ? 2 : 1),
             ),
             child: Column(
               children: [
-                Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+                Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
                 const SizedBox(height: 6),
-                Text(price, style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
+                Text(price, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+                Text(period, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
               ],
             ),
           ),
           if (badge != null)
             Positioned(
-              top: -8,
-              right: 8,
+              top: -10,
+              right: 12,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.amber,
-                  borderRadius: BorderRadius.circular(10),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(color: AppColors.amber, borderRadius: BorderRadius.circular(8)),
                 child: Text(badge, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
               ),
             ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BenefitRow extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String text;
-
-  const _BenefitRow({
-    required this.icon,
-    required this.iconColor,
-    required this.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: iconColor),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text, style: const TextStyle(fontSize: 14, color: AppColors.charcoal))),
         ],
       ),
     );
