@@ -5,31 +5,73 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/models/candidate_profile.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 
-class CandidateProfileTab extends StatelessWidget {
+class CandidateProfileTab extends StatefulWidget {
   const CandidateProfileTab({super.key});
+
+  @override
+  State<CandidateProfileTab> createState() => _CandidateProfileTabState();
+}
+
+class _CandidateProfileTabState extends State<CandidateProfileTab> {
+  bool _loadAttempted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final auth = context.read<CandidateAuthProvider>();
+      if (auth.profile == null && !_loadAttempted) {
+        _loadAttempted = true;
+        auth.refreshProfile();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<CandidateAuthProvider>();
     final profile = authProvider.profile;
 
-    // Loading / no-profile state
+    // Profile not loaded yet — show spinner briefly then fallback
     if (profile == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
-        body: const Center(
-          child: CircularProgressIndicator(color: AppColors.teal),
+        body: Center(
+          child: _loadAttempted
+              ? Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.person_outline, size: 48, color: AppColors.tertiary),
+                    const SizedBox(height: 12),
+                    const Text('Unable to load profile', style: TextStyle(fontSize: 15, color: AppColors.secondary)),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() => _loadAttempted = false);
+                        context.read<CandidateAuthProvider>().refreshProfile();
+                        setState(() => _loadAttempted = true);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.teal,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: const Text('Retry'),
+                    ),
+                  ],
+                )
+              : const CircularProgressIndicator(color: AppColors.teal),
         ),
       );
     }
 
     return _CandidateProfileContent(
       profile: profile,
-      onLogout: () => _showSignOutDialog(context, authProvider),
+      onLogout: () => _showSignOutDialog(authProvider),
     );
   }
 
-  void _showSignOutDialog(BuildContext context, CandidateAuthProvider provider) {
+  void _showSignOutDialog(CandidateAuthProvider provider) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
