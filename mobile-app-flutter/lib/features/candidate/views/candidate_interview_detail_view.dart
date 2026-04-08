@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/interview.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateInterviewDetailView extends StatefulWidget {
   final String interviewId;
@@ -15,24 +17,26 @@ class CandidateInterviewDetailView extends StatefulWidget {
 
 class _CandidateInterviewDetailViewState
     extends State<CandidateInterviewDetailView> {
-  late Map<String, dynamic> _interview;
+  late Interview _interview;
+  late InterviewStatus _currentStatus;
 
   @override
   void initState() {
     super.initState();
-    _interview = Map<String, dynamic>.from(
-      MockData.interviews.firstWhere(
-        (i) => i['id'] == widget.interviewId,
-        orElse: () => MockData.interviews.first,
-      ),
+    final provider = context.read<CandidateInterviewsProvider>();
+    _interview = provider.interviews.firstWhere(
+      (i) => i.id == widget.interviewId,
+      orElse: () => provider.interviews.first,
     );
+    _currentStatus = _interview.status;
   }
 
-  String get _status => _interview['status'] as String;
-  bool get _isVideo => _interview['format'] == 'Video';
+  bool get _isVideo => _interview.format == InterviewFormat.video;
 
   @override
   Widget build(BuildContext context) {
+    final statusText = _currentStatus.displayName;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -53,12 +57,12 @@ class _CandidateInterviewDetailViewState
         child: Column(
           children: [
             // Status badge centered
-            Center(child: StatusBadge(status: _status, large: true)),
+            Center(child: StatusBadge(status: statusText, large: true)),
             const SizedBox(height: 16),
 
             // Role + company
             Text(
-              _interview['jobTitle'] as String,
+              _interview.jobTitle,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w700,
@@ -68,7 +72,7 @@ class _CandidateInterviewDetailViewState
             ),
             const SizedBox(height: 4),
             Text(
-              _interview['company'] as String,
+              _interview.company,
               style: const TextStyle(
                 fontSize: 15,
                 color: AppColors.secondary,
@@ -92,21 +96,21 @@ class _CandidateInterviewDetailViewState
                   _InfoRow(
                     icon: Icons.calendar_today,
                     label: 'Date',
-                    value: _interview['date'] as String,
+                    value: _interview.date,
                   ),
                   const Divider(height: 24),
                   _InfoRow(
                     icon: Icons.access_time,
                     label: 'Time',
-                    value: _interview['time'] as String,
+                    value: _interview.time,
                   ),
                   const Divider(height: 24),
                   _InfoRow(
                     icon: _isVideo ? Icons.videocam : Icons.place,
                     label: 'Format',
-                    value: _interview['format'] as String,
+                    value: _interview.format.displayName,
                   ),
-                  if (_isVideo && _interview['link'] != null) ...[
+                  if (_isVideo && _interview.link != null) ...[
                     const Divider(height: 24),
                     _InfoRow(
                       icon: Icons.link,
@@ -129,12 +133,12 @@ class _CandidateInterviewDetailViewState
                       ),
                     ),
                   ],
-                  if (!_isVideo && _interview['location'] != null) ...[
+                  if (!_isVideo && _interview.location != null) ...[
                     const Divider(height: 24),
                     _InfoRow(
                       icon: Icons.place,
                       label: 'Location',
-                      value: _interview['location'] as String,
+                      value: _interview.location!,
                     ),
                   ],
                 ],
@@ -144,7 +148,7 @@ class _CandidateInterviewDetailViewState
             const SizedBox(height: 16),
 
             // Notes card
-            if (_interview['notes'] != null)
+            if (_interview.notes != null)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -166,7 +170,7 @@ class _CandidateInterviewDetailViewState
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _interview['notes'] as String,
+                      _interview.notes!,
                       style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.secondary,
@@ -180,14 +184,14 @@ class _CandidateInterviewDetailViewState
             const SizedBox(height: 24),
 
             // Action buttons
-            if (_status == 'Invited') ...[
+            if (_currentStatus == InterviewStatus.invited) ...[
               SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _interview['status'] = 'Confirmed';
+                      _currentStatus = InterviewStatus.confirmed;
                     });
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
@@ -262,7 +266,7 @@ class _CandidateInterviewDetailViewState
               ),
             ],
 
-            if (_status == 'Confirmed') ...[
+            if (_currentStatus == InterviewStatus.confirmed) ...[
               SizedBox(
                 width: double.infinity,
                 height: 50,

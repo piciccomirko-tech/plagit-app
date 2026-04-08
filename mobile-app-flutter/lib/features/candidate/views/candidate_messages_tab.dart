@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/conversation.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateMessagesTab extends StatefulWidget {
   const CandidateMessagesTab({super.key});
@@ -14,20 +17,19 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
 
-  List<Map<String, dynamic>> get _allConversations =>
-      MockData.conversations.cast<Map<String, dynamic>>();
-
-  List<Map<String, dynamic>> get _filteredConversations {
-    if (_searchQuery.isEmpty) return _allConversations;
-    final q = _searchQuery.toLowerCase();
-    return _allConversations
-        .where((c) =>
-            (c['company'] as String).toLowerCase().contains(q))
-        .toList();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CandidateMessagesProvider>().load();
+    });
   }
 
-  int get _totalUnread => _allConversations.fold<int>(
-      0, (sum, c) => sum + (c['unread'] as int));
+  List<Conversation> _filterConversations(List<Conversation> all) {
+    if (_searchQuery.isEmpty) return all;
+    final q = _searchQuery.toLowerCase();
+    return all.where((c) => c.company.toLowerCase().contains(q)).toList();
+  }
 
   Color _avatarColor(String name) {
     final hue = MockData.companyHue(name).toDouble();
@@ -42,8 +44,69 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final conversations = _filteredConversations;
-    final unread = _totalUnread;
+    final provider = context.watch<CandidateMessagesProvider>();
+
+    // Loading state
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text(
+            'Messages',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.charcoal,
+            ),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0.5,
+        ),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text(
+            'Messages',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.charcoal,
+            ),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0.5,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.red),
+              const SizedBox(height: 12),
+              Text(
+                provider.error!,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: AppColors.secondary),
+              ),
+              const SizedBox(height: 16),
+              TextButton(
+                onPressed: () => context.read<CandidateMessagesProvider>().load(),
+                child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Content state
+    final conversations = _filterConversations(provider.conversations);
+    final unread = provider.totalUnread;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -141,10 +204,9 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                       final conv = conversations[i];
                       return _ConversationTile(
                         conv: conv,
-                        avatarColor:
-                            _avatarColor(conv['company'] as String),
+                        avatarColor: _avatarColor(conv.company),
                         onTap: () => context.push(
-                          '/candidate/chat/${conv['id']}',
+                          '/candidate/chat/${conv.id}',
                         ),
                       );
                     },
@@ -157,7 +219,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
 }
 
 class _ConversationTile extends StatelessWidget {
-  final Map<String, dynamic> conv;
+  final Conversation conv;
   final Color avatarColor;
   final VoidCallback onTap;
 
@@ -169,9 +231,9 @@ class _ConversationTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final company = conv['company'] as String;
+    final company = conv.company;
     final initial = company.isNotEmpty ? company[0] : '?';
-    final unread = conv['unread'] as int;
+    final unread = conv.unread;
 
     return GestureDetector(
       onTap: onTap,
@@ -218,7 +280,7 @@ class _ConversationTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        conv['jobContext'] as String,
+                        conv.jobContext,
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.secondary,
@@ -226,7 +288,7 @@ class _ConversationTile extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        conv['lastMessage'] as String,
+                        conv.lastMessage,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
@@ -245,7 +307,7 @@ class _ConversationTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      conv['time'] as String,
+                      conv.time,
                       style: const TextStyle(
                         fontSize: 11,
                         color: AppColors.tertiary,

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/job.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateJobDetailView extends StatefulWidget {
   final String jobId;
@@ -14,21 +17,22 @@ class CandidateJobDetailView extends StatefulWidget {
 
 class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
   int _tabIndex = 0;
-  bool _saved = false;
   bool _applied = false;
-
-  Map<String, dynamic>? get _job {
-    final allJobs = MockData.jobs.cast<Map<String, dynamic>>();
-    for (final j in allJobs) {
-      if (j['id'] == widget.jobId) return j;
-    }
-    return null;
-  }
+  Job? _job;
 
   @override
   void initState() {
     super.initState();
-    _saved = MockData.savedJobIds.contains(widget.jobId);
+    final provider = context.read<CandidateJobsProvider>();
+    _job = provider.jobs.cast<Job?>().firstWhere(
+      (j) => j?.id == widget.jobId,
+      orElse: () => null,
+    );
+    // Fallback: look up from all mock jobs if not in provider list
+    _job ??= Job.mockAll().cast<Job?>().firstWhere(
+      (j) => j?.id == widget.jobId,
+      orElse: () => null,
+    );
   }
 
   static const _tabLabels = ['Overview', 'Requirements', 'Benefits'];
@@ -44,11 +48,8 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
       );
     }
 
-    final company = job['company'] as String? ?? '';
-    final hue = MockData.companyHue(company).toDouble();
-    final initials = company.isNotEmpty ? company[0].toUpperCase() : '?';
-    final featured = job['featured'] == true;
-    final urgent = job['urgent'] == true;
+    final hue = MockData.companyHue(job.company).toDouble();
+    final initials = job.company.isNotEmpty ? job.company[0].toUpperCase() : '?';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -98,7 +99,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
                 // ── Title ──
                 Center(
                   child: Text(
-                    job['title'] as String? ?? '',
+                    job.title,
                     style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal),
                     textAlign: TextAlign.center,
                   ),
@@ -108,7 +109,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
                 // ── Company + Location ──
                 Center(
                   child: Text(
-                    '$company  \u{1F4CD} ${job['location'] ?? ''}',
+                    '${job.company}  \u{1F4CD} ${job.location}',
                     style: const TextStyle(fontSize: 14, color: AppColors.secondary),
                     textAlign: TextAlign.center,
                   ),
@@ -122,20 +123,20 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
                     runSpacing: 8,
                     alignment: WrapAlignment.center,
                     children: [
-                      _chip(job['salary'] as String? ?? '', AppColors.teal, Colors.white),
-                      _chip(job['contract'] as String? ?? '', const Color(0xFFEEEEF0), AppColors.charcoal),
+                      _chip(job.salary, AppColors.teal, Colors.white),
+                      _chip(job.contract, const Color(0xFFEEEEF0), AppColors.charcoal),
                     ],
                   ),
                 ),
 
-                if (featured || urgent) ...[
+                if (job.featured || job.urgent) ...[
                   const SizedBox(height: 10),
                   Center(
                     child: Wrap(
                       spacing: 8,
                       children: [
-                        if (featured) _badge('Featured', AppColors.amber),
-                        if (urgent) _badge('Urgent', AppColors.red),
+                        if (job.featured) _badge('Featured', AppColors.amber),
+                        if (job.urgent) _badge('Urgent', AppColors.red),
                       ],
                     ),
                   ),
@@ -193,60 +194,65 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
           ),
 
           // ── FIXED BOTTOM BAR ──
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.06),
-                  blurRadius: 8,
-                  offset: const Offset(0, -2),
-                ),
-              ],
-            ),
-            child: SafeArea(
-              top: false,
-              child: Row(
-                children: [
-                  // Save button
-                  GestureDetector(
-                    onTap: () => setState(() => _saved = !_saved),
-                    child: Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        color: _saved ? AppColors.teal.withValues(alpha: 0.10) : const Color(0xFFEEEEF0),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        _saved ? Icons.favorite : Icons.favorite_border,
-                        color: _saved ? AppColors.teal : AppColors.secondary,
-                        size: 22,
-                      ),
+          Consumer<CandidateJobsProvider>(
+            builder: (context, jobsProvider, _) {
+              final saved = jobsProvider.isSaved(job.id);
+              return Container(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.06),
+                      blurRadius: 8,
+                      offset: const Offset(0, -2),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  // Apply button
-                  Expanded(
-                    child: _applied
-                        ? Center(child: StatusBadge(status: 'Applied', large: true))
-                        : ElevatedButton(
-                            onPressed: () => _showApplyDialog(job),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.teal,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                            ),
-                            child: const Text('Apply Now',
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ],
+                ),
+                child: SafeArea(
+                  top: false,
+                  child: Row(
+                    children: [
+                      // Save button
+                      GestureDetector(
+                        onTap: () => jobsProvider.toggleSave(job.id),
+                        child: Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: saved ? AppColors.teal.withValues(alpha: 0.10) : const Color(0xFFEEEEF0),
+                            borderRadius: BorderRadius.circular(12),
                           ),
+                          child: Icon(
+                            saved ? Icons.favorite : Icons.favorite_border,
+                            color: saved ? AppColors.teal : AppColors.secondary,
+                            size: 22,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      // Apply button
+                      Expanded(
+                        child: _applied
+                            ? Center(child: StatusBadge(status: 'Applied', large: true))
+                            : ElevatedButton(
+                                onPressed: () => _showApplyDialog(job),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.teal,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                ),
+                                child: const Text('Apply Now',
+                                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                              ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -254,10 +260,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
   }
 
   // ── Overview Tab ──
-  Widget _buildOverview(Map<String, dynamic> job) {
-    final company = job['company'] as String? ?? '';
-    final location = job['location'] as String? ?? '';
-
+  Widget _buildOverview(Job job) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -265,7 +268,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
         const SizedBox(height: 10),
         Text(
-          job['description'] as String? ?? '',
+          job.description ?? '',
           style: const TextStyle(fontSize: 14, height: 1.6, color: AppColors.secondary),
         ),
         const SizedBox(height: 20),
@@ -285,10 +288,10 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(company,
+                    Text(job.company,
                         style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
                     const SizedBox(height: 2),
-                    Text(location, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
+                    Text(job.location, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
                   ],
                 ),
               ),
@@ -301,8 +304,8 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
   }
 
   // ── Requirements Tab ──
-  Widget _buildRequirements(Map<String, dynamic> job) {
-    final items = (job['requirements'] as List?)?.cast<String>() ?? [];
+  Widget _buildRequirements(Job job) {
+    final items = job.requirements ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -330,8 +333,8 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
   }
 
   // ── Benefits Tab ──
-  Widget _buildBenefits(Map<String, dynamic> job) {
-    final items = (job['benefits'] as List?)?.cast<String>() ?? [];
+  Widget _buildBenefits(Job job) {
+    final items = job.benefits ?? [];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -359,16 +362,14 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
   }
 
   // ── Apply Dialog ──
-  void _showApplyDialog(Map<String, dynamic> job) {
+  void _showApplyDialog(Job job) {
     final noteController = TextEditingController();
-    final title = job['title'] as String? ?? '';
-    final company = job['company'] as String? ?? '';
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Apply for $title at $company?',
+        title: Text('Apply for ${job.title} at ${job.company}?',
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
         content: Column(
           mainAxisSize: MainAxisSize.min,

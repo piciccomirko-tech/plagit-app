@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/candidate_profile.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
-class CandidateProfileTab extends StatefulWidget {
+class CandidateProfileTab extends StatelessWidget {
   const CandidateProfileTab({super.key});
 
   @override
-  State<CandidateProfileTab> createState() => _CandidateProfileTabState();
-}
+  Widget build(BuildContext context) {
+    final authProvider = context.watch<CandidateAuthProvider>();
+    final profile = authProvider.profile;
 
-class _CandidateProfileTabState extends State<CandidateProfileTab> {
-  final _candidate = MockData.candidate;
+    // Loading / no-profile state
+    if (profile == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: const Center(
+          child: CircularProgressIndicator(color: AppColors.teal),
+        ),
+      );
+    }
 
-  void _showSignOutDialog() {
+    return _CandidateProfileContent(
+      profile: profile,
+      onLogout: () => _showSignOutDialog(context, authProvider),
+    );
+  }
+
+  void _showSignOutDialog(BuildContext context, CandidateAuthProvider provider) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -28,6 +44,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
+              provider.logout();
               context.go('/entry');
             },
             child: const Text('Sign Out', style: TextStyle(color: AppColors.red, fontWeight: FontWeight.w600)),
@@ -36,10 +53,20 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
       ),
     );
   }
+}
+
+class _CandidateProfileContent extends StatelessWidget {
+  final CandidateProfile profile;
+  final VoidCallback onLogout;
+
+  const _CandidateProfileContent({
+    required this.profile,
+    required this.onLogout,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final completion = (_candidate['profileCompletion'] as int?) ?? 65;
+    final completion = profile.completionPercentage;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -49,7 +76,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
           children: [
             const SizedBox(height: 24),
 
-            // ── Top section: Avatar + name ──
+            // -- Top section: Avatar + name --
             Center(
               child: Column(
                 children: [
@@ -66,8 +93,8 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                             color: AppColors.teal,
                             shape: BoxShape.circle,
                           ),
-                          child: const Center(
-                            child: Text('TC', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white)),
+                          child: Center(
+                            child: Text(profile.initials, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white)),
                           ),
                         ),
                         Positioned(
@@ -89,17 +116,17 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    _candidate['name'] as String? ?? 'Test Candidate',
+                    profile.name,
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.charcoal),
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _candidate['role'] as String? ?? 'Waiter',
+                    profile.role ?? '',
                     style: const TextStyle(fontSize: 14, color: AppColors.secondary),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '\u{1F4CD} ${_candidate['location'] ?? 'London, UK'}',
+                    '\u{1F4CD} ${profile.location ?? 'London, UK'}',
                     style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                   ),
                   const SizedBox(height: 16),
@@ -148,41 +175,41 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
 
             const SizedBox(height: 24),
 
-            // ── A. Personal Info ──
+            // -- A. Personal Info --
             _SectionCard(
               title: 'Personal Info',
               onEdit: () => context.push('/candidate/profile/edit'),
               child: Column(
                 children: [
-                  _InfoRow(label: 'Name', value: _candidate['name'] as String? ?? ''),
+                  _InfoRow(label: 'Name', value: profile.name),
                   const Divider(height: 1, color: AppColors.divider),
-                  _InfoRow(label: 'Email', value: _candidate['email'] as String? ?? ''),
+                  _InfoRow(label: 'Email', value: profile.email),
                   const Divider(height: 1, color: AppColors.divider),
-                  _InfoRow(label: 'Phone', value: _candidate['phone'] as String? ?? ''),
+                  _InfoRow(label: 'Phone', value: profile.phone ?? ''),
                   const Divider(height: 1, color: AppColors.divider),
-                  _InfoRow(label: 'Nationality', value: _candidate['nationality'] as String? ?? ''),
+                  _InfoRow(label: 'Nationality', value: profile.nationality ?? ''),
                 ],
               ),
             ),
 
-            // ── B. Work Preferences ──
+            // -- B. Work Preferences --
             _SectionCard(
               title: 'Work Preferences',
               onEdit: () => context.push('/candidate/profile/edit'),
               child: Column(
                 children: [
-                  _InfoRow(label: 'Target Role', value: _candidate['role'] as String? ?? ''),
+                  _InfoRow(label: 'Target Role', value: profile.role ?? ''),
                   const Divider(height: 1, color: AppColors.divider),
-                  _InfoRow(label: 'Contract', value: _candidate['contractPreference'] as String? ?? ''),
+                  _InfoRow(label: 'Contract', value: profile.contractPreference ?? ''),
                   const Divider(height: 1, color: AppColors.divider),
-                  _InfoRow(label: 'Availability', value: _candidate['availability'] as String? ?? ''),
+                  _InfoRow(label: 'Availability', value: profile.availability ?? ''),
                   const Divider(height: 1, color: AppColors.divider),
-                  _InfoRow(label: 'Salary', value: _candidate['salary'] as String? ?? ''),
+                  _InfoRow(label: 'Salary', value: profile.salary ?? ''),
                 ],
               ),
             ),
 
-            // ── C. Experience ──
+            // -- C. Experience --
             _SectionCard(
               title: 'Experience',
               onEdit: () => context.push('/candidate/profile/edit'),
@@ -192,7 +219,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Text(
-                      '${_candidate['experience']} experience',
+                      '${profile.experience ?? ''} experience',
                       style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                     ),
                   ),
@@ -204,7 +231,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
               ),
             ),
 
-            // ── D. Languages ──
+            // -- D. Languages --
             _SectionCard(
               title: 'Languages',
               onEdit: () => context.push('/candidate/profile/edit'),
@@ -217,7 +244,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
               ),
             ),
 
-            // ── E. Certifications ──
+            // -- E. Certifications --
             _SectionCard(
               title: 'Certifications',
               trailing: GestureDetector(
@@ -250,7 +277,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
               ),
             ),
 
-            // ── F. CV ──
+            // -- F. CV --
             _SectionCard(
               title: 'CV',
               child: Padding(
@@ -283,7 +310,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
               ),
             ),
 
-            // ── G. Verification ──
+            // -- G. Verification --
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               padding: const EdgeInsets.all(16),
@@ -293,21 +320,24 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.shield_outlined, size: 20, color: AppColors.amber),
+                      Icon(Icons.shield_outlined, size: 20, color: profile.isVerified ? AppColors.teal : AppColors.amber),
                       const SizedBox(width: 8),
-                      Text('Not verified', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.amber)),
+                      Text(
+                        profile.isVerified ? 'Verified' : 'Not verified',
+                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: profile.isVerified ? AppColors.teal : AppColors.amber),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  const Text(
-                    'Get verified for more opportunities',
-                    style: TextStyle(fontSize: 12, color: AppColors.secondary),
+                  Text(
+                    profile.isVerified ? 'Your profile is verified' : 'Get verified for more opportunities',
+                    style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                   ),
                 ],
               ),
             ),
 
-            // ── Settings ──
+            // -- Settings --
             const SizedBox(height: 24),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -332,7 +362,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                     label: 'Sign Out',
                     color: AppColors.red,
                     showChevron: false,
-                    onTap: _showSignOutDialog,
+                    onTap: onLogout,
                   ),
                 ],
               ),
@@ -345,7 +375,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
   }
 }
 
-// ── Section card with title + edit/trailing ──
+// -- Section card with title + edit/trailing --
 class _SectionCard extends StatelessWidget {
   final String title;
   final VoidCallback? onEdit;
@@ -391,7 +421,7 @@ class _SectionCard extends StatelessWidget {
   }
 }
 
-// ── Info row: label + value ──
+// -- Info row: label + value --
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
@@ -412,7 +442,7 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-// ── Experience row ──
+// -- Experience row --
 class _ExperienceRow extends StatelessWidget {
   final String role;
   final String period;
@@ -432,7 +462,7 @@ class _ExperienceRow extends StatelessWidget {
   }
 }
 
-// ── Language row ──
+// -- Language row --
 class _LanguageRow extends StatelessWidget {
   final String flag;
   final String language;
@@ -453,7 +483,7 @@ class _LanguageRow extends StatelessWidget {
   }
 }
 
-// ── Settings tile ──
+// -- Settings tile --
 class _SettingsTile extends StatelessWidget {
   final IconData icon;
   final String label;

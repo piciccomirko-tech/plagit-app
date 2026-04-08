@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/application.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateApplicationDetailView extends StatelessWidget {
   final String applicationId;
@@ -11,19 +13,14 @@ class CandidateApplicationDetailView extends StatelessWidget {
     required this.applicationId,
   });
 
-  Map<String, dynamic>? get _app {
-    try {
-      return MockData.applications
-          .cast<Map<String, dynamic>>()
-          .firstWhere((a) => a['id'] == applicationId);
-    } catch (_) {
-      return null;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final app = _app;
+    final provider = context.watch<CandidateApplicationsProvider>();
+    final Application? app = provider.applications.cast<Application?>().firstWhere(
+      (a) => a?.id == applicationId,
+      orElse: () => null,
+    );
+
     if (app == null) {
       return Scaffold(
         appBar: AppBar(title: const Text('Application')),
@@ -31,7 +28,7 @@ class CandidateApplicationDetailView extends StatelessWidget {
       );
     }
 
-    final status = app['status'] as String;
+    final statusText = app.status.displayName;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -63,7 +60,7 @@ class CandidateApplicationDetailView extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    app['jobTitle'] as String,
+                    app.jobTitle,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -72,7 +69,7 @@ class CandidateApplicationDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    '${app['company']} \u00B7 ${app['location']}',
+                    '${app.company} \u00B7 ${app.location}',
                     style: const TextStyle(
                       fontSize: 14,
                       color: AppColors.secondary,
@@ -80,7 +77,7 @@ class CandidateApplicationDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    app['salary'] as String,
+                    app.salary ?? '',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -93,10 +90,10 @@ class CandidateApplicationDetailView extends StatelessWidget {
             const SizedBox(height: 20),
 
             // Status badge centered
-            Center(child: StatusBadge(status: status, large: true)),
+            Center(child: StatusBadge(status: statusText, large: true)),
             const SizedBox(height: 8),
             Text(
-              'Applied ${app['date']}',
+              'Applied ${app.date}',
               style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.secondary,
@@ -105,16 +102,16 @@ class CandidateApplicationDetailView extends StatelessWidget {
             const SizedBox(height: 28),
 
             // Timeline
-            _TimelineSection(status: status),
+            _TimelineSection(status: statusText),
             const SizedBox(height: 20),
 
             // What happens next
-            _WhatHappensNextCard(status: status),
+            _WhatHappensNextCard(status: statusText),
             const SizedBox(height: 24),
 
             // Action buttons
             _ActionButtons(
-              status: status,
+              status: statusText,
               onWithdraw: () => _showWithdrawDialog(context),
             ),
             const SizedBox(height: 32),

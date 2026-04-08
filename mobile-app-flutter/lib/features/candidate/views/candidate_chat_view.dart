@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/conversation.dart';
+import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/repositories/candidate_repository.dart';
 
 class CandidateChatView extends StatefulWidget {
   final String conversationId;
@@ -14,64 +17,73 @@ class CandidateChatView extends StatefulWidget {
 class _CandidateChatViewState extends State<CandidateChatView> {
   final _textController = TextEditingController();
   final _scrollController = ScrollController();
-  late List<Map<String, dynamic>> _messages;
-
-  Map<String, dynamic>? get _conversation {
-    try {
-      return MockData.conversations
-          .cast<Map<String, dynamic>>()
-          .firstWhere((c) => c['id'] == widget.conversationId);
-    } catch (_) {
-      return null;
-    }
-  }
+  final _repo = CandidateRepository();
+  List<ChatMessage> _messages = [];
+  Conversation? _conversation;
+  bool _loadingMessages = true;
 
   @override
   void initState() {
     super.initState();
-    // Load mock messages — use ritzMessages for conversation 1, generic for others
-    if (widget.conversationId == '1') {
-      _messages = MockData.ritzMessages
-          .map((m) => Map<String, dynamic>.from(m))
-          .toList();
-    } else if (widget.conversationId == '2') {
-      _messages = [
-        {
-          'sender': 'business',
-          'text': 'Thank you for your application to the Bartender position.',
-          'time': '9:00 AM'
-        },
-        {
-          'sender': 'business',
-          'text': 'Your application is currently under review by our team.',
-          'time': '9:01 AM'
-        },
-        {
-          'sender': 'candidate',
-          'text': 'Thank you for letting me know. Looking forward to hearing back.',
-          'time': '9:30 AM'
-        },
-      ];
-    } else {
-      _messages = [
-        {
-          'sender': 'business',
-          'text':
-              'Congratulations! You have been shortlisted for the Chef de Partie position.',
-          'time': '2:00 PM'
-        },
-        {
-          'sender': 'candidate',
-          'text': 'That is wonderful news! What are the next steps?',
-          'time': '2:15 PM'
-        },
-        {
-          'sender': 'business',
-          'text':
-              'We will be in touch shortly to arrange an interview. Please keep an eye on your notifications.',
-          'time': '2:20 PM'
-        },
-      ];
+    final provider = context.read<CandidateMessagesProvider>();
+    _conversation = provider.conversations.cast<Conversation?>().firstWhere(
+      (c) => c?.id == widget.conversationId,
+      orElse: () => null,
+    );
+    _loadMessages();
+  }
+
+  Future<void> _loadMessages() async {
+    try {
+      final messages = await _repo.fetchMessages(widget.conversationId);
+      if (!mounted) return;
+      setState(() {
+        _messages = messages;
+        _loadingMessages = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      // Fallback: generate some default messages for non-Ritz conversations
+      setState(() {
+        if (widget.conversationId == '2') {
+          _messages = [
+            const ChatMessage(
+              sender: 'business',
+              text: 'Thank you for your application to the Bartender position.',
+              time: '9:00 AM',
+            ),
+            const ChatMessage(
+              sender: 'business',
+              text: 'Your application is currently under review by our team.',
+              time: '9:01 AM',
+            ),
+            const ChatMessage(
+              sender: 'candidate',
+              text: 'Thank you for letting me know. Looking forward to hearing back.',
+              time: '9:30 AM',
+            ),
+          ];
+        } else {
+          _messages = [
+            const ChatMessage(
+              sender: 'business',
+              text: 'Congratulations! You have been shortlisted for the Chef de Partie position.',
+              time: '2:00 PM',
+            ),
+            const ChatMessage(
+              sender: 'candidate',
+              text: 'That is wonderful news! What are the next steps?',
+              time: '2:15 PM',
+            ),
+            const ChatMessage(
+              sender: 'business',
+              text: 'We will be in touch shortly to arrange an interview. Please keep an eye on your notifications.',
+              time: '2:20 PM',
+            ),
+          ];
+        }
+        _loadingMessages = false;
+      });
     }
   }
 
@@ -87,13 +99,16 @@ class _CandidateChatViewState extends State<CandidateChatView> {
     if (text.isEmpty) return;
 
     setState(() {
-      _messages.add({
-        'sender': 'candidate',
-        'text': text,
-        'time': 'Just now',
-      });
+      _messages.add(ChatMessage(
+        sender: 'candidate',
+        text: text,
+        time: 'Just now',
+      ));
     });
     _textController.clear();
+
+    // Would call repo.sendMessage() in production
+    // _repo.sendMessage(widget.conversationId, text);
 
     // Scroll to bottom
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,9 +124,8 @@ class _CandidateChatViewState extends State<CandidateChatView> {
 
   @override
   Widget build(BuildContext context) {
-    final conv = _conversation;
-    final company = conv?['company'] as String? ?? 'Chat';
-    final jobContext = conv?['jobContext'] as String? ?? '';
+    final company = _conversation?.company ?? 'Chat';
+    final jobContext = _conversation?.jobContext ?? '';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -150,60 +164,61 @@ class _CandidateChatViewState extends State<CandidateChatView> {
         children: [
           // Messages list (reversed so newest at bottom)
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              reverse: true,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 12),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                // Reversed index
-                final msgIndex =
-                    _messages.length - 1 - index;
-                final msg = _messages[msgIndex];
-                final isCandidate =
-                    msg['sender'] == 'candidate';
+            child: _loadingMessages
+                ? const Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    controller: _scrollController,
+                    reverse: true,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    itemCount: _messages.length,
+                    itemBuilder: (context, index) {
+                      // Reversed index
+                      final msgIndex =
+                          _messages.length - 1 - index;
+                      final msg = _messages[msgIndex];
+                      final isCandidate = !msg.isFromBusiness;
 
-                // Show timestamp if first message or different sender/time
-                bool showTime = false;
-                if (msgIndex == 0) {
-                  showTime = true;
-                } else {
-                  final prev = _messages[msgIndex - 1];
-                  if (prev['time'] != msg['time'] ||
-                      prev['sender'] != msg['sender']) {
-                    showTime = true;
-                  }
-                }
+                      // Show timestamp if first message or different sender/time
+                      bool showTime = false;
+                      if (msgIndex == 0) {
+                        showTime = true;
+                      } else {
+                        final prev = _messages[msgIndex - 1];
+                        if (prev.time != msg.time ||
+                            prev.sender != msg.sender) {
+                          showTime = true;
+                        }
+                      }
 
-                return Column(
-                  crossAxisAlignment: isCandidate
-                      ? CrossAxisAlignment.end
-                      : CrossAxisAlignment.start,
-                  children: [
-                    if (showTime)
-                      Padding(
-                        padding:
-                            const EdgeInsets.only(bottom: 8, top: 8),
-                        child: Center(
-                          child: Text(
-                            msg['time'] as String,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: AppColors.tertiary,
+                      return Column(
+                        crossAxisAlignment: isCandidate
+                            ? CrossAxisAlignment.end
+                            : CrossAxisAlignment.start,
+                        children: [
+                          if (showTime)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(bottom: 8, top: 8),
+                              child: Center(
+                                child: Text(
+                                  msg.time,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.tertiary,
+                                  ),
+                                ),
+                              ),
                             ),
+                          _ChatBubble(
+                            text: msg.text,
+                            isCandidate: isCandidate,
                           ),
-                        ),
-                      ),
-                    _ChatBubble(
-                      text: msg['text'] as String,
-                      isCandidate: isCandidate,
-                    ),
-                    const SizedBox(height: 6),
-                  ],
-                );
-              },
-            ),
+                          const SizedBox(height: 6),
+                        ],
+                      );
+                    },
+                  ),
           ),
 
           // Input bar

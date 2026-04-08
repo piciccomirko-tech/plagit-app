@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/job_card.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateJobsTab extends StatefulWidget {
   const CandidateJobsTab({super.key});
@@ -12,32 +13,60 @@ class CandidateJobsTab extends StatefulWidget {
 }
 
 class _CandidateJobsTabState extends State<CandidateJobsTab> {
-  int _selectedChip = 0;
-  int _selectedSort = 0;
-  final Set<String> _savedIds = {...MockData.savedJobIds};
-
   static const _chipLabels = ['All', 'Nearby', 'Featured', 'Urgent', 'Saved'];
   static const _sortLabels = ['Newest', 'Salary \u2191', 'Distance'];
 
-  List<Map<String, dynamic>> get _filteredJobs {
-    final allJobs = MockData.jobs.cast<Map<String, dynamic>>();
-    switch (_selectedChip) {
-      case 1: // Nearby
-        return allJobs.where((j) => j['location'] == 'London').toList();
-      case 2: // Featured
-        return allJobs.where((j) => j['featured'] == true).toList();
-      case 3: // Urgent
-        return allJobs.where((j) => j['urgent'] == true).toList();
-      case 4: // Saved
-        return allJobs.where((j) => _savedIds.contains(j['id'])).toList();
-      default:
-        return allJobs;
-    }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CandidateJobsProvider>().load();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final jobs = _filteredJobs;
+    final provider = context.watch<CandidateJobsProvider>();
+
+    // Loading state
+    if (provider.loading) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                provider.error!,
+                style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.read<CandidateJobsProvider>().load(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final jobs = provider.jobs;
+    final selectedChipIndex = _chipLabels.indexOf(provider.filter).clamp(0, _chipLabels.length - 1);
+    final selectedSortIndex = _sortLabels.indexOf(provider.sort).clamp(0, _sortLabels.length - 1);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -105,9 +134,9 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                 itemCount: _chipLabels.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
                 itemBuilder: (context, i) {
-                  final selected = _selectedChip == i;
+                  final selected = selectedChipIndex == i;
                   return GestureDetector(
-                    onTap: () => setState(() => _selectedChip = i),
+                    onTap: () => provider.setFilter(_chipLabels[i]),
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       decoration: BoxDecoration(
@@ -135,11 +164,11 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: List.generate(_sortLabels.length, (i) {
-                  final selected = _selectedSort == i;
+                  final selected = selectedSortIndex == i;
                   return Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: GestureDetector(
-                      onTap: () => setState(() => _selectedSort = i),
+                      onTap: () => provider.setSort(_sortLabels[i]),
                       child: Column(
                         children: [
                           Text(
@@ -183,20 +212,11 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                 separatorBuilder: (_, __) => const SizedBox(height: 10),
                 itemBuilder: (context, i) {
                   final job = jobs[i];
-                  final id = job['id'] as String;
                   return JobCard(
-                    job: job,
-                    saved: _savedIds.contains(id),
-                    onTap: () => context.push('/candidate/job/$id'),
-                    onSave: () {
-                      setState(() {
-                        if (_savedIds.contains(id)) {
-                          _savedIds.remove(id);
-                        } else {
-                          _savedIds.add(id);
-                        }
-                      });
-                    },
+                    job: job.toJson(),
+                    saved: provider.savedIds.contains(job.id),
+                    onTap: () => context.push('/candidate/job/${job.id}'),
+                    onSave: () => provider.toggleSave(job.id),
                   );
                 },
               ),

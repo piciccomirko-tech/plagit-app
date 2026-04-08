@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/application.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateApplicationsTab extends StatefulWidget {
   const CandidateApplicationsTab({super.key});
@@ -13,8 +15,6 @@ class CandidateApplicationsTab extends StatefulWidget {
 }
 
 class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
-  String _selectedFilter = 'All';
-
   static const _filters = [
     'All',
     'Applied',
@@ -24,29 +24,85 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
     'Rejected',
   ];
 
-  List<Map<String, dynamic>> get _allApps =>
-      MockData.applications.cast<Map<String, dynamic>>();
-
-  List<Map<String, dynamic>> get _filteredApps {
-    if (_selectedFilter == 'All') return _allApps;
-    return _allApps
-        .where((a) => a['status'] == _selectedFilter)
-        .toList();
-  }
-
-  int _countFor(String filter) {
-    if (filter == 'All') return _allApps.length;
-    return _allApps.where((a) => a['status'] == filter).length;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CandidateApplicationsProvider>().load();
+    });
   }
 
   Color _avatarColor(String name) {
-    final hue = MockData.companyHue(name).toDouble();
+    final hue = (name.hashCode % 360).abs().toDouble();
     return HSLColor.fromAHSL(1, hue, 0.55, 0.50).toColor();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _filteredApps;
+    final provider = context.watch<CandidateApplicationsProvider>();
+
+    // Loading state
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text(
+            'My Applications',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.charcoal,
+            ),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0.5,
+        ),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text(
+            'My Applications',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: AppColors.charcoal,
+            ),
+          ),
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0.5,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                provider.error!,
+                style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.read<CandidateApplicationsProvider>().load(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    final filtered = provider.applications;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -73,12 +129,11 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
                 children: _filters.map((f) {
-                  final selected = _selectedFilter == f;
-                  final count = _countFor(f);
+                  final selected = provider.filter == f;
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: GestureDetector(
-                      onTap: () => setState(() => _selectedFilter = f),
+                      onTap: () => provider.setFilter(f),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 14,
@@ -94,7 +149,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
                           ),
                         ),
                         child: Text(
-                          '$f ($count)',
+                          f,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -152,9 +207,9 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
                       final app = filtered[i];
                       return _ApplicationCard(
                         app: app,
-                        avatarColor: _avatarColor(app['company'] as String),
+                        avatarColor: _avatarColor(app.company),
                         onTap: () => context.push(
-                          '/candidate/application/${app['id']}',
+                          '/candidate/application/${app.id}',
                         ),
                       );
                     },
@@ -167,7 +222,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
 }
 
 class _ApplicationCard extends StatelessWidget {
-  final Map<String, dynamic> app;
+  final Application app;
   final Color avatarColor;
   final VoidCallback onTap;
 
@@ -179,8 +234,7 @@ class _ApplicationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final company = app['company'] as String;
-    final initial = company.isNotEmpty ? company[0] : '?';
+    final initial = app.company.isNotEmpty ? app.company[0] : '?';
 
     return GestureDetector(
       onTap: onTap,
@@ -218,7 +272,7 @@ class _ApplicationCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        app['jobTitle'] as String,
+                        app.jobTitle,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -227,7 +281,7 @@ class _ApplicationCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '$company \u00B7 ${app['location']}',
+                        '${app.company} \u00B7 ${app.location}',
                         style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.secondary,
@@ -236,14 +290,14 @@ class _ApplicationCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                StatusBadge(status: app['status'] as String),
+                StatusBadge(status: app.status.displayName),
               ],
             ),
             const SizedBox(height: 10),
             Row(
               children: [
                 Text(
-                  'Applied ${app['date']}',
+                  'Applied ${app.date}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.tertiary,

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/job_card.dart';
 import 'package:plagit/core/widgets/empty_state.dart';
+import 'package:plagit/models/job.dart';
 
 class CandidateNearbyView extends StatefulWidget {
   const CandidateNearbyView({super.key});
@@ -25,8 +25,11 @@ class _CandidateNearbyViewState extends State<CandidateNearbyView> {
     '8': '5.3 mi',
   };
 
-  List<Map<String, dynamic>> get _filteredJobs {
-    final londonJobs = MockData.londonJobs;
+  List<Job> get _allLondonJobs =>
+      Job.mockAll().where((j) => j.location == 'London').toList();
+
+  List<Job> get _filteredJobs {
+    final londonJobs = _allLondonJobs;
     if (_selectedRadius == 1) {
       // Only show first 2 jobs when radius is 1mi
       return londonJobs.take(2).toList();
@@ -125,8 +128,7 @@ class _CandidateNearbyViewState extends State<CandidateNearbyView> {
                     itemCount: jobs.length,
                     itemBuilder: (context, index) {
                       final job = jobs[index];
-                      final jobId = job['id'] as String;
-                      final distance = _mockDistances[jobId] ?? '${(index + 1) * 1.1} mi';
+                      final distance = _mockDistances[job.id] ?? '${(index + 1) * 1.1} mi';
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
@@ -159,9 +161,9 @@ class _CandidateNearbyViewState extends State<CandidateNearbyView> {
                               ),
                             ),
                             JobCard(
-                              job: job,
+                              job: job.toJson(),
                               onTap: () => context.push(
-                                '/candidate/job/$jobId',
+                                '/candidate/job/${job.id}',
                               ),
                             ),
                           ],

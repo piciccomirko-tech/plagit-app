@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/interview.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateInterviewsView extends StatefulWidget {
   const CandidateInterviewsView({super.key});
@@ -13,26 +16,17 @@ class CandidateInterviewsView extends StatefulWidget {
 }
 
 class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
-  String _filter = 'Upcoming';
-
-  List<Map<String, dynamic>> get _filteredInterviews {
-    final all = MockData.interviews.cast<Map<String, dynamic>>();
-    switch (_filter) {
-      case 'Upcoming':
-        return all
-            .where((i) =>
-                i['status'] == 'Confirmed' || i['status'] == 'Invited')
-            .toList();
-      case 'Past':
-        return all.where((i) => i['status'] == 'Completed').toList();
-      default:
-        return all;
-    }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CandidateInterviewsProvider>().load();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final interviews = _filteredInterviews;
+    final provider = context.watch<CandidateInterviewsProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -56,11 +50,11 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: ['Upcoming', 'Past', 'All'].map((label) {
-                final selected = _filter == label;
+                final selected = provider.filter == label;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: GestureDetector(
-                    onTap: () => setState(() => _filter = label),
+                    onTap: () => context.read<CandidateInterviewsProvider>().setFilter(label),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
@@ -92,22 +86,59 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
             ),
           ),
 
-          // Content
+          // Content — three-state
           Expanded(
-            child: interviews.isEmpty
-                ? _buildEmptyState()
-                : ListView.separated(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: interviews.length,
-                    separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) {
-                      final interview = interviews[index];
-                      return _InterviewCard(interview: interview);
-                    },
-                  ),
+            child: _buildContent(provider),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildContent(CandidateInterviewsProvider provider) {
+    // Loading state
+    if (provider.loading) {
+      return const Center(child: CircularProgressIndicator(color: AppColors.teal));
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: AppColors.red),
+            const SizedBox(height: 12),
+            Text(
+              provider.error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.secondary),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () => context.read<CandidateInterviewsProvider>().load(),
+              child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Content state
+    final interviews = provider.interviews;
+
+    if (interviews.isEmpty) {
+      return _buildEmptyState();
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: interviews.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, index) {
+        final interview = interviews[index];
+        return _InterviewCard(interview: interview);
+      },
     );
   }
 
@@ -133,19 +164,19 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
 }
 
 class _InterviewCard extends StatelessWidget {
-  final Map<String, dynamic> interview;
+  final Interview interview;
   const _InterviewCard({required this.interview});
 
   @override
   Widget build(BuildContext context) {
-    final company = interview['company'] as String;
+    final company = interview.company;
     final hue = MockData.companyHue(company);
     final avatarColor =
         HSLColor.fromAHSL(1, hue.toDouble(), 0.5, 0.5).toColor();
-    final isVideo = interview['format'] == 'Video';
+    final isVideo = interview.format == InterviewFormat.video;
 
     return GestureDetector(
-      onTap: () => context.push('/candidate/interview/${interview['id']}'),
+      onTap: () => context.push('/candidate/interview/${interview.id}'),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -176,7 +207,7 @@ class _InterviewCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        interview['jobTitle'] as String,
+                        interview.jobTitle,
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
@@ -205,7 +236,7 @@ class _InterviewCard extends StatelessWidget {
                     size: 14, color: AppColors.secondary),
                 const SizedBox(width: 6),
                 Text(
-                  '${interview['date']}  \u2022  ${interview['time']}',
+                  '${interview.date}  \u2022  ${interview.time}',
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.secondary,
@@ -227,7 +258,7 @@ class _InterviewCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
-                    interview['format'] as String,
+                    interview.format.displayName,
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -236,7 +267,7 @@ class _InterviewCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                StatusBadge(status: interview['status'] as String),
+                StatusBadge(status: interview.status.displayName),
               ],
             ),
           ],
