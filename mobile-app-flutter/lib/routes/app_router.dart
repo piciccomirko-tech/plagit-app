@@ -69,10 +69,22 @@ import 'package:plagit/features/onboarding/business/onboarding_business_profile_
 
 // Services
 import 'package:plagit/features/services/views/service_entry_view.dart';
-import 'package:plagit/features/services/views/service_discovery_view.dart';
+import 'package:plagit/features/services/views/service_register_view.dart';
+import 'package:plagit/features/services/views/service_onboarding_view.dart';
+import 'package:plagit/features/services/views/service_home_view.dart';
+import 'package:plagit/features/services/views/service_discover_view.dart';
+import 'package:plagit/features/services/views/service_search_view.dart';
 import 'package:plagit/features/services/views/service_feed_view.dart';
 import 'package:plagit/features/services/views/service_company_profile_view.dart';
-import 'package:plagit/features/services/views/service_provider_signup_view.dart' show ServiceProviderSignUpView;
+import 'package:plagit/features/services/views/service_post_detail_view.dart';
+import 'package:plagit/features/services/views/service_promotions_view.dart';
+import 'package:plagit/features/services/views/service_promotion_detail_view.dart';
+import 'package:plagit/features/services/views/service_nearby_view.dart';
+import 'package:plagit/features/services/views/service_map_view.dart';
+import 'package:plagit/features/services/views/service_saved_view.dart';
+import 'package:plagit/features/services/views/service_messages_view.dart';
+import 'package:plagit/features/services/views/service_message_thread_view.dart';
+import 'package:plagit/features/services/views/service_notifications_view.dart';
 import 'package:plagit/features/services/views/service_subscription_view.dart';
 
 // Feed
@@ -206,13 +218,25 @@ class AppRouter {
       GoRoute(path: '/business/subscription', builder: (context, state) => const BusinessSubscriptionView()),
 
       // ══════════════════════════════════════════
-      // ── Services ──
+      // ── Services / Looking for Companies ──
       // ══════════════════════════════════════════
       GoRoute(path: '/services', builder: (context, state) => const ServiceEntryView()),
-      GoRoute(path: '/services/discovery', builder: (context, state) => const ServiceDiscoveryView()),
+      GoRoute(path: '/services/register', builder: (context, state) => const ServiceRegisterView()),
+      GoRoute(path: '/services/onboarding', builder: (context, state) => const ServiceOnboardingView()),
+      GoRoute(path: '/services/home', builder: (context, state) => const ServiceHomeView()),
+      GoRoute(path: '/services/discover', builder: (context, state) => const ServiceDiscoverView()),
+      GoRoute(path: '/services/search', builder: (context, state) => const ServiceSearchView()),
+      GoRoute(path: '/services/company/:id', builder: (context, state) => ServiceCompanyProfileView(companyId: state.pathParameters['id'] ?? 'sc1')),
       GoRoute(path: '/services/feed', builder: (context, state) => const ServiceFeedView()),
-      GoRoute(path: '/services/company/:id', builder: (context, state) => const ServiceCompanyProfileView()),
-      GoRoute(path: '/services/signup', builder: (context, state) => const ServiceProviderSignUpView()),
+      GoRoute(path: '/services/posts/:id', builder: (context, state) => ServicePostDetailView(postId: state.pathParameters['id'] ?? 'sp1')),
+      GoRoute(path: '/services/promotions', builder: (context, state) => const ServicePromotionsView()),
+      GoRoute(path: '/services/promotions/:id', builder: (context, state) => ServicePromotionDetailView(promotionId: state.pathParameters['id'] ?? 'promo1')),
+      GoRoute(path: '/services/nearby', builder: (context, state) => const ServiceNearbyView()),
+      GoRoute(path: '/services/map', builder: (context, state) => const ServiceMapView()),
+      GoRoute(path: '/services/saved', builder: (context, state) => const ServiceSavedView()),
+      GoRoute(path: '/services/messages', builder: (context, state) => const ServiceMessagesView()),
+      GoRoute(path: '/services/messages/:id', builder: (context, state) => ServiceMessageThreadView(conversationId: state.pathParameters['id'] ?? 'smc1')),
+      GoRoute(path: '/services/notifications', builder: (context, state) => const ServiceNotificationsView()),
       GoRoute(path: '/services/subscription', builder: (context, state) => const ServiceSubscriptionView()),
 
       // ══════════════════════════════════════════

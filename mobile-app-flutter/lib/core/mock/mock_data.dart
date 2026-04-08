@@ -749,4 +749,70 @@ class MockData {
     {'icon': 'flag', 'color': 'red', 'text': 'Content reported: Suspicious Co job', 'time': '1hr ago'},
     {'icon': 'star', 'color': 'purple', 'text': 'Premium subscription: Aisha Al-Farsi', 'time': '2hr ago'},
   ];
+
+  // ══════════════════════════════════════════
+  // ── SERVICE / COMPANIES MOCK DATA ──
+  // ══════════════════════════════════════════
+
+  static const serviceCategories = [
+    {'name': 'Food & Beverage Suppliers', 'color': 'orange', 'icon': 'restaurant'},
+    {'name': 'Event Services', 'color': 'purple', 'icon': 'celebration'},
+    {'name': 'Decor & Design', 'color': 'pink', 'icon': 'palette'},
+    {'name': 'Entertainment', 'color': 'amber', 'icon': 'music_note'},
+    {'name': 'Equipment & Operations', 'color': 'blue', 'icon': 'build'},
+    {'name': 'Cleaning & Maintenance', 'color': 'teal', 'icon': 'cleaning_services'},
+  ];
+
+  static const serviceCompanies = [
+    {'id': 'sc1', 'name': 'Bloom & Co', 'initials': 'BC', 'category': 'Event Services', 'subcategory': 'Florist', 'location': 'London', 'featured': true, 'verified': true, 'premium': true, 'description': 'London\'s premier event florist specializing in luxury arrangements for weddings, corporate events, and hospitality venues. We create stunning floral designs that transform any space.', 'phone': '+44 20 7946 1234', 'website': 'www.bloomandco.com', 'services': ['Wedding Flowers', 'Event Arrangements', 'Venue Decoration', 'Weekly Subscriptions'], 'distance': '1.2 mi'},
+    {'id': 'sc2', 'name': 'Elite Beverages', 'initials': 'EB', 'category': 'Food & Beverage Suppliers', 'subcategory': 'Drink Supplier', 'location': 'Dubai', 'featured': true, 'verified': true, 'premium': false, 'description': 'Premium beverage supplier serving hotels, restaurants, and bars across the UAE. From craft cocktails to fine wines, we deliver excellence in every bottle.', 'phone': '+971 4 123 4567', 'website': 'www.elitebeverages.ae', 'services': ['Wine Supply', 'Spirits', 'Craft Cocktails', 'Non-Alcoholic Range'], 'distance': '3.5 mi'},
+    {'id': 'sc3', 'name': 'Sound & Vision DJ', 'initials': 'SV', 'category': 'Entertainment', 'subcategory': 'DJ Services', 'location': 'London', 'featured': false, 'verified': true, 'premium': false, 'description': 'Professional DJ and AV services for events of all sizes. State-of-the-art equipment and experienced DJs to make your event unforgettable.', 'phone': '+44 7700 900567', 'website': 'www.soundvisiondj.com', 'services': ['DJ Services', 'AV Hire', 'Lighting', 'Live Streaming'], 'distance': '2.8 mi'},
+    {'id': 'sc4', 'name': "Chef's Table Supplies", 'initials': 'CT', 'category': 'Equipment & Operations', 'subcategory': 'Kitchen Equipment', 'location': 'London', 'featured': false, 'verified': false, 'premium': true, 'description': 'Your one-stop shop for professional kitchen equipment. We supply top-quality commercial kitchen gear to restaurants, hotels, and catering companies.', 'phone': '+44 20 7946 5678', 'website': 'www.chefstable.co.uk', 'services': ['Commercial Ovens', 'Refrigeration', 'Cookware', 'Installation'], 'distance': '4.1 mi'},
+    {'id': 'sc5', 'name': 'Golden Events Decor', 'initials': 'GE', 'category': 'Decor & Design', 'subcategory': 'Event Decor', 'location': 'Dubai', 'featured': true, 'verified': false, 'premium': false, 'description': 'Luxury event decoration and design services. We specialize in creating breathtaking settings for weddings, galas, and corporate events in Dubai.', 'phone': '+971 50 987 6543', 'website': 'www.goldenevents.ae', 'services': ['Event Design', 'Venue Styling', 'Furniture Hire', 'Lighting Design'], 'distance': '5.0 mi'},
+    {'id': 'sc6', 'name': 'CleanPro Services', 'initials': 'CP', 'category': 'Cleaning & Maintenance', 'subcategory': 'Cleaning', 'location': 'London', 'featured': false, 'verified': false, 'premium': false, 'description': 'Professional cleaning services for hospitality businesses. We keep your venue spotless with eco-friendly products and reliable teams.', 'phone': '+44 20 7946 9012', 'website': '', 'services': ['Deep Cleaning', 'Daily Maintenance', 'Kitchen Cleaning', 'Post-Event Cleanup'], 'distance': '0.8 mi'},
+    {'id': 'sc7', 'name': 'FoodCo Suppliers', 'initials': 'FS', 'category': 'Food & Beverage Suppliers', 'subcategory': 'Food Supplier', 'location': 'London', 'featured': false, 'verified': true, 'premium': false, 'description': 'Fresh food supplier delivering quality ingredients to restaurants and caterers across London. Farm-to-table produce, meats, and specialty items.', 'phone': '+44 20 7946 3456', 'website': 'www.foodco.co.uk', 'services': ['Fresh Produce', 'Meat & Poultry', 'Dairy', 'Specialty Items'], 'distance': '3.2 mi'},
+    {'id': 'sc8', 'name': 'TechPos Solutions', 'initials': 'TP', 'category': 'Equipment & Operations', 'subcategory': 'POS Software', 'location': 'Dubai', 'featured': false, 'verified': false, 'premium': true, 'description': 'Modern POS systems designed for hospitality. Cloud-based solutions for restaurants, bars, and hotels with real-time analytics and inventory management.', 'phone': '+971 4 567 8901', 'website': 'www.techpos.ae', 'services': ['POS Systems', 'Inventory Management', 'Analytics', 'Staff Scheduling'], 'distance': '6.0 mi'},
+  ];
+
+  static List<Map<String, dynamic>> get featuredCompanies =>
+      serviceCompanies.where((c) => c['featured'] == true).toList().cast<Map<String, dynamic>>();
+
+  static List<Map<String, dynamic>> get londonCompanies =>
+      serviceCompanies.where((c) => c['location'] == 'London').toList().cast<Map<String, dynamic>>();
+
+  static const serviceFeedPosts = [
+    {'id': 'sp1', 'companyId': 'sc1', 'company': 'Bloom & Co', 'companyInitials': 'BC', 'category': 'Event Services', 'text': 'Spring flowers now available for events! Book your arrangements early for the best selection of seasonal blooms.', 'mediaType': 'photo', 'time': '2hr ago', 'isPromo': false},
+    {'id': 'sp2', 'companyId': 'sc2', 'company': 'Elite Beverages', 'companyInitials': 'EB', 'category': 'Food & Beverage Suppliers', 'text': 'New cocktail range for summer 2026 — featuring 12 signature blends crafted by award-winning mixologists.', 'mediaType': 'photo', 'time': '5hr ago', 'isPromo': false},
+    {'id': 'sp3', 'companyId': 'sc3', 'company': 'Sound & Vision DJ', 'companyInitials': 'SV', 'category': 'Entertainment', 'text': 'Available for your next event! From intimate dinners to large galas, we bring the perfect soundtrack.', 'mediaType': 'video', 'time': '1 day ago', 'isPromo': false},
+    {'id': 'sp4', 'companyId': 'sc4', 'company': "Chef's Table Supplies", 'companyInitials': 'CT', 'category': 'Equipment & Operations', 'text': '50% off kitchen equipment this week! Don\'t miss our biggest sale of the year on commercial ovens and refrigeration units.', 'mediaType': 'promo', 'time': '2 days ago', 'isPromo': true},
+    {'id': 'sp5', 'companyId': 'sc5', 'company': 'Golden Events Decor', 'companyInitials': 'GE', 'category': 'Decor & Design', 'text': 'See our latest Dubai ballroom setup — a stunning gold and ivory theme for 500 guests. Contact us for your next event!', 'mediaType': 'photo', 'time': '3 days ago', 'isPromo': false},
+  ];
+
+  static const servicePromotions = [
+    {'id': 'promo1', 'companyId': 'sc4', 'company': "Chef's Table Supplies", 'companyInitials': 'CT', 'title': '50% off all orders over £500', 'description': 'Massive sale on commercial kitchen equipment including ovens, refrigerators, and cookware. Use code SPRING50 at checkout.', 'validUntil': 'Apr 30, 2026', 'active': true},
+    {'id': 'promo2', 'companyId': 'sc2', 'company': 'Elite Beverages', 'companyInitials': 'EB', 'title': 'Free delivery on first order', 'description': 'New customers get free delivery on their first beverage order, no minimum spend required.', 'validUntil': 'Apr 15, 2026', 'active': true},
+    {'id': 'promo3', 'companyId': 'sc6', 'company': 'CleanPro Services', 'companyInitials': 'CP', 'title': 'Spring cleaning package £199', 'description': 'Complete deep clean for your venue including kitchen, dining area, and restrooms. Limited time offer.', 'validUntil': 'May 1, 2026', 'active': true},
+  ];
+
+  static const serviceSavedCompanyIds = ['sc1', 'sc2', 'sc3'];
+
+  static const serviceConversations = [
+    {'id': 'smc1', 'companyId': 'sc1', 'company': 'Bloom & Co', 'companyInitials': 'BC', 'lastMessage': 'Thank you for your inquiry!', 'time': '1h ago', 'unread': 1, 'context': 'Quote request'},
+    {'id': 'smc2', 'companyId': 'sc4', 'company': "Chef's Table Supplies", 'companyInitials': 'CT', 'lastMessage': "We'd be happy to arrange a quote", 'time': '1d ago', 'unread': 0, 'context': 'Equipment inquiry'},
+  ];
+
+  static const serviceChatMessages = [
+    {'sender': 'user', 'text': "Hi, I'm interested in your event flower arrangements for a corporate dinner next month.", 'time': '10:00 AM'},
+    {'sender': 'company', 'text': "Thank you for reaching out! We'd love to help with your event. Could you share more details about the venue and number of guests?", 'time': '10:15 AM'},
+    {'sender': 'user', 'text': 'It will be at a hotel in Mayfair, approximately 80 guests. We are looking for table centrepieces and entrance arrangements.', 'time': '10:30 AM'},
+    {'sender': 'company', 'text': "That sounds wonderful! We have extensive experience with Mayfair venues. I'll prepare a quote for you. Thank you for your inquiry!", 'time': '11:00 AM'},
+  ];
+
+  static const serviceNotifications = [
+    {'id': 'sn1', 'title': 'New message from Bloom & Co', 'time': '10min ago', 'type': 'messages', 'read': false},
+    {'id': 'sn2', 'title': "Chef's Table has a new promotion", 'time': '1hr ago', 'type': 'promotions', 'read': false},
+    {'id': 'sn3', 'title': 'Elite Beverages posted an update', 'time': '2hr ago', 'type': 'updates', 'read': true},
+    {'id': 'sn4', 'title': 'New company near you: CleanPro', 'time': '1 day ago', 'type': 'updates', 'read': true},
+    {'id': 'sn5', 'title': 'Complete your preferences for better matches', 'time': '2 days ago', 'type': 'updates', 'read': true},
+  ];
 }

@@ -1,255 +1,544 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
 
-/// Detail view for a hospitality service provider.
-/// Mirrors ServiceCompanyProfileView.swift.
-class ServiceCompanyProfileView extends StatelessWidget {
-  const ServiceCompanyProfileView({super.key});
+const Color _orange = Color(0xFFF97316);
 
-  // Mock data
-  static const _name = 'Elite Catering Co.';
-  static const _initials = 'EC';
-  static const _hue = 0.1;
-  static const _subcategory = 'Event Catering';
-  static const _category = 'Catering';
-  static const _location = 'London, UK';
-  static const _rating = 4.8;
-  static const _reviewCount = 124;
-  static const _isVerified = true;
-  static const _description =
-      'Elite Catering Co. has been providing premium catering services for over 15 years. '
-      'We specialize in corporate events, weddings, private dining, and large-scale galas. '
-      'Our team of experienced chefs creates bespoke menus using locally sourced, seasonal ingredients. '
-      'We pride ourselves on exceptional service and attention to detail.';
+class ServiceCompanyProfileView extends StatefulWidget {
+  final String companyId;
+  const ServiceCompanyProfileView({super.key, required this.companyId});
+
+  @override
+  State<ServiceCompanyProfileView> createState() => _ServiceCompanyProfileViewState();
+}
+
+class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
+  bool _isSaved = false;
+
+  Map<String, dynamic> get _company {
+    final match = MockData.serviceCompanies.cast<Map<String, dynamic>>().where((c) => c['id'] == widget.companyId);
+    if (match.isNotEmpty) return match.first;
+    return MockData.serviceCompanies.first as Map<String, dynamic>;
+  }
+
+  Color _colorFromName(String name) {
+    final hash = name.hashCode.abs();
+    return HSLColor.fromAHSL(1, (hash % 360).toDouble(), 0.5, 0.45).toColor();
+  }
+
+  Color _bgColorFromName(String name) {
+    final hash = name.hashCode.abs();
+    return HSLColor.fromAHSL(1, (hash % 360).toDouble(), 0.25, 0.92).toColor();
+  }
+
+  Color _gradientFromName(String name) {
+    final hash = name.hashCode.abs();
+    return HSLColor.fromAHSL(1, (hash % 360).toDouble(), 0.6, 0.35).toColor();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _isSaved = MockData.serviceSavedCompanyIds.contains(widget.companyId);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final hsl = HSLColor.fromAHSL(1, _hue * 360, 0.15, 0.95);
-    final hslText = HSLColor.fromAHSL(1, _hue * 360, 0.6, 0.5);
+    final c = _company;
+    final name = c['name'] as String;
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top bar
-            Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.lg),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            SliverAppBar(
+              expandedHeight: 200,
+              pinned: true,
+              backgroundColor: _gradientFromName(name),
+              foregroundColor: Colors.white,
+              actions: [
+                IconButton(icon: const Icon(Icons.share), onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share coming soon')));
+                }),
+              ],
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [_gradientFromName(name), _gradientFromName(name).withValues(alpha: 0.7)],
+                    ),
                   ),
-                  const Spacer(),
-                  const Text('Company Profile', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
-                  const Spacer(),
-                  const SizedBox(width: 36, height: 36),
-                ],
+                ),
               ),
             ),
-
-            // Scrollable content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(top: AppSpacing.xs),
-                child: Column(
-                  children: [
-                    // ── Hero card ──
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                      child: Container(
-                        padding: const EdgeInsets.all(AppSpacing.xl),
-                        decoration: BoxDecoration(
-                          color: AppColors.cardBackground,
-                          borderRadius: BorderRadius.circular(AppRadius.xl),
-                          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 64, height: 64,
-                                  decoration: BoxDecoration(color: hsl.toColor(), borderRadius: BorderRadius.circular(AppRadius.xl)),
-                                  alignment: Alignment.center,
-                                  child: Text(_initials, style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: hslText.toColor())),
-                                ),
-                                const SizedBox(width: AppSpacing.lg),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(children: [
-                                        const Flexible(child: Text(_name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.charcoal))),
-                                        if (_isVerified) ...[const SizedBox(width: AppSpacing.sm), const Icon(Icons.verified, size: 16, color: AppColors.teal)],
-                                      ]),
-                                      const SizedBox(height: AppSpacing.xs),
-                                      const Text(_subcategory, style: TextStyle(fontSize: 15, color: AppColors.teal)),
-                                      const SizedBox(height: AppSpacing.xs),
-                                      const Row(children: [
-                                        Icon(Icons.location_on, size: 12, color: AppColors.teal),
-                                        SizedBox(width: AppSpacing.xs),
-                                        Text(_location, style: TextStyle(fontSize: 13, color: AppColors.secondary)),
-                                      ]),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
-                            // Rating bar
-                            Row(
-                              children: [
-                                ...List.generate(5, (i) {
-                                  return Icon(
-                                    i + 0.5 < _rating ? Icons.star : Icons.star_border,
-                                    size: 16,
-                                    color: AppColors.amber,
-                                  );
-                                }),
-                                const SizedBox(width: AppSpacing.xs),
-                                const Text('$_rating', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
-                                const SizedBox(width: AppSpacing.lg),
-                                const Text('$_reviewCount reviews', style: TextStyle(fontSize: 13, color: AppColors.tertiary)),
-                                const Spacer(),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 3),
-                                  decoration: BoxDecoration(color: AppColors.amber.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(AppRadius.full)),
-                                  child: const Text(_category, style: TextStyle(fontSize: 11, color: AppColors.amber)),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sectionGap),
-
-                    // ── About card ──
-                    _sectionCard(
-                      title: 'About',
-                      child: const Text(_description, style: TextStyle(fontSize: 15, color: AppColors.charcoal, height: 1.5)),
-                    ),
-                    const SizedBox(height: AppSpacing.sectionGap),
-
-                    // ── Details card ──
-                    _sectionCard(
-                      title: 'Details',
-                      child: Column(
-                        children: [
-                          _detailRow(Icons.work, 'Category', _category),
-                          const SizedBox(height: AppSpacing.lg),
-                          _detailRow(Icons.sell, 'Specialty', _subcategory),
-                          const SizedBox(height: AppSpacing.lg),
-                          _detailRow(Icons.location_on, 'Location', _location),
-                          const SizedBox(height: AppSpacing.lg),
-                          _detailRow(Icons.verified_user, 'Verified', _isVerified ? 'Yes' : 'Pending'),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sectionGap),
-
-                    // ── Contact buttons ──
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-                      child: Column(
-                        children: [
-                          // Contact button
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(colors: [AppColors.amber, Color(0xDDF59E33)]),
-                                borderRadius: BorderRadius.circular(AppRadius.full),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.email, size: 16, color: Colors.white),
-                                  SizedBox(width: AppSpacing.sm),
-                                  Text('Contact Company', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.white)),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: AppSpacing.md),
-
-                          // Call button
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-                              decoration: BoxDecoration(
-                                color: AppColors.amber.withValues(alpha: 0.08),
-                                borderRadius: BorderRadius.circular(AppRadius.full),
-                                border: Border.all(color: AppColors.amber.withValues(alpha: 0.3)),
-                              ),
-                              child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.phone, size: 16, color: AppColors.amber),
-                                  SizedBox(width: AppSpacing.sm),
-                                  Text('Call', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.amber)),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxxl),
+            SliverToBoxAdapter(child: _profileHeader(c)),
+            SliverToBoxAdapter(child: _actionRow(c)),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _TabBarDelegate(
+                TabBar(
+                  labelColor: _orange,
+                  unselectedLabelColor: AppColors.secondary,
+                  indicatorColor: _orange,
+                  indicatorWeight: 2,
+                  labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                  unselectedLabelStyle: const TextStyle(fontSize: 13),
+                  tabs: const [
+                    Tab(text: 'About'),
+                    Tab(text: 'Posts'),
+                    Tab(text: 'Promotions'),
+                    Tab(text: 'Gallery'),
                   ],
                 ),
               ),
             ),
           ],
+          body: TabBarView(
+            children: [
+              _aboutTab(c),
+              _postsTab(c),
+              _promotionsTab(c),
+              _galleryTab(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _sectionCard({required String title, required Widget child}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
-        ),
+  Widget _profileHeader(Map<String, dynamic> c) {
+    final name = c['name'] as String;
+    final initials = c['initials'] as String;
+    final category = c['category'] as String;
+    final location = c['location'] as String;
+    final verified = c['verified'] == true;
+    final featured = c['featured'] == true;
+
+    return Transform.translate(
+      offset: const Offset(0, -30),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
-            const SizedBox(height: AppSpacing.md),
-            child,
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                color: _bgColorFromName(name),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 3),
+                boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8)],
+              ),
+              alignment: Alignment.center,
+              child: Text(initials, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: _colorFromName(name))),
+            ),
+            const SizedBox(height: 10),
+            Text(name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+            const SizedBox(height: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(color: _orange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)),
+              child: Text(category, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: _orange)),
+            ),
+            const SizedBox(height: 6),
+            Text('\u{1F4CD} $location', style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (verified) ...[
+                  const Icon(Icons.verified, size: 16, color: AppColors.teal),
+                  const SizedBox(width: 4),
+                  const Text('Verified', style: TextStyle(fontSize: 12, color: AppColors.teal)),
+                  const SizedBox(width: 12),
+                ],
+                if (featured) ...[
+                  const Icon(Icons.star, size: 16, color: AppColors.gold),
+                  const SizedBox(width: 4),
+                  const Text('Featured', style: TextStyle(fontSize: 12, color: AppColors.gold)),
+                ],
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _detailRow(IconData icon, String label, String value) {
-    return Row(
-      children: [
-        Icon(icon, size: 15, color: AppColors.teal),
-        const SizedBox(width: AppSpacing.md),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
-            const SizedBox(height: 2),
-            Text(value, style: const TextStyle(fontSize: 15, color: AppColors.charcoal)),
-          ],
-        ),
-      ],
+  Widget _actionRow(Map<String, dynamic> c) {
+    final id = c['id'] as String;
+    final name = c['name'] as String;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+      child: Row(
+        children: [
+          // Heart toggle
+          GestureDetector(
+            onTap: () => setState(() => _isSaved = !_isSaved),
+            child: Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Icon(
+                _isSaved ? Icons.favorite : Icons.favorite_border,
+                size: 22,
+                color: _isSaved ? Colors.red : AppColors.tertiary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Message button
+          Expanded(
+            child: GestureDetector(
+              onTap: () => context.push('/services/messages/$id'),
+              child: Container(
+                height: 44,
+                decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(12)),
+                alignment: Alignment.center,
+                child: const Text('Message', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          // Request Quote button
+          Expanded(
+            child: GestureDetector(
+              onTap: () => _showQuoteDialog(name),
+              child: Container(
+                height: 44,
+                decoration: BoxDecoration(color: _orange, borderRadius: BorderRadius.circular(12)),
+                alignment: Alignment.center,
+                child: const Text('Request Quote', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
+
+  Widget _aboutTab(Map<String, dynamic> c) {
+    final description = c['description'] as String;
+    final services = (c['services'] as List).cast<String>();
+    final phone = c['phone'] as String;
+    final website = c['website'] as String;
+    final location = c['location'] as String;
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('About Us', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          const SizedBox(height: 8),
+          Text(description, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.5)),
+          const SizedBox(height: 20),
+
+          const Text('Services Offered', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: services.map((s) => Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(16)),
+              child: Text(s, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.teal)),
+            )).toList(),
+          ),
+          const SizedBox(height: 20),
+
+          const Text('Service Area', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              const Icon(Icons.location_on, size: 16, color: AppColors.secondary),
+              const SizedBox(width: 6),
+              Text(location, style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          const Text('Contact', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          const SizedBox(height: 8),
+          if (phone.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.phone, size: 16, color: AppColors.secondary),
+                  const SizedBox(width: 8),
+                  Text(phone, style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
+                ],
+              ),
+            ),
+          if (website.isNotEmpty)
+            Row(
+              children: [
+                const Icon(Icons.language, size: 16, color: AppColors.secondary),
+                const SizedBox(width: 8),
+                Text(website, style: const TextStyle(fontSize: 14, color: AppColors.teal)),
+              ],
+            ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _postsTab(Map<String, dynamic> c) {
+    final companyId = c['id'] as String;
+    final posts = MockData.serviceFeedPosts.cast<Map<String, dynamic>>().where((p) => p['companyId'] == companyId).toList();
+
+    if (posts.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.article_outlined, size: 48, color: AppColors.tertiary),
+            SizedBox(height: 12),
+            Text('No posts yet', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+            SizedBox(height: 4),
+            Text('This company has not posted any updates.', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: posts.length,
+      itemBuilder: (_, i) {
+        final p = posts[i];
+        final mediaType = p['mediaType'] as String;
+        Color mediaColor;
+        switch (mediaType) {
+          case 'video':
+            mediaColor = Colors.purple;
+          case 'promo':
+            mediaColor = _orange;
+          default:
+            mediaColor = Colors.blue;
+        }
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(p['text'] as String, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.4)),
+              const SizedBox(height: 10),
+              Container(
+                height: 140,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(colors: [mediaColor.withValues(alpha: 0.3), mediaColor.withValues(alpha: 0.6)]),
+                ),
+                alignment: Alignment.center,
+                child: mediaType == 'video'
+                    ? const Icon(Icons.play_circle_fill, size: 40, color: Colors.white)
+                    : Text(mediaType.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
+              ),
+              const SizedBox(height: 8),
+              Text(p['time'] as String, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _promotionsTab(Map<String, dynamic> c) {
+    final companyId = c['id'] as String;
+    final promos = MockData.servicePromotions.cast<Map<String, dynamic>>().where((p) => p['companyId'] == companyId).toList();
+
+    if (promos.isEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.local_offer_outlined, size: 48, color: AppColors.tertiary),
+            SizedBox(height: 12),
+            Text('No promotions', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+            SizedBox(height: 4),
+            Text('This company has no active promotions.', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+          ],
+        ),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: promos.length,
+      itemBuilder: (_, i) {
+        final p = promos[i];
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: _orange.withValues(alpha: 0.3)),
+            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8)],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(color: _orange, borderRadius: BorderRadius.circular(8)),
+                    child: const Text('OFFER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(p['title'] as String, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal))),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(p['description'] as String, style: const TextStyle(fontSize: 13, color: AppColors.secondary, height: 1.4)),
+              const SizedBox(height: 8),
+              Text('Valid until ${p['validUntil']}', style: TextStyle(fontSize: 12, color: _orange, fontWeight: FontWeight.w500)),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _galleryTab() {
+    final pastelColors = [
+      const Color(0xFFFFCDD2),
+      const Color(0xFFC8E6C9),
+      const Color(0xFFBBDEFB),
+      const Color(0xFFFFF9C4),
+      const Color(0xFFE1BEE7),
+      const Color(0xFFFFE0B2),
+    ];
+
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+      ),
+      itemCount: 6,
+      itemBuilder: (ctx, i) => GestureDetector(
+        onTap: () => ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Full image viewer coming soon'))),
+        child: Container(
+          decoration: BoxDecoration(
+            color: pastelColors[i],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          alignment: Alignment.center,
+          child: Icon(Icons.image, size: 32, color: Colors.white.withValues(alpha: 0.8)),
+        ),
+      ),
+    );
+  }
+
+  void _showQuoteDialog(String companyName) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        final serviceController = TextEditingController();
+        final dateController = TextEditingController();
+        final detailsController = TextEditingController();
+
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text('Request a Quote from $companyName', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: serviceController,
+                  decoration: InputDecoration(
+                    labelText: 'Service Type',
+                    labelStyle: const TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: dateController,
+                  decoration: InputDecoration(
+                    labelText: 'Date Needed',
+                    labelStyle: const TextStyle(fontSize: 14),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: detailsController,
+                  maxLines: 4,
+                  decoration: InputDecoration(
+                    labelText: 'Details',
+                    labelStyle: const TextStyle(fontSize: 14),
+                    alignLabelWithHint: true,
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.secondary)),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Quote request sent!')));
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _orange,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+              child: const Text('Send Request'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _TabBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar tabBar;
+  _TabBarDelegate(this.tabBar);
+
+  @override
+  double get minExtent => tabBar.preferredSize.height;
+  @override
+  double get maxExtent => tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(color: Colors.white, child: tabBar);
+  }
+
+  @override
+  bool shouldRebuild(covariant _TabBarDelegate oldDelegate) => false;
 }
