@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/config/app_config.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/config/env_config.dart';
 import 'package:plagit/routes/app_router.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/providers/business_providers.dart';
@@ -10,6 +11,7 @@ import 'package:plagit/repositories/business_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  EnvConfig.initialize(Environment.development);
   runApp(const PlagitApp());
 }
 

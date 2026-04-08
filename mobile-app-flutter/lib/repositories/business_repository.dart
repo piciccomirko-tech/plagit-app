@@ -8,6 +8,7 @@
 /// will call [ApiClient] and deserialise the JSON response.
 library;
 
+import 'package:plagit/config/env_config.dart';
 import 'package:plagit/core/api_client.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/models/applicant.dart';
@@ -28,7 +29,7 @@ class BusinessRepository {
 
   /// TODO: check token prefix in production — if token starts with "mock_",
   /// return mock data; otherwise hit the real API.
-  bool get _isMock => true;
+  bool get _isMock => EnvConfig.useMockData;
 
   // ======================================
   // -- Profile --
