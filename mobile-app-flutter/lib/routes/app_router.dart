@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 // Auth & Shared
@@ -126,7 +127,11 @@ import 'package:plagit/features/admin/views/admin_audit_detail_view.dart';
 class AppRouter {
   AppRouter._();
 
+  /// Shared navigator key — used by AuthExpiredHandler for global navigation.
+  static final navigatorKey = GlobalKey<NavigatorState>();
+
   static final router = GoRouter(
+    navigatorKey: navigatorKey,
     initialLocation: '/',
     routes: [
       // ── Splash ──

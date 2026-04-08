@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:plagit/core/services/auth_expired_handler.dart';
 import 'package:plagit/models/application.dart';
 import 'package:plagit/models/candidate_home_data.dart';
 import 'package:plagit/models/candidate_profile.dart';
@@ -108,7 +109,9 @@ class CandidateHomeProvider extends ChangeNotifier {
     try {
       _data = await _repo.fetchHome();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -152,7 +155,9 @@ class CandidateJobsProvider extends ChangeNotifier {
       );
       _savedIds = await _repo.fetchSavedJobIds();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -213,7 +218,9 @@ class CandidateApplicationsProvider extends ChangeNotifier {
     try {
       _applications = await _repo.fetchApplications(statusFilter: _filter);
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -251,7 +258,9 @@ class CandidateMessagesProvider extends ChangeNotifier {
     try {
       _conversations = await _repo.fetchConversations();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -284,7 +293,9 @@ class CandidateInterviewsProvider extends ChangeNotifier {
     try {
       _interviews = await _repo.fetchInterviews(filter: _filter);
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -321,7 +332,9 @@ class CandidateNotificationsProvider extends ChangeNotifier {
     try {
       _notifications = await _repo.fetchNotifications();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();

@@ -75,7 +75,13 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> {
       );
     }
 
-    final data = provider.data!;
+    final data = provider.data;
+    if (data == null) {
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
     final profile = data.profile;
     final recentApplicants = data.recentApplicants;
     final activeJobs = data.activeJobs;

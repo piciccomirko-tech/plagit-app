@@ -69,7 +69,14 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
       );
     }
 
-    final data = provider.data!;
+    final data = provider.data;
+    if (data == null) {
+      // Auth handler may have intercepted — show loading while redirecting
+      return const Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
     final profile = data.profile;
 
     return Scaffold(

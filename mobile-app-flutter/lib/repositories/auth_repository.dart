@@ -174,11 +174,12 @@ class AuthRepository {
         email: data['email'] as String? ?? '',
       );
     } on ApiError catch (e) {
-      if (e.type == ApiErrorType.unauthorized) {
-        await logout();
-      }
+      debugPrint('[AuthRepo] restoreSession failed: ${e.type} ${e.message}');
+      await logout(); // Clear stale token on any API error
       return null;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('[AuthRepo] restoreSession unexpected error: $e');
+      await logout(); // Clear stale token to prevent stuck state
       return null;
     }
   }

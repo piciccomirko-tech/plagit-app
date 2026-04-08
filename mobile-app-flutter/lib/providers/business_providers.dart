@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:plagit/core/services/auth_expired_handler.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/models/business_home_data.dart';
@@ -110,7 +111,9 @@ class BusinessHomeProvider extends ChangeNotifier {
     try {
       _data = await _repo.fetchHome();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -143,7 +146,9 @@ class BusinessJobsProvider extends ChangeNotifier {
     try {
       _jobs = await _repo.fetchJobs(filter: _filter);
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -192,7 +197,9 @@ class BusinessApplicantsProvider extends ChangeNotifier {
         statusFilter: _filter,
       );
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -291,7 +298,9 @@ class BusinessMessagesProvider extends ChangeNotifier {
     try {
       _conversations = await _repo.fetchConversations();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -324,7 +333,9 @@ class BusinessInterviewsProvider extends ChangeNotifier {
     try {
       _interviews = await _repo.fetchInterviews(filter: _filter);
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -389,7 +400,9 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
     try {
       _deck = await _repo.fetchQuickPlugDeck();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
@@ -441,7 +454,9 @@ class BusinessNotificationsProvider extends ChangeNotifier {
     try {
       _notifications = await _repo.fetchNotifications();
     } catch (e) {
-      _error = e.toString();
+      if (!AuthExpiredHandler.instance.handleIfAuthError(e)) {
+        _error = e.toString();
+      }
     }
     _loading = false;
     notifyListeners();
