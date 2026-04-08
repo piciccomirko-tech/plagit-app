@@ -152,19 +152,20 @@ class BusinessRepository {
 
   Future<List<BusinessConversation>> fetchConversations() async {
     if (_isMock) return BusinessConversation.mockAll();
-    // TODO: final resp = await _api.get('/business/conversations');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/conversations');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => BusinessConversation.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<List<ChatMessage>> fetchMessages(String conversationId) async {
     if (_isMock) {
-      // Return business chat messages as ChatMessage instances.
       return MockData.businessChatMessages
           .map((m) => ChatMessage.fromJson(m))
           .toList();
     }
-    // TODO: final resp = await _api.get('/business/conversations/$conversationId/messages');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/conversations/$conversationId/messages');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => ChatMessage.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<void> sendMessage(String conversationId, String text) async {
@@ -172,8 +173,7 @@ class BusinessRepository {
       await Future.delayed(const Duration(milliseconds: 300));
       return;
     }
-    // TODO: await _api.post('/business/conversations/$conversationId/messages', {'text': text});
-    throw UnimplementedError('Real API not wired yet');
+    await _api.post('/business/conversations/$conversationId/messages', body: {'text': text});
   }
 
   // ======================================
@@ -183,16 +183,16 @@ class BusinessRepository {
   Future<List<BusinessInterview>> fetchInterviews({String? filter}) async {
     if (_isMock) {
       var interviews = BusinessInterview.mockAll();
-
       if (filter != null && filter != 'All') {
-        interviews =
-            interviews.where((i) => i.status == filter).toList();
+        interviews = interviews.where((i) => i.status == filter).toList();
       }
-
       return interviews;
     }
-    // TODO: final resp = await _api.get('/business/interviews');
-    throw UnimplementedError('Real API not wired yet');
+    final params = <String, String>{};
+    if (filter != null && filter != 'All') params['status'] = filter;
+    final resp = await _api.get('/business/interviews', queryParams: params.isNotEmpty ? params : null);
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => BusinessInterview.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<void> scheduleInterview(Map<String, dynamic> data) async {
@@ -200,8 +200,7 @@ class BusinessRepository {
       await Future.delayed(const Duration(milliseconds: 800));
       return;
     }
-    // TODO: await _api.post('/business/interviews', data);
-    throw UnimplementedError('Real API not wired yet');
+    await _api.post('/business/interviews', body: data);
   }
 
   // ======================================

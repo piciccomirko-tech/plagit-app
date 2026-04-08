@@ -151,14 +151,16 @@ class CandidateRepository {
 
   Future<List<Conversation>> fetchConversations() async {
     if (_isMock) return Conversation.mockAll();
-    // TODO: final resp = await _api.get('/candidate/conversations');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/conversations');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => Conversation.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<List<ChatMessage>> fetchMessages(String conversationId) async {
     if (_isMock) return ChatMessage.mockRitzMessages();
-    // TODO: final resp = await _api.get('/candidate/conversations/$conversationId/messages');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/conversations/$conversationId/messages');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => ChatMessage.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<void> sendMessage(String conversationId, String text) async {
@@ -166,8 +168,7 @@ class CandidateRepository {
       await Future.delayed(const Duration(milliseconds: 300));
       return;
     }
-    // TODO: await _api.post('/candidate/conversations/$conversationId/messages', {'text': text});
-    throw UnimplementedError('Real API not wired yet');
+    await _api.post('/candidate/conversations/$conversationId/messages', body: {'text': text});
   }
 
   // ══════════════════════════════════════════
@@ -176,8 +177,11 @@ class CandidateRepository {
 
   Future<List<Interview>> fetchInterviews({String? filter}) async {
     if (_isMock) return Interview.mockAll();
-    // TODO: final resp = await _api.get('/candidate/interviews');
-    throw UnimplementedError('Real API not wired yet');
+    final params = <String, String>{};
+    if (filter != null && filter != 'All') params['filter'] = filter;
+    final resp = await _api.get('/candidate/interviews', queryParams: params.isNotEmpty ? params : null);
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => Interview.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   // ══════════════════════════════════════════
