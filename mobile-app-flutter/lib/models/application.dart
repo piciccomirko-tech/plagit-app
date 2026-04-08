@@ -81,14 +81,14 @@ class Application {
   factory Application.fromJson(Map<String, dynamic> json) {
     return Application(
       id: json['id']?.toString() ?? '',
-      jobTitle: json['jobTitle'] as String? ?? '',
-      company: json['company'] as String? ?? '',
-      location: json['location'] as String? ?? '',
+      jobTitle: json['job_title'] as String? ?? json['jobTitle'] as String? ?? '',
+      company: json['business_name'] as String? ?? json['company'] as String? ?? '',
+      location: json['job_location'] as String? ?? json['location'] as String? ?? '',
       status: ApplicationStatus.fromString(json['status'] as String? ?? ''),
-      date: json['date'] as String? ?? '',
+      date: json['applied_at'] as String? ?? json['date'] as String? ?? json['created_at'] as String? ?? '',
       salary: json['salary'] as String?,
-      interviewDate: json['interviewDate'] as String?,
-      interviewType: json['interviewType'] as String?,
+      interviewDate: json['interview_date'] as String? ?? json['interviewDate'] as String?,
+      interviewType: json['interview_type'] as String? ?? json['employment_type'] as String? ?? json['interviewType'] as String?,
     );
   }
 

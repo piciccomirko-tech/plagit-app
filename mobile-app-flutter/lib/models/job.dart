@@ -46,27 +46,35 @@ class Job {
   // ── JSON serialisation ──
 
   factory Job.fromJson(Map<String, dynamic> json) {
+    // requirements/benefits: backend sends String, mock sends List<String>
+    List<String>? parseStringOrList(dynamic raw) {
+      if (raw is List) return raw.cast<String>();
+      if (raw is String && raw.isNotEmpty) return raw.split('\n').where((s) => s.trim().isNotEmpty).toList();
+      return null;
+    }
+
     return Job(
       id: json['id']?.toString() ?? '',
       title: json['title'] as String? ?? '',
-      company: json['company'] as String? ?? '',
+      company: json['business_name'] as String? ?? json['company'] as String? ?? '',
       location: json['location'] as String? ?? '',
       salary: json['salary'] as String? ?? json['salaryRange'] as String? ?? '',
-      contract:
-          json['contract'] as String? ?? json['contractType'] as String? ?? '',
-      featured: json['featured'] as bool? ?? false,
-      urgent: json['urgent'] as bool? ?? false,
+      contract: json['employment_type'] as String?
+          ?? json['contract'] as String?
+          ?? json['contractType'] as String? ?? '',
+      featured: json['is_featured'] as bool? ?? json['featured'] as bool? ?? false,
+      urgent: json['is_urgent'] as bool? ?? json['urgent'] as bool? ?? false,
       description: json['description'] as String?,
-      requirements: (json['requirements'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      benefits: (json['benefits'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+      requirements: parseStringOrList(json['requirements']),
+      benefits: parseStringOrList(json['benefits']),
       distance: json['distance'] as String?,
-      shift: json['shift'] as String?,
-      postedDate: json['postedDate'] as String? ?? json['posted'] as String?,
-      applicantCount: json['applicantCount'] as int? ?? json['applicants'] as int?,
+      shift: json['shift_hours'] as String? ?? json['shift'] as String?,
+      postedDate: json['created_at'] as String?
+          ?? json['postedDate'] as String?
+          ?? json['posted'] as String?,
+      applicantCount: json['applicant_count'] as int?
+          ?? json['applicantCount'] as int?
+          ?? json['applicants'] as int?,
       views: json['views'] as int?,
     );
   }

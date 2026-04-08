@@ -31,10 +31,10 @@ class NotificationItem {
     return NotificationItem(
       id: json['id']?.toString() ?? '',
       title: json['title'] as String? ?? '',
-      time: json['time'] as String? ?? '',
-      type: json['type'] as String? ?? 'jobs',
-      read: json['read'] as bool? ?? false,
-      icon: json['icon'] as String? ?? 'notifications',
+      time: json['created_at'] as String? ?? json['time'] as String? ?? '',
+      type: json['notification_type'] as String? ?? json['type'] as String? ?? 'in_app',
+      read: json['is_read'] as bool? ?? json['read'] as bool? ?? false,
+      icon: json['icon'] as String? ?? json['linked_entity'] as String? ?? 'notifications',
     );
   }
 

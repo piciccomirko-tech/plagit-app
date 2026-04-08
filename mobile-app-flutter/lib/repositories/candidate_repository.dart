@@ -199,19 +199,34 @@ class CandidateRepository {
 
   Future<Set<String>> fetchSavedJobIds() async {
     if (_isMock) return MockData.savedJobIds.toSet();
-    final resp = await _api.get('/candidate/saved-jobs');
-    final list = resp['data'] as List<dynamic>? ?? [];
-    return list.map((e) => e.toString()).toSet();
+    try {
+      final resp = await _api.get('/candidate/saved-jobs');
+      final list = resp['data'] as List<dynamic>? ?? [];
+      return list.map((e) => e.toString()).toSet();
+    } on ApiError catch (e) {
+      if (e.type == ApiErrorType.notFound) return {}; // Endpoint not built yet
+      rethrow;
+    }
   }
 
   Future<void> saveJob(String jobId) async {
     if (_isMock) return;
-    await _api.post('/candidate/saved-jobs', body: {'jobId': jobId});
+    try {
+      await _api.post('/candidate/saved-jobs', body: {'jobId': jobId});
+    } on ApiError catch (e) {
+      if (e.type == ApiErrorType.notFound) return; // Endpoint not built yet
+      rethrow;
+    }
   }
 
   Future<void> unsaveJob(String jobId) async {
     if (_isMock) return;
-    await _api.delete('/candidate/saved-jobs/$jobId');
+    try {
+      await _api.delete('/candidate/saved-jobs/$jobId');
+    } on ApiError catch (e) {
+      if (e.type == ApiErrorType.notFound) return; // Endpoint not built yet
+      rethrow;
+    }
   }
 
   // ══════════════════════════════════════════

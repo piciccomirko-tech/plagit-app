@@ -32,11 +32,11 @@ class Conversation {
   factory Conversation.fromJson(Map<String, dynamic> json) {
     return Conversation(
       id: json['id']?.toString() ?? '',
-      company: json['company'] as String? ?? '',
-      jobContext: json['jobContext'] as String? ?? '',
-      lastMessage: json['lastMessage'] as String? ?? '',
-      time: json['time'] as String? ?? '',
-      unread: json['unread'] as int? ?? 0,
+      company: json['business_name'] as String? ?? json['company'] as String? ?? '',
+      jobContext: json['job_title'] as String? ?? json['jobContext'] as String? ?? '',
+      lastMessage: json['last_message'] as String? ?? json['lastMessage'] as String? ?? '',
+      time: json['updated_at'] as String? ?? json['time'] as String? ?? '',
+      unread: json['unread_count'] as int? ?? json['unread'] as int? ?? 0,
     );
   }
 
@@ -76,9 +76,9 @@ class ChatMessage {
 
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
     return ChatMessage(
-      sender: json['sender'] as String? ?? '',
-      text: json['text'] as String? ?? '',
-      time: json['time'] as String? ?? '',
+      sender: json['sender_type'] as String? ?? json['sender'] as String? ?? '',
+      text: json['body'] as String? ?? json['text'] as String? ?? '',
+      time: json['created_at'] as String? ?? json['time'] as String? ?? '',
     );
   }
 

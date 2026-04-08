@@ -100,15 +100,28 @@ class Interview {
   // ── JSON serialisation ──
 
   factory Interview.fromJson(Map<String, dynamic> json) {
+    // Backend sends scheduled_at as ISO datetime; split into date + time
+    final scheduledAt = json['scheduled_at'] as String?;
+    String dateStr = json['date'] as String? ?? '';
+    String timeStr = json['time'] as String? ?? '';
+    if (scheduledAt != null && scheduledAt.isNotEmpty) {
+      final dt = DateTime.tryParse(scheduledAt);
+      if (dt != null) {
+        dateStr = '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')}';
+        timeStr = '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+      }
+    }
+
     return Interview(
       id: json['id']?.toString() ?? '',
-      jobTitle: json['jobTitle'] as String? ?? '',
-      company: json['company'] as String? ?? '',
-      date: json['date'] as String? ?? '',
-      time: json['time'] as String? ?? '',
-      format: InterviewFormat.fromString(json['format'] as String? ?? ''),
+      jobTitle: json['job_title'] as String? ?? json['jobTitle'] as String? ?? '',
+      company: json['business_name'] as String? ?? json['company'] as String? ?? '',
+      date: dateStr,
+      time: timeStr,
+      format: InterviewFormat.fromString(
+          json['interview_type'] as String? ?? json['format'] as String? ?? ''),
       status: InterviewStatus.fromString(json['status'] as String? ?? ''),
-      link: json['link'] as String?,
+      link: json['meeting_link'] as String? ?? json['link'] as String?,
       location: json['location'] as String?,
       notes: json['notes'] as String?,
     );
