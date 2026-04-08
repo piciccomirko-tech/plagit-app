@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/business_interview.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business interview detail screen.
 class BusinessInterviewDetailView extends StatefulWidget {
@@ -16,22 +18,10 @@ class BusinessInterviewDetailView extends StatefulWidget {
 
 class _BusinessInterviewDetailViewState
     extends State<BusinessInterviewDetailView> {
-  late Map<String, dynamic> _interview;
-  late String _status;
-  bool _found = false;
+  String? _localStatusOverride;
 
-  @override
-  void initState() {
-    super.initState();
-    final match = MockData.businessInterviews
-        .cast<Map<String, dynamic>>()
-        .where((i) => i['id'] == widget.interviewId);
-    if (match.isNotEmpty) {
-      _interview = Map<String, dynamic>.from(match.first);
-      _status = _interview['status'] as String? ?? '';
-      _found = true;
-    }
-  }
+  String _effectiveStatus(BusinessInterview iv) =>
+      _localStatusOverride ?? iv.status;
 
   Color _avatarColor(String name) {
     final hue = (name.hashCode % 360).abs().toDouble();
@@ -39,7 +29,7 @@ class _BusinessInterviewDetailViewState
   }
 
   void _confirmInterview() {
-    setState(() => _status = 'Confirmed');
+    setState(() => _localStatusOverride = 'Confirmed');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Interview confirmed'),
@@ -49,7 +39,7 @@ class _BusinessInterviewDetailViewState
   }
 
   void _markCompleted() {
-    setState(() => _status = 'Completed');
+    setState(() => _localStatusOverride = 'Completed');
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Interview marked as completed'),
@@ -83,7 +73,13 @@ class _BusinessInterviewDetailViewState
 
   @override
   Widget build(BuildContext context) {
-    if (!_found) {
+    final provider = context.watch<BusinessInterviewsProvider>();
+    final BusinessInterview? interview = provider.interviews
+        .where((i) => i.id == widget.interviewId)
+        .firstOrNull;
+
+    // Not found / loading
+    if (interview == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -99,17 +95,17 @@ class _BusinessInterviewDetailViewState
           ),
           centerTitle: true,
         ),
-        body: const Center(
-          child: Text('Interview not found', style: TextStyle(color: AppColors.secondary)),
-        ),
+        body: provider.loading
+            ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
+            : const Center(
+                child: Text('Interview not found', style: TextStyle(color: AppColors.secondary)),
+              ),
       );
     }
 
-    final candidateName = _interview['candidateName'] as String? ?? '';
-    final initials = _interview['candidateInitials'] as String? ?? '??';
-    final format = _interview['format'] as String? ?? '';
-    final isVideo = format == 'Video';
-    final isInPerson = format == 'In Person';
+    final status = _effectiveStatus(interview);
+    final isVideo = interview.format == 'Video';
+    final isInPerson = interview.format == 'In Person';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -138,7 +134,7 @@ class _BusinessInterviewDetailViewState
             const SizedBox(height: 20),
 
             // Large status badge centered
-            Center(child: StatusBadge(status: _status, large: true)),
+            Center(child: StatusBadge(status: status, large: true)),
             const SizedBox(height: 20),
 
             // Candidate info card
@@ -157,11 +153,11 @@ class _BusinessInterviewDetailViewState
                     height: 50,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _avatarColor(candidateName),
+                      color: _avatarColor(interview.candidateName),
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      initials,
+                      interview.candidateInitials,
                       style: const TextStyle(
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
@@ -175,7 +171,7 @@ class _BusinessInterviewDetailViewState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          candidateName,
+                          interview.candidateName,
                           style: const TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
@@ -184,7 +180,7 @@ class _BusinessInterviewDetailViewState
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          _interview['jobTitle'] as String? ?? '',
+                          interview.jobTitle,
                           style: const TextStyle(
                             fontSize: 14,
                             color: AppColors.secondary,
@@ -213,14 +209,14 @@ class _BusinessInterviewDetailViewState
                     Icons.calendar_today,
                     AppColors.teal,
                     'Date',
-                    _interview['date'] as String? ?? '',
+                    interview.date,
                   ),
                   const Divider(height: 20, color: AppColors.divider),
                   _infoRow(
                     Icons.access_time,
                     AppColors.purple,
                     'Time',
-                    _interview['time'] as String? ?? '',
+                    interview.time,
                   ),
                   const Divider(height: 20, color: AppColors.divider),
                   _infoRow(
@@ -231,9 +227,9 @@ class _BusinessInterviewDetailViewState
                             : Icons.phone,
                     AppColors.amber,
                     'Format',
-                    format,
+                    interview.format,
                   ),
-                  if (isVideo && _interview['link'] != null) ...[
+                  if (isVideo && interview.link != null) ...[
                     const Divider(height: 20, color: AppColors.divider),
                     Row(
                       children: [
@@ -270,13 +266,13 @@ class _BusinessInterviewDetailViewState
                       ],
                     ),
                   ],
-                  if (isInPerson && _interview['location'] != null) ...[
+                  if (isInPerson && interview.location != null) ...[
                     const Divider(height: 20, color: AppColors.divider),
                     _infoRow(
                       Icons.place,
                       AppColors.green,
                       'Location',
-                      _interview['location'] as String? ?? '',
+                      interview.location ?? '',
                     ),
                   ],
                 ],
@@ -285,7 +281,7 @@ class _BusinessInterviewDetailViewState
             const SizedBox(height: 16),
 
             // Notes card
-            if (_interview['notes'] != null)
+            if (interview.notes != null)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
@@ -307,7 +303,7 @@ class _BusinessInterviewDetailViewState
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      _interview['notes'] as String? ?? '',
+                      interview.notes ?? '',
                       style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.secondary,
@@ -320,7 +316,7 @@ class _BusinessInterviewDetailViewState
             const SizedBox(height: 24),
 
             // Action buttons based on status
-            if (_status == 'Invited') ...[
+            if (status == 'Invited') ...[
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -381,7 +377,7 @@ class _BusinessInterviewDetailViewState
               ),
             ],
 
-            if (_status == 'Confirmed') ...[
+            if (status == 'Confirmed') ...[
               SizedBox(
                 width: double.infinity,
                 height: 48,
@@ -442,7 +438,7 @@ class _BusinessInterviewDetailViewState
               ),
             ],
 
-            if (_status == 'Completed') ...[
+            if (status == 'Completed') ...[
               SizedBox(
                 width: double.infinity,
                 height: 48,

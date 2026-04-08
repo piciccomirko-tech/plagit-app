@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/business_conversation.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business messages tab — standalone view used inside business home.
 class BusinessMessagesView extends StatefulWidget {
@@ -15,24 +17,20 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   final _searchCtrl = TextEditingController();
   String _query = '';
 
-  List<Map<String, dynamic>> get _filtered {
-    final convos = MockData.businessConversations
-        .map((c) => Map<String, dynamic>.from(c))
-        .toList();
-    if (_query.isEmpty) return convos;
-    final q = _query.toLowerCase();
-    return convos
-        .where((c) =>
-            (c['candidateName'] as String).toLowerCase().contains(q))
-        .toList();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusinessMessagesProvider>().load();
+    });
   }
 
-  int get _totalUnread {
-    int total = 0;
-    for (final c in MockData.businessConversations) {
-      total += (c['unread'] as int?) ?? 0;
-    }
-    return total;
+  List<BusinessConversation> _filter(List<BusinessConversation> all) {
+    if (_query.isEmpty) return all;
+    final q = _query.toLowerCase();
+    return all
+        .where((c) => c.candidateName.toLowerCase().contains(q))
+        .toList();
   }
 
   Color _avatarColor(String name) {
@@ -48,7 +46,69 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
 
   @override
   Widget build(BuildContext context) {
-    final convos = _filtered;
+    final provider = context.watch<BusinessMessagesProvider>();
+
+    // Loading state
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          title: const Text(
+            'Messages',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: AppColors.charcoal,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(color: AppColors.teal),
+        ),
+      );
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          title: const Text(
+            'Messages',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: AppColors.charcoal,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(provider.error!, style: const TextStyle(color: AppColors.secondary)),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () => context.read<BusinessMessagesProvider>().load(),
+                child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Content
+    final totalUnread = provider.totalUnread;
+    final convos = _filter(provider.conversations);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -67,7 +127,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                 color: AppColors.charcoal,
               ),
             ),
-            if (_totalUnread > 0) ...[
+            if (totalUnread > 0) ...[
               const SizedBox(width: 8),
               Container(
                 width: 24,
@@ -78,7 +138,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                 ),
                 alignment: Alignment.center,
                 child: Text(
-                  '$_totalUnread',
+                  '$totalUnread',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -135,12 +195,9 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                     itemCount: convos.length,
                     itemBuilder: (context, index) {
                       final conv = convos[index];
-                      final unread = (conv['unread'] as int?) ?? 0;
-                      final name = conv['candidateName'] as String;
-                      final initials = conv['candidateInitials'] as String? ?? '??';
 
                       return GestureDetector(
-                        onTap: () => context.push('/business/chat/${conv['id']}'),
+                        onTap: () => context.push('/business/chat/${conv.id}'),
                         child: Container(
                           padding: const EdgeInsets.all(14),
                           decoration: BoxDecoration(
@@ -157,11 +214,11 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                 height: 44,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: _avatarColor(name),
+                                  color: _avatarColor(conv.candidateName),
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
-                                  initials,
+                                  conv.candidateInitials,
                                   style: const TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
@@ -177,16 +234,16 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      name,
+                                      conv.candidateName,
                                       style: TextStyle(
                                         fontSize: 15,
-                                        fontWeight: unread > 0 ? FontWeight.w700 : FontWeight.w600,
+                                        fontWeight: conv.unread > 0 ? FontWeight.w700 : FontWeight.w600,
                                         color: AppColors.charcoal,
                                       ),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      conv['jobContext'] as String? ?? '',
+                                      conv.jobContext,
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: AppColors.secondary,
@@ -194,7 +251,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      conv['lastMessage'] as String? ?? '',
+                                      conv.lastMessage,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: const TextStyle(
@@ -212,13 +269,13 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    conv['time'] as String? ?? '',
+                                    conv.time,
                                     style: const TextStyle(
                                       fontSize: 11,
                                       color: AppColors.secondary,
                                     ),
                                   ),
-                                  if (unread > 0) ...[
+                                  if (conv.unread > 0) ...[
                                     const SizedBox(height: 6),
                                     Container(
                                       width: 20,
@@ -229,7 +286,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                       ),
                                       alignment: Alignment.center,
                                       child: Text(
-                                        '$unread',
+                                        '${conv.unread}',
                                         style: const TextStyle(
                                           fontSize: 11,
                                           fontWeight: FontWeight.w600,

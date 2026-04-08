@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/applicant.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business Applicants tab — list of all applicants across jobs.
 class BusinessApplicantsView extends StatefulWidget {
@@ -13,7 +15,6 @@ class BusinessApplicantsView extends StatefulWidget {
 }
 
 class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
-  String _selectedFilter = 'All';
   String _selectedSort = 'Newest';
   final _searchController = TextEditingController();
   String _searchQuery = '';
@@ -28,33 +29,12 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
   ];
   static const _sorts = ['Newest', 'Most Experienced', 'Best Match'];
 
-  List<Map<String, dynamic>> get _filteredApplicants {
-    var list = MockData.businessApplicants.cast<Map<String, dynamic>>();
-
-    // Search filter
-    if (_searchQuery.isNotEmpty) {
-      final q = _searchQuery.toLowerCase();
-      list = list
-          .where((a) =>
-              (a['name']?.toString().toLowerCase().contains(q) ?? false) ||
-              (a['role']?.toString().toLowerCase().contains(q) ?? false))
-          .toList();
-    }
-
-    // Status filter
-    if (_selectedFilter != 'All') {
-      if (_selectedFilter == 'Interview') {
-        list = list
-            .where((a) =>
-                a['status'] == 'Interview Scheduled' ||
-                a['status'] == 'Interview')
-            .toList();
-      } else {
-        list = list.where((a) => a['status'] == _selectedFilter).toList();
-      }
-    }
-
-    return list;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusinessApplicantsProvider>().load();
+    });
   }
 
   @override
@@ -63,24 +43,69 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
     super.dispose();
   }
 
+  /// Applies local search on top of provider-filtered applicants.
+  List<Applicant> _applySearch(List<Applicant> list) {
+    if (_searchQuery.isEmpty) return list;
+    final q = _searchQuery.toLowerCase();
+    return list
+        .where((a) =>
+            a.name.toLowerCase().contains(q) ||
+            a.role.toLowerCase().contains(q))
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final filtered = _filteredApplicants;
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        title: const Text(
-          'Applicants',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: AppColors.charcoal,
+    final provider = context.watch<BusinessApplicantsProvider>();
+
+    // ── Loading state ──
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
+
+    // ── Error state ──
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.red),
+              const SizedBox(height: 12),
+              Text(
+                provider.error!,
+                style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.read<BusinessApplicantsProvider>().load(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
           ),
         ),
-      ),
+      );
+    }
+
+    // ── Content state ──
+    final selectedFilter = provider.filter;
+    final filtered = _applySearch(provider.applicants);
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: _buildAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -123,9 +148,9 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
               separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final f = _filters[i];
-                final active = f == _selectedFilter;
+                final active = f == selectedFilter;
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedFilter = f),
+                  onTap: () => context.read<BusinessApplicantsProvider>().setFilter(f),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
@@ -213,10 +238,26 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
       ),
     );
   }
+
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+      title: const Text(
+        'Applicants',
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: AppColors.charcoal,
+        ),
+      ),
+    );
+  }
 }
 
 class _ApplicantCard extends StatelessWidget {
-  final Map<String, dynamic> applicant;
+  final Applicant applicant;
   const _ApplicantCard({required this.applicant});
 
   Color _avatarColor(String initials) {
@@ -226,17 +267,8 @@ class _ApplicantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = applicant['name']?.toString() ?? '';
-    final initials = applicant['initials']?.toString() ?? '';
-    final role = applicant['role']?.toString() ?? '';
-    final experience = applicant['experience']?.toString() ?? '';
-    final location = applicant['location']?.toString() ?? '';
-    final status = applicant['status']?.toString() ?? '';
-    final date = applicant['date']?.toString() ?? '';
-    final verified = applicant['verified'] == true;
-
     return GestureDetector(
-      onTap: () => context.push('/business/applicant/${applicant['id']}'),
+      onTap: () => context.push('/business/applicant/${applicant.id}'),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
@@ -253,9 +285,9 @@ class _ApplicantCard extends StatelessWidget {
                 // ── Avatar ──
                 CircleAvatar(
                   radius: 22,
-                  backgroundColor: _avatarColor(initials),
+                  backgroundColor: _avatarColor(applicant.initials),
                   child: Text(
-                    initials,
+                    applicant.initials,
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -273,7 +305,7 @@ class _ApplicantCard extends StatelessWidget {
                         children: [
                           Flexible(
                             child: Text(
-                              name,
+                              applicant.name,
                               style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
@@ -282,31 +314,31 @@ class _ApplicantCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          if (verified) ...[
+                          if (applicant.verified) ...[
                             const SizedBox(width: 4),
                             const Icon(Icons.verified, size: 14, color: AppColors.teal),
                           ],
                         ],
                       ),
                       Text(
-                        'Applying for: $role',
+                        'Applying for: ${applicant.role}',
                         style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                       ),
                       Text(
-                        '$experience · $location',
+                        '${applicant.experience} \u00B7 ${applicant.location}',
                         style: const TextStyle(fontSize: 11, color: AppColors.secondary),
                       ),
                     ],
                   ),
                 ),
-                StatusBadge(status: status),
+                StatusBadge(status: applicant.status.displayName),
               ],
             ),
             const SizedBox(height: 4),
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'Applied $date',
+                'Applied ${applicant.date}',
                 style: const TextStyle(fontSize: 11, color: AppColors.secondary),
               ),
             ),
@@ -318,8 +350,9 @@ class _ApplicantCard extends StatelessWidget {
                   label: '\u2713 Shortlist',
                   color: AppColors.teal,
                   onTap: () {
+                    context.read<BusinessApplicantsProvider>().shortlist(applicant.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('$name shortlisted'), duration: const Duration(seconds: 1)),
+                      SnackBar(content: Text('${applicant.name} shortlisted'), duration: const Duration(seconds: 1)),
                     );
                   },
                 ),
@@ -328,8 +361,9 @@ class _ApplicantCard extends StatelessWidget {
                   label: '\u2717 Reject',
                   color: AppColors.red,
                   onTap: () {
+                    context.read<BusinessApplicantsProvider>().reject(applicant.id);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('$name rejected'), duration: const Duration(seconds: 1)),
+                      SnackBar(content: Text('${applicant.name} rejected'), duration: const Duration(seconds: 1)),
                     );
                   },
                 ),

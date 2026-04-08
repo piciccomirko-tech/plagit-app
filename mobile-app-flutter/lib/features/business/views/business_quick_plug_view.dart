@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/quick_plug_candidate.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business Quick Plug — Tinder-style swipe deck for candidate discovery.
 /// This is the signature feature of the business side.
@@ -14,16 +16,11 @@ class BusinessQuickPlugView extends StatefulWidget {
 
 class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     with SingleTickerProviderStateMixin {
-  int _currentIndex = 0;
   double _dragX = 0;
-  int _swipesUsed = 0;
-  bool _showUpgradePrompt = false;
   bool _isAnimatingOut = false;
 
   late AnimationController _animController;
   late Animation<double> _animX;
-
-  static const _candidates = MockData.quickPlugCandidates;
 
   @override
   void initState() {
@@ -32,6 +29,9 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusinessQuickPlugProvider>().load();
+    });
   }
 
   @override
@@ -40,10 +40,11 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     super.dispose();
   }
 
-  // ── Swipe logic ──
+  // -- Swipe logic --
 
   void _processSwipe(bool interested) {
-    if (_isAnimatingOut || _currentIndex >= _candidates.length) return;
+    final provider = context.read<BusinessQuickPlugProvider>();
+    if (_isAnimatingOut || !provider.hasCards) return;
 
     _isAnimatingOut = true;
     final targetX = interested ? 500.0 : -500.0;
@@ -54,22 +55,13 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
     _animController.forward(from: 0).then((_) {
       if (!mounted) return;
-      _swipesUsed++;
 
-      if (_swipesUsed >= 5 &&
-          MockData.business['subscription'] == 'basic') {
-        setState(() {
-          _showUpgradePrompt = true;
-          _dragX = 0;
-          _isAnimatingOut = false;
-        });
-      } else {
-        setState(() {
-          _currentIndex++;
-          _dragX = 0;
-          _isAnimatingOut = false;
-        });
-      }
+      provider.swipe(interested);
+
+      setState(() {
+        _dragX = 0;
+        _isAnimatingOut = false;
+      });
 
       _animController.reset();
 
@@ -89,7 +81,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
   }
 
   void _handleSuperInterested() {
-    if (_isAnimatingOut || _currentIndex >= _candidates.length) return;
+    final provider = context.read<BusinessQuickPlugProvider>();
+    if (_isAnimatingOut || !provider.hasCards) return;
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -108,28 +101,19 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
     _animController.forward(from: 0).then((_) {
       if (!mounted) return;
-      _swipesUsed++;
 
-      if (_swipesUsed >= 5 &&
-          MockData.business['subscription'] == 'basic') {
-        setState(() {
-          _showUpgradePrompt = true;
-          _dragX = 0;
-          _isAnimatingOut = false;
-        });
-      } else {
-        setState(() {
-          _currentIndex++;
-          _dragX = 0;
-          _isAnimatingOut = false;
-        });
-      }
+      provider.swipe(true);
+
+      setState(() {
+        _dragX = 0;
+        _isAnimatingOut = false;
+      });
 
       _animController.reset();
     });
   }
 
-  // ── Color from name hash for avatar ──
+  // -- Color from name hash for avatar --
   Color _avatarColor(String name) {
     final hash = name.hashCode;
     final hue = (hash % 360).abs().toDouble();
@@ -138,20 +122,70 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<BusinessQuickPlugProvider>();
+
+    // Loading state
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildAppBar(),
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(color: AppColors.teal),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildAppBar(),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(provider.error!, style: const TextStyle(color: AppColors.secondary)),
+                      const SizedBox(height: 12),
+                      GestureDetector(
+                        onTap: () => context.read<BusinessQuickPlugProvider>().load(),
+                        child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
             _buildAppBar(),
-            Expanded(child: _buildBody()),
+            Expanded(child: _buildBody(provider)),
           ],
         ),
       ),
     );
   }
 
-  // ── Custom App Bar ──
+  // -- Custom App Bar --
   Widget _buildAppBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -194,23 +228,23 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Body ──
-  Widget _buildBody() {
+  // -- Body --
+  Widget _buildBody(BusinessQuickPlugProvider provider) {
     // Empty state: all candidates reviewed
-    if (!_showUpgradePrompt && _currentIndex >= _candidates.length) {
+    if (!provider.showUpgrade && !provider.hasCards) {
       return _buildEmptyState();
     }
 
     // Upgrade prompt
-    if (_showUpgradePrompt) {
+    if (provider.showUpgrade) {
       return _buildUpgradePrompt();
     }
 
     // Swipe deck
-    return _buildSwipeDeck();
+    return _buildSwipeDeck(provider);
   }
 
-  // ── Empty State ──
+  // -- Empty State --
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
@@ -244,11 +278,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             const SizedBox(height: 24),
             GestureDetector(
               onTap: () {
-                setState(() {
-                  _currentIndex = 0;
-                  _swipesUsed = 0;
-                  _showUpgradePrompt = false;
-                });
+                context.read<BusinessQuickPlugProvider>().load();
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
@@ -272,7 +302,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Upgrade Prompt ──
+  // -- Upgrade Prompt --
   Widget _buildUpgradePrompt() {
     return Center(
       child: Padding(
@@ -317,7 +347,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             const SizedBox(height: 16),
             GestureDetector(
               onTap: () {
-                setState(() => _showUpgradePrompt = false);
+                // Reload to dismiss upgrade state
+                context.read<BusinessQuickPlugProvider>().load();
               },
               child: Text(
                 'Maybe later',
@@ -333,10 +364,12 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Swipe Deck ──
-  Widget _buildSwipeDeck() {
+  // -- Swipe Deck --
+  Widget _buildSwipeDeck(BusinessQuickPlugProvider provider) {
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = screenWidth - 48;
+    final deck = provider.deck;
+    final currentIndex = provider.currentIndex;
 
     return Column(
       children: [
@@ -345,11 +378,12 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             alignment: Alignment.center,
             children: [
               // Background card (next card peeking)
-              if (_currentIndex + 1 < _candidates.length)
-                _buildBackgroundCard(cardWidth),
+              if (currentIndex + 1 < deck.length)
+                _buildBackgroundCard(deck[currentIndex + 1], cardWidth),
 
               // Foreground card
-              _buildForegroundCard(cardWidth),
+              if (provider.hasCards)
+                _buildForegroundCard(provider.currentCard!, cardWidth),
 
               // Swipe labels
               if (_dragX > 40)
@@ -426,9 +460,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Background Card ──
-  Widget _buildBackgroundCard(double cardWidth) {
-    final nextCandidate = _candidates[_currentIndex + 1];
+  // -- Background Card --
+  Widget _buildBackgroundCard(QuickPlugCandidate nextCandidate, double cardWidth) {
     return Transform.translate(
       offset: const Offset(0, 12),
       child: Transform.scale(
@@ -441,10 +474,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Foreground Card ──
-  Widget _buildForegroundCard(double cardWidth) {
-    final candidate = _candidates[_currentIndex];
-
+  // -- Foreground Card --
+  Widget _buildForegroundCard(QuickPlugCandidate candidate, double cardWidth) {
     return AnimatedBuilder(
       animation: _animController,
       builder: (context, child) {
@@ -463,7 +494,6 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             : (details) {
                 setState(() {
                   _dragX += details.delta.dx;
-
                 });
               },
         onPanEnd: _isAnimatingOut
@@ -474,7 +504,6 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                 } else {
                   setState(() {
                     _dragX = 0;
-
                   });
                 }
               },
@@ -483,17 +512,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Candidate Card ──
-  Widget _buildCandidateCard(Map<String, dynamic> candidate, double cardWidth) {
-    final name = candidate['name'] as String? ?? '';
-    final initials = candidate['initials'] as String? ?? '';
-    final role = candidate['role'] as String? ?? '';
-    final location = candidate['location'] as String? ?? '';
-    final experience = candidate['experience'] as String? ?? '';
-    final verified = candidate['verified'] as bool? ?? false;
-    final tags = (candidate['tags'] as List?)?.cast<String>() ?? [];
-    final summary = candidate['summary'] as String? ?? '';
-
+  // -- Candidate Card --
+  Widget _buildCandidateCard(QuickPlugCandidate candidate, double cardWidth) {
     return Container(
       width: cardWidth,
       decoration: BoxDecoration(
@@ -524,11 +544,11 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               height: 120,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _avatarColor(name),
+                color: _avatarColor(candidate.name),
               ),
               child: Center(
                 child: Text(
-                  initials,
+                  candidate.initials,
                   style: const TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
@@ -541,7 +561,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
             // Name
             Text(
-              name,
+              candidate.name,
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -552,7 +572,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
             // Role + experience
             Text(
-              '$role \u00B7 $experience',
+              '${candidate.role} \u00B7 ${candidate.experience}',
               style: TextStyle(
                 fontSize: 15,
                 color: Colors.grey.shade500,
@@ -567,7 +587,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                 const Icon(Icons.place, size: 14, color: AppColors.teal),
                 const SizedBox(width: 4),
                 Text(
-                  location,
+                  candidate.location,
                   style: const TextStyle(fontSize: 13, color: AppColors.teal),
                 ),
               ],
@@ -575,7 +595,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             const SizedBox(height: 6),
 
             // Verified badge
-            if (verified)
+            if (candidate.verified)
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: const [
@@ -598,7 +618,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               spacing: 8,
               runSpacing: 8,
               alignment: WrapAlignment.center,
-              children: tags.map((tag) {
+              children: candidate.tags.map((tag) {
                 return Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
@@ -620,7 +640,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
             // Summary
             Text(
-              summary,
+              candidate.summary,
               textAlign: TextAlign.center,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
@@ -636,7 +656,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
-  // ── Swipe Label ──
+  // -- Swipe Label --
   Widget _buildSwipeLabel(String text, Color color) {
     final opacity = (_dragX.abs() / 120).clamp(0.0, 1.0);
     return Opacity(

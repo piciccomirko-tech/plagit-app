@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/applicant.dart';
+import 'package:plagit/models/business_job.dart';
+import 'package:plagit/providers/business_providers.dart';
 
-/// Business job detail — Details + Applicants tabs, mock-only.
+/// Business job detail — Details + Applicants tabs, provider-backed.
 class BusinessJobDetailView extends StatefulWidget {
   final String jobId;
   const BusinessJobDetailView({super.key, required this.jobId});
@@ -17,38 +20,6 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   int _tabIndex = 0;
   String _applicantFilter = 'All';
 
-  Map<String, dynamic> get _job {
-    final all = MockData.businessJobs.cast<Map<String, dynamic>>();
-    return all.firstWhere(
-      (j) => j['id'] == widget.jobId,
-      orElse: () => all.first,
-    );
-  }
-
-  List<Map<String, dynamic>> get _applicants {
-    var list = MockData.businessApplicants
-        .cast<Map<String, dynamic>>()
-        .where((a) => a['jobId'] == widget.jobId)
-        .toList();
-    if (_applicantFilter != 'All') {
-      if (_applicantFilter == 'Interview') {
-        list = list
-            .where((a) =>
-                a['status'] == 'Interview Scheduled' ||
-                a['status'] == 'Interview')
-            .toList();
-      } else {
-        list = list.where((a) => a['status'] == _applicantFilter).toList();
-      }
-    }
-    return list;
-  }
-
-  int get _totalApplicants => MockData.businessApplicants
-      .cast<Map<String, dynamic>>()
-      .where((a) => a['jobId'] == widget.jobId)
-      .length;
-
   static const _applicantFilters = [
     'All',
     'Applied',
@@ -58,22 +29,146 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ensure both providers are loaded
+      final jobsProv = context.read<BusinessJobsProvider>();
+      if (jobsProv.jobs.isEmpty && !jobsProv.loading) {
+        jobsProv.load();
+      }
+      final appProv = context.read<BusinessApplicantsProvider>();
+      if (appProv.applicants.isEmpty && !appProv.loading) {
+        appProv.load();
+      }
+    });
+  }
+
+  /// Find the job from the jobs provider by ID.
+  BusinessJob? _findJob(BusinessJobsProvider provider) {
+    try {
+      return provider.jobs.firstWhere((j) => j.id == widget.jobId);
+    } catch (_) {
+      return provider.jobs.isNotEmpty ? provider.jobs.first : null;
+    }
+  }
+
+  /// Filter applicants for this job from the applicants provider.
+  List<Applicant> _jobApplicants(BusinessApplicantsProvider provider) {
+    var list = provider.applicants
+        .where((a) => a.jobId == widget.jobId)
+        .toList();
+    if (_applicantFilter != 'All') {
+      if (_applicantFilter == 'Interview') {
+        list = list
+            .where((a) =>
+                a.status == ApplicantStatus.interviewScheduled)
+            .toList();
+      } else {
+        list = list.where((a) => a.status.displayName == _applicantFilter).toList();
+      }
+    }
+    return list;
+  }
+
+  int _totalApplicantsForJob(BusinessApplicantsProvider provider) {
+    return provider.applicants
+        .where((a) => a.jobId == widget.jobId)
+        .length;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final job = _job;
-    final status = job['status']?.toString() ?? 'Draft';
-    final title = job['title']?.toString() ?? '';
-    final salary = job['salary']?.toString() ?? '';
-    final contract = job['contract']?.toString() ?? '';
-    final location = job['location']?.toString() ?? '';
-    final urgent = job['urgent'] == true;
-    final featured = job['featured'] == true;
-    final applicantCount = job['applicants'] ?? 0;
-    final description = job['description']?.toString() ?? '';
-    final requirements = (job['requirements'] as List?)?.cast<String>() ?? [];
-    final benefits = (job['benefits'] as List?)?.cast<String>() ?? [];
-    final posted = job['posted']?.toString() ?? '';
-    final views = job['views']?.toString() ?? '0';
-    final saves = job['saves']?.toString() ?? '0';
+    final jobsProvider = context.watch<BusinessJobsProvider>();
+    final applicantsProvider = context.watch<BusinessApplicantsProvider>();
+
+    // ── Loading state ──
+    if (jobsProvider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Job Details',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+        ),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
+
+    // ── Error state ──
+    if (jobsProvider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Job Details',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.red),
+              const SizedBox(height: 12),
+              Text(
+                jobsProvider.error!,
+                style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.read<BusinessJobsProvider>().load(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // ── Content state ──
+    final job = _findJob(jobsProvider);
+    if (job == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Job Details',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+        ),
+        body: const Center(
+          child: Text('Job not found', style: TextStyle(fontSize: 16, color: AppColors.secondary)),
+        ),
+      );
+    }
+
+    final totalApplicants = _totalApplicantsForJob(applicantsProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -106,7 +201,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  job.title,
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -116,10 +211,10 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    StatusBadge(status: status),
+                    StatusBadge(status: job.status.displayName),
                     const SizedBox(width: 8),
                     Text(
-                      '$applicantCount applicants',
+                      '${job.applicants} applicants',
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -134,16 +229,16 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
-                    _InfoChip(text: salary, color: AppColors.teal),
-                    _InfoChip(text: contract, color: AppColors.secondary),
-                    _InfoChip(text: location, color: AppColors.secondary),
+                    _InfoChip(text: job.salary, color: AppColors.teal),
+                    _InfoChip(text: job.contract, color: AppColors.secondary),
+                    _InfoChip(text: job.location, color: AppColors.secondary),
                   ],
                 ),
-                if (urgent || featured) ...[
+                if (job.urgent || job.featured) ...[
                   const SizedBox(height: 12),
                   Row(
                     children: [
-                      if (urgent)
+                      if (job.urgent)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
@@ -159,8 +254,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                             ],
                           ),
                         ),
-                      if (urgent && featured) const SizedBox(width: 8),
-                      if (featured)
+                      if (job.urgent && job.featured) const SizedBox(width: 8),
+                      if (job.featured)
                         Container(
                           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
@@ -190,7 +285,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                     ),
                     const SizedBox(width: 24),
                     _TabButton(
-                      label: 'Applicants ($_totalApplicants)',
+                      label: 'Applicants ($totalApplicants)',
                       selected: _tabIndex == 1,
                       onTap: () => setState(() => _tabIndex = 1),
                     ),
@@ -203,8 +298,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
           // ── Tab content ──
           Expanded(
             child: _tabIndex == 0
-                ? _buildDetailsTab(description, requirements, benefits, posted, views, saves)
-                : _buildApplicantsTab(),
+                ? _buildDetailsTab(job)
+                : _buildApplicantsTab(applicantsProvider),
           ),
 
           // ── Bottom bar ──
@@ -249,14 +344,11 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
     );
   }
 
-  Widget _buildDetailsTab(
-    String description,
-    List<String> requirements,
-    List<String> benefits,
-    String posted,
-    String views,
-    String saves,
-  ) {
+  Widget _buildDetailsTab(BusinessJob job) {
+    final description = job.description ?? '';
+    final requirements = job.requirements ?? [];
+    final benefits = job.benefits ?? [];
+
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
@@ -310,11 +402,11 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
           ),
           child: Column(
             children: [
-              _InfoRow(label: 'Posted', value: posted),
+              _InfoRow(label: 'Posted', value: job.posted),
               const Divider(height: 20, color: AppColors.divider),
-              _InfoRow(label: 'Views', value: views),
+              _InfoRow(label: 'Views', value: '${job.views}'),
               const Divider(height: 20, color: AppColors.divider),
-              _InfoRow(label: 'Saves', value: saves),
+              _InfoRow(label: 'Saves', value: '${job.saves}'),
             ],
           ),
         ),
@@ -322,8 +414,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
     );
   }
 
-  Widget _buildApplicantsTab() {
-    final applicants = _applicants;
+  Widget _buildApplicantsTab(BusinessApplicantsProvider provider) {
+    final applicants = _jobApplicants(provider);
     return Column(
       children: [
         // ── Filter chips ──
@@ -454,7 +546,7 @@ class _InfoRow extends StatelessWidget {
 }
 
 class _ApplicantRow extends StatelessWidget {
-  final Map<String, dynamic> applicant;
+  final Applicant applicant;
   const _ApplicantRow({required this.applicant});
 
   Color _avatarColor(String initials) {
@@ -464,15 +556,8 @@ class _ApplicantRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final name = applicant['name']?.toString() ?? '';
-    final initials = applicant['initials']?.toString() ?? '';
-    final role = applicant['role']?.toString() ?? '';
-    final experience = applicant['experience']?.toString() ?? '';
-    final status = applicant['status']?.toString() ?? '';
-    final date = applicant['date']?.toString() ?? '';
-
     return GestureDetector(
-      onTap: () => context.push('/business/applicant/${applicant['id']}'),
+      onTap: () => context.push('/business/applicant/${applicant.id}'),
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(14),
@@ -487,26 +572,26 @@ class _ApplicantRow extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 20,
-                  backgroundColor: _avatarColor(initials),
-                  child: Text(initials, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+                  backgroundColor: _avatarColor(applicant.initials),
+                  child: Text(applicant.initials, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
-                      Text(role, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
-                      Text(experience, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
+                      Text(applicant.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+                      Text(applicant.role, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
+                      Text(applicant.experience, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
                     ],
                   ),
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    StatusBadge(status: status),
+                    StatusBadge(status: applicant.status.displayName),
                     const SizedBox(height: 4),
-                    Text(date, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
+                    Text(applicant.date, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
                   ],
                 ),
               ],

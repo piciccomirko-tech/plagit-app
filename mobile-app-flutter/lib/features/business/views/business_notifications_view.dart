@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/models/notification_item.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business Notifications screen.
-/// Mirrors BusinessRealNotificationsView.swift with mock data.
+/// Mirrors BusinessRealNotificationsView.swift with typed models.
 class BusinessNotificationsView extends StatefulWidget {
   const BusinessNotificationsView({super.key});
 
@@ -13,79 +16,23 @@ class BusinessNotificationsView extends StatefulWidget {
 }
 
 class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
-  bool _loading = true;
-  String? _error;
   String _selectedFilter = 'All';
   final List<String> _filters = ['All', 'Unread'];
-
-  List<Map<String, dynamic>> _notifications = [];
 
   @override
   void initState() {
     super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
-    setState(() {
-      _notifications = _mockNotifications();
-      _loading = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusinessNotificationsProvider>().load();
     });
   }
 
-  List<Map<String, dynamic>> _mockNotifications() => [
-        {
-          'id': 'not1',
-          'title': 'New applicant for Senior Chef position',
-          'notificationType': 'push',
-          'deliveryState': 'delivered',
-          'isRead': false,
-        },
-        {
-          'id': 'not2',
-          'title': 'Interview confirmed with Marco Rossi',
-          'notificationType': 'in_app',
-          'deliveryState': 'delivered',
-          'isRead': false,
-        },
-        {
-          'id': 'not3',
-          'title': 'New message from Sophie Chen',
-          'notificationType': 'push',
-          'deliveryState': 'delivered',
-          'isRead': true,
-        },
-        {
-          'id': 'not4',
-          'title': 'Your job posting "Bartender" has expired',
-          'notificationType': 'email',
-          'deliveryState': 'sent',
-          'isRead': true,
-        },
-        {
-          'id': 'not5',
-          'title': '3 new candidates match your Head Chef role',
-          'notificationType': 'in_app',
-          'deliveryState': 'delivered',
-          'isRead': false,
-        },
-      ];
-
-  List<Map<String, dynamic>> get _filtered {
+  List<NotificationItem> _applyFilter(List<NotificationItem> all) {
     if (_selectedFilter == 'Unread') {
-      return _notifications.where((n) => n['isRead'] != true).toList();
+      return all.where((n) => !n.read).toList();
     }
-    return _notifications;
+    return all;
   }
-
-  int get _unreadCount =>
-      _notifications.where((n) => n['isRead'] != true).length;
 
   IconData _typeIcon(String t) {
     switch (t) {
@@ -102,30 +49,25 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     }
   }
 
-  void _markRead(String id) {
-    setState(() {
-      final idx = _notifications.indexWhere((n) => n['id'] == id);
-      if (idx >= 0) _notifications[idx]['isRead'] = true;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final provider = context.watch<BusinessNotificationsProvider>();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            _topBar(),
+            _topBar(provider.unreadCount),
             _filterChips(),
-            Expanded(child: _body()),
+            Expanded(child: _body(provider)),
           ],
         ),
       ),
     );
   }
 
-  Widget _topBar() {
+  Widget _topBar(int unreadCount) {
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
@@ -145,7 +87,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.charcoal)),
-          if (_unreadCount > 0) ...[
+          if (unreadCount > 0) ...[
             const SizedBox(width: AppSpacing.sm),
             Container(
               padding: const EdgeInsets.symmetric(
@@ -154,7 +96,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
                 color: AppColors.teal,
                 borderRadius: BorderRadius.circular(AppRadius.full),
               ),
-              child: Text('$_unreadCount',
+              child: Text('$unreadCount',
                   style: const TextStyle(
                       fontSize: 11, color: Colors.white)),
             ),
@@ -204,22 +146,25 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     );
   }
 
-  Widget _body() {
-    if (_loading) {
+  Widget _body(BusinessNotificationsProvider provider) {
+    // Loading state
+    if (provider.loading) {
       return const Center(
           child: CircularProgressIndicator(color: AppColors.teal));
     }
-    if (_error != null) {
+
+    // Error state
+    if (provider.error != null) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(_error!,
+            Text(provider.error!,
                 style:
                     const TextStyle(fontSize: 12, color: AppColors.secondary)),
             const SizedBox(height: AppSpacing.md),
             GestureDetector(
-              onTap: _load,
+              onTap: () => context.read<BusinessNotificationsProvider>().load(),
               child: const Text('Retry',
                   style: TextStyle(
                       fontSize: 13,
@@ -230,26 +175,31 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
         ),
       );
     }
-    if (_filtered.isEmpty) {
+
+    // Content
+    final filtered = _applyFilter(provider.notifications);
+
+    if (filtered.isEmpty) {
       return _emptyState();
     }
     return ListView.builder(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
-      itemCount: _filtered.length,
+      itemCount: filtered.length,
       itemBuilder: (_, i) => Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-        child: _notificationRow(_filtered[i]),
+        child: _notificationRow(filtered[i]),
       ),
     );
   }
 
-  Widget _notificationRow(Map<String, dynamic> n) {
-    final isRead = n['isRead'] == true;
-    final type = n['notificationType'] as String? ?? 'push';
+  Widget _notificationRow(NotificationItem n) {
+    final isRead = n.read;
     return GestureDetector(
       onTap: () {
-        if (!isRead) _markRead(n['id']);
+        if (!isRead) {
+          context.read<BusinessNotificationsProvider>().markRead(n.id);
+        }
       },
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -266,7 +216,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
                 shape: BoxShape.circle,
                 color: isRead ? AppColors.surface : AppColors.tealLight,
               ),
-              child: Icon(_typeIcon(type),
+              child: Icon(_typeIcon(n.type),
                   size: 14,
                   color: isRead ? AppColors.tertiary : AppColors.teal),
             ),
@@ -275,7 +225,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(n['title'] ?? '',
+                  Text(n.title,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -284,12 +234,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
                               isRead ? FontWeight.w400 : FontWeight.w500,
                           color: AppColors.charcoal)),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(
-                      (n['deliveryState'] as String? ?? '')
-                          .replaceFirst(
-                              (n['deliveryState'] as String? ?? '')[0],
-                              (n['deliveryState'] as String? ?? '')[0]
-                                  .toUpperCase()),
+                  Text(n.time,
                       style: const TextStyle(
                           fontSize: 11, color: AppColors.tertiary)),
                 ],

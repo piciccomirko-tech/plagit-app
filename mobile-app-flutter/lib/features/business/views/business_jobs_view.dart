@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/business_job.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business Jobs tab — list of posted jobs with filter tabs.
 class BusinessJobsView extends StatefulWidget {
@@ -13,39 +15,68 @@ class BusinessJobsView extends StatefulWidget {
 }
 
 class _BusinessJobsViewState extends State<BusinessJobsView> {
-  String _selectedFilter = 'All';
   static const _filters = ['All', 'Active', 'Draft', 'Paused', 'Closed'];
 
-  List<Map<String, dynamic>> get _filteredJobs {
-    final all = MockData.businessJobs.cast<Map<String, dynamic>>();
-    if (_selectedFilter == 'All') return all;
-    return all.where((j) => j['status'] == _selectedFilter).toList();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusinessJobsProvider>().load();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _filteredJobs;
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        title: const Text(
-          'My Jobs',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: AppColors.charcoal,
+    final provider = context.watch<BusinessJobsProvider>();
+
+    // ── Loading state ──
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(context),
+        body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+      );
+    }
+
+    // ── Error state ──
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: _buildAppBar(context),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.red),
+              const SizedBox(height: 12),
+              Text(
+                provider.error!,
+                style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.read<BusinessJobsProvider>().load(),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add, color: AppColors.teal, size: 28),
-            onPressed: () => context.push('/business/post-job'),
-          ),
-        ],
-      ),
+      );
+    }
+
+    // ── Content state ──
+    final jobs = provider.jobs;
+    final selectedFilter = provider.filter;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: _buildAppBar(context),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -59,9 +90,9 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
               separatorBuilder: (_, __) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final f = _filters[i];
-                final active = f == _selectedFilter;
+                final active = f == selectedFilter;
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedFilter = f),
+                  onTap: () => context.read<BusinessJobsProvider>().setFilter(f),
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
@@ -89,7 +120,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              '${filtered.length} jobs',
+              '${jobs.length} jobs',
               style: const TextStyle(fontSize: 13, color: AppColors.secondary),
             ),
           ),
@@ -97,7 +128,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
 
           // ── Job list ──
           Expanded(
-            child: filtered.isEmpty
+            child: jobs.isEmpty
                 ? Center(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -105,7 +136,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
                         Icon(Icons.work_off_outlined, size: 56, color: AppColors.tertiary),
                         const SizedBox(height: 12),
                         Text(
-                          'No $_selectedFilter jobs',
+                          'No $selectedFilter jobs',
                           style: const TextStyle(fontSize: 16, color: AppColors.secondary),
                         ),
                       ],
@@ -113,28 +144,46 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
                   )
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemCount: filtered.length,
-                    itemBuilder: (_, i) => _JobCard(job: filtered[i]),
+                    itemCount: jobs.length,
+                    itemBuilder: (_, i) => _JobCard(job: jobs[i]),
                   ),
           ),
         ],
       ),
     );
   }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Colors.white,
+      elevation: 0,
+      centerTitle: false,
+      title: const Text(
+        'My Jobs',
+        style: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          color: AppColors.charcoal,
+        ),
+      ),
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.add, color: AppColors.teal, size: 28),
+          onPressed: () => context.push('/business/post-job'),
+        ),
+      ],
+    );
+  }
 }
 
 class _JobCard extends StatelessWidget {
-  final Map<String, dynamic> job;
+  final BusinessJob job;
   const _JobCard({required this.job});
 
   @override
   Widget build(BuildContext context) {
-    final status = job['status']?.toString() ?? 'Draft';
-    final urgent = job['urgent'] == true;
-    final applicants = job['applicants'] ?? 0;
-
     return GestureDetector(
-      onTap: () => context.push('/business/job/${job['id']}'),
+      onTap: () => context.push('/business/job/${job.id}'),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
@@ -151,7 +200,7 @@ class _JobCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    job['title']?.toString() ?? '',
+                    job.title,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -159,8 +208,8 @@ class _JobCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                StatusBadge(status: status),
-                if (urgent) ...[
+                StatusBadge(status: job.status.displayName),
+                if (job.urgent) ...[
                   const SizedBox(width: 6),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -186,17 +235,17 @@ class _JobCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  job['location']?.toString() ?? '',
+                  job.location,
                   style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                 ),
                 const Text(' · ', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
                 Text(
-                  job['salary']?.toString() ?? '',
+                  job.salary,
                   style: const TextStyle(fontSize: 12, color: AppColors.teal, fontWeight: FontWeight.w500),
                 ),
                 const Text(' · ', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
                 Text(
-                  job['contract']?.toString() ?? '',
+                  job.contract,
                   style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                 ),
               ],
@@ -213,7 +262,7 @@ class _JobCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
-                    '$applicants applicants',
+                    '${job.applicants} applicants',
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -223,7 +272,7 @@ class _JobCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Posted ${job['posted'] ?? ''}',
+                  'Posted ${job.posted}',
                   style: const TextStyle(fontSize: 11, color: AppColors.secondary),
                 ),
                 const Spacer(),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/applicant.dart';
+import 'package:plagit/providers/business_providers.dart';
 
-/// Applicant detail / candidate profile — mock-only.
+/// Applicant detail / candidate profile — uses typed Applicant model.
 class BusinessApplicantDetailView extends StatefulWidget {
   final String applicantId;
   const BusinessApplicantDetailView({super.key, required this.applicantId});
@@ -14,14 +16,6 @@ class BusinessApplicantDetailView extends StatefulWidget {
 }
 
 class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailView> {
-  Map<String, dynamic> get _applicant {
-    final all = MockData.businessApplicants.cast<Map<String, dynamic>>();
-    return all.firstWhere(
-      (a) => a['id'] == widget.applicantId,
-      orElse: () => all.first,
-    );
-  }
-
   Color _avatarColor(String initials) {
     final hue = (initials.hashCode % 360).abs().toDouble();
     return HSLColor.fromAHSL(1, hue, 0.5, 0.45).toColor();
@@ -38,6 +32,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
+              context.read<BusinessApplicantsProvider>().reject(widget.applicantId);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(content: Text('$name rejected'), duration: const Duration(seconds: 1)),
               );
@@ -51,19 +46,47 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
 
   @override
   Widget build(BuildContext context) {
-    final a = _applicant;
-    final name = a['name']?.toString() ?? '';
-    final initials = a['initials']?.toString() ?? '';
-    final role = a['role']?.toString() ?? '';
-    final experience = a['experience']?.toString() ?? '';
-    final location = a['location']?.toString() ?? '';
-    final verified = a['verified'] == true;
-    final bio = a['bio']?.toString() ?? '';
-    final languages = (a['languages'] as List?)?.cast<String>() ?? [];
-    final availability = a['availability']?.toString() ?? '';
-    final salaryExpectation = a['salaryExpectation']?.toString() ?? '';
-    final status = a['status']?.toString() ?? '';
-    final date = a['date']?.toString() ?? '';
+    final provider = context.watch<BusinessApplicantsProvider>();
+    final Applicant? applicant = provider.applicants
+        .where((a) => a.id == widget.applicantId)
+        .firstOrNull;
+
+    // Not found state
+    if (applicant == null) {
+      // Fallback: try first applicant or show not found
+      if (provider.loading) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+              onPressed: () => context.pop(),
+            ),
+            title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          ),
+          body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+        );
+      }
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        ),
+        body: const Center(
+          child: Text('Applicant not found', style: TextStyle(color: AppColors.secondary)),
+        ),
+      );
+    }
+
+    final a = applicant;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -75,26 +98,26 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           onPressed: () => context.pop(),
         ),
         title: Text(
-          name,
+          a.name,
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
         ),
       ),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          // ── Large avatar ──
+          // -- Large avatar --
           Center(
             child: Stack(
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundColor: _avatarColor(initials),
+                  backgroundColor: _avatarColor(a.initials),
                   child: Text(
-                    initials,
+                    a.initials,
                     style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ),
-                if (verified)
+                if (a.verified)
                   Positioned(
                     bottom: 0,
                     right: 0,
@@ -109,27 +132,27 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           ),
           const SizedBox(height: 12),
 
-          // ── Name + role ──
+          // -- Name + role --
           Center(
             child: Text(
-              name,
+              a.name,
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.charcoal),
             ),
           ),
           const SizedBox(height: 4),
           Center(
-            child: Text(role, style: const TextStyle(fontSize: 15, color: AppColors.secondary)),
+            child: Text(a.role, style: const TextStyle(fontSize: 15, color: AppColors.secondary)),
           ),
           const SizedBox(height: 6),
           Center(
             child: Text(
-              '$location  \u2022  $experience',
+              '${a.location}  \u2022  ${a.experience}',
               style: const TextStyle(fontSize: 13, color: AppColors.secondary),
             ),
           ),
           const SizedBox(height: 20),
 
-          // ── Action buttons ──
+          // -- Action buttons --
           Row(
             children: [
               Expanded(
@@ -139,8 +162,9 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                   color: AppColors.teal,
                   filled: true,
                   onTap: () {
+                    context.read<BusinessApplicantsProvider>().shortlist(widget.applicantId);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('$name shortlisted'), duration: const Duration(seconds: 1)),
+                      SnackBar(content: Text('${a.name} shortlisted'), duration: const Duration(seconds: 1)),
                     );
                   },
                 ),
@@ -173,36 +197,36 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                   color: AppColors.red,
                   filled: false,
                   textOnly: true,
-                  onTap: () => _confirmReject(name),
+                  onTap: () => _confirmReject(a.name),
                 ),
               ),
             ],
           ),
           const SizedBox(height: 20),
 
-          // ── A. About ──
+          // -- A. About --
           _SectionCard(
             title: 'About',
-            child: Text(bio, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.6)),
+            child: Text(a.bio ?? '', style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.6)),
           ),
           const SizedBox(height: 12),
 
-          // ── B. Experience ──
+          // -- B. Experience --
           _SectionCard(
             title: 'Experience',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(experience, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                Text(a.experience, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
                 const SizedBox(height: 10),
                 _ExperienceItem(
-                  title: role,
+                  title: a.role,
                   company: 'Previous Employer',
                   period: '2023 - Present',
                 ),
                 const Divider(height: 16, color: AppColors.divider),
                 _ExperienceItem(
-                  title: role,
+                  title: a.role,
                   company: 'Earlier Venue',
                   period: '2021 - 2023',
                 ),
@@ -211,13 +235,13 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           ),
           const SizedBox(height: 12),
 
-          // ── C. Skills ──
+          // -- C. Skills --
           _SectionCard(
             title: 'Skills',
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: [role, 'Customer Service', 'Teamwork', 'Communication']
+              children: [a.role, 'Customer Service', 'Teamwork', 'Communication']
                   .map((s) => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
@@ -231,12 +255,12 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           ),
           const SizedBox(height: 12),
 
-          // ── D. Languages ──
+          // -- D. Languages --
           _SectionCard(
             title: 'Languages',
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: languages
+              children: (a.languages ?? [])
                   .map((l) => Padding(
                         padding: const EdgeInsets.only(bottom: 6),
                         child: Row(
@@ -252,21 +276,21 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           ),
           const SizedBox(height: 12),
 
-          // ── E. Availability ──
+          // -- E. Availability --
           _SectionCard(
             title: 'Availability',
-            child: Text(availability, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+            child: Text(a.availability ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           ),
           const SizedBox(height: 12),
 
-          // ── F. Salary Expectation ──
+          // -- F. Salary Expectation --
           _SectionCard(
             title: 'Salary Expectation',
-            child: Text(salaryExpectation, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.teal)),
+            child: Text(a.salaryExpectation ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.teal)),
           ),
           const SizedBox(height: 12),
 
-          // ── CV section ──
+          // -- CV section --
           _SectionCard(
             title: 'CV',
             child: SizedBox(
@@ -290,7 +314,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           ),
           const SizedBox(height: 12),
 
-          // ── Application context ──
+          // -- Application context --
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -304,17 +328,17 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                 const Text('Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
                 const SizedBox(height: 10),
                 Text(
-                  'Applied to $role on $date',
+                  'Applied to ${a.role} on ${a.date}',
                   style: const TextStyle(fontSize: 13, color: AppColors.secondary),
                 ),
                 const SizedBox(height: 8),
-                StatusBadge(status: status),
+                StatusBadge(status: a.status.displayName),
               ],
             ),
           ),
           const SizedBox(height: 12),
 
-          // ── Timeline ──
+          // -- Timeline --
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -330,8 +354,8 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                 _TimelineStep(label: 'Applied', done: true),
                 _TimelineStep(label: 'Viewed', done: true),
                 _TimelineStep(
-                  label: _timelineStatusLabel(status),
-                  done: _isStatusReached(status),
+                  label: _timelineStatusLabel(a.status.displayName),
+                  done: _isStatusReached(a.status.displayName),
                   isLast: true,
                 ),
               ],

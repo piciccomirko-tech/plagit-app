@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/models/business_interview.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Standalone business interviews screen (pushed from dashboard).
 class BusinessInterviewsView extends StatefulWidget {
@@ -15,21 +17,12 @@ class BusinessInterviewsView extends StatefulWidget {
 class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
   String _filter = 'Upcoming';
 
-  List<Map<String, dynamic>> get _filtered {
-    final all = MockData.businessInterviews
-        .map((i) => Map<String, dynamic>.from(i))
-        .toList();
-    switch (_filter) {
-      case 'Upcoming':
-        return all
-            .where((i) =>
-                i['status'] == 'Confirmed' || i['status'] == 'Invited')
-            .toList();
-      case 'Past':
-        return all.where((i) => i['status'] == 'Completed').toList();
-      default:
-        return all;
-    }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<BusinessInterviewsProvider>().load();
+    });
   }
 
   Color _avatarColor(String name) {
@@ -50,9 +43,84 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
     }
   }
 
+  List<BusinessInterview> _applyLocalFilter(
+      List<BusinessInterview> all, String filter) {
+    switch (filter) {
+      case 'Upcoming':
+        return all
+            .where((i) => i.status == 'Confirmed' || i.status == 'Invited')
+            .toList();
+      case 'Past':
+        return all.where((i) => i.status == 'Completed').toList();
+      default:
+        return all;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final interviews = _filtered;
+    final provider = context.watch<BusinessInterviewsProvider>();
+
+    // Loading state
+    if (provider.loading) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Interviews',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+          centerTitle: true,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(color: AppColors.teal),
+        ),
+      );
+    }
+
+    // Error state
+    if (provider.error != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Interviews',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(provider.error!, style: const TextStyle(color: AppColors.secondary)),
+              const SizedBox(height: 12),
+              GestureDetector(
+                onTap: () => context.read<BusinessInterviewsProvider>().load(),
+                child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Content
+    final interviews = _applyLocalFilter(provider.interviews, _filter);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -148,12 +216,9 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                     itemCount: interviews.length,
                     itemBuilder: (context, index) {
                       final iv = interviews[index];
-                      final name = iv['candidateName'] as String? ?? '';
-                      final initials = iv['candidateInitials'] as String? ?? '??';
-                      final format = iv['format'] as String? ?? '';
 
                       return GestureDetector(
-                        onTap: () => context.push('/business/interview/${iv['id']}'),
+                        onTap: () => context.push('/business/interview/${iv.id}'),
                         child: Container(
                           margin: const EdgeInsets.only(bottom: 12),
                           padding: const EdgeInsets.all(16),
@@ -173,11 +238,11 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                                     height: 44,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: _avatarColor(name),
+                                      color: _avatarColor(iv.candidateName),
                                     ),
                                     alignment: Alignment.center,
                                     child: Text(
-                                      initials,
+                                      iv.candidateInitials,
                                       style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w700,
@@ -191,7 +256,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          name,
+                                          iv.candidateName,
                                           style: const TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
@@ -200,7 +265,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          iv['jobTitle'] as String? ?? '',
+                                          iv.jobTitle,
                                           style: const TextStyle(
                                             fontSize: 13,
                                             color: AppColors.secondary,
@@ -219,7 +284,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                                   const Icon(Icons.calendar_today, size: 14, color: AppColors.secondary),
                                   const SizedBox(width: 6),
                                   Text(
-                                    '${iv['date']} \u00B7 ${iv['time']}',
+                                    '${iv.date} \u00B7 ${iv.time}',
                                     style: const TextStyle(
                                       fontSize: 13,
                                       color: AppColors.secondary,
@@ -235,11 +300,11 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                                   Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                                     decoration: BoxDecoration(
-                                      color: _formatColor(format),
+                                      color: _formatColor(iv.format),
                                       borderRadius: BorderRadius.circular(100),
                                     ),
                                     child: Text(
-                                      format,
+                                      iv.format,
                                       style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -248,7 +313,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  StatusBadge(status: iv['status'] as String? ?? ''),
+                                  StatusBadge(status: iv.status),
                                 ],
                               ),
                             ],

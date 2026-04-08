@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/business_conversation.dart';
+import 'package:plagit/models/conversation.dart'; // ChatMessage
+import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/repositories/business_repository.dart';
 
 /// Business chat thread view.
 class BusinessChatView extends StatefulWidget {
@@ -15,39 +19,62 @@ class BusinessChatView extends StatefulWidget {
 class _BusinessChatViewState extends State<BusinessChatView> {
   final _inputCtrl = TextEditingController();
   final _scrollCtrl = ScrollController();
-  late List<Map<String, dynamic>> _messages;
-  Map<String, dynamic>? _conversation;
+  List<ChatMessage> _messages = [];
+  BusinessConversation? _conversation;
   bool _canSend = false;
+  bool _loading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _conversation = MockData.businessConversations
-        .cast<Map<String, dynamic>>()
-        .firstWhere(
-          (c) => c['id'] == widget.conversationId,
-          orElse: () => <String, dynamic>{},
-        );
-    _messages = MockData.businessChatMessages
-        .map((m) => Map<String, dynamic>.from(m))
-        .toList()
-        .reversed
-        .toList();
     _inputCtrl.addListener(() {
       final canSend = _inputCtrl.text.trim().isNotEmpty;
       if (canSend != _canSend) setState(() => _canSend = canSend);
     });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _loadMessages();
+    });
+  }
+
+  Future<void> _loadMessages() async {
+    // Look up conversation from provider
+    final msgProvider = context.read<BusinessMessagesProvider>();
+    _conversation = msgProvider.conversations
+        .where((c) => c.id == widget.conversationId)
+        .firstOrNull;
+
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      final repo = BusinessRepository();
+      final msgs = await repo.fetchMessages(widget.conversationId);
+      if (!mounted) return;
+      setState(() {
+        _messages = msgs.reversed.toList();
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
   }
 
   void _send() {
     final text = _inputCtrl.text.trim();
     if (text.isEmpty) return;
     setState(() {
-      _messages.insert(0, {
-        'sender': 'business',
-        'text': text,
-        'time': 'Just now',
-      });
+      _messages.insert(0, ChatMessage(
+        sender: 'business',
+        text: text,
+        time: 'Just now',
+      ));
     });
     _inputCtrl.clear();
     if (_scrollCtrl.hasClients) {
@@ -68,10 +95,8 @@ class _BusinessChatViewState extends State<BusinessChatView> {
 
   @override
   Widget build(BuildContext context) {
-    final candidateName =
-        _conversation?['candidateName'] as String? ?? 'Chat';
-    final jobContext =
-        _conversation?['jobContext'] as String? ?? '';
+    final candidateName = _conversation?.candidateName ?? 'Chat';
+    final jobContext = _conversation?.jobContext ?? '';
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -155,75 +180,89 @@ class _BusinessChatViewState extends State<BusinessChatView> {
 
           // Messages list
           Expanded(
-            child: ListView.builder(
-              controller: _scrollCtrl,
-              reverse: true,
-              padding: const EdgeInsets.all(16),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final msg = _messages[index];
-                final isBusiness = msg['sender'] == 'business';
-                final text = msg['text'] as String? ?? '';
-                final time = msg['time'] as String? ?? '';
-
-                // Show timestamp between groups
-                final showTime = index == _messages.length - 1 ||
-                    _messages[index + 1]['time'] != time;
-
-                return Column(
-                  children: [
-                    if (showTime)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 8, top: 4),
-                        child: Center(
-                          child: Text(
-                            time,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: AppColors.tertiary,
+            child: _loading
+                ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
+                : _error != null
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(_error!, style: const TextStyle(color: AppColors.secondary)),
+                            const SizedBox(height: 12),
+                            GestureDetector(
+                              onTap: _loadMessages,
+                              child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
                             ),
-                          ),
+                          ],
                         ),
+                      )
+                    : ListView.builder(
+                        controller: _scrollCtrl,
+                        reverse: true,
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _messages.length,
+                        itemBuilder: (context, index) {
+                          final msg = _messages[index];
+                          final isBusiness = msg.isFromBusiness;
+
+                          // Show timestamp between groups
+                          final showTime = index == _messages.length - 1 ||
+                              _messages[index + 1].time != msg.time;
+
+                          return Column(
+                            children: [
+                              if (showTime)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8, top: 4),
+                                  child: Center(
+                                    child: Text(
+                                      msg.time,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: AppColors.tertiary,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              Align(
+                                alignment: isBusiness
+                                    ? Alignment.centerRight
+                                    : Alignment.centerLeft,
+                                child: Container(
+                                  margin: const EdgeInsets.only(bottom: 6),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 10,
+                                  ),
+                                  constraints: BoxConstraints(
+                                    maxWidth: MediaQuery.of(context).size.width * 0.75,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isBusiness
+                                        ? AppColors.teal
+                                        : const Color(0xFFF0F0F2),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: const Radius.circular(16),
+                                      topRight: const Radius.circular(16),
+                                      bottomLeft: Radius.circular(isBusiness ? 16 : 4),
+                                      bottomRight: Radius.circular(isBusiness ? 4 : 16),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    msg.text,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      color: isBusiness
+                                          ? Colors.white
+                                          : AppColors.charcoal,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
-                    Align(
-                      alignment: isBusiness
-                          ? Alignment.centerRight
-                          : Alignment.centerLeft,
-                      child: Container(
-                        margin: const EdgeInsets.only(bottom: 6),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 10,
-                        ),
-                        constraints: BoxConstraints(
-                          maxWidth: MediaQuery.of(context).size.width * 0.75,
-                        ),
-                        decoration: BoxDecoration(
-                          color: isBusiness
-                              ? AppColors.teal
-                              : const Color(0xFFF0F0F2),
-                          borderRadius: BorderRadius.only(
-                            topLeft: const Radius.circular(16),
-                            topRight: const Radius.circular(16),
-                            bottomLeft: Radius.circular(isBusiness ? 16 : 4),
-                            bottomRight: Radius.circular(isBusiness ? 4 : 16),
-                          ),
-                        ),
-                        child: Text(
-                          text,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: isBusiness
-                                ? Colors.white
-                                : AppColors.charcoal,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
           ),
 
           // Bottom input bar

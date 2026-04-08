@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/business_profile.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Business profile tab — the Profile TAB in business bottom nav.
 class BusinessProfileView extends StatefulWidget {
@@ -12,11 +14,22 @@ class BusinessProfileView extends StatefulWidget {
 }
 
 class _BusinessProfileViewState extends State<BusinessProfileView> {
-  final _biz = MockData.business;
-
   @override
   Widget build(BuildContext context) {
-    final completion = (_biz['profileCompletion'] as int?) ?? 70;
+    final authProvider = context.watch<BusinessAuthProvider>();
+    final profile = authProvider.profile;
+
+    // Loading / no profile
+    if (profile == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: const Center(
+          child: CircularProgressIndicator(color: AppColors.teal),
+        ),
+      );
+    }
+
+    final completion = profile.profileCompletion;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -26,8 +39,8 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
           children: [
             const SizedBox(height: 24),
 
-            // ── Top Section (centered, no card) ──
-            _buildTopSection(completion),
+            // -- Top Section (centered, no card) --
+            _buildTopSection(profile, completion),
 
             const SizedBox(height: 24),
 
@@ -36,13 +49,13 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
               title: 'Business Info',
               onEdit: () => _snack('Profile editor coming soon'),
               children: [
-                _infoRow('Name', _biz['name'] as String? ?? ''),
+                _infoRow('Name', profile.name),
                 _divider(),
-                _infoRow('Category', _biz['category'] as String? ?? ''),
+                _infoRow('Category', profile.category),
                 _divider(),
-                _infoRow('Size', _biz['size'] as String? ?? ''),
+                _infoRow('Size', profile.size),
                 _divider(),
-                _infoRow('Website', _biz['website'] as String? ?? ''),
+                _infoRow('Website', profile.website ?? ''),
               ],
             ),
 
@@ -51,11 +64,11 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
               title: 'Contact Details',
               onEdit: () => _snack('Profile editor coming soon'),
               children: [
-                _infoRow('Contact Person', _biz['contactName'] as String? ?? ''),
+                _infoRow('Contact Person', profile.contactName),
                 _divider(),
-                _infoRow('Email', _biz['email'] as String? ?? ''),
+                _infoRow('Email', profile.email),
                 _divider(),
-                _infoRow('Phone', _biz['phone'] as String? ?? ''),
+                _infoRow('Phone', profile.phone ?? ''),
               ],
             ),
 
@@ -64,7 +77,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
               title: 'Location',
               onEdit: () => _snack('Profile editor coming soon'),
               children: [
-                _infoRow('Address', _biz['location'] as String? ?? ''),
+                _infoRow('Address', profile.location),
               ],
             ),
 
@@ -74,7 +87,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
               onEdit: () => _snack('Profile editor coming soon'),
               children: [
                 Text(
-                  _biz['description'] as String? ?? '',
+                  profile.description ?? '',
                   style: const TextStyle(
                     fontSize: 14,
                     color: AppColors.charcoal,
@@ -90,7 +103,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
             // F. Active Jobs Summary
             _buildActiveJobsCard(),
 
-            // ── Settings Section ──
+            // -- Settings Section --
             const SizedBox(height: 24),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
@@ -113,8 +126,8 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // ── Top Section ──
-  Widget _buildTopSection(int completion) {
+  // -- Top Section --
+  Widget _buildTopSection(BusinessProfile profile, int completion) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
@@ -126,7 +139,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
                 radius: 40,
                 backgroundColor: AppColors.teal,
                 child: Text(
-                  _biz['initials'] as String? ?? 'TB',
+                  profile.initials,
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -156,7 +169,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
           ),
           const SizedBox(height: 12),
           Text(
-            _biz['name'] as String? ?? '',
+            profile.name,
             style: const TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -164,12 +177,12 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
             ),
           ),
           Text(
-            _biz['category'] as String? ?? '',
+            profile.category,
             style: const TextStyle(fontSize: 14, color: AppColors.secondary),
           ),
           const SizedBox(height: 4),
           Text(
-            '\u{1F4CD} ${_biz['location'] ?? ''}',
+            '\u{1F4CD} ${profile.location}',
             style: const TextStyle(fontSize: 12, color: AppColors.secondary),
           ),
           const SizedBox(height: 16),
@@ -229,7 +242,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // ── Section Card ──
+  // -- Section Card --
   Widget _buildSectionCard({
     required String title,
     required VoidCallback onEdit,
@@ -270,7 +283,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // ── Info Row ──
+  // -- Info Row --
   Widget _infoRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -295,7 +308,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     return const Divider(color: AppColors.divider, height: 12);
   }
 
-  // ── Verification Card ──
+  // -- Verification Card --
   Widget _buildVerificationCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -328,9 +341,10 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // ── Active Jobs Card ──
+  // -- Active Jobs Card --
   Widget _buildActiveJobsCard() {
-    final activeCount = MockData.activeBusinessJobs.length;
+    final jobsProvider = context.watch<BusinessJobsProvider>();
+    final activeCount = jobsProvider.jobs.where((j) => j.status.displayName == 'Active').length;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       padding: const EdgeInsets.all(16),
@@ -362,7 +376,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // ── Settings Card ──
+  // -- Settings Card --
   Widget _buildSettingsCard() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -428,7 +442,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // ── Sign Out Dialog ──
+  // -- Sign Out Dialog --
   void _showSignOutDialog() {
     showDialog(
       context: context,
@@ -443,6 +457,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
+              context.read<BusinessAuthProvider>().logout();
               context.go('/entry');
             },
             child: const Text(
