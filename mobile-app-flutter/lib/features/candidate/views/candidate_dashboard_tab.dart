@@ -73,11 +73,12 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                   children: [
                     _header(first, loc),
                     _searchBar(),
+                    _bannerCard(Icons.map_outlined, 'Explore Nearby Jobs', 'Discover opportunities close to you', _C.teal),
                     _nextStepCard(),
-                    _quickActions(context),
+                    _bannerCard(Icons.verified_outlined, 'Your Matches', 'Jobs matching your role and preferences', _C.teal),
+                    _premiumCard(context),
                     if (jobs.isNotEmpty) _jobsNearYou(jobs, context),
                     _applicationsCard(summary),
-                    _premiumCard(context),
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -99,8 +100,8 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
             borderRadius: BorderRadius.circular(14),
           ),
           child: Center(child: Text(
-            name.isNotEmpty ? name[0].toUpperCase() : '?',
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: Colors.white),
+            name.length >= 2 ? '${name[0]}${name.split(' ').last[0]}'.toUpperCase() : name.isNotEmpty ? name[0].toUpperCase() : '?',
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5),
           )),
         ),
         const SizedBox(width: 14),
@@ -204,32 +205,26 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
     );
   }
 
-  // ── Quick Action Cards (2 side by side) ──
-  Widget _quickActions(BuildContext ctx) {
+  // ── Full-width Banner Card ──
+  Widget _bannerCard(IconData icon, String title, String subtitle, Color color) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      child: Row(children: [
-        Expanded(child: _quickCard(Icons.map_outlined, 'Explore Nearby Jobs', _C.teal, () {})),
-        const SizedBox(width: 12),
-        Expanded(child: _quickCard(Icons.verified_outlined, 'Your Matches', _C.teal, () {})),
-      ]),
-    );
-  }
-
-  Widget _quickCard(IconData icon, String title, Color color, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: _cardDeco(),
         child: Row(children: [
           Container(
-            width: 40, height: 40,
+            width: 44, height: 44,
             decoration: BoxDecoration(color: color.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, size: 20, color: color),
+            child: Icon(icon, size: 22, color: color),
           ),
-          const SizedBox(width: 12),
-          Expanded(child: Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _C.charcoal), maxLines: 2)),
+          const SizedBox(width: 14),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: _C.charcoal)),
+            const SizedBox(height: 2),
+            Text(subtitle, style: const TextStyle(fontSize: 12, color: _C.secondary)),
+          ])),
+          Icon(Icons.chevron_right, size: 18, color: _C.tertiary),
         ]),
       ),
     );

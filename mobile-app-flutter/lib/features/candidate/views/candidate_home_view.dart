@@ -49,7 +49,7 @@ class _CandidateHomeViewState extends State<CandidateHomeView> {
                 [Icons.bolt_outlined, Icons.bolt],
                 [Icons.person_outline, Icons.person],
               ];
-              final labels = const ['Home', 'Jobs', 'Applied', 'Connect', 'Profile'];
+              final labels = const ['Home', 'Jobs', 'Applied', 'Quick Plug', 'Profile'];
               final color = isPurple
                   ? (active ? _purple : _purple.withValues(alpha: 0.5))
                   : (active ? _teal : _tertiary);
