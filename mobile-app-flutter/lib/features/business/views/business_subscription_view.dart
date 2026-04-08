@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/providers/business_providers.dart';
+
 /// Business Subscription / Paywall screen — 3 pricing tiers.
 class BusinessSubscriptionView extends StatefulWidget {
   const BusinessSubscriptionView({super.key});
@@ -15,6 +18,9 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
 
   @override
   Widget build(BuildContext context) {
+    final sub = context.watch<BusinessAuthProvider>().subscription;
+    final isPremium = sub.plan.isPremium;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -34,7 +40,7 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
+      body: isPremium ? _buildManageSubscription(sub) : SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -146,6 +152,46 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             ),
 
             const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Already premium ──
+  Widget _buildManageSubscription(dynamic sub) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.workspace_premium, size: 60, color: AppColors.gold),
+            const SizedBox(height: 16),
+            Text(
+              '${sub.plan.displayName} Plan Active',
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              sub.renewalDate != null
+                  ? 'Your plan renews on ${sub.renewalDate}'
+                  : 'Your premium plan is active',
+              style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+            ),
+            const SizedBox(height: 32),
+            SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: OutlinedButton(
+                onPressed: () {},
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.teal),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+                child: const Text('Manage Subscription', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.teal)),
+              ),
+            ),
           ],
         ),
       ),

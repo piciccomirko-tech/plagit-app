@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class ProfileEditView extends StatefulWidget {
   const ProfileEditView({super.key});
@@ -11,8 +12,6 @@ class ProfileEditView extends StatefulWidget {
 }
 
 class _ProfileEditViewState extends State<ProfileEditView> {
-  final _candidate = MockData.candidate;
-
   late final TextEditingController _nameCtrl;
   late final TextEditingController _emailCtrl;
   late final TextEditingController _phoneCtrl;
@@ -26,28 +25,37 @@ class _ProfileEditViewState extends State<ProfileEditView> {
 
   String _contractPreference = 'Full-time';
   final List<String> _languages = [];
+  bool _initialized = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _nameCtrl = TextEditingController(text: _candidate['name'] as String? ?? '');
-    _emailCtrl = TextEditingController(text: _candidate['email'] as String? ?? '');
-    _phoneCtrl = TextEditingController(text: _candidate['phone'] as String? ?? '');
-    _locationCtrl = TextEditingController(text: _candidate['location'] as String? ?? '');
-    _nationalityCtrl = TextEditingController(text: _candidate['nationality'] as String? ?? '');
-    _roleCtrl = TextEditingController(text: _candidate['role'] as String? ?? '');
-    _availabilityCtrl = TextEditingController(text: _candidate['availability'] as String? ?? '');
-    _salaryCtrl = TextEditingController(text: _candidate['salary'] as String? ?? '');
-    _experienceCtrl = TextEditingController(text: _candidate['experience'] as String? ?? '');
+  void _initFromProfile() {
+    if (_initialized) return;
+    _initialized = true;
+
+    final profile = context.read<CandidateAuthProvider>().profile;
+    _nameCtrl = TextEditingController(text: profile?.name ?? '');
+    _emailCtrl = TextEditingController(text: profile?.email ?? '');
+    _phoneCtrl = TextEditingController(text: profile?.phone ?? '');
+    _locationCtrl = TextEditingController(text: profile?.location ?? '');
+    _nationalityCtrl = TextEditingController(text: profile?.nationality ?? '');
+    _roleCtrl = TextEditingController(text: profile?.role ?? '');
+    _availabilityCtrl = TextEditingController(text: profile?.availability ?? '');
+    _salaryCtrl = TextEditingController(text: profile?.salary ?? '');
+    _experienceCtrl = TextEditingController(text: profile?.experience ?? '');
     _bioCtrl = TextEditingController();
-    _contractPreference = _candidate['contractPreference'] as String? ?? 'Full-time';
+    _contractPreference = profile?.contractPreference ?? 'Full-time';
 
-    final langs = _candidate['languages'];
-    if (langs is List) {
-      for (final l in langs) {
-        _languages.add(l.toString());
+    final langs = profile?.languages;
+    if (langs != null && langs.isNotEmpty) {
+      for (final l in langs.split(', ')) {
+        _languages.add(l);
       }
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _initFromProfile();
   }
 
   @override
@@ -78,6 +86,26 @@ class _ProfileEditViewState extends State<ProfileEditView> {
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.watch<CandidateAuthProvider>().profile;
+
+    if (profile == null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: AppColors.background,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, size: 18, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text('Edit Profile', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+          centerTitle: true,
+        ),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -111,8 +139,8 @@ class _ProfileEditViewState extends State<ProfileEditView> {
                     color: AppColors.teal,
                     shape: BoxShape.circle,
                   ),
-                  child: const Center(
-                    child: Text('TC', style: TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white)),
+                  child: Center(
+                    child: Text(profile.initials, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700, color: Colors.white)),
                   ),
                 ),
                 const SizedBox(height: 8),

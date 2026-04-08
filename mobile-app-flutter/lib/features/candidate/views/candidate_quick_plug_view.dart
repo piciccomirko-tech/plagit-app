@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateQuickPlugView extends StatelessWidget {
   const CandidateQuickPlugView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final sub = context.watch<CandidateAuthProvider>().subscription;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -46,8 +50,10 @@ class CandidateQuickPlugView extends StatelessWidget {
               icon: Icons.rocket_launch,
               title: 'Boost My Profile',
               subtitle: 'Get seen by more employers today',
-              trailing: _UnlockPill(),
-              onTap: () => _showPremiumSnack(context),
+              trailing: sub.canBoostProfile ? _ActivePill() : _UnlockPill(),
+              onTap: () => sub.canBoostProfile
+                  ? _showActiveSnack(context)
+                  : _showPremiumSnack(context),
             ),
             const SizedBox(height: 12),
 
@@ -57,8 +63,10 @@ class CandidateQuickPlugView extends StatelessWidget {
               icon: Icons.bolt,
               title: 'Quick Apply',
               subtitle: 'Apply to matching jobs instantly',
-              trailing: _LockTrailing(),
-              onTap: () => _showPremiumSnack(context),
+              trailing: sub.canQuickApply ? _ActivePill() : _LockTrailing(),
+              onTap: () => sub.canQuickApply
+                  ? _showActiveSnack(context)
+                  : _showPremiumSnack(context),
             ),
             const SizedBox(height: 12),
 
@@ -68,8 +76,10 @@ class CandidateQuickPlugView extends StatelessWidget {
               icon: Icons.notifications,
               title: 'Priority Notifications',
               subtitle: 'Be first to know about new jobs',
-              trailing: _LockTrailing(),
-              onTap: () => _showPremiumSnack(context),
+              trailing: sub.hasPriorityNotifications ? _ActivePill() : _LockTrailing(),
+              onTap: () => sub.hasPriorityNotifications
+                  ? _showActiveSnack(context)
+                  : _showPremiumSnack(context),
             ),
             const SizedBox(height: 12),
 
@@ -79,8 +89,10 @@ class CandidateQuickPlugView extends StatelessWidget {
               icon: Icons.tune,
               title: 'Advanced Filters',
               subtitle: 'Filter by salary, distance, contract type',
-              trailing: _LockTrailing(),
-              onTap: () => _showPremiumSnack(context),
+              trailing: sub.hasAdvancedFilters ? _ActivePill() : _LockTrailing(),
+              onTap: () => sub.hasAdvancedFilters
+                  ? _showActiveSnack(context)
+                  : _showPremiumSnack(context),
             ),
             const SizedBox(height: 12),
 
@@ -89,9 +101,13 @@ class CandidateQuickPlugView extends StatelessWidget {
               iconBg: AppColors.gold,
               icon: Icons.workspace_premium,
               title: 'Go Premium',
-              subtitle: 'Unlock all features \u00b7 \u00a39.99/month',
-              trailing: _UpgradeButton(),
-              onTap: () => context.push('/candidate/subscription'),
+              subtitle: sub.plan.isPremium
+                  ? 'All features unlocked'
+                  : 'Unlock all features \u00b7 \u00a39.99/month',
+              trailing: sub.plan.isPremium ? _PremiumActivePill() : _UpgradeButton(),
+              onTap: () => sub.plan.isPremium
+                  ? _showActiveSnack(context)
+                  : context.push('/candidate/subscription'),
             ),
           ],
         ),
@@ -103,6 +119,15 @@ class CandidateQuickPlugView extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Premium feature \u2014 upgrade to unlock'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  static void _showActiveSnack(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Feature is active!'),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -176,6 +201,57 @@ class _QuickPlugCard extends StatelessWidget {
             const SizedBox(width: 8),
             trailing,
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── "Active" teal pill ──
+class _ActivePill extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: AppColors.teal.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(100),
+          ),
+          child: const Text(
+            'Active',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: AppColors.teal,
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+        const Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
+      ],
+    );
+  }
+}
+
+// ── "Premium Active" green pill ──
+class _PremiumActivePill extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.green,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Text(
+        '\u2713 Premium Active',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
       ),
     );

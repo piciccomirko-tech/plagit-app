@@ -1,5 +1,4 @@
 import 'package:plagit/core/api_client.dart';
-import 'package:plagit/models/message.dart';
 
 class MessageService {
   final _api = ApiClient();
@@ -9,10 +8,9 @@ class MessageService {
     return List<Map<String, dynamic>>.from(data['conversations'] as List);
   }
 
-  Future<List<Message>> getMessages(int conversationId) async {
+  Future<List<Map<String, dynamic>>> getMessages(int conversationId) async {
     final data = await _api.get('/candidate/messages/$conversationId');
-    final messages = data['messages'] as List;
-    return messages.map((m) => Message.fromJson(m as Map<String, dynamic>)).toList();
+    return List<Map<String, dynamic>>.from(data['messages'] as List);
   }
 
   Future<void> sendMessage({required int receiverId, required String content}) async {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 
 class CandidateSubscriptionView extends StatefulWidget {
   const CandidateSubscriptionView({super.key});
@@ -12,10 +13,12 @@ class CandidateSubscriptionView extends StatefulWidget {
 
 class _CandidateSubscriptionViewState extends State<CandidateSubscriptionView> {
   int _selectedPlan = 1; // 0 = monthly, 1 = annual
-  final bool _isPremium = MockData.candidate['plan'] == 'premium';
 
   @override
   Widget build(BuildContext context) {
+    final sub = context.watch<CandidateAuthProvider>().subscription;
+    final isPremium = sub.plan.isPremium;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -29,12 +32,12 @@ class _CandidateSubscriptionViewState extends State<CandidateSubscriptionView> {
         title: const Text('Go Premium', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
         centerTitle: true,
       ),
-      body: _isPremium ? _buildManageSubscription() : _buildPaywall(),
+      body: isPremium ? _buildManageSubscription(sub) : _buildPaywall(),
     );
   }
 
   // ── Already premium ──
-  Widget _buildManageSubscription() {
+  Widget _buildManageSubscription(dynamic sub) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -43,9 +46,14 @@ class _CandidateSubscriptionViewState extends State<CandidateSubscriptionView> {
           children: [
             const Icon(Icons.workspace_premium, size: 60, color: AppColors.gold),
             const SizedBox(height: 16),
-            const Text('Premium Active', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal)),
+            Text('${sub.plan.displayName} Active', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal)),
             const SizedBox(height: 8),
-            const Text('Your plan renews on May 8, 2026', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
+            Text(
+              sub.renewalDate != null
+                  ? 'Your plan renews on ${sub.renewalDate}'
+                  : 'Your premium plan is active',
+              style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+            ),
             const SizedBox(height: 32),
             SizedBox(
               width: double.infinity,
