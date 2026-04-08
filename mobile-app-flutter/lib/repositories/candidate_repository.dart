@@ -10,6 +10,7 @@ library;
 
 import 'package:plagit/config/env_config.dart';
 import 'package:plagit/core/network/api_client.dart';
+import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/models/application.dart';
 import 'package:plagit/models/candidate_home_data.dart';
@@ -219,8 +220,14 @@ class CandidateRepository {
 
   Future<CandidateSubscription> fetchSubscription() async {
     if (_isMock) return CandidateSubscription.mock();
-    final resp = await _api.get('/candidate/subscription');
-    final data = resp['data'] as Map<String, dynamic>? ?? {};
-    return CandidateSubscription.fromJson(data);
+    try {
+      final resp = await _api.get('/candidate/subscription');
+      final data = resp['data'] as Map<String, dynamic>? ?? {};
+      return CandidateSubscription.fromJson(data);
+    } on ApiError catch (e) {
+      // Subscription endpoint may not exist yet — return free plan
+      if (e.type == ApiErrorType.notFound) return CandidateSubscription.mock();
+      rethrow;
+    }
   }
 }

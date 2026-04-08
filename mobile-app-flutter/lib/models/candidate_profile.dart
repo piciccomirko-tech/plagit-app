@@ -103,31 +103,43 @@ class CandidateProfile {
             .toList() ??
         [];
 
+    // Derive initials from name if not provided by backend
+    final nameStr = json['name'] as String? ?? '';
+    final parts = nameStr.trim().split(' ');
+    final fallbackInitials = parts.length >= 2
+        ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
+        : (nameStr.isNotEmpty ? nameStr[0].toUpperCase() : '?');
+
     return CandidateProfile(
       id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
+      name: nameStr,
       email: json['email'] as String? ?? '',
       phone: json['phone'] as String?,
       location: json['location'] as String?,
       role: json['role'] as String?,
       status: json['status'] as String? ?? 'active',
-      isVerified: json['isVerified'] as bool? ?? false,
-      profileStrength: json['profileCompletion'] as int? ??
+      isVerified: json['is_verified'] as bool? ?? json['isVerified'] as bool? ?? false,
+      profileStrength: json['profile_strength'] as int? ??
           json['profileStrength'] as int? ??
+          json['profileCompletion'] as int? ??
           0,
-      profileViews: json['profileViews'] as int?,
-      avatarHue: (json['avatarHue'] as num?)?.toDouble() ?? 0.0,
-      photoUrl: json['photoUrl'] as String?,
+      profileViews: json['profile_views'] as int? ?? json['profileViews'] as int?,
+      avatarHue: (json['avatar_hue'] as num?)?.toDouble() ??
+          (json['avatarHue'] as num?)?.toDouble() ?? 0.0,
+      photoUrl: json['photo_url'] as String? ?? json['photoUrl'] as String?,
       experience: json['experience'] as String?,
       languages: languagesStr,
-      verificationStatus: json['verificationStatus'] as String?,
-      createdAt: json['createdAt'] as String?,
-      initials: json['initials'] as String? ?? '',
+      verificationStatus: json['verification_status'] as String? ??
+          json['verificationStatus'] as String?,
+      createdAt: json['created_at'] as String? ?? json['createdAt'] as String?,
+      initials: json['initials'] as String? ??
+          (fallbackInitials.isNotEmpty ? fallbackInitials : '?'),
       plan: json['plan'] as String? ?? 'free',
       nationality: json['nationality'] as String?,
-      availability: json['availability'] as String?,
+      availability: json['availability'] as String? ?? json['start_date'] as String?,
       salary: json['salary'] as String?,
-      contractPreference: json['contractPreference'] as String?,
+      contractPreference: json['contractPreference'] as String? ??
+          json['job_type'] as String?,
       completionItems: items,
     );
   }
