@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/repositories/auth_repository.dart';
 
 class BusinessRegisterView extends StatefulWidget {
   const BusinessRegisterView({super.key});
@@ -18,6 +19,30 @@ class _BusinessRegisterViewState extends State<BusinessRegisterView> {
   bool _obscurePassword = true;
   bool _obscureConfirm = true;
   bool _agreedToTerms = false;
+  bool _loading = false;
+  String? _error;
+
+  Future<void> _createAccount() async {
+    if (!_canSubmit) return;
+    if (_passwordCtrl.text != _confirmPasswordCtrl.text) {
+      setState(() => _error = 'Passwords do not match');
+      return;
+    }
+    setState(() { _loading = true; _error = null; });
+
+    try {
+      final authRepo = AuthRepository();
+      await authRepo.register(
+        name: _businessNameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text,
+        role: 'business',
+      );
+      if (mounted) context.go('/business/onboarding/welcome');
+    } catch (e) {
+      if (mounted) setState(() { _error = e.toString(); _loading = false; });
+    }
+  }
 
   @override
   void initState() {
@@ -144,6 +169,11 @@ class _BusinessRegisterViewState extends State<BusinessRegisterView> {
                 ),
               ),
 
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(_error!, style: const TextStyle(fontSize: 13, color: AppColors.red)),
+              ],
+
               const SizedBox(height: 24),
 
               // ── Create Account button ──
@@ -151,7 +181,7 @@ class _BusinessRegisterViewState extends State<BusinessRegisterView> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _canSubmit ? () => context.go('/business/onboarding/welcome') : null,
+                  onPressed: (_canSubmit && !_loading) ? _createAccount : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.teal,
                     disabledBackgroundColor: AppColors.teal.withValues(alpha: 0.4),
@@ -160,7 +190,9 @@ class _BusinessRegisterViewState extends State<BusinessRegisterView> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Create Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  child: _loading
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('Create Account', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 ),
               ),
 
