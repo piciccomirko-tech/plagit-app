@@ -190,8 +190,9 @@ class CandidateRepository {
 
   Future<List<NotificationItem>> fetchNotifications() async {
     if (_isMock) return NotificationItem.mockAll();
-    // TODO: final resp = await _api.get('/candidate/notifications');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/notifications');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => NotificationItem.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   // ══════════════════════════════════════════
@@ -221,7 +222,8 @@ class CandidateRepository {
 
   Future<CandidateSubscription> fetchSubscription() async {
     if (_isMock) return CandidateSubscription.mock();
-    // TODO: final resp = await _api.get('/candidate/subscription');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/subscription');
+    final data = resp['data'] as Map<String, dynamic>? ?? {};
+    return CandidateSubscription.fromJson(data);
   }
 }

@@ -228,8 +228,9 @@ class BusinessRepository {
 
   Future<BusinessSubscription> fetchSubscription() async {
     if (_isMock) return BusinessSubscription.mock();
-    // TODO: final resp = await _api.get('/business/subscription');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/subscription');
+    final data = resp['data'] as Map<String, dynamic>? ?? {};
+    return BusinessSubscription.fromJson(data);
   }
 
   // ======================================
@@ -242,7 +243,8 @@ class BusinessRepository {
           .map((n) => NotificationItem.fromJson(n))
           .toList();
     }
-    // TODO: final resp = await _api.get('/business/notifications');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/notifications');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => NotificationItem.fromJson(e as Map<String, dynamic>)).toList();
   }
 }
