@@ -26,8 +26,8 @@ class AuthResult {
     final user = json['user'] as Map<String, dynamic>? ?? json;
     return AuthResult(
       accessToken:
-          json['accessToken'] as String? ?? json['token'] as String? ?? '',
-      refreshToken: json['refreshToken'] as String?,
+          json['access_token'] as String? ?? json['accessToken'] as String? ?? json['token'] as String? ?? '',
+      refreshToken: json['refresh_token'] as String? ?? json['refreshToken'] as String?,
       role: user['role'] as String? ?? 'candidate',
       userId: (user['id'] ?? user['_id'] ?? '').toString(),
       name: user['name'] as String? ?? '',
@@ -126,11 +126,10 @@ class AuthRepository {
       return result;
     }
 
-    final resp = await _api.post('/auth/signup', body: {
+    final resp = await _api.post('/auth/register/$role', body: {
       'name': name,
       'email': email.trim().toLowerCase(),
       'password': password,
-      'role': role,
     });
     final result =
         AuthResult.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
