@@ -1,0 +1,42 @@
+{
+  "name": "plagit-backend",
+  "version": "1.0.0",
+  "description": "Plagit Admin REST API — Node.js + Express + PostgreSQL",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js",
+    "migrate": "npx knex migrate:latest",
+    "migrate:rollback": "npx knex migrate:rollback",
+    "migrate:prod": "NODE_ENV=production npx knex migrate:latest",
+    "seed": "npx knex seed:run",
+    "seed:prod": "NODE_ENV=production npx knex seed:run",
+    "db:setup": "npx knex migrate:latest && npx knex seed:run",
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.82.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-validator": "^7.3.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "knex": "^3.2.6",
+    "morgan": "^1.10.1",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.20.0",
+    "resend": "^6.9.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

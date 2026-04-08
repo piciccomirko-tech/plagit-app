@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+.pub-cache/
+Pods/
+
+# Environment secrets
+.env
+*.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.xcuserdatad/
+xcuserdata/
+
+# Build outputs
+build/
+dist/
+.next/
+*.ipa
+*.apk
+*.aab
+
+# Logs
+*.log
+npm-debug.log*
+
+# Archives (keep tracked but ignore large zips)
+archive/**/*.zip

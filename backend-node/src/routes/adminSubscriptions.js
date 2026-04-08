@@ -1,0 +1,12 @@
+const router = require('express').Router();
+const { authenticate, requireAdmin } = require('../middleware/auth');
+const c = require('../controllers/adminSubscriptionsController');
+router.use(authenticate, requireAdmin);
+router.get('/', c.list);
+router.get('/stats', c.stats);
+router.patch('/:id/status', c.updateStatus);
+router.patch('/:id/plan', c.updatePlan);
+router.post('/:id/cancel', c.cancel);
+router.post('/:id/extend-trial', c.extendTrial);
+router.post('/:id/comp', c.compAccess);
+module.exports = router;

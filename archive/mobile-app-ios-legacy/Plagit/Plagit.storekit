@@ -1,0 +1,458 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "067B28A9",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_disableDialogs" : false,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "FA116110",
+      "localizations" : [
+
+      ],
+      "name" : "Plagit Candidate Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.00",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "13478FE2",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full access to premium candidate features",
+              "displayName" : "Candidate Premium Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.candidate.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Candidate Monthly",
+          "subscriptionGroupID" : "FA116110",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "89.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "6FCEFF76",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full access to premium candidate features",
+              "displayName" : "Candidate Premium Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.candidate.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Candidate Annual",
+          "subscriptionGroupID" : "FA116110",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "BA220001",
+      "localizations" : [
+
+      ],
+      "name" : "Plagit Business",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "BA220010",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Essential hiring tools for small businesses",
+              "displayName" : "Business Basic Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.business.basic.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Business Basic Monthly",
+          "subscriptionGroupID" : "BA220001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "299.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "BA220011",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Essential hiring tools for small businesses",
+              "displayName" : "Business Basic Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.business.basic.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Business Basic Annual",
+          "subscriptionGroupID" : "BA220001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "59.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "BA220020",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Advanced hiring and analytics for growing teams",
+              "displayName" : "Business Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.business.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Business Pro Monthly",
+          "subscriptionGroupID" : "BA220001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "599.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "BA220021",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Advanced hiring and analytics for growing teams",
+              "displayName" : "Business Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.business.pro.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Business Pro Annual",
+          "subscriptionGroupID" : "BA220001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "99.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "BA220030",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full-suite premium hiring platform",
+              "displayName" : "Business Premium Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.business.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Business Premium Monthly",
+          "subscriptionGroupID" : "BA220001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "999.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "BA220031",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full-suite premium hiring platform",
+              "displayName" : "Business Premium Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.business.premium.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Business Premium Annual",
+          "subscriptionGroupID" : "BA220001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    },
+    {
+      "id" : "SA330001",
+      "localizations" : [
+
+      ],
+      "name" : "Plagit Service Provider",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "19.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "SA330010",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "List your services and connect with hospitality businesses",
+              "displayName" : "Service Basic Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.service.basic.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Service Basic Monthly",
+          "subscriptionGroupID" : "SA330001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "199.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "SA330011",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "List your services and connect with hospitality businesses",
+              "displayName" : "Service Basic Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.service.basic.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Service Basic Annual",
+          "subscriptionGroupID" : "SA330001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "SA330020",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Priority listing and advanced service provider tools",
+              "displayName" : "Service Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.service.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Service Pro Monthly",
+          "subscriptionGroupID" : "SA330001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "399.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "SA330021",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Priority listing and advanced service provider tools",
+              "displayName" : "Service Pro Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.service.pro.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Service Pro Annual",
+          "subscriptionGroupID" : "SA330001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "69.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "SA330030",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full-suite service provider platform with premium visibility",
+              "displayName" : "Service Premium Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.service.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Service Premium Monthly",
+          "subscriptionGroupID" : "SA330001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "699.99",
+          "familyShareable" : false,
+          "groupNumber" : 3,
+          "internalID" : "SA330031",
+          "introductoryOffer" : null,
+          "localizations" : [
+            {
+              "description" : "Full-suite service provider platform with premium visibility",
+              "displayName" : "Service Premium Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.plagit.service.premium.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Service Premium Annual",
+          "subscriptionGroupID" : "SA330001",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : [
+
+          ]
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}
