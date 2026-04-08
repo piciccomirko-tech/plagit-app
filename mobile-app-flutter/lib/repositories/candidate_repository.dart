@@ -9,7 +9,7 @@
 library;
 
 import 'package:plagit/config/env_config.dart';
-import 'package:plagit/core/api_client.dart';
+import 'package:plagit/core/network/api_client.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/models/application.dart';
 import 'package:plagit/models/candidate_home_data.dart';
@@ -21,9 +21,10 @@ import 'package:plagit/models/notification_item.dart';
 import 'package:plagit/models/subscription_state.dart';
 
 class CandidateRepository {
-  final ApiClient _api;
+  final PlagitApiClient _api;
 
-  CandidateRepository({ApiClient? api}) : _api = api ?? ApiClient();
+  CandidateRepository({PlagitApiClient? api})
+      : _api = api ?? PlagitApiClient.instance;
 
   /// TODO: check token prefix in production — if token starts with "mock_",
   /// return mock data; otherwise hit the real API.
@@ -93,8 +94,13 @@ class CandidateRepository {
 
       return jobs;
     }
-    // TODO: final resp = await _api.get('/candidate/jobs?...');
-    throw UnimplementedError('Real API not wired yet');
+    final params = <String, String>{};
+    if (search != null && search.isNotEmpty) params['search'] = search;
+    if (filter != null && filter != 'All') params['filter'] = filter;
+    if (sort != null) params['sort'] = sort;
+    final resp = await _api.get('/candidate/jobs', queryParams: params.isNotEmpty ? params : null);
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => Job.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Job> fetchJobDetail(String jobId) async {
@@ -104,8 +110,8 @@ class CandidateRepository {
         orElse: () => Job.mockAll().first,
       );
     }
-    // TODO: final resp = await _api.get('/candidate/jobs/$jobId');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/jobs/$jobId');
+    return Job.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   Future<void> applyToJob(String jobId, {String? note}) async {
@@ -113,8 +119,9 @@ class CandidateRepository {
       await Future.delayed(const Duration(milliseconds: 800));
       return;
     }
-    // TODO: await _api.post('/candidate/jobs/$jobId/apply', {'note': note});
-    throw UnimplementedError('Real API not wired yet');
+    final body = <String, dynamic>{'jobId': jobId};
+    if (note != null) body['note'] = note;
+    await _api.post('/candidate/applications', body: body);
   }
 
   // ══════════════════════════════════════════
@@ -131,8 +138,11 @@ class CandidateRepository {
       }
       return apps;
     }
-    // TODO: final resp = await _api.get('/candidate/applications');
-    throw UnimplementedError('Real API not wired yet');
+    final params = <String, String>{};
+    if (statusFilter != null && statusFilter != 'All') params['status'] = statusFilter;
+    final resp = await _api.get('/candidate/applications', queryParams: params.isNotEmpty ? params : null);
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => Application.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   // ══════════════════════════════════════════
@@ -186,20 +196,19 @@ class CandidateRepository {
 
   Future<Set<String>> fetchSavedJobIds() async {
     if (_isMock) return MockData.savedJobIds.toSet();
-    // TODO: final resp = await _api.get('/candidate/saved-jobs');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/saved-jobs');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => e.toString()).toSet();
   }
 
   Future<void> saveJob(String jobId) async {
     if (_isMock) return;
-    // TODO: await _api.post('/candidate/saved-jobs', {'jobId': jobId});
-    throw UnimplementedError('Real API not wired yet');
+    await _api.post('/candidate/saved-jobs', body: {'jobId': jobId});
   }
 
   Future<void> unsaveJob(String jobId) async {
     if (_isMock) return;
-    // TODO: await _api.delete('/candidate/saved-jobs/$jobId');
-    throw UnimplementedError('Real API not wired yet');
+    await _api.delete('/candidate/saved-jobs/$jobId');
   }
 
   // ══════════════════════════════════════════
