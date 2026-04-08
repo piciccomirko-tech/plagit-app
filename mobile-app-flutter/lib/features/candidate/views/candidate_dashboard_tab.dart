@@ -123,12 +123,19 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          '\u{1F4CD} ${profile.location ?? 'Unknown'}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.teal,
-                          ),
+                        Row(
+                          children: [
+                            const Icon(Icons.place, size: 14, color: AppColors.teal),
+                            const SizedBox(width: 2),
+                            Flexible(
+                              child: Text(
+                                (profile.location ?? 'Unknown').trim(),
+                                style: const TextStyle(fontSize: 12, color: AppColors.teal),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -373,64 +380,91 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20, top: 4),
-              child: Text(
-                '\u{1F4CD} ${data.nearbyJobs.length} jobs available',
-                style: const TextStyle(fontSize: 12, color: AppColors.secondary),
-              ),
-            ),
-            const SizedBox(height: 10),
-            SizedBox(
-              height: 155,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: data.nearbyJobs.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (context, i) {
-                  final job = data.nearbyJobs[i];
-                  return _CompactJobCard(
-                    job: job,
-                    onTap: () => context.push('/candidate/job/${job.id}'),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // ── 6. FEATURED JOBS ──
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Featured Jobs',
-                      style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-                  GestureDetector(
-                    onTap: () => context.push('/candidate/nearby'),
-                    child: const Text('See All >',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal)),
+                  const Icon(Icons.place, size: 13, color: AppColors.secondary),
+                  const SizedBox(width: 3),
+                  Text(
+                    '${data.nearbyJobs.length} jobs available',
+                    style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 10),
-            SizedBox(
-              height: 180,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
+            if (data.nearbyJobs.isNotEmpty)
+              SizedBox(
+                height: 155,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: data.nearbyJobs.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, i) {
+                    final job = data.nearbyJobs[i];
+                    return _CompactJobCard(
+                      job: job,
+                      onTap: () => context.push('/candidate/job/${job.id}'),
+                    );
+                  },
+                ),
+              )
+            else
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                itemCount: data.featuredJobs.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (context, i) {
-                  final job = data.featuredJobs[i];
-                  return _FeaturedJobCard(
-                    job: job,
-                    onTap: () => context.push('/candidate/job/${job.id}'),
-                  );
-                },
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 28),
+                  decoration: AppColors.cardDecoration,
+                  child: const Column(
+                    children: [
+                      Icon(Icons.explore_outlined, size: 32, color: AppColors.tertiary),
+                      SizedBox(height: 8),
+                      Text('No nearby jobs yet', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+                      SizedBox(height: 4),
+                      Text('Check back soon for new opportunities', style: TextStyle(fontSize: 12, color: AppColors.tertiary)),
+                    ],
+                  ),
+                ),
               ),
-            ),
+
+            const SizedBox(height: 20),
+
+            // ── 6. FEATURED JOBS ──
+            if (data.featuredJobs.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text('Featured Jobs',
+                        style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+                    GestureDetector(
+                      onTap: () => context.push('/candidate/nearby'),
+                      child: const Text('See All >',
+                          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal)),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 180,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  itemCount: data.featuredJobs.length,
+                  separatorBuilder: (_, __) => const SizedBox(width: 12),
+                  itemBuilder: (context, i) {
+                    final job = data.featuredJobs[i];
+                    return _FeaturedJobCard(
+                      job: job,
+                      onTap: () => context.push('/candidate/job/${job.id}'),
+                    );
+                  },
+                ),
+              ),
+            ],
 
             const SizedBox(height: 20),
 
@@ -663,27 +697,29 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: AppColors.cardDecoration,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: const Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('From the Community',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-                        GestureDetector(
-                          onTap: () {},
-                          child: const Text('See All >',
-                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal)),
+                        Icon(Icons.forum_outlined, color: AppColors.teal, size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('From the Community',
+                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+                              SizedBox(height: 2),
+                              Text('Tips, stories, and advice from hospitality professionals',
+                                  style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    const EmptyState(
-                      icon: Icons.chat_bubble_outline,
-                      title: 'No community posts yet',
-                      subtitle: 'Be the first to share something.',
-                    ),
+                    SizedBox(height: 16),
+                    Text('Coming soon',
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.tertiary)),
                   ],
                 ),
               ),
