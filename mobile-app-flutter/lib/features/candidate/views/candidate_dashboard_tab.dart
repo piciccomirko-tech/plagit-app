@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/services/candidate_service.dart';
 
+/// Candidate home dashboard — mirrors HomeView.swift.
 class CandidateDashboardTab extends StatefulWidget {
   const CandidateDashboardTab({super.key});
 
@@ -41,106 +43,233 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
   @override
   Widget build(BuildContext context) {
     final userName = _homeData?['user']?['name']?.toString();
+    final userFirstName = userName?.split(' ').first ?? 'there';
+    final userLocation = _homeData?['user']?['location']?.toString() ?? '';
     final summary = _homeData?['applicationsSummary'] as Map<String, dynamic>?;
     final strength = (_homeData?['user']?['profileStrength'] as num?)?.toInt() ?? 0;
+    final featuredJobs = (_homeData?['featuredJobs'] as List?)?.cast<Map<String, dynamic>>() ?? [];
 
     return SafeArea(
       child: RefreshIndicator(
         color: AppColors.teal,
         onRefresh: _loadHome,
         child: ListView(
-          padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 32),
           children: [
-            // ── Header ──
-            Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text(_greeting, style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
-                const SizedBox(height: 3),
-                Text(
-                  userName ?? 'Welcome to Plagit',
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.charcoal),
-                ),
-              ])),
-              // Subtle avatar badge
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.teal.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(AppRadius.md),
-                ),
-                child: Icon(Icons.person_outline, size: 20, color: AppColors.teal),
-              ),
-            ]),
-            const SizedBox(height: 28),
-
             if (_loading)
-              const Padding(padding: EdgeInsets.symmetric(vertical: 60), child: Center(child: CircularProgressIndicator(color: AppColors.teal, strokeWidth: 2.5)))
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 80),
+                child: Center(child: CircularProgressIndicator(color: AppColors.teal, strokeWidth: 2.5)),
+              )
             else if (_error != null)
               _buildError()
             else ...[
-              // ── Applications overview ──
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: _cardDecoration(),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(children: [
+              // ── Header (mirrors Swift headerSection) ──
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+                child: Row(
+                  children: [
+                    // Avatar
                     Container(
-                      width: 36, height: 36,
-                      decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(AppRadius.md)),
-                      child: const Icon(Icons.description_outlined, size: 17, color: AppColors.teal),
+                      width: 52, height: 52,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [AppColors.teal, AppColors.tealDark],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(AppRadius.lg),
+                      ),
+                      child: Center(
+                        child: Text(
+                          (userFirstName.isNotEmpty ? userFirstName[0] : '?').toUpperCase(),
+                          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.white),
+                        ),
+                      ),
                     ),
-                    const SizedBox(width: 12),
-                    const Text('Your Applications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '$_greeting, $userFirstName',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          ),
+                          if (userLocation.isNotEmpty) ...[
+                            const SizedBox(height: 3),
+                            Row(children: [
+                              const Icon(Icons.location_on, size: 12, color: AppColors.teal),
+                              const SizedBox(width: 3),
+                              Text(userLocation, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.teal)),
+                            ]),
+                          ],
+                        ],
+                      ),
+                    ),
+                    // Notification bell
+                    Container(
+                      width: 40, height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppRadius.md),
+                      ),
+                      child: const Icon(Icons.notifications_outlined, size: 20, color: AppColors.charcoal),
+                    ),
+                  ],
+                ),
+              ),
+
+              // ── Search bar (mirrors Swift searchSection) ──
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(AppRadius.lg),
+                  ),
+                  child: const Row(children: [
+                    Icon(Icons.search, size: 18, color: AppColors.tertiary),
+                    SizedBox(width: 10),
+                    Text('Search jobs, roles, companies...', style: TextStyle(fontSize: 15, color: AppColors.tertiary)),
                   ]),
-                  const SizedBox(height: 18),
-                  Row(children: [
-                    _StatCell(count: summary?['applied'] ?? 0, label: 'Applied', color: AppColors.teal),
-                    const SizedBox(width: 10),
-                    _StatCell(count: summary?['under_review'] ?? 0, label: 'In Review', color: AppColors.amber),
-                    const SizedBox(width: 10),
-                    _StatCell(count: summary?['interview'] ?? 0, label: 'Interview', color: AppColors.indigo),
-                    const SizedBox(width: 10),
-                    _StatCell(count: summary?['offer'] ?? 0, label: 'Offers', color: AppColors.online),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // ── Nearby banner (mirrors Swift nearbyBanner) ──
+              _BannerCard(
+                icon: Icons.map,
+                gradientColors: const [AppColors.teal, AppColors.tealDark],
+                title: 'Explore Nearby Jobs',
+                subtitle: 'Discover opportunities close to you',
+                chevronColor: AppColors.teal,
+              ),
+              const SizedBox(height: 14),
+
+              // ── Matches banner (mirrors Swift matchesBanner) ──
+              _BannerCard(
+                icon: Icons.verified,
+                gradientColors: const [AppColors.online, AppColors.teal],
+                title: 'Your Matches',
+                subtitle: 'Jobs matching your role and job type',
+                chevronColor: AppColors.teal,
+              ),
+              const SizedBox(height: 20),
+
+              // ── Featured Jobs horizontal scroll (mirrors Swift jobsNearYouSection) ──
+              if (featuredJobs.isNotEmpty) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(children: [
+                    const Text('Jobs Near You', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                    const Spacer(),
+                    Row(children: [
+                      Text('See All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
+                      const SizedBox(width: 3),
+                      Icon(Icons.chevron_right, size: 14, color: AppColors.teal),
+                    ]),
                   ]),
-                ]),
+                ),
+                const SizedBox(height: 6),
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Row(children: [
+                    Icon(Icons.location_on, size: 12, color: AppColors.teal),
+                    const SizedBox(width: 4),
+                    Text('${featuredJobs.length} jobs available', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+                  ]),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  height: 170,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    itemCount: featuredJobs.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 14),
+                    itemBuilder: (_, i) => _FeaturedJobCard(job: featuredJobs[i]),
+                  ),
+                ),
+                const SizedBox(height: 20),
+              ],
+
+              // ── Applications overview (mirrors Swift applicationsSummary) ──
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: _cardDecoration(),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    Row(children: [
+                      Container(
+                        width: 36, height: 36,
+                        decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(AppRadius.md)),
+                        child: const Icon(Icons.description_outlined, size: 17, color: AppColors.teal),
+                      ),
+                      const SizedBox(width: 12),
+                      const Text('Your Applications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                    ]),
+                    const SizedBox(height: 18),
+                    Row(children: [
+                      _StatCell(count: summary?['applied'] ?? 0, label: 'Applied', color: AppColors.teal),
+                      const SizedBox(width: 10),
+                      _StatCell(count: summary?['under_review'] ?? 0, label: 'In Review', color: AppColors.amber),
+                      const SizedBox(width: 10),
+                      _StatCell(count: summary?['interview'] ?? 0, label: 'Interview', color: AppColors.indigo),
+                      const SizedBox(width: 10),
+                      _StatCell(count: summary?['offer'] ?? 0, label: 'Offers', color: AppColors.online),
+                    ]),
+                  ]),
+                ),
               ),
               const SizedBox(height: 14),
 
               // ── Quick actions ──
-              Container(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-                decoration: _cardDecoration(),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                  const SizedBox(height: 18),
-                  Row(children: [
-                    _ActionItem(icon: Icons.search, label: 'Find Jobs', color: AppColors.teal),
-                    const SizedBox(width: 14),
-                    _ActionItem(icon: Icons.chat_outlined, label: 'Messages', color: AppColors.indigo),
-                    const SizedBox(width: 14),
-                    _ActionItem(icon: Icons.person_outline, label: 'Profile', color: AppColors.amber),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                  decoration: _cardDecoration(),
+                  child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    const Text('Quick Actions', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                    const SizedBox(height: 18),
+                    Row(children: [
+                      _ActionItem(icon: Icons.search, label: 'Find Jobs', color: AppColors.teal),
+                      const SizedBox(width: 14),
+                      _ActionItem(icon: Icons.chat_outlined, label: 'Messages', color: AppColors.indigo),
+                      const SizedBox(width: 14),
+                      _ActionItem(icon: Icons.person_outline, label: 'Profile', color: AppColors.amber),
+                    ]),
                   ]),
-                ]),
+                ),
               ),
               const SizedBox(height: 14),
 
               // ── Activity ──
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: _cardDecoration(),
-                child: Column(children: [
-                  _ActivityItem(icon: Icons.mail_outline, label: 'Unread messages', count: _homeData?['unreadMessages'] ?? 0, color: AppColors.indigo),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 48, top: 10, bottom: 10),
-                    child: Divider(height: 1, color: AppColors.divider),
-                  ),
-                  _ActivityItem(icon: Icons.notifications_outlined, label: 'Notifications', count: _homeData?['unreadNotifications'] ?? 0, color: AppColors.amber),
-                ]),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  decoration: _cardDecoration(),
+                  child: Column(children: [
+                    _ActivityItem(icon: Icons.mail_outline, label: 'Unread messages', count: _homeData?['unreadMessages'] ?? 0, color: AppColors.indigo),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 48, top: 10, bottom: 10),
+                      child: Divider(height: 1, color: AppColors.divider),
+                    ),
+                    _ActivityItem(icon: Icons.notifications_outlined, label: 'Notifications', count: _homeData?['unreadNotifications'] ?? 0, color: AppColors.amber),
+                  ]),
+                ),
               ),
               const SizedBox(height: 14),
 
               // ── Profile strength ──
-              _ProfileStrengthCard(strength: strength),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _ProfileStrengthCard(strength: strength),
+              ),
             ],
           ],
         ),
@@ -148,16 +277,19 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
     );
   }
 
-  Widget _buildError() => Container(
+  Widget _buildError() => Padding(
     padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(color: AppColors.urgent.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(AppRadius.lg)),
-    child: Column(children: [
-      const Icon(Icons.error_outline, size: 28, color: AppColors.urgent),
-      const SizedBox(height: 10),
-      Text(_error!, style: const TextStyle(fontSize: 14, color: AppColors.urgent), textAlign: TextAlign.center),
-      const SizedBox(height: 12),
-      TextButton(onPressed: _loadHome, child: const Text('Retry')),
-    ]),
+    child: Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(color: AppColors.urgent.withValues(alpha: 0.05), borderRadius: BorderRadius.circular(AppRadius.lg)),
+      child: Column(children: [
+        const Icon(Icons.error_outline, size: 28, color: AppColors.urgent),
+        const SizedBox(height: 10),
+        Text(_error!, style: const TextStyle(fontSize: 14, color: AppColors.urgent), textAlign: TextAlign.center),
+        const SizedBox(height: 12),
+        TextButton(onPressed: _loadHome, child: const Text('Retry')),
+      ]),
+    ),
   );
 
   static BoxDecoration _cardDecoration() => BoxDecoration(
@@ -167,6 +299,159 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
     boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 12, offset: const Offset(0, 4))],
   );
 }
+
+// ── Banner card (nearby, matches, premium) ──
+
+class _BannerCard extends StatelessWidget {
+  final IconData icon;
+  final List<Color> gradientColors;
+  final String title;
+  final String subtitle;
+  final Color chevronColor;
+
+  const _BannerCard({
+    required this.icon,
+    required this.gradientColors,
+    required this.title,
+    required this.subtitle,
+    required this.chevronColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))],
+        ),
+        child: Row(children: [
+          Container(
+            width: 48, height: 48,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: gradientColors, begin: Alignment.topLeft, end: Alignment.bottomRight),
+              borderRadius: BorderRadius.circular(AppRadius.md),
+            ),
+            child: Icon(icon, color: Colors.white, size: 22),
+          ),
+          const SizedBox(width: 16),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+              const SizedBox(height: 3),
+              Text(subtitle, style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
+            ],
+          )),
+          Icon(Icons.chevron_right, size: 18, color: chevronColor),
+        ]),
+      ),
+    );
+  }
+}
+
+// ── Featured job card (horizontal scroll) ──
+
+class _FeaturedJobCard extends StatelessWidget {
+  final Map<String, dynamic> job;
+  const _FeaturedJobCard({required this.job});
+
+  @override
+  Widget build(BuildContext context) {
+    final title = job['title'] ?? '';
+    final business = job['businessName'] ?? job['business_name'] ?? '';
+    final location = job['location'] ?? '';
+    final salary = job['salary'] ?? '';
+    final type = job['employmentType'] ?? job['employment_type'] ?? '';
+    final isFeatured = job['isFeatured'] == true;
+
+    // Generate a hue from the business name for the avatar
+    final hue = (business.hashCode % 360).abs() / 360.0;
+
+    return GestureDetector(
+      onTap: () {
+        final jobId = job['id']?.toString();
+        if (jobId != null) context.push('/candidate/job/$jobId');
+      },
+      child: Container(
+        width: 180,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.cardBackground,
+          borderRadius: BorderRadius.circular(AppRadius.lg),
+          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Business avatar + name
+            Row(children: [
+              Container(
+                width: 28, height: 28,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      HSLColor.fromAHSL(1, hue * 360, 0.45, 0.65).toColor(),
+                      HSLColor.fromAHSL(1, hue * 360, 0.55, 0.50).toColor(),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    business.isNotEmpty ? business[0].toUpperCase() : '?',
+                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(business, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.charcoal), maxLines: 1, overflow: TextOverflow.ellipsis),
+                  if (location.isNotEmpty)
+                    Text(location, style: const TextStyle(fontSize: 10, color: AppColors.tertiary), maxLines: 1, overflow: TextOverflow.ellipsis),
+                ],
+              )),
+            ]),
+            const SizedBox(height: 12),
+
+            // Job title
+            Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal), maxLines: 1, overflow: TextOverflow.ellipsis),
+            const SizedBox(height: 6),
+
+            // Salary + type
+            Row(children: [
+              if (salary.isNotEmpty) Text(salary, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
+              if (salary.isNotEmpty && type.isNotEmpty) const Text(' · ', style: TextStyle(color: AppColors.tertiary)),
+              if (type.isNotEmpty) Flexible(child: Text(type, style: const TextStyle(fontSize: 12, color: AppColors.secondary), maxLines: 1, overflow: TextOverflow.ellipsis)),
+            ]),
+
+            const Spacer(),
+
+            // Featured badge
+            if (isFeatured)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.amber.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(AppRadius.full),
+                ),
+                child: const Text('Featured', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: AppColors.amber)),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Stat cell ──
 
 class _StatCell extends StatelessWidget {
   final dynamic count;
@@ -191,6 +476,8 @@ class _StatCell extends StatelessWidget {
   );
 }
 
+// ── Quick action item ──
+
 class _ActionItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -213,6 +500,8 @@ class _ActionItem extends StatelessWidget {
   );
 }
 
+// ── Activity row ──
+
 class _ActivityItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -231,6 +520,8 @@ class _ActivityItem extends StatelessWidget {
     Text('$count', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: color)),
   ]);
 }
+
+// ── Profile strength card ──
 
 class _ProfileStrengthCard extends StatelessWidget {
   final int strength;
