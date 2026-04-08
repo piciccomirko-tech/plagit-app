@@ -4,50 +4,61 @@ import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
-/// Candidate login screen — email/password sign-in with mock auth.
-class CandidateLoginView extends StatefulWidget {
-  const CandidateLoginView({super.key});
+/// Candidate registration screen — create a new account.
+class CandidateRegisterView extends StatefulWidget {
+  const CandidateRegisterView({super.key});
 
   @override
-  State<CandidateLoginView> createState() => _CandidateLoginViewState();
+  State<CandidateRegisterView> createState() => _CandidateRegisterViewState();
 }
 
-class _CandidateLoginViewState extends State<CandidateLoginView> {
+class _CandidateRegisterViewState extends State<CandidateRegisterView> {
+  final _nameCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+  final _confirmCtrl = TextEditingController();
   bool _passwordVisible = false;
-  bool _rememberMe = false;
+  bool _confirmVisible = false;
+  bool _termsAccepted = false;
   bool _loading = false;
 
   @override
   void initState() {
     super.initState();
+    _nameCtrl.addListener(_onChanged);
     _emailCtrl.addListener(_onChanged);
     _passwordCtrl.addListener(_onChanged);
+    _confirmCtrl.addListener(_onChanged);
   }
 
   void _onChanged() => setState(() {});
 
   bool get _canSubmit =>
-      _emailCtrl.text.trim().isNotEmpty && _passwordCtrl.text.isNotEmpty;
+      _nameCtrl.text.trim().isNotEmpty &&
+      _emailCtrl.text.trim().isNotEmpty &&
+      _passwordCtrl.text.isNotEmpty &&
+      _confirmCtrl.text.isNotEmpty &&
+      _termsAccepted;
 
-  Future<void> _login() async {
+  Future<void> _createAccount() async {
     if (!_canSubmit) return;
     setState(() => _loading = true);
 
-    // Mock auth delay
+    // Mock registration delay
     await Future.delayed(const Duration(milliseconds: 600));
 
     if (mounted) {
       setState(() => _loading = false);
-      context.go('/candidate/home');
+      context.go('/onboarding/welcome');
     }
   }
 
   @override
   void dispose() {
+    _nameCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
+    _confirmCtrl.dispose();
     super.dispose();
   }
 
@@ -67,12 +78,12 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.go('/entry'),
+                    onTap: () => context.go('/candidate/login'),
                     child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
                   ),
                   const Expanded(
                     child: Text(
-                      'Join as Candidate',
+                      'Create Account',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 17,
@@ -81,7 +92,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 28), // balance the back button
+                  const SizedBox(width: 28),
                 ],
               ),
 
@@ -92,7 +103,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
               const SizedBox(height: 16),
               const Center(
                 child: Text(
-                  'Find your next hospitality role',
+                  'Join Plagit',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24,
@@ -104,7 +115,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
               const SizedBox(height: 6),
               const Center(
                 child: Text(
-                  'Sign in or create an account to start applying',
+                  'Create your account to start finding roles',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 14, color: AppColors.secondary),
                 ),
@@ -116,6 +127,12 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
               AuthFormCard(
                 children: [
                   AuthFormField(
+                    icon: Icons.person_outline,
+                    placeholder: 'Full name',
+                    controller: _nameCtrl,
+                    keyboardType: TextInputType.name,
+                  ),
+                  AuthFormField(
                     icon: Icons.email_outlined,
                     placeholder: 'Email address',
                     controller: _emailCtrl,
@@ -126,39 +143,71 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                     placeholder: 'Password',
                     controller: _passwordCtrl,
                     obscure: !_passwordVisible,
-                    textInputAction: TextInputAction.done,
                     suffix: PasswordToggle(
                       visible: _passwordVisible,
                       onToggle: () => setState(() => _passwordVisible = !_passwordVisible),
                     ),
                   ),
+                  AuthFormField(
+                    icon: Icons.lock_outline,
+                    placeholder: 'Confirm password',
+                    controller: _confirmCtrl,
+                    obscure: !_confirmVisible,
+                    textInputAction: TextInputAction.done,
+                    suffix: PasswordToggle(
+                      visible: _confirmVisible,
+                      onToggle: () => setState(() => _confirmVisible = !_confirmVisible),
+                    ),
+                  ),
                 ],
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
 
-              // ── Remember me ──
+              // ── Terms checkbox ──
               GestureDetector(
-                onTap: () => setState(() => _rememberMe = !_rememberMe),
+                onTap: () => setState(() => _termsAccepted = !_termsAccepted),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      _rememberMe ? Icons.check_box : Icons.check_box_outline_blank,
+                      _termsAccepted ? Icons.check_box : Icons.check_box_outline_blank,
                       size: 20,
-                      color: _rememberMe ? AppColors.teal : AppColors.tertiary,
+                      color: _termsAccepted ? AppColors.teal : AppColors.tertiary,
                     ),
                     const SizedBox(width: 8),
-                    const Text(
-                      'Remember me',
-                      style: TextStyle(fontSize: 14, color: AppColors.secondary),
+                    Expanded(
+                      child: RichText(
+                        text: const TextSpan(
+                          style: TextStyle(fontSize: 13, color: AppColors.secondary, height: 1.4),
+                          children: [
+                            TextSpan(text: 'I agree to the '),
+                            TextSpan(
+                              text: 'Terms of Service',
+                              style: TextStyle(
+                                color: AppColors.teal,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            TextSpan(text: ' and '),
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: TextStyle(
+                                color: AppColors.teal,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
 
-              // ── Sign in button ──
+              // ── Create account button ──
               SizedBox(
                 width: double.infinity,
                 height: 50,
@@ -180,7 +229,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                         : null,
                   ),
                   child: MaterialButton(
-                    onPressed: (_canSubmit && !_loading) ? _login : null,
+                    onPressed: (_canSubmit && !_loading) ? _createAccount : null,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadius.full),
                     ),
@@ -194,7 +243,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                             ),
                           )
                         : const Text(
-                            'Sign In',
+                            'Create Account',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -205,65 +254,22 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                 ),
               ),
 
-              const SizedBox(height: 12),
-
-              // ── Create account button ──
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: OutlinedButton(
-                  onPressed: () => context.go('/candidate/register'),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide.none,
-                    backgroundColor: AppColors.tealLight,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppRadius.full),
-                    ),
-                  ),
-                  child: const Text(
-                    'Create Account',
-                    style: TextStyle(
-                      color: AppColors.teal,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-
               const SizedBox(height: 20),
 
-              // ── Forgot password link ──
+              // ── Sign in link ──
               Center(
                 child: GestureDetector(
-                  onTap: () => context.go('/forgot-password'),
-                  child: const Text(
-                    'Forgot Password?',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.teal,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              // ── Switch to business ──
-              Center(
-                child: GestureDetector(
-                  onTap: () => context.go('/business/login'),
+                  onTap: () => context.go('/candidate/login'),
                   child: RichText(
                     text: const TextSpan(
                       style: TextStyle(fontSize: 14, color: AppColors.secondary),
                       children: [
-                        TextSpan(text: 'Looking for staff instead? '),
+                        TextSpan(text: 'Already have an account? '),
                         TextSpan(
-                          text: 'Switch to Business',
+                          text: 'Sign In',
                           style: TextStyle(
                             color: AppColors.teal,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],

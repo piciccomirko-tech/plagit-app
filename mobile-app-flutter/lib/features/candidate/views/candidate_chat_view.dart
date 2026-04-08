@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/services/candidate_service.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
 
-/// Chat thread — mirrors CandidateChatView.swift.
 class CandidateChatView extends StatefulWidget {
   final String conversationId;
   const CandidateChatView({super.key, required this.conversationId});
@@ -13,173 +12,321 @@ class CandidateChatView extends StatefulWidget {
 }
 
 class _CandidateChatViewState extends State<CandidateChatView> {
-  final _service = CandidateService();
-  final _inputCtrl = TextEditingController();
-  final _scrollCtrl = ScrollController();
-  List<Map<String, dynamic>> _messages = [];
-  bool _loading = true;
-  bool _sending = false;
+  final _textController = TextEditingController();
+  final _scrollController = ScrollController();
+  late List<Map<String, dynamic>> _messages;
+
+  Map<String, dynamic>? get _conversation {
+    try {
+      return MockData.conversations
+          .cast<Map<String, dynamic>>()
+          .firstWhere((c) => c['id'] == widget.conversationId);
+    } catch (_) {
+      return null;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _loadMessages();
-  }
-
-  Future<void> _loadMessages() async {
-    setState(() => _loading = true);
-    try {
-      final data = await _service.getMessages(widget.conversationId);
-      final msgs = (data['messages'] ?? data['data'] ?? []) as List;
-      if (mounted) setState(() { _messages = msgs.cast<Map<String, dynamic>>(); _loading = false; });
-      _scrollToBottom();
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
+    // Load mock messages — use ritzMessages for conversation 1, generic for others
+    if (widget.conversationId == '1') {
+      _messages = MockData.ritzMessages
+          .map((m) => Map<String, dynamic>.from(m))
+          .toList();
+    } else if (widget.conversationId == '2') {
+      _messages = [
+        {
+          'sender': 'business',
+          'text': 'Thank you for your application to the Bartender position.',
+          'time': '9:00 AM'
+        },
+        {
+          'sender': 'business',
+          'text': 'Your application is currently under review by our team.',
+          'time': '9:01 AM'
+        },
+        {
+          'sender': 'candidate',
+          'text': 'Thank you for letting me know. Looking forward to hearing back.',
+          'time': '9:30 AM'
+        },
+      ];
+    } else {
+      _messages = [
+        {
+          'sender': 'business',
+          'text':
+              'Congratulations! You have been shortlisted for the Chef de Partie position.',
+          'time': '2:00 PM'
+        },
+        {
+          'sender': 'candidate',
+          'text': 'That is wonderful news! What are the next steps?',
+          'time': '2:15 PM'
+        },
+        {
+          'sender': 'business',
+          'text':
+              'We will be in touch shortly to arrange an interview. Please keep an eye on your notifications.',
+          'time': '2:20 PM'
+        },
+      ];
     }
   }
 
-  Future<void> _send() async {
-    final text = _inputCtrl.text.trim();
-    if (text.isEmpty || _sending) return;
-    setState(() => _sending = true);
-    _inputCtrl.clear();
-    try {
-      await _service.sendMessage(widget.conversationId, text);
-      await _loadMessages();
-    } catch (_) {}
-    if (mounted) setState(() => _sending = false);
+  @override
+  void dispose() {
+    _textController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 
-  void _scrollToBottom() {
+  void _sendMessage() {
+    final text = _textController.text.trim();
+    if (text.isEmpty) return;
+
+    setState(() {
+      _messages.add({
+        'sender': 'candidate',
+        'text': text,
+        'time': 'Just now',
+      });
+    });
+    _textController.clear();
+
+    // Scroll to bottom
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollCtrl.hasClients) {
-        _scrollCtrl.animateTo(_scrollCtrl.position.maxScrollExtent, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+        );
       }
     });
   }
 
   @override
-  void dispose() {
-    _inputCtrl.dispose();
-    _scrollCtrl.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final conv = _conversation;
+    final company = conv?['company'] as String? ?? 'Chat';
+    final jobContext = conv?['jobContext'] as String? ?? '';
+
     return Scaffold(
-      body: SafeArea(
-        child: Column(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, size: 20),
+          onPressed: () => context.pop(),
+        ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Header ──
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
-              child: Row(
-                children: [
-                  IconButton(icon: const Icon(Icons.chevron_left, size: 28), onPressed: () => context.pop()),
-                  const Text('Chat', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                ],
+            Text(
+              company,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: AppColors.charcoal,
               ),
             ),
-            const Divider(height: 1, color: AppColors.divider),
+            if (jobContext.isNotEmpty)
+              Text(
+                jobContext,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.secondary,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+          ],
+        ),
+      ),
+      body: Column(
+        children: [
+          // Messages list (reversed so newest at bottom)
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollController,
+              reverse: true,
+              padding: const EdgeInsets.symmetric(
+                  horizontal: 16, vertical: 12),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                // Reversed index
+                final msgIndex =
+                    _messages.length - 1 - index;
+                final msg = _messages[msgIndex];
+                final isCandidate =
+                    msg['sender'] == 'candidate';
 
-            // ── Messages ──
-            Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
-                  : _messages.isEmpty
-                      ? const Center(child: Text('No messages yet', style: TextStyle(color: AppColors.secondary)))
-                      : ListView.builder(
-                          controller: _scrollCtrl,
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _messages.length,
-                          itemBuilder: (_, i) {
-                            final m = _messages[i];
-                            final isMe = (m['senderType'] ?? m['sender_type']) == 'candidate';
-                            return _MessageBubble(
-                              body: m['body']?.toString() ?? m['content']?.toString() ?? '',
-                              senderName: isMe ? null : (m['senderName'] ?? m['sender_name'])?.toString(),
-                              isMe: isMe,
-                            );
-                          },
+                // Show timestamp if first message or different sender/time
+                bool showTime = false;
+                if (msgIndex == 0) {
+                  showTime = true;
+                } else {
+                  final prev = _messages[msgIndex - 1];
+                  if (prev['time'] != msg['time'] ||
+                      prev['sender'] != msg['sender']) {
+                    showTime = true;
+                  }
+                }
+
+                return Column(
+                  crossAxisAlignment: isCandidate
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: [
+                    if (showTime)
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: 8, top: 8),
+                        child: Center(
+                          child: Text(
+                            msg['time'] as String,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.tertiary,
+                            ),
+                          ),
                         ),
+                      ),
+                    _ChatBubble(
+                      text: msg['text'] as String,
+                      isCandidate: isCandidate,
+                    ),
+                    const SizedBox(height: 6),
+                  ],
+                );
+              },
             ),
+          ),
 
-            // ── Input ──
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 8, 8, 16),
+          // Input bar
+          SafeArea(
+            top: false,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                border: Border(top: BorderSide(color: AppColors.divider)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: _inputCtrl,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _send(),
-                      decoration: InputDecoration(
-                        hintText: 'Type a message...',
-                        filled: true,
-                        fillColor: AppColors.surface,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.full), borderSide: BorderSide.none),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14),
+                      decoration: BoxDecoration(
+                        color: AppColors.background,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      child: TextField(
+                        controller: _textController,
+                        onSubmitted: (_) => _sendMessage(),
+                        style: const TextStyle(fontSize: 15),
+                        decoration: const InputDecoration(
+                          hintText: 'Type a message...',
+                          hintStyle: TextStyle(
+                            color: AppColors.tertiary,
+                            fontSize: 15,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 10),
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: _send,
-                    child: Container(
-                      width: 42, height: 42,
-                      decoration: const BoxDecoration(color: AppColors.teal, shape: BoxShape.circle),
-                      child: const Icon(Icons.send, size: 18, color: Colors.white),
-                    ),
+                  ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _textController,
+                    builder: (context, value, _) {
+                      final hasText = value.text.trim().isNotEmpty;
+                      return GestureDetector(
+                        onTap: hasText ? _sendMessage : null,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            color: hasText
+                                ? AppColors.teal
+                                : AppColors.border,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.arrow_upward,
+                            color: hasText
+                                ? Colors.white
+                                : AppColors.tertiary,
+                            size: 20,
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 }
 
-class _MessageBubble extends StatelessWidget {
-  final String body;
-  final String? senderName;
-  final bool isMe;
-  const _MessageBubble({required this.body, this.senderName, required this.isMe});
+class _ChatBubble extends StatelessWidget {
+  final String text;
+  final bool isCandidate;
+
+  const _ChatBubble({
+    required this.text,
+    required this.isCandidate,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+      alignment:
+          isCandidate ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width * 0.72,
+        ),
+        padding: const EdgeInsets.symmetric(
+            horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
-          color: isMe ? AppColors.teal : AppColors.surface,
+          color: isCandidate
+              ? AppColors.teal
+              : const Color(0xFFF0F0F2),
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(16),
             topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 4),
-            bottomRight: Radius.circular(isMe ? 4 : 16),
+            bottomLeft:
+                Radius.circular(isCandidate ? 16 : 4),
+            bottomRight:
+                Radius.circular(isCandidate ? 4 : 16),
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (senderName != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(senderName!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isMe ? Colors.white70 : AppColors.teal)),
-              ),
-            Text(body, style: TextStyle(fontSize: 15, color: isMe ? Colors.white : AppColors.charcoal)),
-          ],
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 15,
+            color: isCandidate
+                ? Colors.white
+                : AppColors.charcoal,
+            height: 1.4,
+          ),
         ),
       ),
     );

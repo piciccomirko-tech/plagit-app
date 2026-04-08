@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/theme/app_colors.dart';
 
-/// Quick Plug — fast-action hub. Mirrors CandidateQuickPlugView.swift.
 class CandidateQuickPlugView extends StatelessWidget {
   const CandidateQuickPlugView({super.key});
 
@@ -11,20 +10,88 @@ class CandidateQuickPlugView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Column(
+        child: ListView(
+          padding: const EdgeInsets.all(20),
           children: [
-            _buildTopBar(context),
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.only(top: AppSpacing.lg, bottom: AppSpacing.xxxl),
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: AppSpacing.lg),
-                  _buildQuickActions(context),
-                  const SizedBox(height: AppSpacing.lg),
-                  _buildPremiumSection(context),
-                ],
+            // Header
+            const Center(
+              child: Icon(Icons.bolt, size: 40, color: AppColors.purple),
+            ),
+            const SizedBox(height: 12),
+            const Center(
+              child: Text(
+                'Quick Plug',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.charcoal,
+                ),
               ),
+            ),
+            const SizedBox(height: 4),
+            const Center(
+              child: Text(
+                'Premium tools for faster hiring',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppColors.secondary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Card 1: Boost My Profile
+            _QuickPlugCard(
+              iconBg: AppColors.teal,
+              icon: Icons.rocket_launch,
+              title: 'Boost My Profile',
+              subtitle: 'Get seen by more employers today',
+              trailing: _UnlockPill(),
+              onTap: () => _showPremiumSnack(context),
+            ),
+            const SizedBox(height: 12),
+
+            // Card 2: Quick Apply
+            _QuickPlugCard(
+              iconBg: AppColors.purple,
+              icon: Icons.bolt,
+              title: 'Quick Apply',
+              subtitle: 'Apply to matching jobs instantly',
+              trailing: _LockTrailing(),
+              onTap: () => _showPremiumSnack(context),
+            ),
+            const SizedBox(height: 12),
+
+            // Card 3: Priority Notifications
+            _QuickPlugCard(
+              iconBg: AppColors.amber,
+              icon: Icons.notifications,
+              title: 'Priority Notifications',
+              subtitle: 'Be first to know about new jobs',
+              trailing: _LockTrailing(),
+              onTap: () => _showPremiumSnack(context),
+            ),
+            const SizedBox(height: 12),
+
+            // Card 4: Advanced Filters
+            _QuickPlugCard(
+              iconBg: const Color(0xFF3B82F6),
+              icon: Icons.tune,
+              title: 'Advanced Filters',
+              subtitle: 'Filter by salary, distance, contract type',
+              trailing: _LockTrailing(),
+              onTap: () => _showPremiumSnack(context),
+            ),
+            const SizedBox(height: 12),
+
+            // Card 5: Go Premium
+            _QuickPlugCard(
+              iconBg: AppColors.gold,
+              icon: Icons.workspace_premium,
+              title: 'Go Premium',
+              subtitle: 'Unlock all features \u00b7 \u00a39.99/month',
+              trailing: _UpgradeButton(),
+              onTap: () => context.push('/candidate/subscription'),
             ),
           ],
         ),
@@ -32,172 +99,149 @@ class CandidateQuickPlugView extends StatelessWidget {
     );
   }
 
-  Widget _buildTopBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.lg),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
-          ),
-          const Spacer(),
-          const Text('Quick Plug', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-          const Spacer(),
-          const SizedBox(width: 36, height: 36),
-        ],
+  static void _showPremiumSnack(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Premium feature \u2014 upgrade to unlock'),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }
+}
 
-  Widget _buildHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
-      child: Column(
-        children: [
-          Container(
-            width: 56, height: 56,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(colors: [AppColors.purple, AppColors.purpleDark], begin: Alignment.topLeft, end: Alignment.bottomRight),
-            ),
-            child: const Icon(Icons.bolt, size: 24, color: Colors.white),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const Text('Quick Actions', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
-          const SizedBox(height: AppSpacing.sm),
-          const Text(
-            'Boost your profile, get discovered faster, and land your next role.',
-            style: TextStyle(fontSize: 15, color: AppColors.secondary),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+// ── Reusable card ──
+class _QuickPlugCard extends StatelessWidget {
+  final Color iconBg;
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final Widget trailing;
+  final VoidCallback onTap;
 
-  Widget _buildQuickActions(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Column(
-        children: [
-          _buildActionCard(
-            icon: Icons.arrow_upward,
-            color: AppColors.purple,
-            title: 'Boost My Profile',
-            subtitle: 'Upgrade to get seen by more employers',
-            onTap: () => context.push('/candidate/subscription'),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _buildActionCard(
-            icon: Icons.work,
-            color: AppColors.amber,
-            title: 'Quick Apply',
-            subtitle: 'Browse and apply to the latest jobs near you',
-            onTap: () => context.pop(), // Go back to jobs tab
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _buildActionCard(
-            icon: Icons.notifications_active,
-            color: AppColors.indigo,
-            title: 'Priority Notifications',
-            subtitle: 'Upgrade to get notified first when jobs match',
-            onTap: () => context.push('/candidate/subscription'),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _buildActionCard(
-            icon: Icons.tune,
-            color: AppColors.purple,
-            title: 'Advanced Filters',
-            subtitle: 'Upgrade to unlock premium search filters',
-            onTap: () => context.push('/candidate/subscription'),
-          ),
-        ],
-      ),
-    );
-  }
+  const _QuickPlugCard({
+    required this.iconBg,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.trailing,
+    required this.onTap,
+  });
 
-  Widget _buildActionCard({
-    required IconData icon,
-    required Color color,
-    required String title,
-    required String subtitle,
-    required VoidCallback onTap,
-  }) {
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [AppColors.cardShadow],
         ),
         child: Row(
           children: [
             Container(
-              width: 48, height: 48,
+              width: 44,
+              height: 44,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppRadius.lg),
+                color: iconBg,
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, size: 20, color: color),
+              child: Icon(icon, color: Colors.white, size: 22),
             ),
-            const SizedBox(width: AppSpacing.lg),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(subtitle, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 2),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.charcoal,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.secondary,
+                    ),
+                  ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, size: 12, color: AppColors.tertiary),
+            const SizedBox(width: 8),
+            trailing,
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _buildPremiumSection(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: GestureDetector(
-        onTap: () => context.push('/candidate/subscription'),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.xl),
+// ── "Unlock" amber pill ──
+class _UnlockPill extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
           decoration: BoxDecoration(
-            color: AppColors.purple.withValues(alpha: 0.04),
-            borderRadius: BorderRadius.circular(AppRadius.xl),
-            border: Border.all(color: AppColors.purple.withValues(alpha: 0.15)),
+            color: AppColors.amber.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(100),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 40, height: 40,
-                decoration: BoxDecoration(shape: BoxShape.circle, color: AppColors.purple.withValues(alpha: 0.1)),
-                child: const Icon(Icons.workspace_premium, size: 16, color: AppColors.purple),
-              ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Go Premium', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                    SizedBox(height: 2),
-                    Text('Unlock all filters, boost your profile, and get priority access.', style: TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 2),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                decoration: BoxDecoration(color: AppColors.purple, borderRadius: BorderRadius.circular(AppRadius.full)),
-                child: const Text('Upgrade', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white)),
-              ),
-            ],
+          child: const Text(
+            'Unlock',
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              color: AppColors.amber,
+            ),
           ),
+        ),
+        const SizedBox(width: 4),
+        const Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
+      ],
+    );
+  }
+}
+
+// ── Lock icon + chevron ──
+class _LockTrailing extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return const Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(Icons.lock, size: 16, color: AppColors.tertiary),
+        SizedBox(width: 4),
+        Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
+      ],
+    );
+  }
+}
+
+// ── "Upgrade Now" small teal button ──
+class _UpgradeButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.teal,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: const Text(
+        'Upgrade Now',
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
       ),
     );

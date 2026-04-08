@@ -1,200 +1,265 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/services/candidate_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/status_badge.dart';
 
 class CandidateApplicationsTab extends StatefulWidget {
   const CandidateApplicationsTab({super.key});
 
   @override
-  State<CandidateApplicationsTab> createState() => _CandidateApplicationsTabState();
+  State<CandidateApplicationsTab> createState() =>
+      _CandidateApplicationsTabState();
 }
 
 class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
-  final _service = CandidateService();
-  List<Map<String, dynamic>> _applications = [];
-  bool _loading = true;
-  String? _error;
-  String _filter = 'All';
+  String _selectedFilter = 'All';
 
-  static const _filters = ['All', 'applied', 'under_review', 'interview', 'offer', 'rejected'];
-  static const _filterLabels = {'All': 'All', 'applied': 'Applied', 'under_review': 'Review', 'interview': 'Interview', 'offer': 'Offer', 'rejected': 'Rejected'};
+  static const _filters = [
+    'All',
+    'Applied',
+    'Under Review',
+    'Interview Scheduled',
+    'Shortlisted',
+    'Rejected',
+  ];
 
-  @override
-  void initState() {
-    super.initState();
-    _load();
+  List<Map<String, dynamic>> get _allApps =>
+      MockData.applications.cast<Map<String, dynamic>>();
+
+  List<Map<String, dynamic>> get _filteredApps {
+    if (_selectedFilter == 'All') return _allApps;
+    return _allApps
+        .where((a) => a['status'] == _selectedFilter)
+        .toList();
   }
 
-  Future<void> _load() async {
-    setState(() { _loading = true; _error = null; });
-    try {
-      final data = await _service.getApplications();
-      final apps = (data['applications'] ?? data['data'] ?? []) as List;
-      if (mounted) setState(() { _applications = apps.cast<Map<String, dynamic>>(); _loading = false; });
-    } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _loading = false; });
-    }
+  int _countFor(String filter) {
+    if (filter == 'All') return _allApps.length;
+    return _allApps.where((a) => a['status'] == filter).length;
   }
 
-  List<Map<String, dynamic>> get _filtered =>
-      _filter == 'All' ? _applications : _applications.where((a) => a['status'] == _filter).toList();
-
-  Color _statusColor(String? status) {
-    switch (status) {
-      case 'applied': return AppColors.teal;
-      case 'under_review': case 'shortlisted': return AppColors.amber;
-      case 'interview': return AppColors.indigo;
-      case 'offer': return AppColors.online;
-      case 'rejected': case 'withdrawn': return AppColors.tertiary;
-      default: return AppColors.secondary;
-    }
+  Color _avatarColor(String name) {
+    final hue = MockData.companyHue(name).toDouble();
+    return HSLColor.fromAHSL(1, hue, 0.55, 0.50).toColor();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        // ── Header ──
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 20, 24, 0),
-          child: Text('Applications', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-        ),
-
-        // ── Filters ──
-        SizedBox(
-          height: 50,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 4),
-            itemCount: _filters.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 8),
-            itemBuilder: (_, i) {
-              final f = _filters[i];
-              final active = f == _filter;
-              return GestureDetector(
-                onTap: () => setState(() => _filter = f),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
-                  decoration: BoxDecoration(
-                    color: active ? AppColors.teal : AppColors.cardBackground,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
-                    border: Border.all(color: active ? AppColors.teal : AppColors.border),
-                    boxShadow: active ? [BoxShadow(color: AppColors.teal.withValues(alpha: 0.15), blurRadius: 8, offset: const Offset(0, 2))] : null,
-                  ),
-                  child: Center(child: Text(_filterLabels[f] ?? f, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: active ? Colors.white : AppColors.secondary))),
-                ),
-              );
-            },
+    final filtered = _filteredApps;
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: const Text(
+          'My Applications',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppColors.charcoal,
           ),
         ),
-
-        // ── Count ──
-        Padding(
-          padding: const EdgeInsets.fromLTRB(24, 6, 24, 0),
-          child: Text('${_filtered.length} applications', style: const TextStyle(fontSize: 13, color: AppColors.tertiary)),
-        ),
-
-        // ── List ──
-        Expanded(
-          child: _loading
-              ? const Center(child: CircularProgressIndicator(color: AppColors.teal, strokeWidth: 2.5))
-              : _error != null
-                  ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.error_outline, size: 28, color: AppColors.urgent),
-                      const SizedBox(height: 10),
-                      Text(_error!, style: const TextStyle(fontSize: 14, color: AppColors.urgent), textAlign: TextAlign.center),
-                      const SizedBox(height: 12),
-                      TextButton(onPressed: _load, child: const Text('Retry')),
-                    ]))
-                  : _filtered.isEmpty
-                      ? _buildEmpty()
-                      : RefreshIndicator(
-                          color: AppColors.teal,
-                          onRefresh: _load,
-                          child: ListView.separated(
-                            padding: const EdgeInsets.fromLTRB(24, 10, 24, 24),
-                            itemCount: _filtered.length,
-                            separatorBuilder: (_, __) => const SizedBox(height: 12),
-                            itemBuilder: (_, i) {
-                              final app = _filtered[i];
-                              final status = app['status']?.toString() ?? 'applied';
-                              return Container(
-                                padding: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                  color: AppColors.cardBackground,
-                                  borderRadius: BorderRadius.circular(AppRadius.lg),
-                                  border: Border.all(color: AppColors.border),
-                                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
-                                ),
-                                child: Row(children: [
-                                  // Status icon badge
-                                  Container(
-                                    width: 42, height: 42,
-                                    decoration: BoxDecoration(color: _statusColor(status).withValues(alpha: 0.10), borderRadius: BorderRadius.circular(AppRadius.md)),
-                                    child: Icon(_statusIcon(status), size: 20, color: _statusColor(status)),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                    Text(app['job_title']?.toString() ?? app['title']?.toString() ?? 'Job', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                                    const SizedBox(height: 2),
-                                    Text(app['business_name']?.toString() ?? app['company_name']?.toString() ?? '', style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
-                                    if (app['location'] != null) ...[
-                                      const SizedBox(height: 3),
-                                      Row(mainAxisSize: MainAxisSize.min, children: [
-                                        const Icon(Icons.location_on_outlined, size: 12, color: AppColors.tertiary),
-                                        const SizedBox(width: 3),
-                                        Text(app['location'].toString(), style: const TextStyle(fontSize: 12, color: AppColors.tertiary)),
-                                      ]),
-                                    ],
-                                  ])),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(color: _statusColor(status).withValues(alpha: 0.10), borderRadius: BorderRadius.circular(AppRadius.full)),
-                                    child: Text(
-                                      (_filterLabels[status] ?? status).toUpperCase(),
-                                      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _statusColor(status)),
-                                    ),
-                                  ),
-                                ]),
-                              );
-                            },
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0.5,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Filter tab bar
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.only(bottom: 12),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: _filters.map((f) {
+                  final selected = _selectedFilter == f;
+                  final count = _countFor(f);
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: GestureDetector(
+                      onTap: () => setState(() => _selectedFilter = f),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: selected ? AppColors.teal : Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(
+                            color: selected
+                                ? AppColors.teal
+                                : AppColors.border,
                           ),
                         ),
-        ),
-      ]),
+                        child: Text(
+                          '$f ($count)',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: selected
+                                ? Colors.white
+                                : AppColors.secondary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+
+          // Count
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+            child: Text(
+              '${filtered.length} application${filtered.length == 1 ? '' : 's'}',
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.secondary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+
+          // Application list
+          Expanded(
+            child: filtered.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.description_outlined,
+                            size: 56, color: AppColors.tertiary),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No applications found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: AppColors.secondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, i) {
+                      final app = filtered[i];
+                      return _ApplicationCard(
+                        app: app,
+                        avatarColor: _avatarColor(app['company'] as String),
+                        onTap: () => context.push(
+                          '/candidate/application/${app['id']}',
+                        ),
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
     );
   }
+}
 
-  IconData _statusIcon(String? status) {
-    switch (status) {
-      case 'applied': return Icons.send;
-      case 'under_review': case 'shortlisted': return Icons.hourglass_top;
-      case 'interview': return Icons.event;
-      case 'offer': return Icons.star;
-      case 'rejected': case 'withdrawn': return Icons.close;
-      default: return Icons.circle_outlined;
-    }
+class _ApplicationCard extends StatelessWidget {
+  final Map<String, dynamic> app;
+  final Color avatarColor;
+  final VoidCallback onTap;
+
+  const _ApplicationCard({
+    required this.app,
+    required this.avatarColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final company = app['company'] as String;
+    final initial = company.isNotEmpty ? company[0] : '?';
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: AppColors.cardDecoration,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                // Avatar
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: avatarColor,
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    initial,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                // Title + company
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        app['jobTitle'] as String,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.charcoal,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        '$company \u00B7 ${app['location']}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.secondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                StatusBadge(status: app['status'] as String),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Text(
+                  'Applied ${app['date']}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.tertiary,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: AppColors.tertiary,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
-
-  Widget _buildEmpty() => Center(child: Padding(
-    padding: const EdgeInsets.all(40),
-    child: Column(mainAxisSize: MainAxisSize.min, children: [
-      Container(
-        width: 60, height: 60,
-        decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.06), shape: BoxShape.circle),
-        child: Icon(Icons.description_outlined, size: 26, color: AppColors.teal.withValues(alpha: 0.4)),
-      ),
-      const SizedBox(height: 16),
-      Text(
-        _applications.isNotEmpty ? 'No matches for this filter' : 'No applications yet',
-        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
-      ),
-      const SizedBox(height: 6),
-      Text(
-        _applications.isNotEmpty ? 'Try selecting a different status above.' : 'Start exploring jobs and apply to\npositions that match your skills.',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.4),
-      ),
-    ]),
-  ));
 }

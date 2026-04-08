@@ -3,76 +3,86 @@ import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
-/// Role selection screen — pixel-close replica of EntryView.swift.
+/// Role selection screen — entry point for the app.
 class EntryView extends StatelessWidget {
   const EntryView({super.key});
-
-  // Softer, slightly rounded font family to approximate SF Rounded
-  static const _rounded = TextStyle(fontFamily: '.AppleSystemUIFontRounded');
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: const Color(0xFFF5F5F7),
       body: SafeArea(
         child: Column(
           children: [
             const Spacer(),
 
             // ── Logo + title block ──
-            Column(children: [
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: AppColors.teal.withValues(alpha: 0.16), blurRadius: 14, offset: const Offset(0, 5))],
+            Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.teal.withValues(alpha: 0.16),
+                        blurRadius: 14,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: const PlagitLogo(size: 84, borderRadius: 20, withShadow: true),
                 ),
-                child: const PlagitLogo(size: 84, borderRadius: 20),
-              ),
-              const SizedBox(height: 16),
-
-              // Title — SF Rounded, elegant
-              Text(
-                'Plagit',
-                style: _rounded.copyWith(fontSize: 29, fontWeight: FontWeight.w600, color: AppColors.charcoal, letterSpacing: -0.2),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'One app for hospitality\nprofessionals and businesses',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 15, color: AppColors.secondary, height: 1.4),
-              ),
-            ]),
+                const SizedBox(height: 16),
+                const Text(
+                  'Plagit',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.charcoal,
+                    letterSpacing: -0.2,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'One app for hospitality\nprofessionals and businesses',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 15, color: AppColors.secondary, height: 1.4),
+                ),
+              ],
+            ),
 
             const SizedBox(height: 32),
 
             // ── Role cards ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Column(children: [
-                _RoleCard(
-                  icon: Icons.person,
-                  color: AppColors.teal,
-                  title: 'Find Work',
-                  subtitle: 'Discover jobs and apply faster',
-                  onTap: () => context.go('/candidate/login'),
-                ),
-                const SizedBox(height: 12),
-                _RoleCard(
-                  icon: Icons.business,
-                  color: AppColors.indigo,
-                  title: 'Hire Staff',
-                  subtitle: 'Post jobs and hire faster',
-                  onTap: () => context.go('/business/login'),
-                ),
-                const SizedBox(height: 12),
-                _RoleCard(
-                  icon: Icons.apartment,
-                  color: AppColors.amber,
-                  title: 'Looking for Companies',
-                  subtitle: 'Discover hospitality services near you',
-                  onTap: () => context.push('/services'),
-                ),
-              ]),
+              child: Column(
+                children: [
+                  _RoleCard(
+                    icon: Icons.person,
+                    color: AppColors.teal,
+                    title: 'Find Work',
+                    subtitle: 'Discover jobs and apply faster',
+                    onTap: () => context.go('/candidate/login'),
+                  ),
+                  const SizedBox(height: 12),
+                  _RoleCard(
+                    icon: Icons.business,
+                    color: AppColors.purple,
+                    title: 'Hire Staff',
+                    subtitle: 'Post jobs and hire faster',
+                    onTap: () => context.go('/business/login'),
+                  ),
+                  const SizedBox(height: 12),
+                  _RoleCard(
+                    icon: Icons.grid_view_rounded,
+                    color: AppColors.amber,
+                    title: 'Looking for Companies',
+                    subtitle: 'Discover hospitality services near you',
+                    onTap: () => context.go('/services'),
+                  ),
+                ],
+              ),
             ),
 
             const Spacer(),
@@ -80,27 +90,43 @@ class EntryView extends StatelessWidget {
             // ── Footer ──
             Padding(
               padding: const EdgeInsets.only(bottom: 24),
-              child: Column(children: [
-                GestureDetector(
-                  onTap: () => context.go('/candidate/login'),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Already have an account? ', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
-                      Text('Sign In', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal)),
-                    ],
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: () => context.go('/candidate/login'),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Already have an account? ',
+                          style: TextStyle(fontSize: 13, color: AppColors.secondary),
+                        ),
+                        Text(
+                          'Sign In',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.teal,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24),
-                  child: Text(
-                    'By continuing you agree to our Terms and Privacy Policy',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.tertiary),
+                  const SizedBox(height: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24),
+                    child: Text(
+                      'By continuing you agree to our Terms and Privacy Policy',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.tertiary,
+                      ),
+                    ),
                   ),
-                ),
-              ]),
+                ],
+              ),
             ),
           ],
         ),
@@ -109,15 +135,13 @@ class EntryView extends StatelessWidget {
   }
 }
 
+/// A single role-selection card with icon badge, title, subtitle, and arrow.
 class _RoleCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-
-  // Rounded font for card titles
-  static const _rounded = TextStyle(fontFamily: '.AppleSystemUIFontRounded');
 
   const _RoleCard({
     required this.icon,
@@ -135,8 +159,14 @@ class _RoleCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 14, offset: const Offset(0, 5))],
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 14,
+              offset: const Offset(0, 5),
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -159,7 +189,11 @@ class _RoleCard extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: _rounded.copyWith(fontSize: 18, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.charcoal,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(

@@ -4,11 +4,19 @@ import 'package:go_router/go_router.dart';
 import 'package:plagit/features/auth/views/splash_view.dart';
 import 'package:plagit/features/auth/views/entry_view.dart';
 import 'package:plagit/features/auth/views/candidate_login_view.dart';
-import 'package:plagit/features/auth/views/candidate_signup_view.dart';
+import 'package:plagit/features/auth/views/candidate_register_view.dart';
+import 'package:plagit/features/auth/views/forgot_password_view.dart';
 import 'package:plagit/features/auth/views/business_login_view.dart';
 import 'package:plagit/features/auth/views/business_signup_view.dart';
 import 'package:plagit/features/auth/views/admin_login_view.dart';
 import 'package:plagit/features/auth/views/admin_change_password_view.dart';
+
+// Onboarding
+import 'package:plagit/features/onboarding/views/onboarding_welcome_view.dart';
+import 'package:plagit/features/onboarding/views/onboarding_role_view.dart';
+import 'package:plagit/features/onboarding/views/onboarding_location_view.dart';
+import 'package:plagit/features/onboarding/views/onboarding_experience_view.dart';
+import 'package:plagit/features/onboarding/views/onboarding_availability_view.dart';
 
 // Candidate
 import 'package:plagit/features/candidate/views/candidate_home_view.dart';
@@ -18,13 +26,17 @@ import 'package:plagit/features/candidate/views/candidate_interviews_view.dart';
 import 'package:plagit/features/candidate/views/candidate_interview_detail_view.dart';
 import 'package:plagit/features/candidate/views/candidate_matches_view.dart';
 import 'package:plagit/features/candidate/views/candidate_nearby_view.dart';
-import 'package:plagit/features/candidate/views/candidate_profile_setup_view.dart';
-import 'package:plagit/features/candidate/views/candidate_quick_plug_view.dart';
-import 'package:plagit/features/candidate/views/candidate_subscription_view.dart';
+import 'package:plagit/features/candidate/views/nearby_map_view.dart';
+import 'package:plagit/features/candidate/views/saved_jobs_view.dart';
 import 'package:plagit/features/candidate/views/candidate_application_detail_view.dart';
+import 'package:plagit/features/candidate/views/candidate_subscription_view.dart';
+import 'package:plagit/features/candidate/views/notifications_view.dart';
+import 'package:plagit/features/candidate/views/profile_edit_view.dart';
+import 'package:plagit/features/candidate/views/candidate_quick_plug_view.dart';
 import 'package:plagit/features/candidate/views/company_discovery_view.dart';
 import 'package:plagit/features/candidate/views/cv_review_view.dart';
 import 'package:plagit/features/candidate/views/match_feedback_view.dart';
+import 'package:plagit/features/candidate/views/candidate_profile_setup_view.dart';
 
 // Business
 import 'package:plagit/features/business/views/business_home_view.dart';
@@ -59,9 +71,6 @@ import 'package:plagit/features/feed/views/saved_posts_view.dart';
 import 'package:plagit/features/admin/views/admin_root_view.dart';
 import 'package:plagit/features/admin/views/super_admin_home_view.dart';
 
-// Shared
-import 'package:plagit/widgets/activity_view.dart';
-
 class AppRouter {
   AppRouter._();
 
@@ -74,17 +83,25 @@ class AppRouter {
       // ── Entry: role selection ──
       GoRoute(path: '/entry', builder: (context, state) => const EntryView()),
 
-      // ── Candidate auth ──
+      // ══════════════════════════════════════════
+      // ── Auth ──
+      // ══════════════════════════════════════════
       GoRoute(path: '/candidate/login', builder: (context, state) => const CandidateLoginView()),
-      GoRoute(path: '/candidate/signup', builder: (context, state) => const CandidateSignupView()),
-
-      // ── Business auth ──
+      GoRoute(path: '/candidate/register', builder: (context, state) => const CandidateRegisterView()),
+      GoRoute(path: '/forgot-password', builder: (context, state) => const ForgotPasswordView()),
       GoRoute(path: '/business/login', builder: (context, state) => const BusinessLoginView()),
       GoRoute(path: '/business/signup', builder: (context, state) => const BusinessSignupView()),
-
-      // ── Admin auth ──
       GoRoute(path: '/admin/login', builder: (context, state) => AdminLoginView(onLoginSuccess: () => const AdminRootView())),
       GoRoute(path: '/admin/change-password', builder: (context, state) => const AdminChangePasswordView()),
+
+      // ══════════════════════════════════════════
+      // ── Onboarding ──
+      // ══════════════════════════════════════════
+      GoRoute(path: '/onboarding/welcome', builder: (context, state) => const OnboardingWelcomeView()),
+      GoRoute(path: '/onboarding/role', builder: (context, state) => const OnboardingRoleView()),
+      GoRoute(path: '/onboarding/location', builder: (context, state) => const OnboardingLocationView()),
+      GoRoute(path: '/onboarding/experience', builder: (context, state) => const OnboardingExperienceView()),
+      GoRoute(path: '/onboarding/availability', builder: (context, state) => const OnboardingAvailabilityView()),
 
       // ══════════════════════════════════════════
       // ── Candidate main area ──
@@ -96,14 +113,18 @@ class AppRouter {
       GoRoute(path: '/candidate/interview/:id', builder: (context, state) => CandidateInterviewDetailView(interviewId: state.pathParameters['id']!)),
       GoRoute(path: '/candidate/matches', builder: (context, state) => const CandidateMatchesView()),
       GoRoute(path: '/candidate/nearby', builder: (context, state) => const CandidateNearbyView()),
+      GoRoute(path: '/candidate/nearby-map', builder: (context, state) => const NearbyMapView()),
+      GoRoute(path: '/candidate/saved', builder: (context, state) => const SavedJobsView()),
+      GoRoute(path: '/candidate/application/:id', builder: (context, state) => CandidateApplicationDetailView(applicationId: state.pathParameters['id']!)),
+      GoRoute(path: '/candidate/subscription', builder: (context, state) => const CandidateSubscriptionView()),
+      GoRoute(path: '/candidate/notifications', builder: (context, state) => const NotificationsView()),
+      GoRoute(path: '/candidate/profile/edit', builder: (context, state) => const ProfileEditView()),
       GoRoute(path: '/candidate/profile-setup', builder: (context, state) => const CandidateProfileSetupView()),
       GoRoute(path: '/candidate/quick-plug', builder: (context, state) => const CandidateQuickPlugView()),
-      GoRoute(path: '/candidate/subscription', builder: (context, state) => const CandidateSubscriptionView()),
-      GoRoute(path: '/candidate/application/:id', builder: (context, state) => CandidateApplicationDetailView(applicationId: state.pathParameters['id']!)),
       GoRoute(path: '/candidate/companies', builder: (context, state) => const CompanyDiscoveryView()),
       GoRoute(path: '/candidate/cv-review', builder: (context, state) => const CvReviewView()),
       GoRoute(path: '/candidate/match-feedback/:id', builder: (context, state) => MatchFeedbackView(matchId: state.pathParameters['id']!)),
-      GoRoute(path: '/candidate/notifications', builder: (context, state) => const ActivityView(isBusiness: false)),
+      GoRoute(path: '/candidate/messages/:id', builder: (context, state) => CandidateChatView(conversationId: state.pathParameters['id']!)),
 
       // ══════════════════════════════════════════
       // ── Business main area ──
