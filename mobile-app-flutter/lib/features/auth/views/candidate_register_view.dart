@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
+import 'package:plagit/repositories/auth_repository.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
 /// Candidate registration screen — create a new account.
@@ -21,6 +22,7 @@ class _CandidateRegisterViewState extends State<CandidateRegisterView> {
   bool _confirmVisible = false;
   bool _termsAccepted = false;
   bool _loading = false;
+  String? _error;
 
   @override
   void initState() {
@@ -42,14 +44,23 @@ class _CandidateRegisterViewState extends State<CandidateRegisterView> {
 
   Future<void> _createAccount() async {
     if (!_canSubmit) return;
-    setState(() => _loading = true);
+    if (_passwordCtrl.text != _confirmCtrl.text) {
+      setState(() => _error = 'Passwords do not match');
+      return;
+    }
+    setState(() { _loading = true; _error = null; });
 
-    // Mock registration delay
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    if (mounted) {
-      setState(() => _loading = false);
-      context.go('/onboarding/welcome');
+    try {
+      final authRepo = AuthRepository();
+      await authRepo.register(
+        name: _nameCtrl.text.trim(),
+        email: _emailCtrl.text.trim(),
+        password: _passwordCtrl.text,
+        role: 'candidate',
+      );
+      if (mounted) context.go('/onboarding/welcome');
+    } catch (e) {
+      if (mounted) setState(() { _error = e.toString(); _loading = false; });
     }
   }
 
@@ -204,6 +215,14 @@ class _CandidateRegisterViewState extends State<CandidateRegisterView> {
                   ],
                 ),
               ),
+
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(
+                  _error!,
+                  style: const TextStyle(fontSize: 13, color: Color(0xFFEF4444)),
+                ),
+              ],
 
               const SizedBox(height: 24),
 
