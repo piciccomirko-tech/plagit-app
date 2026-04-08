@@ -36,25 +36,49 @@ class CandidateHomeData {
   // ── JSON serialisation ──
 
   factory CandidateHomeData.fromJson(Map<String, dynamic> json) {
+    // Backend sends 'user', mock sends 'profile'
+    final profileJson = json['user'] as Map<String, dynamic>?
+        ?? json['profile'] as Map<String, dynamic>?
+        ?? {};
+
+    // Backend sends nested 'applications_summary', mock sends flat fields
+    final appSummary = json['applications_summary'] as Map<String, dynamic>?
+        ?? json['applicationsSummary'] as Map<String, dynamic>?;
+
+    // Backend may not include featured/nearby jobs — those come from separate endpoints
+    final featuredList = json['featured_jobs'] as List<dynamic>?
+        ?? json['featuredJobs'] as List<dynamic>?;
+    final nearbyList = json['nearby_jobs'] as List<dynamic>?
+        ?? json['nearbyJobs'] as List<dynamic>?;
+
+    // Next interview may be absent
+    final nextInterviewJson = json['next_interview'] as Map<String, dynamic>?
+        ?? json['nextInterview'] as Map<String, dynamic>?;
+
     return CandidateHomeData(
-      profile: CandidateProfile.fromJson(
-          json['profile'] as Map<String, dynamic>),
-      featuredJobs: (json['featuredJobs'] as List<dynamic>?)
+      profile: CandidateProfile.fromJson(profileJson),
+      featuredJobs: featuredList
               ?.map((j) => Job.fromJson(j as Map<String, dynamic>))
               .toList() ??
           [],
-      nearbyJobs: (json['nearbyJobs'] as List<dynamic>?)
+      nearbyJobs: nearbyList
               ?.map((j) => Job.fromJson(j as Map<String, dynamic>))
               .toList() ??
           [],
-      totalApplications: json['totalApplications'] as int? ?? 0,
-      underReviewCount: json['underReviewCount'] as int? ?? 0,
-      interviewCount: json['interviewCount'] as int? ?? 0,
-      offerCount: json['offerCount'] as int? ?? 0,
-      nextInterview: json['nextInterview'] != null
-          ? Interview.fromJson(json['nextInterview'] as Map<String, dynamic>)
+      totalApplications: appSummary?['total'] as int?
+          ?? json['totalApplications'] as int? ?? 0,
+      underReviewCount: appSummary?['under_review'] as int?
+          ?? appSummary?['underReview'] as int?
+          ?? json['underReviewCount'] as int? ?? 0,
+      interviewCount: appSummary?['interview'] as int?
+          ?? json['interviewCount'] as int? ?? 0,
+      offerCount: appSummary?['offer'] as int?
+          ?? json['offerCount'] as int? ?? 0,
+      nextInterview: nextInterviewJson != null
+          ? Interview.fromJson(nextInterviewJson)
           : null,
-      unreadMessages: json['unreadMessages'] as int? ?? 0,
+      unreadMessages: json['unread_messages'] as int?
+          ?? json['unreadMessages'] as int? ?? 0,
     );
   }
 
