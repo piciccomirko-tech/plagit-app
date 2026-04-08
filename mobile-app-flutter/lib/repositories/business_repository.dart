@@ -9,7 +9,7 @@
 library;
 
 import 'package:plagit/config/env_config.dart';
-import 'package:plagit/core/api_client.dart';
+import 'package:plagit/core/network/api_client.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_conversation.dart';
@@ -23,9 +23,10 @@ import 'package:plagit/models/notification_item.dart';
 import 'package:plagit/models/quick_plug_candidate.dart';
 
 class BusinessRepository {
-  final ApiClient _api;
+  final PlagitApiClient _api;
 
-  BusinessRepository({ApiClient? api}) : _api = api ?? ApiClient();
+  BusinessRepository({PlagitApiClient? api})
+      : _api = api ?? PlagitApiClient.instance;
 
   /// TODO: check token prefix in production — if token starts with "mock_",
   /// return mock data; otherwise hit the real API.
@@ -76,8 +77,11 @@ class BusinessRepository {
 
       return jobs;
     }
-    // TODO: final resp = await _api.get('/business/jobs?filter=$filter');
-    throw UnimplementedError('Real API not wired yet');
+    final params = <String, String>{};
+    if (filter != null && filter != 'All') params['status'] = filter;
+    final resp = await _api.get('/business/jobs', queryParams: params.isNotEmpty ? params : null);
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => BusinessJob.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<BusinessJob> fetchJobDetail(String jobId) async {
@@ -87,8 +91,8 @@ class BusinessRepository {
         orElse: () => BusinessJob.mockAll().first,
       );
     }
-    // TODO: final resp = await _api.get('/business/jobs/$jobId');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/jobs/$jobId');
+    return BusinessJob.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   Future<void> postJob(Map<String, dynamic> data) async {
@@ -96,8 +100,7 @@ class BusinessRepository {
       await Future.delayed(const Duration(milliseconds: 800));
       return;
     }
-    // TODO: await _api.post('/business/jobs', data);
-    throw UnimplementedError('Real API not wired yet');
+    await _api.post('/business/jobs', body: data);
   }
 
   // ======================================
@@ -124,8 +127,12 @@ class BusinessRepository {
 
       return applicants;
     }
-    // TODO: final resp = await _api.get('/business/applicants?jobId=$jobId&status=$statusFilter');
-    throw UnimplementedError('Real API not wired yet');
+    final params = <String, String>{};
+    if (jobId != null) params['jobId'] = jobId;
+    if (statusFilter != null && statusFilter != 'All') params['status'] = statusFilter;
+    final resp = await _api.get('/business/applicants', queryParams: params.isNotEmpty ? params : null);
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => Applicant.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<Applicant> fetchApplicantDetail(String applicantId) async {
@@ -135,8 +142,8 @@ class BusinessRepository {
         orElse: () => Applicant.mockAll().first,
       );
     }
-    // TODO: final resp = await _api.get('/business/applicants/$applicantId');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/applicants/$applicantId');
+    return Applicant.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   // ======================================
