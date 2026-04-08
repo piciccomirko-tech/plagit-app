@@ -4,9 +4,9 @@ import 'package:plagit/core/api_client.dart';
 /// Mock data returned in debug mode when the real API is unavailable.
 const _mockHomeData = <String, dynamic>{
   'user': {
-    'name': 'Test User',
+    'name': 'Test Candidate',
     'first_name': 'Test',
-    'last_name': 'User',
+    'last_name': 'Candidate',
     'location': 'London, UK',
     'profileStrength': 65,
   },
@@ -141,7 +141,7 @@ const _mockConversationsData = <String, dynamic>{
 
 const _mockProfileData = <String, dynamic>{
   'id': 'mock_candidate_001',
-  'name': 'Test User',
+  'name': 'Test Candidate',
   'email': 'candidate@test.com',
   'role': 'Waiter',
   'location': 'London, UK',

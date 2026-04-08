@@ -302,9 +302,8 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
     ]);
   }
 
-  // ── My Applications (compact) ──
+  // ── My Applications (column numbers like Swift) ──
   Widget _applicationsCard(Map<String, dynamic>? summary) {
-    final total = (summary?['applied'] ?? 3) + (summary?['under_review'] ?? 1) + (summary?['interview'] ?? 1) + (summary?['offer'] ?? 0);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Container(
@@ -318,36 +317,45 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
               child: const Icon(Icons.description_outlined, size: 17, color: _C.teal),
             ),
             const SizedBox(width: 12),
-            const Expanded(child: Text('My Applications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal))),
-            Text('$total total', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: _C.secondary)),
+            const Expanded(child: Text('Your Applications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal))),
+            GestureDetector(
+              onTap: () {},
+              child: const Row(children: [
+                Text('View All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _C.teal)),
+                SizedBox(width: 3),
+                Icon(Icons.chevron_right, size: 16, color: _C.teal),
+              ]),
+            ),
           ]),
           const SizedBox(height: 16),
-          _appRow('Under Review', summary?['under_review'] ?? 1, _C.amber),
-          const SizedBox(height: 10),
-          _appRow('Interview', summary?['interview'] ?? 1, _C.teal),
-          const SizedBox(height: 10),
-          _appRow('Offer', summary?['offer'] ?? 0, _C.green),
-          const SizedBox(height: 14),
-          GestureDetector(
-            onTap: () {},
-            child: const Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-              Text('View All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _C.teal)),
-              SizedBox(width: 3),
-              Icon(Icons.chevron_right, size: 16, color: _C.teal),
-            ]),
-          ),
+          Row(children: [
+            _statCell(summary?['applied'] ?? 3, 'Applied', _C.teal),
+            const SizedBox(width: 8),
+            _statCell(summary?['under_review'] ?? 1, 'In Review', _C.amber),
+            const SizedBox(width: 8),
+            _statCell(summary?['interview'] ?? 1, 'Interview', const Color(0xFF6675F0)),
+            const SizedBox(width: 8),
+            _statCell(summary?['offer'] ?? 0, 'Offers', _C.green),
+          ]),
         ]),
       ),
     );
   }
 
-  Widget _appRow(String label, dynamic count, Color color) {
-    return Row(children: [
-      Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-      const SizedBox(width: 10),
-      Expanded(child: Text(label, style: const TextStyle(fontSize: 14, color: _C.charcoal))),
-      Text('$count', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color)),
-    ]);
+  Widget _statCell(dynamic count, String label, Color color) {
+    return Expanded(child: Container(
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withValues(alpha: 0.08)),
+      ),
+      child: Column(children: [
+        Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: color)),
+        const SizedBox(height: 3),
+        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: _C.secondary)),
+      ]),
+    ));
   }
 
   // ── Next Interview ──
@@ -452,7 +460,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
             child: const LinearProgressIndicator(value: strength / 100, backgroundColor: Color(0xFFEEEEF0), color: _C.teal, minHeight: 5),
           ),
           const SizedBox(height: 16),
-          _checkItem('Photo uploaded', true),
+          _checkItem('Add profile photo', false),
           const SizedBox(height: 8),
           _checkItem('Location set', true),
           const SizedBox(height: 8),
@@ -462,17 +470,18 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
           const SizedBox(height: 8),
           _checkItem('Languages added', true),
           const SizedBox(height: 8),
-          _checkItem('CV uploaded', false),
+          _checkItem('CV uploaded', true),
           const SizedBox(height: 8),
-          _checkItem('Phone verified', false),
+          _checkItem('Phone verified', true),
           const SizedBox(height: 16),
           SizedBox(
             width: double.infinity, height: 42,
-            child: OutlinedButton(
+            child: ElevatedButton(
               onPressed: () {},
-              style: OutlinedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _C.teal.withValues(alpha: 0.10),
                 foregroundColor: _C.teal,
-                side: const BorderSide(color: _C.teal, width: 1.5),
+                elevation: 0,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               ),
