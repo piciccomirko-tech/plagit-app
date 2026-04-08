@@ -38,16 +38,14 @@ class BusinessRepository {
 
   Future<BusinessProfile> fetchProfile() async {
     if (_isMock) return BusinessProfile.mock();
-    // TODO: final resp = await _api.get('/business/profile');
-    // return BusinessProfile.fromJson(resp['data'] as Map<String, dynamic>);
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/profile');
+    return BusinessProfile.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   Future<BusinessProfile> updateProfile(Map<String, dynamic> fields) async {
-    if (_isMock) return BusinessProfile.mock(); // return updated mock
-    // TODO: final resp = await _api.put('/business/profile', fields);
-    // return BusinessProfile.fromJson(resp['data'] as Map<String, dynamic>);
-    throw UnimplementedError('Real API not wired yet');
+    if (_isMock) return BusinessProfile.mock();
+    final resp = await _api.put('/business/profile', body: fields);
+    return BusinessProfile.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   // ======================================
@@ -56,9 +54,8 @@ class BusinessRepository {
 
   Future<BusinessHomeData> fetchHome() async {
     if (_isMock) return BusinessHomeData.mock();
-    // TODO: final resp = await _api.get('/business/home');
-    // return BusinessHomeData.fromJson(resp['data'] as Map<String, dynamic>);
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/home');
+    return BusinessHomeData.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   // ======================================
@@ -209,8 +206,9 @@ class BusinessRepository {
 
   Future<List<QuickPlugCandidate>> fetchQuickPlugDeck() async {
     if (_isMock) return QuickPlugCandidate.mockAll();
-    // TODO: final resp = await _api.get('/business/quickplug/deck');
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/business/quickplug/deck');
+    final list = resp['data'] as List<dynamic>? ?? [];
+    return list.map((e) => QuickPlugCandidate.fromJson(e as Map<String, dynamic>)).toList();
   }
 
   Future<void> swipeCandidate(String candidateId, bool interested) async {
@@ -218,8 +216,10 @@ class BusinessRepository {
       await Future.delayed(const Duration(milliseconds: 300));
       return;
     }
-    // TODO: await _api.post('/business/quickplug/swipe', {'candidateId': candidateId, 'interested': interested});
-    throw UnimplementedError('Real API not wired yet');
+    await _api.post('/business/quickplug/swipe', body: {
+      'candidateId': candidateId,
+      'interested': interested,
+    });
   }
 
   // ======================================

@@ -36,16 +36,14 @@ class CandidateRepository {
 
   Future<CandidateProfile> fetchProfile() async {
     if (_isMock) return CandidateProfile.mock();
-    // TODO: final resp = await _api.get('/candidate/profile');
-    // return CandidateProfile.fromJson(resp['data'] as Map<String, dynamic>);
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/profile');
+    return CandidateProfile.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   Future<CandidateProfile> updateProfile(Map<String, dynamic> fields) async {
-    if (_isMock) return CandidateProfile.mock(); // return updated mock
-    // TODO: final resp = await _api.put('/candidate/profile', fields);
-    // return CandidateProfile.fromJson(resp['data'] as Map<String, dynamic>);
-    throw UnimplementedError('Real API not wired yet');
+    if (_isMock) return CandidateProfile.mock();
+    final resp = await _api.put('/candidate/profile', body: fields);
+    return CandidateProfile.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   // ══════════════════════════════════════════
@@ -54,9 +52,8 @@ class CandidateRepository {
 
   Future<CandidateHomeData> fetchHome() async {
     if (_isMock) return CandidateHomeData.mock();
-    // TODO: final resp = await _api.get('/candidate/home');
-    // return CandidateHomeData.fromJson(resp['data'] as Map<String, dynamic>);
-    throw UnimplementedError('Real API not wired yet');
+    final resp = await _api.get('/candidate/home');
+    return CandidateHomeData.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
   }
 
   // ══════════════════════════════════════════
