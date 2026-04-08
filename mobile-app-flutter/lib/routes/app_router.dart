@@ -40,9 +40,14 @@ import 'package:plagit/features/candidate/views/candidate_profile_setup_view.dar
 
 // Business
 import 'package:plagit/features/business/views/business_home_view.dart';
-import 'package:plagit/features/business/views/business_post_job_view.dart';
+import 'package:plagit/features/business/views/post_job_view.dart';
+import 'package:plagit/features/business/views/business_jobs_view.dart';
 import 'package:plagit/features/business/views/business_job_detail_view.dart';
+import 'package:plagit/features/business/views/business_applicants_view.dart';
+import 'package:plagit/features/business/views/business_applicant_detail_view.dart';
 import 'package:plagit/features/business/views/business_chat_view.dart';
+import 'package:plagit/features/business/views/business_messages_view.dart';
+import 'package:plagit/features/business/views/business_interviews_view.dart';
 import 'package:plagit/features/business/views/business_schedule_interview_view.dart';
 import 'package:plagit/features/business/views/business_candidate_profile_view.dart';
 import 'package:plagit/features/business/views/business_insights_view.dart';
@@ -53,6 +58,14 @@ import 'package:plagit/features/business/views/business_quick_plug_view.dart';
 import 'package:plagit/features/business/views/business_notifications_view.dart';
 import 'package:plagit/features/business/views/business_shortlist_view.dart';
 import 'package:plagit/features/business/views/business_subscription_view.dart';
+import 'package:plagit/features/auth/views/business_register_view.dart';
+
+// Business Onboarding
+import 'package:plagit/features/onboarding/business/onboarding_business_welcome_view.dart';
+import 'package:plagit/features/onboarding/business/onboarding_business_type_view.dart';
+import 'package:plagit/features/onboarding/business/onboarding_business_details_view.dart';
+import 'package:plagit/features/onboarding/business/onboarding_business_location_view.dart';
+import 'package:plagit/features/onboarding/business/onboarding_business_profile_view.dart';
 
 // Services
 import 'package:plagit/features/services/views/service_entry_view.dart';
@@ -127,22 +140,30 @@ class AppRouter {
       GoRoute(path: '/candidate/messages/:id', builder: (context, state) => CandidateChatView(conversationId: state.pathParameters['id']!)),
 
       // ══════════════════════════════════════════
+      // ── Business auth ──
+      // ══════════════════════════════════════════
+      GoRoute(path: '/business/register', builder: (context, state) => const BusinessRegisterView()),
+
+      // ── Business onboarding ──
+      GoRoute(path: '/business/onboarding/welcome', builder: (context, state) => const OnboardingBusinessWelcomeView()),
+      GoRoute(path: '/business/onboarding/type', builder: (context, state) => const OnboardingBusinessTypeView()),
+      GoRoute(path: '/business/onboarding/details', builder: (context, state) => const OnboardingBusinessDetailsView()),
+      GoRoute(path: '/business/onboarding/location', builder: (context, state) => const OnboardingBusinessLocationView()),
+      GoRoute(path: '/business/onboarding/profile', builder: (context, state) => const OnboardingBusinessProfileView()),
+
+      // ══════════════════════════════════════════
       // ── Business main area ──
       // ══════════════════════════════════════════
       GoRoute(path: '/business/home', builder: (context, state) => const BusinessHomeView()),
-      GoRoute(path: '/business/post-job', builder: (context, state) => const BusinessPostJobView()),
+      GoRoute(path: '/business/post-job', builder: (context, state) => const PostJobView()),
+      GoRoute(path: '/business/jobs', builder: (context, state) => const BusinessJobsView()),
       GoRoute(path: '/business/job/:id', builder: (context, state) => BusinessJobDetailView(jobId: state.pathParameters['id']!)),
+      GoRoute(path: '/business/applicants', builder: (context, state) => const BusinessApplicantsView()),
+      GoRoute(path: '/business/applicant/:id', builder: (context, state) => BusinessApplicantDetailView(applicantId: state.pathParameters['id']!)),
       GoRoute(path: '/business/chat/:id', builder: (context, state) => BusinessChatView(conversationId: state.pathParameters['id']!)),
-      GoRoute(
-        path: '/business/schedule-interview',
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>?;
-          return BusinessScheduleInterviewView(
-            candidateId: extra?['candidateId']?.toString(),
-            jobId: extra?['jobId']?.toString(),
-          );
-        },
-      ),
+      GoRoute(path: '/business/messages', builder: (context, state) => const BusinessMessagesView()),
+      GoRoute(path: '/business/interviews', builder: (context, state) => const BusinessInterviewsView()),
+      GoRoute(path: '/business/schedule-interview', builder: (context, state) => const BusinessScheduleInterviewView()),
       GoRoute(path: '/business/candidate/:id', builder: (context, state) => BusinessCandidateProfileView(candidateId: state.pathParameters['id']!)),
       GoRoute(path: '/business/insights', builder: (context, state) => const BusinessInsightsView()),
       GoRoute(path: '/business/interview/:id', builder: (context, state) => BusinessInterviewDetailView(interviewId: state.pathParameters['id']!)),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/services/business_service.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
 
-/// Business chat thread — mirrors BusinessRealChatView.swift.
+/// Business chat thread view.
 class BusinessChatView extends StatefulWidget {
   final String conversationId;
   const BusinessChatView({super.key, required this.conversationId});
@@ -13,54 +13,50 @@ class BusinessChatView extends StatefulWidget {
 }
 
 class _BusinessChatViewState extends State<BusinessChatView> {
-  final _service = BusinessService();
   final _inputCtrl = TextEditingController();
   final _scrollCtrl = ScrollController();
-  List<Map<String, dynamic>> _messages = [];
-  Map<String, dynamic>? _conversationInfo;
-  bool _loading = true;
-  bool _sending = false;
+  late List<Map<String, dynamic>> _messages;
+  Map<String, dynamic>? _conversation;
+  bool _canSend = false;
 
   @override
   void initState() {
     super.initState();
-    _loadMessages();
-  }
-
-  Future<void> _loadMessages() async {
-    setState(() => _loading = true);
-    try {
-      final data = await _service.getMessages(widget.conversationId);
-      final msgs = (data['messages'] ?? data['data'] ?? []) as List;
-      if (mounted) setState(() {
-        _messages = msgs.cast<Map<String, dynamic>>();
-        _conversationInfo = data['conversation'] as Map<String, dynamic>?;
-        _loading = false;
-      });
-      _scrollToBottom();
-    } catch (_) {
-      if (mounted) setState(() => _loading = false);
-    }
-  }
-
-  Future<void> _send() async {
-    final text = _inputCtrl.text.trim();
-    if (text.isEmpty || _sending) return;
-    setState(() => _sending = true);
-    _inputCtrl.clear();
-    try {
-      await _service.sendMessage(widget.conversationId, text);
-      await _loadMessages();
-    } catch (_) {}
-    if (mounted) setState(() => _sending = false);
-  }
-
-  void _scrollToBottom() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollCtrl.hasClients) {
-        _scrollCtrl.animateTo(_scrollCtrl.position.maxScrollExtent, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
-      }
+    _conversation = MockData.businessConversations
+        .cast<Map<String, dynamic>>()
+        .firstWhere(
+          (c) => c['id'] == widget.conversationId,
+          orElse: () => <String, dynamic>{},
+        );
+    _messages = MockData.businessChatMessages
+        .map((m) => Map<String, dynamic>.from(m))
+        .toList()
+        .reversed
+        .toList();
+    _inputCtrl.addListener(() {
+      final canSend = _inputCtrl.text.trim().isNotEmpty;
+      if (canSend != _canSend) setState(() => _canSend = canSend);
     });
+  }
+
+  void _send() {
+    final text = _inputCtrl.text.trim();
+    if (text.isEmpty) return;
+    setState(() {
+      _messages.insert(0, {
+        'sender': 'business',
+        'text': text,
+        'time': 'Just now',
+      });
+    });
+    _inputCtrl.clear();
+    if (_scrollCtrl.hasClients) {
+      _scrollCtrl.animateTo(
+        0,
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   @override
@@ -72,59 +68,178 @@ class _BusinessChatViewState extends State<BusinessChatView> {
 
   @override
   Widget build(BuildContext context) {
-    final candidateName = _conversationInfo?['candidateName'] ?? _conversationInfo?['candidate_name'] ?? 'Chat';
+    final candidateName =
+        _conversation?['candidateName'] as String? ?? 'Chat';
+    final jobContext =
+        _conversation?['jobContext'] as String? ?? '';
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          onPressed: () => context.pop(),
+        ),
+        title: Column(
           children: [
-            // ── Header ──
-            Padding(
-              padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
-              child: Row(
-                children: [
-                  IconButton(icon: const Icon(Icons.chevron_left, size: 28), onPressed: () => context.pop()),
-                  Expanded(child: Text(candidateName.toString(), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal), overflow: TextOverflow.ellipsis)),
-                  GestureDetector(
-                    onTap: () {
-                      final candidateId = _conversationInfo?['candidateId'] ?? _conversationInfo?['candidate_id'];
-                      if (candidateId != null) context.push('/business/candidate/$candidateId');
-                    },
-                    child: const Icon(Icons.person_outline, size: 22, color: AppColors.indigo),
-                  ),
-                ],
+            Text(
+              candidateName,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: AppColors.charcoal,
               ),
             ),
-            const Divider(height: 1, color: AppColors.divider),
-
-            // ── Messages ──
-            Expanded(
-              child: _loading
-                  ? const Center(child: CircularProgressIndicator(color: AppColors.indigo))
-                  : _messages.isEmpty
-                      ? const Center(child: Text('No messages yet', style: TextStyle(color: AppColors.secondary)))
-                      : ListView.builder(
-                          controller: _scrollCtrl,
-                          padding: const EdgeInsets.all(16),
-                          itemCount: _messages.length,
-                          itemBuilder: (_, i) {
-                            final m = _messages[i];
-                            final isMe = (m['senderType'] ?? m['sender_type']) == 'business';
-                            return _MessageBubble(
-                              body: m['body']?.toString() ?? m['content']?.toString() ?? '',
-                              senderName: isMe ? null : (m['senderName'] ?? m['sender_name'])?.toString(),
-                              isMe: isMe,
-                            );
-                          },
-                        ),
+            if (jobContext.isNotEmpty)
+              Text(
+                jobContext,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.secondary,
+                ),
+              ),
+          ],
+        ),
+        centerTitle: true,
+      ),
+      body: Column(
+        children: [
+          // Quick action buttons
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.04),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
+            child: Row(
+              children: [
+                OutlinedButton(
+                  onPressed: () => context.push('/business/applicant/ba1'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.teal,
+                    side: const BorderSide(color: AppColors.teal),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    minimumSize: Size.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('View Profile', style: TextStyle(fontSize: 13)),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton(
+                  onPressed: () => context.push('/business/schedule-interview'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.purple,
+                    side: const BorderSide(color: AppColors.purple),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    minimumSize: Size.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: const Text('Invite to Interview', style: TextStyle(fontSize: 13)),
+                ),
+              ],
+            ),
+          ),
 
-            // ── Input ──
-            Container(
-              padding: const EdgeInsets.fromLTRB(16, 8, 8, 16),
+          // Messages list
+          Expanded(
+            child: ListView.builder(
+              controller: _scrollCtrl,
+              reverse: true,
+              padding: const EdgeInsets.all(16),
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final msg = _messages[index];
+                final isBusiness = msg['sender'] == 'business';
+                final text = msg['text'] as String? ?? '';
+                final time = msg['time'] as String? ?? '';
+
+                // Show timestamp between groups
+                final showTime = index == _messages.length - 1 ||
+                    _messages[index + 1]['time'] != time;
+
+                return Column(
+                  children: [
+                    if (showTime)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8, top: 4),
+                        child: Center(
+                          child: Text(
+                            time,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.tertiary,
+                            ),
+                          ),
+                        ),
+                      ),
+                    Align(
+                      alignment: isBusiness
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width * 0.75,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isBusiness
+                              ? AppColors.teal
+                              : const Color(0xFFF0F0F2),
+                          borderRadius: BorderRadius.only(
+                            topLeft: const Radius.circular(16),
+                            topRight: const Radius.circular(16),
+                            bottomLeft: Radius.circular(isBusiness ? 16 : 4),
+                            bottomRight: Radius.circular(isBusiness ? 4 : 16),
+                          ),
+                        ),
+                        child: Text(
+                          text,
+                          style: TextStyle(
+                            fontSize: 15,
+                            color: isBusiness
+                                ? Colors.white
+                                : AppColors.charcoal,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+
+          // Bottom input bar
+          SafeArea(
+            top: false,
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(16, 8, 8, 12),
               decoration: BoxDecoration(
-                color: AppColors.cardBackground,
-                border: Border(top: BorderSide(color: AppColors.divider)),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.06),
+                    blurRadius: 8,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -135,66 +250,47 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                       onSubmitted: (_) => _send(),
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
+                        hintStyle: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.tertiary,
+                        ),
                         filled: true,
-                        fillColor: AppColors.surface,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppRadius.full), borderSide: BorderSide.none),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        fillColor: AppColors.background,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide.none,
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(
-                    onTap: _send,
+                    onTap: _canSend ? _send : null,
                     child: Container(
-                      width: 42, height: 42,
-                      decoration: const BoxDecoration(color: AppColors.indigo, shape: BoxShape.circle),
-                      child: const Icon(Icons.send, size: 18, color: Colors.white),
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: _canSend
+                            ? AppColors.teal
+                            : AppColors.teal.withValues(alpha: 0.4),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_upward,
+                        size: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MessageBubble extends StatelessWidget {
-  final String body;
-  final String? senderName;
-  final bool isMe;
-  const _MessageBubble({required this.body, this.senderName, required this.isMe});
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.72),
-        decoration: BoxDecoration(
-          color: isMe ? AppColors.indigo : AppColors.surface,
-          borderRadius: BorderRadius.only(
-            topLeft: const Radius.circular(16),
-            topRight: const Radius.circular(16),
-            bottomLeft: Radius.circular(isMe ? 16 : 4),
-            bottomRight: Radius.circular(isMe ? 4 : 16),
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (senderName != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(senderName!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isMe ? Colors.white70 : AppColors.indigo)),
-              ),
-            Text(body, style: TextStyle(fontSize: 15, color: isMe ? Colors.white : AppColors.charcoal)),
-          ],
-        ),
+        ],
       ),
     );
   }

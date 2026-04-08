@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/features/business/views/business_dashboard_tab.dart';
-import 'package:plagit/features/business/views/business_jobs_tab.dart';
-import 'package:plagit/features/business/views/business_interviews_tab.dart';
-import 'package:plagit/features/business/views/business_messages_tab.dart';
-import 'package:plagit/features/business/views/business_profile_tab.dart';
+import 'package:plagit/features/business/views/business_jobs_view.dart';
+import 'package:plagit/features/business/views/business_applicants_view.dart';
+import 'package:plagit/features/business/views/business_quick_plug_view.dart';
+import 'package:plagit/features/business/views/business_profile_view.dart';
 
-/// Root business view with 5 bottom tabs — mirrors BusinessHomeView.swift.
 class BusinessHomeView extends StatefulWidget {
   const BusinessHomeView({super.key});
 
@@ -17,30 +16,90 @@ class BusinessHomeView extends StatefulWidget {
 class _BusinessHomeViewState extends State<BusinessHomeView> {
   int _currentIndex = 0;
 
-  final _tabs = const [
+  final List<Widget> _tabs = const [
     BusinessDashboardTab(),
-    BusinessJobsTab(),
-    BusinessInterviewsTab(),
-    BusinessMessagesTab(),
-    BusinessProfileTab(),
+    BusinessJobsView(),
+    BusinessApplicantsView(),
+    BusinessQuickPlugView(),
+    BusinessProfileView(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _tabs),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentIndex,
-        onDestinationSelected: (i) => setState(() => _currentIndex = i),
-        backgroundColor: AppColors.cardBackground,
-        indicatorColor: AppColors.indigo.withValues(alpha: 0.10),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard, color: AppColors.indigo), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.work_outline), selectedIcon: Icon(Icons.work, color: AppColors.indigo), label: 'Jobs'),
-          NavigationDestination(icon: Icon(Icons.event_outlined), selectedIcon: Icon(Icons.event, color: AppColors.indigo), label: 'Interviews'),
-          NavigationDestination(icon: Icon(Icons.chat_outlined), selectedIcon: Icon(Icons.chat, color: AppColors.indigo), label: 'Messages'),
-          NavigationDestination(icon: Icon(Icons.store_outlined), selectedIcon: Icon(Icons.store, color: AppColors.indigo), label: 'Profile'),
-        ],
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 6, bottom: 2),
+            child: Row(
+              children: List.generate(5, (i) {
+                final active = _currentIndex == i;
+                final isPurple = i == 3;
+                const icons = [
+                  [Icons.home_outlined, Icons.home],
+                  [Icons.work_outline, Icons.work],
+                  [Icons.people_outline, Icons.people],
+                  [Icons.bolt_outlined, Icons.bolt],
+                  [Icons.business_outlined, Icons.business],
+                ];
+                const labels = [
+                  'Home',
+                  'Jobs',
+                  'Applicants',
+                  'Quick Plug',
+                  'Profile',
+                ];
+                final color = isPurple
+                    ? (active
+                        ? AppColors.purple
+                        : AppColors.purple.withValues(alpha: 0.5))
+                    : (active ? AppColors.teal : AppColors.tertiary);
+
+                return Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _currentIndex = i),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            active ? icons[i][1] : icons[i][0],
+                            size: 22,
+                            color: color,
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            labels[i],
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight:
+                                  active ? FontWeight.w700 : FontWeight.w400,
+                              color: color,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+            ),
+          ),
+        ),
       ),
     );
   }

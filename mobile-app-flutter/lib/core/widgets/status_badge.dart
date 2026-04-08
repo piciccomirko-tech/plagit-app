@@ -47,6 +47,16 @@ class StatusBadge extends StatelessWidget {
         return (const Color(0xFF707580), const Color(0xFF707580).withValues(alpha: 0.10));
       case 'hired':
         return (const Color(0xFF10B981), const Color(0xFF10B981).withValues(alpha: 0.10));
+      case 'active':
+        return (const Color(0xFF10B981), const Color(0xFF10B981).withValues(alpha: 0.10));
+      case 'draft':
+        return (const Color(0xFF707580), const Color(0xFF707580).withValues(alpha: 0.10));
+      case 'paused':
+        return (const Color(0xFFF59E0B), const Color(0xFFF59E0B).withValues(alpha: 0.10));
+      case 'closed':
+        return (const Color(0xFFEF4444), const Color(0xFFEF4444).withValues(alpha: 0.10));
+      case 'interview':
+        return (const Color(0xFF2BB8B0), const Color(0xFF2BB8B0).withValues(alpha: 0.10));
       default:
         return (const Color(0xFF707580), const Color(0xFF707580).withValues(alpha: 0.10));
     }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/status_badge.dart';
 
-/// Business Interview Detail screen.
-/// Mirrors BusinessInterviewDetailView.swift with mock data.
+/// Business interview detail screen.
 class BusinessInterviewDetailView extends StatefulWidget {
   final String interviewId;
   const BusinessInterviewDetailView({super.key, required this.interviewId});
@@ -15,518 +16,516 @@ class BusinessInterviewDetailView extends StatefulWidget {
 
 class _BusinessInterviewDetailViewState
     extends State<BusinessInterviewDetailView> {
-  bool _loading = true;
-  bool _updating = false;
-  String? _updateError;
-  Map<String, dynamic>? _interview;
+  late Map<String, dynamic> _interview;
+  late String _status;
+  bool _found = false;
 
   @override
   void initState() {
     super.initState();
-    _load();
-  }
-
-  void _load() {
-    Future.delayed(const Duration(milliseconds: 600), () {
-      if (!mounted) return;
-      setState(() {
-        _interview = _mockInterview(widget.interviewId);
-        _loading = false;
-      });
-    });
-  }
-
-  Map<String, dynamic> _mockInterview(String id) => {
-        'id': id,
-        'status': 'confirmed',
-        'candidateName': 'Marco Rossi',
-        'candidateRole': 'Senior Chef',
-        'candidateInitials': 'MR',
-        'candidateAvatarHue': 0.55,
-        'jobTitle': 'Head Chef',
-        'interviewType': 'video_call',
-        'scheduledAt': '2026-04-12T10:00:00Z',
-        'timezone': 'CET',
-        'meetingLink': 'https://meet.google.com/abc-defg-hij',
-        'location': null,
-      };
-
-  Color _statusColor(String s) {
-    switch (s) {
-      case 'pending':
-        return AppColors.amber;
-      case 'confirmed':
-        return AppColors.teal;
-      case 'completed':
-        return AppColors.online;
-      case 'cancelled':
-      case 'declined':
-        return AppColors.urgent;
-      default:
-        return AppColors.secondary;
+    final match = MockData.businessInterviews
+        .cast<Map<String, dynamic>>()
+        .where((i) => i['id'] == widget.interviewId);
+    if (match.isNotEmpty) {
+      _interview = Map<String, dynamic>.from(match.first);
+      _status = _interview['status'] as String? ?? '';
+      _found = true;
     }
   }
 
-  IconData _statusIcon(String s) {
-    switch (s) {
-      case 'pending':
-        return Icons.access_time;
-      case 'confirmed':
-        return Icons.check_circle;
-      case 'completed':
-        return Icons.verified;
-      case 'cancelled':
-        return Icons.cancel;
-      case 'declined':
-        return Icons.thumb_down;
-      default:
-        return Icons.help_outline;
-    }
+  Color _avatarColor(String name) {
+    final hue = (name.hashCode % 360).abs().toDouble();
+    return HSLColor.fromAHSL(1.0, hue, 0.55, 0.45).toColor();
   }
 
-  String _typeLabel(String t) {
-    switch (t) {
-      case 'video_call':
-        return 'Video Call';
-      case 'phone':
-        return 'Phone';
-      case 'in_person':
-        return 'In Person';
-      default:
-        return t;
-    }
+  void _confirmInterview() {
+    setState(() => _status = 'Confirmed');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Interview confirmed'),
+        backgroundColor: AppColors.teal,
+      ),
+    );
   }
 
-  IconData _typeIcon(String t) {
-    switch (t) {
-      case 'video_call':
-        return Icons.videocam;
-      case 'phone':
-        return Icons.phone;
-      case 'in_person':
-        return Icons.place;
-      default:
-        return Icons.calendar_today;
-    }
+  void _markCompleted() {
+    setState(() => _status = 'Completed');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Interview marked as completed'),
+        backgroundColor: AppColors.green,
+      ),
+    );
   }
 
-  String _statusSubtitle(String s) {
-    switch (s) {
-      case 'pending':
-        return 'Waiting for candidate response';
-      case 'confirmed':
-        return 'Interview confirmed';
-      case 'completed':
-        return 'Interview completed';
-      default:
-        return '';
-    }
-  }
-
-  Future<void> _updateStatus(String newStatus) async {
-    setState(() {
-      _updating = true;
-      _updateError = null;
-    });
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    setState(() {
-      _interview!['status'] = newStatus;
-      _updating = false;
-    });
+  void _cancelInterview() {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Cancel Interview'),
+        content: const Text('Are you sure you want to cancel this interview?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('No', style: TextStyle(color: AppColors.secondary)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              context.pop();
+            },
+            child: const Text('Yes, Cancel', style: TextStyle(color: AppColors.red)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!_found) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Interview Details',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+          centerTitle: true,
+        ),
+        body: const Center(
+          child: Text('Interview not found', style: TextStyle(color: AppColors.secondary)),
+        ),
+      );
+    }
+
+    final candidateName = _interview['candidateName'] as String? ?? '';
+    final initials = _interview['candidateInitials'] as String? ?? '??';
+    final format = _interview['format'] as String? ?? '';
+    final isVideo = format == 'Video';
+    final isInPerson = format == 'In Person';
+
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: _loading
-            ? const Center(
-                child: CircularProgressIndicator(color: AppColors.teal))
-            : _interview == null
-                ? _notFound()
-                : _content(),
-      ),
-    );
-  }
-
-  Widget _notFound() {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('Interview not found',
-              style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.charcoal)),
-          const SizedBox(height: AppSpacing.md),
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const Text('Go Back',
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.teal)),
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'Interview Details',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: AppColors.charcoal,
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _content() {
-    final iv = _interview!;
-    final status = iv['status'] as String;
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _topBar(),
-          const SizedBox(height: AppSpacing.lg),
-          _statusBanner(iv),
-          const SizedBox(height: AppSpacing.sectionGap),
-          _candidateCard(iv),
-          const SizedBox(height: AppSpacing.sectionGap),
-          _detailsCard(iv),
-          if (status == 'pending' || status == 'confirmed') ...[
-            const SizedBox(height: AppSpacing.sectionGap),
-            _actionsCard(iv),
-          ],
-          if (_updateError != null)
-            Padding(
-              padding: const EdgeInsets.only(
-                  top: AppSpacing.md,
-                  left: AppSpacing.xl,
-                  right: AppSpacing.xl),
-              child: Text(_updateError!,
-                  style:
-                      const TextStyle(fontSize: 12, color: AppColors.urgent)),
-            ),
-          const SizedBox(height: AppSpacing.xxxl),
-        ],
-      ),
-    );
-  }
-
-  Widget _topBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const SizedBox(
-              width: 36,
-              height: 36,
-              child:
-                  Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal),
-            ),
-          ),
-          const Spacer(),
-          const Text('Interview Details',
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.charcoal)),
-          const Spacer(),
-          const SizedBox(width: 36, height: 36),
-        ],
-      ),
-    );
-  }
-
-  Widget _statusBanner(Map<String, dynamic> iv) {
-    final status = iv['status'] as String;
-    final sc = _statusColor(status);
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: BoxDecoration(
-          color: sc.withValues(alpha: 0.06),
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: sc.withValues(alpha: 0.15)),
         ),
-        child: Row(
-          children: [
-            Icon(_statusIcon(status), size: 20, color: sc),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(status[0].toUpperCase() + status.substring(1),
-                      style: TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w500, color: sc)),
-                  const SizedBox(height: 2),
-                  Text(_statusSubtitle(status),
-                      style: const TextStyle(
-                          fontSize: 11, color: AppColors.secondary)),
-                ],
-              ),
-            ),
-          ],
-        ),
+        centerTitle: true,
       ),
-    );
-  }
-
-  Widget _candidateCard(Map<String, dynamic> iv) {
-    final initials = iv['candidateInitials'] ?? '--';
-    final hue = (iv['candidateAvatarHue'] as double?) ?? 0.5;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 4)),
-          ],
-        ),
-        child: Row(
-          children: [
-            _avatar(initials, hue, 48),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(iv['candidateName'] ?? 'Candidate',
-                      style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.charcoal)),
-                  if (iv['candidateRole'] != null) ...[
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(iv['candidateRole'],
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColors.secondary)),
-                  ],
-                  if (iv['jobTitle'] != null) ...[
-                    const SizedBox(height: 2),
-                    Text('for ${iv['jobTitle']}',
-                        style: const TextStyle(
-                            fontSize: 11, color: AppColors.teal)),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _detailsCard(Map<String, dynamic> iv) {
-    final type = iv['interviewType'] as String;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2)),
-          ],
-        ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            _detailRow(Icons.calendar_today, 'Date', 'Sunday, Apr 12, 2026'),
-            const SizedBox(height: AppSpacing.lg),
-            _detailRow(Icons.access_time, 'Time',
-                '10:00 AM ${iv['timezone'] ?? ''}'),
-            const SizedBox(height: AppSpacing.lg),
-            _detailRow(_typeIcon(type), 'Type', _typeLabel(type)),
-            if (type == 'video_call' &&
-                iv['meetingLink'] != null &&
-                (iv['meetingLink'] as String).isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.lg),
-              _linkCta(
-                icon: Icons.videocam,
-                title: 'Join Video Call',
-                subtitle: iv['meetingLink'],
+            const SizedBox(height: 20),
+
+            // Large status badge centered
+            Center(child: StatusBadge(status: _status, large: true)),
+            const SizedBox(height: 20),
+
+            // Candidate info card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [AppColors.cardShadow],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: _avatarColor(candidateName),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      initials,
+                      style: const TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          candidateName,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.charcoal,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          _interview['jobTitle'] as String? ?? '',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Interview details card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [AppColors.cardShadow],
+              ),
+              child: Column(
+                children: [
+                  _infoRow(
+                    Icons.calendar_today,
+                    AppColors.teal,
+                    'Date',
+                    _interview['date'] as String? ?? '',
+                  ),
+                  const Divider(height: 20, color: AppColors.divider),
+                  _infoRow(
+                    Icons.access_time,
+                    AppColors.purple,
+                    'Time',
+                    _interview['time'] as String? ?? '',
+                  ),
+                  const Divider(height: 20, color: AppColors.divider),
+                  _infoRow(
+                    isVideo
+                        ? Icons.videocam
+                        : isInPerson
+                            ? Icons.place
+                            : Icons.phone,
+                    AppColors.amber,
+                    'Format',
+                    format,
+                  ),
+                  if (isVideo && _interview['link'] != null) ...[
+                    const Divider(height: 20, color: AppColors.divider),
+                    Row(
+                      children: [
+                        const Icon(Icons.link, size: 20, color: AppColors.teal),
+                        const SizedBox(width: 12),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Meeting Link',
+                              style: TextStyle(fontSize: 12, color: AppColors.secondary),
+                            ),
+                            const SizedBox(height: 2),
+                            GestureDetector(
+                              onTap: () {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Opening meeting link...'),
+                                    backgroundColor: AppColors.teal,
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'Join meeting',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.teal,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                  if (isInPerson && _interview['location'] != null) ...[
+                    const Divider(height: 20, color: AppColors.divider),
+                    _infoRow(
+                      Icons.place,
+                      AppColors.green,
+                      'Location',
+                      _interview['location'] as String? ?? '',
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Notes card
+            if (_interview['notes'] != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [AppColors.cardShadow],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Notes',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.charcoal,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      _interview['notes'] as String? ?? '',
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: AppColors.secondary,
+                        height: 1.4,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 24),
+
+            // Action buttons based on status
+            if (_status == 'Invited') ...[
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: _confirmInterview,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Confirm Interview',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Reschedule feature coming soon'),
+                        backgroundColor: AppColors.teal,
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.teal,
+                    side: const BorderSide(color: AppColors.teal),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Reschedule',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton(
+                  onPressed: _cancelInterview,
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.red,
+                    ),
+                  ),
+                ),
               ),
             ],
-            if (type == 'in_person' &&
-                iv['location'] != null &&
-                (iv['location'] as String).isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.lg),
-              _linkCta(
-                icon: Icons.map,
-                title: 'Open in Maps',
-                subtitle: iv['location'],
+
+            if (_status == 'Confirmed') ...[
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Notes feature coming soon'),
+                        backgroundColor: AppColors.teal,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Add Notes',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: _markCompleted,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.teal,
+                    side: const BorderSide(color: AppColors.teal),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Mark as Completed',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton(
+                  onPressed: _cancelInterview,
+                  child: const Text(
+                    'Cancel Interview',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.red,
+                    ),
+                  ),
+                ),
               ),
             ],
+
+            if (_status == 'Completed') ...[
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Candidate marked as hired!'),
+                        backgroundColor: AppColors.green,
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.green,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Mark as Hired',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: OutlinedButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Feedback feature coming soon'),
+                        backgroundColor: AppColors.teal,
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.teal,
+                    side: const BorderSide(color: AppColors.teal),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'Send Feedback',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ),
+            ],
+
+            const SizedBox(height: 32),
           ],
         ),
       ),
     );
   }
 
-  Widget _detailRow(IconData icon, String label, String value) {
+  Widget _infoRow(IconData icon, Color iconColor, String label, String value) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 13, color: AppColors.teal),
-        const SizedBox(width: AppSpacing.md),
+        Icon(icon, size: 20, color: iconColor),
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label,
-                  style:
-                      const TextStyle(fontSize: 11, color: AppColors.tertiary)),
+              Text(
+                label,
+                style: const TextStyle(fontSize: 12, color: AppColors.secondary),
+              ),
               const SizedBox(height: 2),
-              Text(value,
-                  style: const TextStyle(
-                      fontSize: 14, color: AppColors.charcoal)),
+              Text(
+                value,
+                style: const TextStyle(fontSize: 14, color: AppColors.charcoal),
+              ),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  Widget _linkCta(
-      {required IconData icon,
-      required String title,
-      required String subtitle}) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        color: AppColors.tealLight,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, size: 14, color: AppColors.teal),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.teal)),
-                const SizedBox(height: 2),
-                Text(subtitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                        fontSize: 11, color: AppColors.tertiary)),
-              ],
-            ),
-          ),
-          const Icon(Icons.open_in_new, size: 11, color: AppColors.teal),
-        ],
-      ),
-    );
-  }
-
-  Widget _actionsCard(Map<String, dynamic> iv) {
-    final status = iv['status'] as String;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: BoxDecoration(
-          color: AppColors.cardBackground,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          boxShadow: [
-            BoxShadow(
-                color: Colors.black.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2)),
-          ],
-        ),
-        child: Column(
-          children: [
-            if (status == 'pending') ...[
-              _actionBtn('Confirm Interview', Icons.check_circle,
-                  AppColors.online, true, () => _updateStatus('confirmed')),
-              const SizedBox(height: AppSpacing.sm),
-              _actionBtn('Cancel Interview', Icons.cancel, AppColors.urgent,
-                  false, () => _updateStatus('cancelled')),
-            ] else if (status == 'confirmed') ...[
-              _actionBtn('Mark as Completed', Icons.verified, AppColors.teal,
-                  true, () => _updateStatus('completed')),
-              const SizedBox(height: AppSpacing.sm),
-              _actionBtn('Cancel Interview', Icons.cancel, AppColors.urgent,
-                  false, () => _updateStatus('cancelled')),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _actionBtn(String label, IconData icon, Color color, bool primary,
-      VoidCallback onTap) {
-    return GestureDetector(
-      onTap: _updating ? null : onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg, vertical: AppSpacing.md),
-        decoration: BoxDecoration(
-          color: primary ? color : color.withValues(alpha: 0.04),
-          borderRadius: BorderRadius.circular(AppRadius.md),
-        ),
-        child: Row(
-          children: [
-            Icon(icon,
-                size: 15, color: primary ? Colors.white : color),
-            const SizedBox(width: AppSpacing.sm),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: primary ? Colors.white : color)),
-            const Spacer(),
-            if (_updating)
-              SizedBox(
-                  width: 14,
-                  height: 14,
-                  child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: primary ? Colors.white : color)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _avatar(String initials, double hue, double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [
-            HSLColor.fromAHSL(1, hue * 360, 0.45, 0.90).toColor(),
-            HSLColor.fromAHSL(1, hue * 360, 0.55, 0.75).toColor(),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: Text(initials,
-          style: TextStyle(
-              fontSize: size * 0.32,
-              fontWeight: FontWeight.w700,
-              color: Colors.white)),
     );
   }
 }

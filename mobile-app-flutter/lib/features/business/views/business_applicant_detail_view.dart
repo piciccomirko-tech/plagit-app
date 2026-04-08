@@ -1,0 +1,515 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/status_badge.dart';
+
+/// Applicant detail / candidate profile — mock-only.
+class BusinessApplicantDetailView extends StatefulWidget {
+  final String applicantId;
+  const BusinessApplicantDetailView({super.key, required this.applicantId});
+
+  @override
+  State<BusinessApplicantDetailView> createState() => _BusinessApplicantDetailViewState();
+}
+
+class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailView> {
+  Map<String, dynamic> get _applicant {
+    final all = MockData.businessApplicants.cast<Map<String, dynamic>>();
+    return all.firstWhere(
+      (a) => a['id'] == widget.applicantId,
+      orElse: () => all.first,
+    );
+  }
+
+  Color _avatarColor(String initials) {
+    final hue = (initials.hashCode % 360).abs().toDouble();
+    return HSLColor.fromAHSL(1, hue, 0.5, 0.45).toColor();
+  }
+
+  void _confirmReject(String name) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reject Applicant'),
+        content: Text('Are you sure you want to reject $name?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$name rejected'), duration: const Duration(seconds: 1)),
+              );
+            },
+            child: const Text('Reject', style: TextStyle(color: AppColors.red)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final a = _applicant;
+    final name = a['name']?.toString() ?? '';
+    final initials = a['initials']?.toString() ?? '';
+    final role = a['role']?.toString() ?? '';
+    final experience = a['experience']?.toString() ?? '';
+    final location = a['location']?.toString() ?? '';
+    final verified = a['verified'] == true;
+    final bio = a['bio']?.toString() ?? '';
+    final languages = (a['languages'] as List?)?.cast<String>() ?? [];
+    final availability = a['availability']?.toString() ?? '';
+    final salaryExpectation = a['salaryExpectation']?.toString() ?? '';
+    final status = a['status']?.toString() ?? '';
+    final date = a['date']?.toString() ?? '';
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          onPressed: () => context.pop(),
+        ),
+        title: Text(
+          name,
+          style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          // ── Large avatar ──
+          Center(
+            child: Stack(
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: _avatarColor(initials),
+                  child: Text(
+                    initials,
+                    style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+                  ),
+                ),
+                if (verified)
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                      child: const Icon(Icons.check_circle, size: 22, color: AppColors.teal),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── Name + role ──
+          Center(
+            child: Text(
+              name,
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.charcoal),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Center(
+            child: Text(role, style: const TextStyle(fontSize: 15, color: AppColors.secondary)),
+          ),
+          const SizedBox(height: 6),
+          Center(
+            child: Text(
+              '$location  \u2022  $experience',
+              style: const TextStyle(fontSize: 13, color: AppColors.secondary),
+            ),
+          ),
+          const SizedBox(height: 20),
+
+          // ── Action buttons ──
+          Row(
+            children: [
+              Expanded(
+                child: _ActionBtn(
+                  icon: Icons.star_outline,
+                  label: 'Shortlist',
+                  color: AppColors.teal,
+                  filled: true,
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('$name shortlisted'), duration: const Duration(seconds: 1)),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ActionBtn(
+                  icon: Icons.chat_bubble_outline,
+                  label: 'Message',
+                  color: AppColors.teal,
+                  filled: false,
+                  onTap: () {},
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ActionBtn(
+                  icon: Icons.calendar_today_outlined,
+                  label: 'Interview',
+                  color: AppColors.purple,
+                  filled: true,
+                  onTap: () => context.push('/business/schedule-interview'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _ActionBtn(
+                  icon: Icons.close,
+                  label: 'Reject',
+                  color: AppColors.red,
+                  filled: false,
+                  textOnly: true,
+                  onTap: () => _confirmReject(name),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+
+          // ── A. About ──
+          _SectionCard(
+            title: 'About',
+            child: Text(bio, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.6)),
+          ),
+          const SizedBox(height: 12),
+
+          // ── B. Experience ──
+          _SectionCard(
+            title: 'Experience',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(experience, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                const SizedBox(height: 10),
+                _ExperienceItem(
+                  title: role,
+                  company: 'Previous Employer',
+                  period: '2023 - Present',
+                ),
+                const Divider(height: 16, color: AppColors.divider),
+                _ExperienceItem(
+                  title: role,
+                  company: 'Earlier Venue',
+                  period: '2021 - 2023',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── C. Skills ──
+          _SectionCard(
+            title: 'Skills',
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [role, 'Customer Service', 'Teamwork', 'Communication']
+                  .map((s) => Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.teal.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Text(s, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.teal)),
+                      ))
+                  .toList(),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── D. Languages ──
+          _SectionCard(
+            title: 'Languages',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: languages
+                  .map((l) => Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.language, size: 16, color: AppColors.teal),
+                            const SizedBox(width: 8),
+                            Text(l, style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── E. Availability ──
+          _SectionCard(
+            title: 'Availability',
+            child: Text(availability, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          ),
+          const SizedBox(height: 12),
+
+          // ── F. Salary Expectation ──
+          _SectionCard(
+            title: 'Salary Expectation',
+            child: Text(salaryExpectation, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.teal)),
+          ),
+          const SizedBox(height: 12),
+
+          // ── CV section ──
+          _SectionCard(
+            title: 'CV',
+            child: SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('CV viewer coming soon'), duration: Duration(seconds: 1)),
+                  );
+                },
+                icon: const Icon(Icons.description_outlined, size: 18),
+                label: const Text('View CV'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── Application context ──
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [AppColors.cardShadow],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+                const SizedBox(height: 10),
+                Text(
+                  'Applied to $role on $date',
+                  style: const TextStyle(fontSize: 13, color: AppColors.secondary),
+                ),
+                const SizedBox(height: 8),
+                StatusBadge(status: status),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+
+          // ── Timeline ──
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [AppColors.cardShadow],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Timeline', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+                const SizedBox(height: 12),
+                _TimelineStep(label: 'Applied', done: true),
+                _TimelineStep(label: 'Viewed', done: true),
+                _TimelineStep(
+                  label: _timelineStatusLabel(status),
+                  done: _isStatusReached(status),
+                  isLast: true,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 40),
+        ],
+      ),
+    );
+  }
+
+  String _timelineStatusLabel(String status) {
+    switch (status) {
+      case 'Shortlisted':
+        return 'Shortlisted';
+      case 'Interview Scheduled':
+        return 'Interview Scheduled';
+      case 'Rejected':
+        return 'Rejected';
+      case 'Under Review':
+        return 'Under Review';
+      default:
+        return 'Pending Review';
+    }
+  }
+
+  bool _isStatusReached(String status) {
+    return status != 'Applied';
+  }
+}
+
+// ──────────────────────────────────────────────
+// Subwidgets
+// ──────────────────────────────────────────────
+
+class _ActionBtn extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final bool filled;
+  final bool textOnly;
+  final VoidCallback onTap;
+
+  const _ActionBtn({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.filled,
+    this.textOnly = false,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: filled ? color : Colors.transparent,
+              shape: BoxShape.circle,
+              border: filled ? null : Border.all(color: textOnly ? Colors.transparent : color),
+            ),
+            child: Icon(
+              icon,
+              size: 22,
+              color: filled ? Colors.white : color,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+  const _SectionCard({required this.title, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [AppColors.cardShadow],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+          const SizedBox(height: 10),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
+class _ExperienceItem extends StatelessWidget {
+  final String title;
+  final String company;
+  final String period;
+  const _ExperienceItem({required this.title, required this.company, required this.period});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        const SizedBox(height: 2),
+        Text(company, style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
+        Text(period, style: const TextStyle(fontSize: 12, color: AppColors.tertiary)),
+      ],
+    );
+  }
+}
+
+class _TimelineStep extends StatelessWidget {
+  final String label;
+  final bool done;
+  final bool isLast;
+  const _TimelineStep({required this.label, required this.done, this.isLast = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: done ? AppColors.green : AppColors.border,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                done ? Icons.check : Icons.circle,
+                size: done ? 16 : 8,
+                color: done ? Colors.white : AppColors.tertiary,
+              ),
+            ),
+            if (!isLast)
+              Container(
+                width: 2,
+                height: 28,
+                color: done ? AppColors.green.withValues(alpha: 0.3) : AppColors.border,
+              ),
+          ],
+        ),
+        const SizedBox(width: 12),
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: done ? AppColors.charcoal : AppColors.tertiary,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
