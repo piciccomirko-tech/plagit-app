@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
@@ -45,7 +46,15 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
       );
       if (mounted) context.go('/candidate/home');
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _loading = false; });
+      if (mounted) {
+        String msg;
+        if (e is ApiError) {
+          msg = e.displayMessage;
+        } else {
+          msg = e.toString().replaceAll('Exception: ', '');
+        }
+        setState(() { _error = msg; _loading = false; });
+      }
     }
   }
 

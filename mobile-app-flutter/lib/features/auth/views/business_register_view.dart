@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/repositories/auth_repository.dart';
 
 class BusinessRegisterView extends StatefulWidget {
@@ -40,7 +41,10 @@ class _BusinessRegisterViewState extends State<BusinessRegisterView> {
       );
       if (mounted) context.go('/business/onboarding/welcome');
     } catch (e) {
-      if (mounted) setState(() { _error = e.toString(); _loading = false; });
+      if (mounted) {
+        final msg = e is ApiError ? e.displayMessage : e.toString().replaceAll('Exception: ', '');
+        setState(() { _error = msg; _loading = false; });
+      }
     }
   }
 

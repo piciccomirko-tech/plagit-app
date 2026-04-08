@@ -15,21 +15,30 @@ class ApiError implements Exception {
   String toString() => message;
 
   /// User-friendly message for UI display.
-  String get displayMessage => switch (type) {
-        ApiErrorType.network =>
-          'No internet connection. Please check your network.',
-        ApiErrorType.timeout => 'Request timed out. Please try again.',
-        ApiErrorType.unauthorized =>
-          'Your session has expired. Please sign in again.',
-        ApiErrorType.forbidden =>
-          "You don't have permission to access this.",
-        ApiErrorType.notFound => 'The requested resource was not found.',
-        ApiErrorType.validation => message,
-        ApiErrorType.server =>
-          'Something went wrong on our end. Please try again later.',
-        ApiErrorType.unknown =>
-          'An unexpected error occurred. Please try again.',
-      };
+  /// Prefers the backend's actual error message when available.
+  String get displayMessage {
+    // If backend sent a real message (not just "HTTP 4xx"), use it
+    final hasBackendMessage = !message.startsWith('HTTP ') && message.isNotEmpty;
+
+    return switch (type) {
+      ApiErrorType.network =>
+        'No internet connection. Please check your network.',
+      ApiErrorType.timeout => 'Request timed out. Please try again.',
+      ApiErrorType.unauthorized => hasBackendMessage
+          ? message
+          : 'Your session has expired. Please sign in again.',
+      ApiErrorType.forbidden => hasBackendMessage
+          ? message
+          : "You don't have permission to access this.",
+      ApiErrorType.notFound =>
+        hasBackendMessage ? message : 'The requested resource was not found.',
+      ApiErrorType.validation => message,
+      ApiErrorType.server =>
+        'Something went wrong on our end. Please try again later.',
+      ApiErrorType.unknown =>
+        'An unexpected error occurred. Please try again.',
+    };
+  }
 
   /// Create from HTTP status code.
   factory ApiError.fromStatusCode(int code, [String? body]) {
