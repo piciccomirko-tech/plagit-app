@@ -2,6 +2,20 @@
 class MockData {
   MockData._();
 
+  // ══════════════════════════════════════════
+  // ── MASTER USER (multi-role) ──
+  // ══════════════════════════════════════════
+  static const masterUser = {
+    'userId': 'user_001',
+    'name': 'Test User',
+    'roles': ['candidate', 'business', 'admin', 'services'],
+    'candidateEmail': 'candidate@test.com',
+    'businessEmail': 'business@test.com',
+    'adminEmail': 'admin@test.com',
+    'servicesEmail': 'services@test.com',
+    'password': 'test123',
+  };
+
   // ── Candidate ──
   static const candidate = {
     'id': '1',

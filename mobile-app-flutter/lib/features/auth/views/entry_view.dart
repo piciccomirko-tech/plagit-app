@@ -93,7 +93,7 @@ class EntryView extends StatelessWidget {
               child: Column(
                 children: [
                   GestureDetector(
-                    onTap: () => context.go('/candidate/login'),
+                    onTap: () => context.go('/sign-in'),
                     child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [

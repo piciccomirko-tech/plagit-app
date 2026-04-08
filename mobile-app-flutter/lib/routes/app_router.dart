@@ -1,8 +1,10 @@
 import 'package:go_router/go_router.dart';
 
-// Auth
+// Auth & Shared
 import 'package:plagit/features/auth/views/splash_view.dart';
 import 'package:plagit/features/auth/views/entry_view.dart';
+import 'package:plagit/features/auth/views/sign_in_view.dart';
+import 'package:plagit/features/auth/views/role_select_view.dart';
 import 'package:plagit/features/auth/views/candidate_login_view.dart';
 import 'package:plagit/features/auth/views/candidate_register_view.dart';
 import 'package:plagit/features/auth/views/forgot_password_view.dart';
@@ -10,6 +12,9 @@ import 'package:plagit/features/auth/views/business_login_view.dart';
 import 'package:plagit/features/auth/views/business_signup_view.dart';
 import 'package:plagit/features/auth/views/admin_login_view.dart';
 import 'package:plagit/features/auth/views/admin_change_password_view.dart';
+import 'package:plagit/features/notifications/views/unified_notifications_view.dart';
+import 'package:plagit/features/messaging/views/unified_messages_view.dart';
+import 'package:plagit/features/profile/views/account_settings_view.dart';
 
 // Onboarding
 import 'package:plagit/features/onboarding/views/onboarding_welcome_view.dart';
@@ -129,6 +134,13 @@ class AppRouter {
 
       // ── Entry: role selection ──
       GoRoute(path: '/entry', builder: (context, state) => const EntryView()),
+
+      // ── Shared screens ──
+      GoRoute(path: '/sign-in', builder: (context, state) => const SignInView()),
+      GoRoute(path: '/auth/role-select', builder: (context, state) => const RoleSelectView()),
+      GoRoute(path: '/notifications', builder: (context, state) => const UnifiedNotificationsView()),
+      GoRoute(path: '/messages', builder: (context, state) => const UnifiedMessagesView()),
+      GoRoute(path: '/account-settings', builder: (context, state) => const AccountSettingsView()),
 
       // ══════════════════════════════════════════
       // ── Auth ──

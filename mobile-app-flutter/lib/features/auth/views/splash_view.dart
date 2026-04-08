@@ -1,11 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/core/token_storage.dart';
+import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
-/// Splash screen — checks for existing session and auto-routes.
+/// Premium splash screen — demo mode always navigates to /entry.
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
@@ -17,50 +15,41 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    _checkSession();
+    _navigate();
   }
 
-  Future<void> _checkSession() async {
-    await Future.delayed(const Duration(milliseconds: 800));
+  Future<void> _navigate() async {
+    await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
-
-    try {
-      final token = await TokenStorage.getAccessToken();
-      final role = await TokenStorage.getUserRole();
-      debugPrint('[SPLASH] token=${token != null ? "YES" : "null"} role=$role');
-
-      if (!mounted) return;
-
-      if (token != null && role != null) {
-        debugPrint('[SPLASH] Restoring session -> /$role/home');
-        context.go('/$role/home');
-        return;
-      }
-    } catch (e) {
-      debugPrint('[SPLASH] Session check error: $e');
-    }
-
-    debugPrint('[SPLASH] No session -> /entry');
-    if (mounted) context.go('/entry');
+    context.go('/entry');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.teal,
+      backgroundColor: AppColors.navy,
       body: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const PlagitLogo(size: 100, borderRadius: 24),
-            const SizedBox(height: 16),
+            const PlagitLogo(size: 120, borderRadius: 28),
+            const SizedBox(height: 20),
             const Text(
-              'Plagit',
+              'PLAGIT',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
-                letterSpacing: 1,
+                letterSpacing: 4,
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColors.teal,
               ),
             ),
           ],
