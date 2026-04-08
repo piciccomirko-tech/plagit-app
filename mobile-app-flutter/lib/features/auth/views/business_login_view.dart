@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
 class BusinessLoginView extends StatefulWidget {
@@ -15,6 +17,22 @@ class _BusinessLoginViewState extends State<BusinessLoginView> {
   final _passwordCtrl = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
+  bool _loading = false;
+  String? _error;
+
+  Future<void> _login() async {
+    if (_emailCtrl.text.trim().isEmpty || _passwordCtrl.text.isEmpty) return;
+    setState(() { _loading = true; _error = null; });
+    try {
+      await context.read<BusinessAuthProvider>().login(
+        _emailCtrl.text.trim(),
+        _passwordCtrl.text,
+      );
+      if (mounted) context.go('/business/home');
+    } catch (e) {
+      if (mounted) setState(() { _error = e.toString(); _loading = false; });
+    }
+  }
 
   @override
   void dispose() {
@@ -163,6 +181,11 @@ class _BusinessLoginViewState extends State<BusinessLoginView> {
                 ),
               ),
 
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(_error!, style: const TextStyle(fontSize: 13, color: AppColors.red)),
+              ],
+
               const SizedBox(height: 24),
 
               // ── Sign In button ──
@@ -170,14 +193,16 @@ class _BusinessLoginViewState extends State<BusinessLoginView> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () => context.go('/business/home'),
+                  onPressed: _loading ? null : _login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.teal,
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                     elevation: 0,
                   ),
-                  child: const Text('Sign In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  child: _loading
+                      ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('Sign In', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 ),
               ),
 

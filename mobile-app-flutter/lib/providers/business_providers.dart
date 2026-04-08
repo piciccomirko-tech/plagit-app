@@ -16,6 +16,7 @@ import 'package:plagit/models/business_subscription.dart';
 import 'package:plagit/models/notification_item.dart';
 import 'package:plagit/models/quick_plug_candidate.dart';
 import 'package:plagit/repositories/business_repository.dart';
+import 'package:plagit/repositories/auth_repository.dart';
 
 // ================================================================
 // Auth — mirrors BusinessAuthService @Observable
@@ -27,39 +28,50 @@ class BusinessAuthProvider extends ChangeNotifier {
   BusinessProfile? _profile;
   BusinessSubscription _subscription = BusinessSubscription.mock();
   final BusinessRepository _repo;
+  final AuthRepository _authRepo;
 
-  BusinessAuthProvider({BusinessRepository? repo})
-      : _repo = repo ?? BusinessRepository();
+  BusinessAuthProvider({BusinessRepository? repo, AuthRepository? authRepo})
+      : _repo = repo ?? BusinessRepository(),
+        _authRepo = authRepo ?? AuthRepository();
 
   bool get isAuthenticated => _isAuthenticated;
   bool get isRestoring => _isRestoring;
   BusinessProfile? get profile => _profile;
   BusinessSubscription get subscription => _subscription;
 
-  /// Attempt login with email/password. Throws on invalid credentials.
+  /// Login via AuthRepository. Persists token, loads profile.
   Future<void> login(String email, String password) async {
-    if (email == 'business@test.com' && password == 'test123') {
-      _profile = await _repo.fetchProfile();
-      _subscription = await _repo.fetchSubscription();
-      _isAuthenticated = true;
-      notifyListeners();
-    } else {
-      throw Exception('Invalid credentials');
+    final result = await _authRepo.login(email: email, password: password);
+    if (result.role != 'business') {
+      throw Exception('Not a business account');
     }
+    _profile = await _repo.fetchProfile();
+    _subscription = await _repo.fetchSubscription();
+    _isAuthenticated = true;
+    notifyListeners();
   }
 
-  /// Check for a stored session token and restore if valid.
+  /// Restore session from stored token.
   Future<void> restoreSession() async {
     _isRestoring = true;
     notifyListeners();
-    await Future.delayed(const Duration(seconds: 1));
-    // TODO: check stored token via TokenStorage
+    try {
+      final result = await _authRepo.restoreSession();
+      if (result != null && result.role == 'business') {
+        _profile = await _repo.fetchProfile();
+        _subscription = await _repo.fetchSubscription();
+        _isAuthenticated = true;
+      }
+    } catch (_) {
+      // No valid session — stay logged out
+    }
     _isRestoring = false;
     notifyListeners();
   }
 
-  /// Clear auth state and return to logged-out experience.
-  void logout() {
+  /// Clear auth state and tokens.
+  Future<void> logout() async {
+    await _authRepo.logout();
     _isAuthenticated = false;
     _profile = null;
     _subscription = BusinessSubscription.mock();

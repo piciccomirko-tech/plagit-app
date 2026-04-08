@@ -6,6 +6,7 @@ import 'package:plagit/config/env_config.dart';
 import 'package:plagit/routes/app_router.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/repositories/auth_repository.dart';
 import 'package:plagit/repositories/candidate_repository.dart';
 import 'package:plagit/repositories/business_repository.dart';
 
@@ -20,13 +21,14 @@ class PlagitApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authRepo = AuthRepository();
     final candidateRepo = CandidateRepository();
     final businessRepo = BusinessRepository();
     return MultiProvider(
       providers: [
         // -- Candidate providers --
         ChangeNotifierProvider(
-            create: (_) => CandidateAuthProvider(repo: candidateRepo)),
+            create: (_) => CandidateAuthProvider(repo: candidateRepo, authRepo: authRepo)),
         ChangeNotifierProvider(
             create: (_) => CandidateHomeProvider(repo: candidateRepo)),
         ChangeNotifierProvider(
@@ -41,7 +43,7 @@ class PlagitApp extends StatelessWidget {
             create: (_) => CandidateNotificationsProvider(repo: candidateRepo)),
         // -- Business providers --
         ChangeNotifierProvider(
-            create: (_) => BusinessAuthProvider(repo: businessRepo)),
+            create: (_) => BusinessAuthProvider(repo: businessRepo, authRepo: authRepo)),
         ChangeNotifierProvider(
             create: (_) => BusinessHomeProvider(repo: businessRepo)),
         ChangeNotifierProvider(

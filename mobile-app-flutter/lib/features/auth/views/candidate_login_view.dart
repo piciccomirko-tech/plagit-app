@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
 /// Candidate login screen — email/password sign-in with mock auth.
@@ -18,6 +20,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
   bool _passwordVisible = false;
   bool _rememberMe = false;
   bool _loading = false;
+  String? _error;
 
   @override
   void initState() {
@@ -33,14 +36,16 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
 
   Future<void> _login() async {
     if (!_canSubmit) return;
-    setState(() => _loading = true);
+    setState(() { _loading = true; _error = null; });
 
-    // Mock auth delay
-    await Future.delayed(const Duration(milliseconds: 600));
-
-    if (mounted) {
-      setState(() => _loading = false);
-      context.go('/candidate/home');
+    try {
+      await context.read<CandidateAuthProvider>().login(
+        _emailCtrl.text.trim(),
+        _passwordCtrl.text,
+      );
+      if (mounted) context.go('/candidate/home');
+    } catch (e) {
+      if (mounted) setState(() { _error = e.toString(); _loading = false; });
     }
   }
 
@@ -155,6 +160,11 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                   ],
                 ),
               ),
+
+              if (_error != null) ...[
+                const SizedBox(height: 12),
+                Text(_error!, style: const TextStyle(fontSize: 13, color: Color(0xFFEF4444))),
+              ],
 
               const SizedBox(height: 20),
 

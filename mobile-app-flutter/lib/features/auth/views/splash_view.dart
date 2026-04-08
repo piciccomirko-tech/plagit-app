@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/repositories/auth_repository.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 
-/// Premium splash screen — demo mode always navigates to /entry.
+/// Splash screen — attempts session restore, then routes accordingly.
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
@@ -21,7 +22,31 @@ class _SplashViewState extends State<SplashView> {
   Future<void> _navigate() async {
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
-    context.go('/entry');
+
+    try {
+      final authRepo = AuthRepository();
+      final session = await authRepo.restoreSession();
+      if (!mounted) return;
+
+      if (session != null) {
+        debugPrint('[Splash] Restored session → ${session.role}');
+        switch (session.role) {
+          case 'candidate':
+            context.go('/candidate/home');
+          case 'business':
+            context.go('/business/home');
+          case 'admin':
+            context.go('/admin/dashboard');
+          default:
+            context.go('/entry');
+        }
+        return;
+      }
+    } catch (e) {
+      debugPrint('[Splash] Session restore failed: $e');
+    }
+
+    if (mounted) context.go('/entry');
   }
 
   @override
