@@ -78,7 +78,12 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                     _bannerCard(Icons.verified_outlined, 'Your Matches', 'Jobs matching your role and preferences', _C.teal),
                     _premiumCard(context),
                     if (jobs.isNotEmpty) _jobsNearYou(jobs, context),
+                    if (jobs.isNotEmpty) _featuredJobs(jobs, context),
                     _applicationsCard(summary),
+                    _nextInterviewCard(),
+                    _messagesCard(),
+                    _profileStrengthCard(),
+                    _communityCard(),
                     const SizedBox(height: 8),
                   ],
                 ),
@@ -268,8 +273,38 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
     ]);
   }
 
-  // ── Your Applications ──
+  // ── Featured Jobs (large horizontal scroll) ──
+  Widget _featuredJobs(List<Map<String, dynamic>> jobs, BuildContext ctx) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+        child: Row(children: [
+          const Text('Featured Jobs', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: _C.charcoal)),
+          const Spacer(),
+          GestureDetector(onTap: () {}, child: const Row(children: [
+            Text('See All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _C.teal)),
+            SizedBox(width: 3),
+            Icon(Icons.chevron_right, size: 16, color: _C.teal),
+          ])),
+        ]),
+      ),
+      const SizedBox(height: 14),
+      SizedBox(
+        height: 195,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          itemCount: jobs.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (_, i) => _LargeJobCard(job: jobs[i]),
+        ),
+      ),
+    ]);
+  }
+
+  // ── My Applications (compact) ──
   Widget _applicationsCard(Map<String, dynamic>? summary) {
+    final total = (summary?['applied'] ?? 3) + (summary?['under_review'] ?? 1) + (summary?['interview'] ?? 1) + (summary?['offer'] ?? 0);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
       child: Container(
@@ -283,39 +318,210 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
               child: const Icon(Icons.description_outlined, size: 17, color: _C.teal),
             ),
             const SizedBox(width: 12),
-            const Text('Your Applications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal)),
+            const Expanded(child: Text('My Applications', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal))),
+            Text('$total total', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: _C.secondary)),
           ]),
           const SizedBox(height: 16),
-          Row(children: [
-            _statCell(summary?['applied'] ?? 3, 'Applied', _C.secondary),
-            const SizedBox(width: 8),
-            _statCell(summary?['under_review'] ?? 1, 'In Review', _C.amber),
-            const SizedBox(width: 8),
-            _statCell(summary?['interview'] ?? 1, 'Interview', _C.teal),
-            const SizedBox(width: 8),
-            _statCell(summary?['offer'] ?? 0, 'Offers', _C.green),
-          ]),
+          _appRow('Under Review', summary?['under_review'] ?? 1, _C.amber),
+          const SizedBox(height: 10),
+          _appRow('Interview', summary?['interview'] ?? 1, _C.teal),
+          const SizedBox(height: 10),
+          _appRow('Offer', summary?['offer'] ?? 0, _C.green),
+          const SizedBox(height: 14),
+          GestureDetector(
+            onTap: () {},
+            child: const Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Text('View All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _C.teal)),
+              SizedBox(width: 3),
+              Icon(Icons.chevron_right, size: 16, color: _C.teal),
+            ]),
+          ),
         ]),
       ),
     );
   }
 
-  Widget _statCell(dynamic count, String label, Color color) {
-    return Expanded(child: Container(
-      padding: const EdgeInsets.symmetric(vertical: 14),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.06),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(children: [
-        Text('$count', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: color)),
-        const SizedBox(height: 3),
-        Text(label, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: _C.secondary)),
-      ]),
-    ));
+  Widget _appRow(String label, dynamic count, Color color) {
+    return Row(children: [
+      Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+      const SizedBox(width: 10),
+      Expanded(child: Text(label, style: const TextStyle(fontSize: 14, color: _C.charcoal))),
+      Text('$count', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color)),
+    ]);
   }
 
-  // ── Unlock Premium (bottom) ──
+  // ── Next Interview ──
+  Widget _nextInterviewCard() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: _cardDeco(),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Container(
+              width: 34, height: 34,
+              decoration: BoxDecoration(color: _C.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(10)),
+              child: const Icon(Icons.calendar_today, size: 16, color: _C.teal),
+            ),
+            const SizedBox(width: 12),
+            const Text('Next Interview', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal)),
+          ]),
+          const SizedBox(height: 14),
+          const Text('Waiter · Sat, Apr 11 · 4:53 pm · Video', style: TextStyle(fontSize: 13, color: _C.secondary, height: 1.4)),
+          const SizedBox(height: 14),
+          SizedBox(
+            width: double.infinity, height: 42,
+            child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                backgroundColor: _C.teal, foregroundColor: Colors.white, elevation: 0,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              child: const Text('View Interviews'),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  // ── Messages ──
+  Widget _messagesCard() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: GestureDetector(
+        onTap: () {},
+        child: Container(
+          padding: const EdgeInsets.all(18),
+          decoration: _cardDeco(),
+          child: Row(children: [
+            Container(
+              width: 34, height: 34,
+              decoration: BoxDecoration(color: _C.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(10)),
+              child: const Icon(Icons.chat_bubble_outline, size: 16, color: _C.teal),
+            ),
+            const SizedBox(width: 14),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                const Text('Messages', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal)),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(color: _C.teal, borderRadius: BorderRadius.circular(100)),
+                  child: const Text('2', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Colors.white)),
+                ),
+              ]),
+              const SizedBox(height: 3),
+              const Text('2 unread messages · Tap to view all conversations', style: TextStyle(fontSize: 12, color: _C.secondary)),
+            ])),
+            const Icon(Icons.chevron_right, size: 18, color: _C.tertiary),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  // ── Profile Strength ──
+  Widget _profileStrengthCard() {
+    const strength = 65;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: _cardDeco(),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Container(
+              width: 34, height: 34,
+              decoration: BoxDecoration(color: _C.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(10)),
+              child: const Icon(Icons.shield_outlined, size: 17, color: _C.teal),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(child: Text('Profile Strength', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal))),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+              decoration: BoxDecoration(color: _C.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(100)),
+              child: const Text('$strength%', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: _C.teal)),
+            ),
+          ]),
+          const SizedBox(height: 14),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(4),
+            child: const LinearProgressIndicator(value: strength / 100, backgroundColor: Color(0xFFEEEEF0), color: _C.teal, minHeight: 5),
+          ),
+          const SizedBox(height: 16),
+          _checkItem('Photo uploaded', true),
+          const SizedBox(height: 8),
+          _checkItem('Location set', true),
+          const SizedBox(height: 8),
+          _checkItem('Role selected', true),
+          const SizedBox(height: 8),
+          _checkItem('Experience added', true),
+          const SizedBox(height: 8),
+          _checkItem('Languages added', true),
+          const SizedBox(height: 8),
+          _checkItem('CV uploaded', false),
+          const SizedBox(height: 8),
+          _checkItem('Phone verified', false),
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity, height: 42,
+            child: OutlinedButton(
+              onPressed: () {},
+              style: OutlinedButton.styleFrom(
+                foregroundColor: _C.teal,
+                side: const BorderSide(color: _C.teal, width: 1.5),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+              ),
+              child: const Text('Complete Profile'),
+            ),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _checkItem(String label, bool done) {
+    return Row(children: [
+      Icon(done ? Icons.check_circle : Icons.radio_button_unchecked, size: 18, color: done ? _C.green : _C.tertiary),
+      const SizedBox(width: 10),
+      Text(label, style: TextStyle(fontSize: 13, color: done ? _C.charcoal : _C.tertiary, decoration: done ? null : null)),
+    ]);
+  }
+
+  // ── From the Community ──
+  Widget _communityCard() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: _cardDeco(),
+        child: Column(children: [
+          Row(children: [
+            Container(
+              width: 34, height: 34,
+              decoration: BoxDecoration(color: _C.teal.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(10)),
+              child: const Icon(Icons.people_outline, size: 17, color: _C.teal),
+            ),
+            const SizedBox(width: 12),
+            const Text('From the Community', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: _C.charcoal)),
+          ]),
+          const SizedBox(height: 20),
+          Icon(Icons.forum_outlined, size: 32, color: _C.tertiary.withValues(alpha: 0.5)),
+          const SizedBox(height: 10),
+          const Text('No community posts yet', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: _C.secondary)),
+          const SizedBox(height: 4),
+          const Text('Be the first to share something', style: TextStyle(fontSize: 12, color: _C.tertiary)),
+          const SizedBox(height: 4),
+        ]),
+      ),
+    );
+  }
+
+  // ── Unlock Premium ──
   Widget _premiumCard(BuildContext ctx) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
@@ -405,6 +611,71 @@ class _JobCard extends StatelessWidget {
             child: const Text('Featured', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: _C.amber)),
           ),
       ]),
+    );
+  }
+}
+
+// ── Large Featured Job Card ──
+class _LargeJobCard extends StatelessWidget {
+  final Map<String, dynamic> job;
+  const _LargeJobCard({required this.job});
+
+  @override
+  Widget build(BuildContext context) {
+    final title = job['title'] ?? '';
+    final biz = job['businessName'] ?? job['business_name'] ?? '';
+    final loc = job['location'] ?? '';
+    final salary = job['salary'] ?? '';
+    final type = job['employmentType'] ?? job['employment_type'] ?? '';
+    final featured = job['isFeatured'] == true;
+    final hue = ((biz.hashCode % 360).abs() / 360.0 * 360).clamp(0.0, 360.0);
+
+    return Container(
+      width: 220,
+      padding: const EdgeInsets.all(18),
+      decoration: _cardDeco(),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        // Company avatar + name + location
+        Row(children: [
+          Container(
+            width: 36, height: 36,
+            decoration: BoxDecoration(
+              color: HSLColor.fromAHSL(1, hue, 0.30, 0.88).toColor(),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(child: Text(
+              biz.isNotEmpty ? biz[0].toUpperCase() : '?',
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: HSLColor.fromAHSL(1, hue, 0.50, 0.45).toColor()),
+            )),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(biz, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: _C.charcoal), maxLines: 1, overflow: TextOverflow.ellipsis),
+            if (loc.isNotEmpty) Text(loc, style: const TextStyle(fontSize: 10, color: _C.tertiary), maxLines: 1, overflow: TextOverflow.ellipsis),
+          ])),
+        ]),
+        const SizedBox(height: 14),
+        // Job title
+        Text(title, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: _C.charcoal), maxLines: 2, overflow: TextOverflow.ellipsis),
+        const SizedBox(height: 8),
+        // Salary
+        if (salary.isNotEmpty)
+          Text(salary, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _C.teal)),
+        const Spacer(),
+        // Badges row
+        Wrap(spacing: 6, runSpacing: 4, children: [
+          if (type.isNotEmpty) _badge(type, _C.secondary),
+          if (featured) _badge('Featured', _C.amber),
+        ]),
+      ]),
+    );
+  }
+
+  Widget _badge(String text, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(100)),
+      child: Text(text, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: color)),
     );
   }
 }
