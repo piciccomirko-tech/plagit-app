@@ -57,6 +57,24 @@ class _CommunityViewState extends State<CommunityView> {
   int _unreadCount = 3;
   final Set<String> _likedPosts = {};
   final Set<String> _savedPosts = {};
+  final Set<String> _followedUsers = {};
+
+  List<_MockPost> get _filteredPosts {
+    var posts = List<_MockPost>.from(_posts);
+    // Tab filter
+    if (_selectedTab == 'Following') {
+      posts = posts.where((p) => _followedUsers.contains(p.authorName)).toList();
+    } else if (_selectedTab == 'Nearby') {
+      posts = posts.where((p) => p.location == 'London' || p.location == 'Milan').toList();
+    } else if (_selectedTab == 'Saved') {
+      posts = posts.where((p) => _savedPosts.contains(p.id)).toList();
+    }
+    // Role filter
+    if (_selectedRole != 'All') {
+      posts = posts.where((p) => p.roleCategory?.toLowerCase() == _selectedRole.toLowerCase()).toList();
+    }
+    return posts;
+  }
 
   static const _tabs = ['For You', 'Following', 'Nearby', 'Saved'];
   static const _roles = ['All', 'Chef', 'Waiter', 'Bartender', 'Manager', 'Reception', 'Kitchen Porter'];
@@ -200,7 +218,7 @@ class _CommunityViewState extends State<CommunityView> {
                   )
                 else if (_isLoading)
                   const Expanded(child: Center(child: CircularProgressIndicator(color: AppColors.teal)))
-                else if (_posts.isEmpty)
+                else if (_filteredPosts.isEmpty)
                   Expanded(child: _emptyState())
                 else
                   Expanded(
@@ -211,10 +229,10 @@ class _CommunityViewState extends State<CommunityView> {
                       },
                       child: ListView.builder(
                         padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.xxxl),
-                        itemCount: _posts.length,
+                        itemCount: _filteredPosts.length,
                         itemBuilder: (_, i) => Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                          child: _postCard(_posts[i]),
+                          child: _postCard(_filteredPosts[i]),
                         ),
                       ),
                     ),
@@ -242,9 +260,7 @@ class _CommunityViewState extends State<CommunityView> {
           const Spacer(),
           // Bell icon with badge
           GestureDetector(
-            onTap: () {
-              // Navigate to FeedActivityView
-            },
+            onTap: () => context.push('/candidate/notifications'),
             child: SizedBox(
               width: 36,
               height: 36,
@@ -275,9 +291,7 @@ class _CommunityViewState extends State<CommunityView> {
           ),
           const SizedBox(width: AppSpacing.sm),
           GestureDetector(
-            onTap: () {
-              // Create post
-            },
+            onTap: _showCreatePost,
             child: const Icon(Icons.add_circle, size: 26, color: AppColors.teal),
           ),
         ],
@@ -414,14 +428,34 @@ class _CommunityViewState extends State<CommunityView> {
                     children: [
                       Text(post.timeAgo, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
                       const SizedBox(width: AppSpacing.sm),
-                      const Icon(Icons.more_horiz, size: 16, color: AppColors.tertiary),
+                      GestureDetector(
+                        onTap: () => _showActionMenu(post),
+                        child: const Icon(Icons.more_horiz, size: 16, color: AppColors.tertiary),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
-                    decoration: BoxDecoration(color: AppColors.tealLight, borderRadius: BorderRadius.circular(AppRadius.full)),
-                    child: const Text('Follow', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.teal)),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        if (_followedUsers.contains(post.authorName)) {
+                          _followedUsers.remove(post.authorName);
+                        } else {
+                          _followedUsers.add(post.authorName);
+                        }
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: _followedUsers.contains(post.authorName) ? AppColors.teal : AppColors.tealLight,
+                        borderRadius: BorderRadius.circular(AppRadius.full),
+                      ),
+                      child: Text(
+                        _followedUsers.contains(post.authorName) ? 'Following' : 'Follow',
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: _followedUsers.contains(post.authorName) ? Colors.white : AppColors.teal),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -495,9 +529,9 @@ class _CommunityViewState extends State<CommunityView> {
                 },
               ),
               const SizedBox(width: AppSpacing.xl),
-              _actionBtn(icon: Icons.chat_bubble_outline, label: post.commentCount > 0 ? '${post.commentCount}' : 'Comment', color: AppColors.tertiary, onTap: () {}),
+              _actionBtn(icon: Icons.chat_bubble_outline, label: post.commentCount > 0 ? '${post.commentCount}' : 'Comment', color: AppColors.tertiary, onTap: () => _showComments(post)),
               const SizedBox(width: AppSpacing.xl),
-              _actionBtn(icon: Icons.ios_share, label: 'Share', color: AppColors.tertiary, onTap: () {}),
+              _actionBtn(icon: Icons.ios_share, label: 'Share', color: AppColors.tertiary, onTap: () => _showShare(post)),
               const SizedBox(width: AppSpacing.xl),
               _actionBtn(
                 icon: saved ? Icons.bookmark : Icons.bookmark_border,
@@ -529,18 +563,203 @@ class _CommunityViewState extends State<CommunityView> {
           // View comments link
           if (post.commentCount > 0) ...[
             const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                const Icon(Icons.chat_bubble, size: 12, color: AppColors.teal),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  post.commentCount == 1 ? 'View 1 comment' : 'View all ${post.commentCount} comments',
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal),
-                ),
-              ],
+            GestureDetector(
+              onTap: () => _showComments(post),
+              child: Row(
+                children: [
+                  const Icon(Icons.chat_bubble, size: 12, color: AppColors.teal),
+                  const SizedBox(width: AppSpacing.xs),
+                  Text(
+                    post.commentCount == 1 ? 'View 1 comment' : 'View all ${post.commentCount} comments',
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal),
+                  ),
+                ],
+              ),
             ),
           ],
         ],
+      ),
+    );
+  }
+
+  // ── Action handlers ──
+
+  void _showComments(_MockPost post) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => DraggableScrollableSheet(
+        initialChildSize: 0.7,
+        maxChildSize: 0.9,
+        minChildSize: 0.4,
+        expand: false,
+        builder: (ctx, scroll) => Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            children: [
+              Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2))),
+              const SizedBox(height: 16),
+              Text('Comments (${post.commentCount})', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+              const SizedBox(height: 16),
+              Expanded(
+                child: post.commentCount > 0
+                    ? ListView(controller: scroll, children: [
+                        _mockComment('Great post!', 'Alex C.', '2h ago'),
+                        _mockComment('Very helpful, thanks for sharing.', 'Maria S.', '1h ago'),
+                        if (post.commentCount > 2) _mockComment('Agreed, hospitality is tough but rewarding!', 'James W.', '30m ago'),
+                      ])
+                    : const Center(child: Text('No comments yet. Be the first!', style: TextStyle(fontSize: 14, color: AppColors.secondary))),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14),
+                      decoration: BoxDecoration(color: const Color(0xFFF5F5F7), borderRadius: BorderRadius.circular(12)),
+                      child: const TextField(
+                        decoration: InputDecoration(hintText: 'Add a comment...', hintStyle: TextStyle(fontSize: 14, color: AppColors.tertiary), border: InputBorder.none),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    width: 36, height: 36,
+                    decoration: const BoxDecoration(color: AppColors.teal, shape: BoxShape.circle),
+                    child: const Icon(Icons.send, size: 16, color: Colors.white),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _mockComment(String text, String author, String time) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 32, height: 32,
+            decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: Center(child: Text(author[0], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal))),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(children: [
+                  Text(author, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+                  const SizedBox(width: 8),
+                  Text(time, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
+                ]),
+                const SizedBox(height: 2),
+                Text(text, style: const TextStyle(fontSize: 14, color: AppColors.charcoal, height: 1.3)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showShare(_MockPost post) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Shared: "${post.body.substring(0, post.body.length > 40 ? 40 : post.body.length)}..."'), behavior: SnackBarBehavior.floating),
+    );
+  }
+
+  void _showActionMenu(_MockPost post) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 12), decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2))),
+              _menuItem(Icons.bookmark_outline, _savedPosts.contains(post.id) ? 'Unsave' : 'Save Post', () {
+                setState(() { _savedPosts.contains(post.id) ? _savedPosts.remove(post.id) : _savedPosts.add(post.id); });
+                Navigator.pop(context);
+              }),
+              _menuItem(Icons.share_outlined, 'Share', () { Navigator.pop(context); _showShare(post); }),
+              _menuItem(Icons.link, 'Copy Link', () { Navigator.pop(context); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link copied'), behavior: SnackBarBehavior.floating)); }),
+              _menuItem(Icons.visibility_off_outlined, 'Not Interested', () { Navigator.pop(context); setState(() {}); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post hidden'), behavior: SnackBarBehavior.floating)); }),
+              _menuItem(Icons.flag_outlined, 'Report', () { Navigator.pop(context); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report submitted'), behavior: SnackBarBehavior.floating)); }),
+              const SizedBox(height: 8),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _menuItem(IconData icon, String label, VoidCallback onTap) {
+    return ListTile(
+      dense: true,
+      leading: Icon(icon, size: 20, color: AppColors.charcoal),
+      title: Text(label, style: const TextStyle(fontSize: 14, color: AppColors.charcoal)),
+      onTap: onTap,
+    );
+  }
+
+  void _showCreatePost() {
+    final controller = TextEditingController();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (_) => Padding(
+        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 16),
+            const Text('Create Post', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              maxLines: 5,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: 'Share something with the community...',
+                hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
+                filled: true,
+                fillColor: const Color(0xFFF5F5F7),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+              ),
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  if (controller.text.trim().isNotEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post shared!'), behavior: SnackBarBehavior.floating, backgroundColor: AppColors.teal));
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(gradient: const LinearGradient(colors: [AppColors.teal, AppColors.tealDark]), borderRadius: BorderRadius.circular(12)),
+                  child: const Center(child: Text('Post', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white))),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -588,7 +807,7 @@ class _CommunityViewState extends State<CommunityView> {
             ),
             const SizedBox(height: AppSpacing.lg),
             GestureDetector(
-              onTap: () {},
+              onTap: _showCreatePost,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.md),
                 decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(AppRadius.full)),
