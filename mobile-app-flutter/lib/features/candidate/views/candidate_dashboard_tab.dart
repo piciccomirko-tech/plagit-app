@@ -71,7 +71,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                 child: ListView(
                   padding: const EdgeInsets.only(bottom: 24),
                   children: [
-                    _header(first, loc),
+                    _header(first, loc, name ?? ''),
                     _searchBar(),
                     _bannerCard(Icons.map_outlined, 'Explore Nearby Jobs', 'Discover opportunities close to you', _C.teal),
                     _nextStepCard(),
@@ -88,7 +88,13 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
   }
 
   // ── Header ──
-  Widget _header(String name, String location) {
+  Widget _header(String name, String location, String fullName) {
+    // Initials: first letter of first name + first letter of last name
+    final parts = fullName.trim().split(' ');
+    final initials = parts.length >= 2
+        ? '${parts.first[0]}${parts.last[0]}'.toUpperCase()
+        : (name.isNotEmpty ? name[0].toUpperCase() : '?');
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 4),
       child: Row(children: [
@@ -100,7 +106,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
             borderRadius: BorderRadius.circular(14),
           ),
           child: Center(child: Text(
-            name.length >= 2 ? '${name[0]}${name.split(' ').last[0]}'.toUpperCase() : name.isNotEmpty ? name[0].toUpperCase() : '?',
+            initials,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700, color: Colors.white, letterSpacing: 0.5),
           )),
         ),
@@ -215,8 +221,8 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
         child: Row(children: [
           Container(
             width: 44, height: 44,
-            decoration: BoxDecoration(color: color.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(12)),
-            child: Icon(icon, size: 22, color: color),
+            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
+            child: Icon(icon, size: 22, color: Colors.white),
           ),
           const SizedBox(width: 14),
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -317,14 +323,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
         onTap: () {},
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [_C.gold.withValues(alpha: 0.12), _C.amber.withValues(alpha: 0.08)],
-              begin: Alignment.topLeft, end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: _C.gold.withValues(alpha: 0.18)),
-          ),
+          decoration: _cardDeco(),
           child: Row(children: [
             Container(
               width: 40, height: 40,
