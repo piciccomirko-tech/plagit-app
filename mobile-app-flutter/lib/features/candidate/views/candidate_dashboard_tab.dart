@@ -694,33 +694,38 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
             // ── 11. FROM THE COMMUNITY ──
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: AppColors.cardDecoration,
-                child: const Column(
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.forum_outlined, color: AppColors.teal, size: 20),
-                        SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('From the Community',
-                                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-                              SizedBox(height: 2),
-                              Text('Tips, stories, and advice from hospitality professionals',
-                                  style: TextStyle(fontSize: 12, color: AppColors.secondary)),
-                            ],
-                          ),
+              child: GestureDetector(
+                onTap: () => context.push('/feed'),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: AppColors.cardDecoration,
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 40,
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: AppColors.teal,
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                    Text('Coming soon',
-                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.tertiary)),
-                  ],
+                        child: const Icon(Icons.forum, color: Colors.white, size: 20),
+                      ),
+                      const SizedBox(width: 14),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Community Feed',
+                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+                            SizedBox(height: 2),
+                            Text('Tips, stories, and advice from hospitality professionals',
+                                style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right, color: AppColors.tertiary),
+                    ],
+                  ),
                 ),
               ),
             ),
