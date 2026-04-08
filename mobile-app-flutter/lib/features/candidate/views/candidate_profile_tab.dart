@@ -13,18 +13,26 @@ class CandidateProfileTab extends StatefulWidget {
 }
 
 class _CandidateProfileTabState extends State<CandidateProfileTab> {
-  bool _loadAttempted = false;
+  bool _loading = false;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final auth = context.read<CandidateAuthProvider>();
-      if (auth.profile == null && !_loadAttempted) {
-        _loadAttempted = true;
-        auth.refreshProfile();
-      }
+      if (auth.profile == null) _loadProfile();
     });
+  }
+
+  Future<void> _loadProfile() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      await context.read<CandidateAuthProvider>().refreshProfile();
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    }
+    if (mounted) setState(() => _loading = false);
   }
 
   @override
@@ -32,25 +40,24 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
     final authProvider = context.watch<CandidateAuthProvider>();
     final profile = authProvider.profile;
 
-    // Profile not loaded yet — show spinner briefly then fallback
     if (profile == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
         body: Center(
-          child: _loadAttempted
-              ? Column(
+          child: _loading
+              ? const CircularProgressIndicator(color: AppColors.teal)
+              : Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.person_outline, size: 48, color: AppColors.tertiary),
+                    Icon(Icons.person_outline, size: 48, color: _error != null ? AppColors.red : AppColors.tertiary),
                     const SizedBox(height: 12),
-                    const Text('Unable to load profile', style: TextStyle(fontSize: 15, color: AppColors.secondary)),
+                    Text(
+                      _error != null ? 'Could not load profile' : 'Profile not available',
+                      style: const TextStyle(fontSize: 15, color: AppColors.secondary),
+                    ),
                     const SizedBox(height: 16),
                     ElevatedButton(
-                      onPressed: () {
-                        setState(() => _loadAttempted = false);
-                        context.read<CandidateAuthProvider>().refreshProfile();
-                        setState(() => _loadAttempted = true);
-                      },
+                      onPressed: _loadProfile,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.teal,
                         foregroundColor: Colors.white,
@@ -59,8 +66,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                       child: const Text('Retry'),
                     ),
                   ],
-                )
-              : const CircularProgressIndicator(color: AppColors.teal),
+                ),
         ),
       );
     }
@@ -167,10 +173,15 @@ class _CandidateProfileContent extends StatelessWidget {
                     style: const TextStyle(fontSize: 14, color: AppColors.secondary),
                   ),
                   const SizedBox(height: 2),
-                  Text(
-                    '\u{1F4CD} ${profile.location ?? 'London, UK'}',
-                    style: const TextStyle(fontSize: 12, color: AppColors.secondary),
-                  ),
+                  if (profile.location != null && profile.location!.trim().isNotEmpty)
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.place, size: 14, color: AppColors.teal),
+                        const SizedBox(width: 2),
+                        Text(profile.location!.trim(), style: const TextStyle(fontSize: 12, color: AppColors.teal)),
+                      ],
+                    ),
                   const SizedBox(height: 16),
 
                   // Profile completion
@@ -258,17 +269,19 @@ class _CandidateProfileContent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Text(
-                      '${profile.experience ?? ''} experience',
-                      style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                  if (profile.experience != null && profile.experience!.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Text(
+                        '${profile.experience} years experience',
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                      ),
+                    )
+                  else
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Text('No experience added yet', style: TextStyle(fontSize: 14, color: AppColors.tertiary)),
                     ),
-                  ),
-                  const Divider(height: 1, color: AppColors.divider),
-                  _ExperienceRow(role: 'Waiter at The Savoy', period: 'Jan 2023 - Present'),
-                  const Divider(height: 1, color: AppColors.divider),
-                  _ExperienceRow(role: 'Runner at Sketch', period: 'Jun 2021 - Dec 2022'),
                 ],
               ),
             ),
@@ -277,13 +290,26 @@ class _CandidateProfileContent extends StatelessWidget {
             _SectionCard(
               title: 'Languages',
               onEdit: () => context.push('/candidate/profile/edit'),
-              child: Column(
-                children: [
-                  _LanguageRow(flag: '\u{1F1EC}\u{1F1E7}', language: 'English (Fluent)'),
-                  const Divider(height: 1, color: AppColors.divider),
-                  _LanguageRow(flag: '\u{1F1EE}\u{1F1F9}', language: 'Italian (Native)'),
-                ],
-              ),
+              child: profile.languages != null && profile.languages!.isNotEmpty
+                  ? Column(
+                      children: profile.languages!.split(',').map((lang) {
+                        final trimmed = lang.trim();
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.translate, size: 16, color: AppColors.teal),
+                              const SizedBox(width: 10),
+                              Text(trimmed, style: const TextStyle(fontSize: 14, color: AppColors.charcoal)),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Text('No languages added yet', style: TextStyle(fontSize: 14, color: AppColors.tertiary)),
+                    ),
             ),
 
             // -- E. Certifications --
@@ -329,22 +355,21 @@ class _CandidateProfileContent extends StatelessWidget {
                     const Icon(Icons.insert_drive_file_outlined, size: 20, color: AppColors.teal),
                     const SizedBox(width: 10),
                     const Expanded(
-                      child: Text('CV_TestCandidate.pdf', style: TextStyle(fontSize: 14, color: AppColors.charcoal)),
+                      child: Text('Upload your CV', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
                     ),
                     GestureDetector(
-                      onTap: () {},
-                      child: const Text('View', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal)),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('CV upload coming soon'), behavior: SnackBarBehavior.floating),
+                        );
+                      },
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          border: Border.all(color: AppColors.border),
+                          color: AppColors.teal.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Text('Replace', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                        child: const Text('Upload', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.teal)),
                       ),
                     ),
                   ],
