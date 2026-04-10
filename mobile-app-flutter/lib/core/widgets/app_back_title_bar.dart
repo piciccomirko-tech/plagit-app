@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 /// structure and visuals while removing duplicated header row code.
 class AppBackTitleBar extends StatelessWidget {
   final String title;
+  final Widget? titleWidget;
   final VoidCallback? onBack;
   final Widget? trailing;
   final EdgeInsetsGeometry padding;
@@ -14,12 +15,15 @@ class AppBackTitleBar extends StatelessWidget {
   final BorderRadius backBorderRadius;
   final Widget? backIcon;
   final TextStyle titleStyle;
+  final bool centerTitle;
+  final double titleSpacing;
   final double leadingSize;
   final double trailingMinWidth;
 
   const AppBackTitleBar({
     super.key,
     required this.title,
+    this.titleWidget,
     this.onBack,
     this.trailing,
     this.padding = const EdgeInsets.fromLTRB(20, 14, 20, 12),
@@ -32,6 +36,8 @@ class AppBackTitleBar extends StatelessWidget {
       color: Color(0xFF1C1C1E),
       letterSpacing: -0.2,
     ),
+    this.centerTitle = true,
+    this.titleSpacing = 0,
     this.leadingSize = 36,
     this.trailingMinWidth = 36,
   });
@@ -62,8 +68,11 @@ class AppBackTitleBar extends StatelessWidget {
               ),
             ),
           ),
+          if (titleSpacing > 0) SizedBox(width: titleSpacing),
           Expanded(
-            child: Center(child: Text(title, style: titleStyle)),
+            child: centerTitle
+                ? Center(child: titleWidget ?? Text(title, style: titleStyle))
+                : titleWidget ?? Text(title, style: titleStyle),
           ),
           ConstrainedBox(
             constraints: BoxConstraints(minWidth: trailingMinWidth),
