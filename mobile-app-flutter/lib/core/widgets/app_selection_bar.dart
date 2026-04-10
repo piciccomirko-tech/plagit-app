@@ -7,8 +7,10 @@ import 'package:flutter/material.dart';
 class AppSelectionBar extends StatelessWidget {
   final int selectedCount;
   final VoidCallback onCancel;
+  final Widget? leading;
   final Widget? trailing;
   final EdgeInsetsGeometry padding;
+  final String? title;
   final TextStyle titleStyle;
   final TextStyle actionStyle;
 
@@ -16,8 +18,10 @@ class AppSelectionBar extends StatelessWidget {
     super.key,
     required this.selectedCount,
     required this.onCancel,
+    this.leading,
     this.trailing,
     this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+    this.title,
     this.titleStyle = const TextStyle(
       fontSize: 17,
       fontWeight: FontWeight.w600,
@@ -33,16 +37,17 @@ class AppSelectionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final label = '$selectedCount selected';
+    final label = title ?? '$selectedCount selected';
     return Padding(
       padding: padding,
       child: Row(
         children: [
-          GestureDetector(
-            onTap: onCancel,
-            behavior: HitTestBehavior.opaque,
-            child: Text('Cancel', style: actionStyle),
-          ),
+          leading ??
+              GestureDetector(
+                onTap: onCancel,
+                behavior: HitTestBehavior.opaque,
+                child: Text('Cancel', style: actionStyle),
+              ),
           Expanded(
             child: Center(child: Text(label, style: titleStyle)),
           ),
