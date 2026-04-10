@@ -1,240 +1,556 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/widgets/app_back_title_bar.dart';
+import 'package:plagit/core/widgets/business_identity.dart';
+import 'package:plagit/core/widgets/venue_gallery.dart';
 import 'package:plagit/models/business_profile.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/repositories/business_repository.dart';
 
-/// Business profile tab — the Profile TAB in business bottom nav.
+const _tealMain = Color(0xFF00B5B0);
+const _bgMain = Color(0xFFF6F7F8);
+const _cardBg = Color(0xFFFFFFFF);
+const _surface = Color(0xFFF9FAFB);
+const _charcoal = Color(0xFF1A1C24);
+const _secondary = Color(0xFF707580);
+const _tertiary = Color(0xFF9EA3AD);
+const _urgent = Color(0xFFF55748);
+
+BoxShadow get _cardShadow => BoxShadow(
+  color: Colors.black.withValues(alpha: 0.05),
+  blurRadius: 14,
+  offset: const Offset(0, 5),
+);
+BoxShadow get _subtleShadow => BoxShadow(
+  color: Colors.black.withValues(alpha: 0.04),
+  blurRadius: 10,
+  offset: const Offset(0, 3),
+);
+
 class BusinessProfileView extends StatefulWidget {
   const BusinessProfileView({super.key});
-
   @override
   State<BusinessProfileView> createState() => _BusinessProfileViewState();
 }
 
 class _BusinessProfileViewState extends State<BusinessProfileView> {
+  final _repo = BusinessRepository();
+  bool _loading = false;
+  String? _error;
+  bool _editing = false;
+  bool _saving = false;
+  String? _saveError;
+  late TextEditingController _nameCtrl,
+      _phoneCtrl,
+      _locationCtrl,
+      _categoryCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _nameCtrl = TextEditingController();
+    _phoneCtrl = TextEditingController();
+    _locationCtrl = TextEditingController();
+    _categoryCtrl = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (context.read<BusinessAuthProvider>().profile == null) _load();
+    });
+  }
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _phoneCtrl.dispose();
+    _locationCtrl.dispose();
+    _categoryCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _load() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      await context.read<BusinessAuthProvider>().refreshProfile();
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    }
+    if (mounted) setState(() => _loading = false);
+  }
+
+  void _startEditing(BusinessProfile p) {
+    _nameCtrl.text = p.name;
+    _phoneCtrl.text = p.phone ?? '';
+    _locationCtrl.text = p.location;
+    _categoryCtrl.text = p.category;
+    setState(() {
+      _editing = true;
+      _saveError = null;
+    });
+  }
+
+  Future<void> _save() async {
+    setState(() {
+      _saving = true;
+      _saveError = null;
+    });
+    try {
+      await _repo.updateProfile({
+        'name': _nameCtrl.text.trim(),
+        'phone': _phoneCtrl.text.trim(),
+        'location': _locationCtrl.text.trim(),
+        'category': _categoryCtrl.text.trim(),
+      });
+      if (mounted) {
+        await context.read<BusinessAuthProvider>().refreshProfile();
+        setState(() => _editing = false);
+      }
+    } catch (e) {
+      if (mounted) setState(() => _saveError = e.toString());
+    }
+    if (mounted) setState(() => _saving = false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final authProvider = context.watch<BusinessAuthProvider>();
-    final profile = authProvider.profile;
+    final auth = context.watch<BusinessAuthProvider>();
+    final profile = auth.profile;
 
-    // Loading / no profile
     if (profile == null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
-        body: const Center(
-          child: CircularProgressIndicator(color: AppColors.teal),
+        backgroundColor: _bgMain,
+        body: SafeArea(
+          child: Center(
+            child: _loading
+                ? const CircularProgressIndicator(
+                    color: _tealMain,
+                    strokeWidth: 2.5,
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.business, size: 40, color: _tertiary),
+                      const SizedBox(height: 12),
+                      Text(
+                        _error ?? 'Profile not available',
+                        style: const TextStyle(fontSize: 14, color: _secondary),
+                      ),
+                      const SizedBox(height: 16),
+                      GestureDetector(
+                        onTap: _load,
+                        child: const Text(
+                          'Retry',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: _tealMain,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
         ),
       );
     }
 
-    final completion = profile.profileCompletion;
-
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: _bgMain,
       body: SafeArea(
-        child: ListView(
-          padding: EdgeInsets.zero,
+        child: Column(
           children: [
-            const SizedBox(height: 24),
-
-            // -- Top Section (centered, no card) --
-            _buildTopSection(profile, completion),
-
-            const SizedBox(height: 24),
-
-            // A. Business Info
-            _buildSectionCard(
-              title: 'Business Info',
-              onEdit: () => _snack('Profile editor coming soon'),
-              children: [
-                _infoRow('Name', profile.name),
-                _divider(),
-                _infoRow('Category', profile.category),
-                _divider(),
-                _infoRow('Size', profile.size),
-                _divider(),
-                _infoRow('Website', profile.website ?? ''),
-              ],
+            // TOP BAR
+            AppBackTitleBar(
+              title: 'Company Profile',
+              onBack: () => context.canPop() ? context.pop() : null,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              backBackgroundColor: _surface,
+              backIcon: const Icon(
+                Icons.chevron_left,
+                size: 18,
+                color: _charcoal,
+              ),
+              titleStyle: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: _charcoal,
+              ),
+              trailing: GestureDetector(
+                onTap: _saving
+                    ? null
+                    : _editing
+                    ? _save
+                    : () => _startEditing(profile),
+                child: _saving
+                    ? const SizedBox(
+                        width: 36,
+                        height: 36,
+                        child: Center(
+                          child: SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: _tealMain,
+                            ),
+                          ),
+                        ),
+                      )
+                    : Text(
+                        _editing ? 'Save' : 'Edit',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: _tealMain,
+                        ),
+                      ),
+              ),
             ),
 
-            // B. Contact Details
-            _buildSectionCard(
-              title: 'Contact Details',
-              onEdit: () => _snack('Profile editor coming soon'),
-              children: [
-                _infoRow('Contact Person', profile.contactName),
-                _divider(),
-                _infoRow('Email', profile.email),
-                _divider(),
-                _infoRow('Phone', profile.phone ?? ''),
-              ],
-            ),
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.only(top: 4, bottom: 32),
+                child: Column(
+                  children: [
+                    // HERO CARD
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 20),
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: _cardBg,
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [_cardShadow],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 76,
+                                height: 76,
+                                child: Stack(
+                                  children: [
+                                    // Identity chain: logo > venue cover > first gallery
+                                    // image > category-themed fallback. Never empty —
+                                    // even a brand-new business gets a polished slot.
+                                    BusinessIdentity(
+                                      initials: profile.initials,
+                                      category: profile.category,
+                                      logoUrl: profile.logoUrl,
+                                      coverImage: profile.coverImage,
+                                      galleryImages: profile.galleryImages,
+                                      size: 72,
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        width: 24,
+                                        height: 24,
+                                        decoration: const BoxDecoration(
+                                          color: _tealMain,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.camera_alt,
+                                          size: 10,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Flexible(
+                                          child: Text(
+                                            profile.name,
+                                            style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                              color: _charcoal,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        if (profile.profileCompletion >=
+                                            80) ...[
+                                          const SizedBox(width: 6),
+                                          PhosphorIcon(
+                                            PhosphorIconsFill.sealCheck,
+                                            size: 18,
+                                            color: _tealMain,
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                    if (profile.category.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        profile.category,
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          color: _secondary,
+                                        ),
+                                      ),
+                                    ],
+                                    if (profile.location.isNotEmpty) ...[
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.location_on,
+                                            size: 10,
+                                            color: _tealMain,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Flexible(
+                                            child: Text(
+                                              profile.location,
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                color: _tealMain,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
 
-            // C. Location
-            _buildSectionCard(
-              title: 'Location',
-              onEdit: () => _snack('Profile editor coming soon'),
-              children: [
-                _infoRow('Address', profile.location),
-              ],
-            ),
+                    // ══════════════════════════════════════
+                    // VENUE GALLERY (photos + optional video)
+                    // ══════════════════════════════════════
+                    if (!_editing) ...[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              CupertinoIcons.photo_on_rectangle,
+                              size: 16,
+                              color: _tealMain,
+                            ),
+                            const SizedBox(width: 6),
+                            const Text(
+                              'Venue Gallery',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF1C1C1E),
+                                letterSpacing: -0.2,
+                              ),
+                            ),
+                            const Spacer(),
+                            if (profile.galleryImages.isNotEmpty)
+                              Text(
+                                '${profile.galleryImages.length} photos',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                  color: Color(0xFF8E8E93),
+                                ),
+                              ),
+                            const SizedBox(width: 8),
+                            GestureDetector(
+                              onTap: () {},
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _tealMain.withValues(alpha: 0.10),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      CupertinoIcons.add,
+                                      size: 12,
+                                      color: _tealMain,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Add',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: _tealMain,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: VenueGallery(
+                          images: profile.galleryImages,
+                          videoUrl: profile.videoUrl,
+                          height: 220,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
 
-            // D. About Us
-            _buildSectionCard(
-              title: 'About Us',
-              onEdit: () => _snack('Profile editor coming soon'),
-              children: [
-                Text(
-                  profile.description ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.charcoal,
-                    height: 1.5,
-                  ),
-                ),
-              ],
-            ),
+                    if (_editing) ...[
+                      _buildEditForm(profile),
+                    ] else ...[
+                      _infoCard('Business Details', [
+                        (Icons.business, 'Business Name', profile.name),
+                        (Icons.category, 'Category', profile.category),
+                        (
+                          Icons.location_on,
+                          'Location',
+                          profile.location.isNotEmpty
+                              ? profile.location
+                              : 'Not set',
+                        ),
+                        (
+                          Icons.verified_user_outlined,
+                          'Verification',
+                          profile.profileCompletion >= 80
+                              ? 'Verified'
+                              : 'Pending',
+                        ),
+                      ]),
+                      const SizedBox(height: 28),
+                      _infoCard('Contact', [
+                        (Icons.email_outlined, 'Email', profile.email),
+                        (
+                          Icons.phone_outlined,
+                          'Phone',
+                          profile.phone ?? 'Not set',
+                        ),
+                      ]),
+                    ],
+                    const SizedBox(height: 28),
 
-            // E. Verification
-            _buildVerificationCard(),
-
-            // F. Active Jobs Summary
-            _buildActiveJobsCard(),
-
-            // -- Settings Section --
-            const SizedBox(height: 24),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'Settings',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.charcoal,
+                    // LOGOUT
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: GestureDetector(
+                        onTap: () => _showSignOutDialog(auth),
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
+                            color: _urgent.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.logout, size: 14, color: _urgent),
+                              SizedBox(width: 8),
+                              Text(
+                                'Sign Out',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: _urgent,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 8),
-            _buildSettingsCard(),
-
-            const SizedBox(height: 40),
           ],
         ),
       ),
     );
   }
 
-  // -- Top Section --
-  Widget _buildTopSection(BusinessProfile profile, int completion) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+  Widget _buildEditForm(BusinessProfile p) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [_subtleShadow],
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Avatar with camera overlay
-          Stack(
-            children: [
-              CircleAvatar(
-                radius: 40,
-                backgroundColor: AppColors.teal,
-                child: Text(
-                  profile.initials,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [AppColors.cardShadow],
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    size: 14,
-                    color: AppColors.charcoal,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            profile.name,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.charcoal,
+          const Text(
+            'Edit Profile',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: _secondary,
             ),
-          ),
-          Text(
-            profile.category,
-            style: const TextStyle(fontSize: 14, color: AppColors.secondary),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '\u{1F4CD} ${profile.location}',
-            style: const TextStyle(fontSize: 12, color: AppColors.secondary),
           ),
           const SizedBox(height: 16),
-
-          // Profile completion
-          Row(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(3),
-                  child: LinearProgressIndicator(
-                    value: completion / 100,
-                    minHeight: 5,
-                    backgroundColor: AppColors.divider,
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(AppColors.teal),
+          _editField('Company Name', _nameCtrl),
+          const SizedBox(height: 12),
+          _editField('Phone', _phoneCtrl, keyboard: TextInputType.phone),
+          const SizedBox(height: 12),
+          _editField('Location', _locationCtrl),
+          const SizedBox(height: 12),
+          _editField('Category / Venue Type', _categoryCtrl),
+          if (_saveError != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              _saveError!,
+              style: const TextStyle(fontSize: 13, color: _urgent),
+            ),
+          ],
+          const SizedBox(height: 16),
+          GestureDetector(
+            onTap: () => setState(() {
+              _editing = false;
+              _saveError = null;
+            }),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                color: _surface,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Center(
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: _secondary,
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              Text(
-                '$completion%',
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.teal,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Complete Profile button
-          SizedBox(
-            width: double.infinity,
-            child: TextButton(
-              onPressed: () => _snack('Profile editor coming soon'),
-              style: TextButton.styleFrom(
-                backgroundColor: AppColors.teal.withValues(alpha: 0.08),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text(
-                'Complete Profile',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.teal,
-                ),
-              ),
             ),
           ),
         ],
@@ -242,237 +558,128 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
     );
   }
 
-  // -- Section Card --
-  Widget _buildSectionCard({
-    required String title,
-    required VoidCallback onEdit,
-    required List<Widget> children,
+  Widget _editField(
+    String label,
+    TextEditingController ctrl, {
+    TextInputType? keyboard,
   }) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: AppColors.cardDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.charcoal,
-                ),
-              ),
-              const Spacer(),
-              GestureDetector(
-                onTap: onEdit,
-                child: const Icon(
-                  Icons.edit_outlined,
-                  size: 18,
-                  color: AppColors.teal,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          ...children,
-        ],
-      ),
-    );
-  }
-
-  // -- Info Row --
-  Widget _infoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: const TextStyle(fontSize: 12, color: AppColors.secondary),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            value,
-            style: const TextStyle(fontSize: 14, color: AppColors.charcoal),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _divider() {
-    return const Divider(color: AppColors.divider, height: 12);
-  }
-
-  // -- Verification Card --
-  Widget _buildVerificationCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: AppColors.cardDecoration,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.shield_outlined, size: 20, color: AppColors.amber),
-              const SizedBox(width: 8),
-              const Text(
-                'Not verified',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.amber,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Get verified to build trust with candidates',
-            style: TextStyle(fontSize: 12, color: AppColors.secondary),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // -- Active Jobs Card --
-  Widget _buildActiveJobsCard() {
-    final jobsProvider = context.watch<BusinessJobsProvider>();
-    final activeCount = jobsProvider.jobs.where((j) => j.status.displayName == 'Active').length;
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      padding: const EdgeInsets.all(16),
-      decoration: AppColors.cardDecoration,
-      child: Row(
-        children: [
-          Text(
-            '$activeCount Active Jobs',
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-              color: AppColors.charcoal,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 11, color: _tertiary)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: ctrl,
+          keyboardType: keyboard,
+          style: const TextStyle(fontSize: 15, color: _charcoal),
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: _surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide.none,
             ),
+            contentPadding: const EdgeInsets.all(12),
+            isDense: true,
           ),
-          const Spacer(),
-          GestureDetector(
-            onTap: () => _snack('Switch to Jobs tab'),
-            child: const Text(
-              'Manage Jobs',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.teal,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // -- Settings Card --
-  Widget _buildSettingsCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      decoration: AppColors.cardDecoration,
-      child: Column(
-        children: [
-          _settingsTile(
-            icon: Icons.notifications_outlined,
-            title: 'Notifications',
-            onTap: () => _snack('Notifications settings coming soon'),
-          ),
-          const Divider(height: 0, indent: 16, endIndent: 16, color: AppColors.divider),
-          _settingsTile(
-            icon: Icons.lock_outline,
-            title: 'Privacy',
-            onTap: () => _snack('Privacy settings coming soon'),
-          ),
-          const Divider(height: 0, indent: 16, endIndent: 16, color: AppColors.divider),
-          _settingsTile(
-            icon: Icons.workspace_premium_outlined,
-            title: 'My Subscription',
-            onTap: () => context.push('/business/subscription'),
-          ),
-          const Divider(height: 0, indent: 16, endIndent: 16, color: AppColors.divider),
-          _settingsTile(
-            icon: Icons.help_outline,
-            title: 'Help & Support',
-            onTap: () => _snack('Help & Support coming soon'),
-          ),
-          const Divider(height: 0, indent: 16, endIndent: 16, color: AppColors.divider),
-          _settingsTile(
-            icon: Icons.logout,
-            title: 'Sign Out',
-            isDestructive: true,
-            onTap: _showSignOutDialog,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _settingsTile({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool isDestructive = false,
-  }) {
-    final color = isDestructive ? AppColors.red : AppColors.charcoal;
-    return ListTile(
-      leading: Icon(icon, size: 22, color: color),
-      title: Text(
-        title,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: isDestructive ? FontWeight.w600 : FontWeight.w400,
-          color: color,
         ),
-      ),
-      trailing: isDestructive
-          ? null
-          : const Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
-      onTap: onTap,
+      ],
     );
   }
 
-  // -- Sign Out Dialog --
-  void _showSignOutDialog() {
+  Widget _infoCard(String title, List<(IconData, String, String)> rows) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [_subtleShadow],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w500,
+              color: _secondary,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ...rows.map(
+            (r) => Padding(
+              padding: const EdgeInsets.only(bottom: 14),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: 20,
+                    child: Icon(r.$1, size: 13, color: _tealMain),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          r.$2,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: _tertiary,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          r.$3,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: _charcoal,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showSignOutDialog(BusinessAuthProvider auth) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Sign Out'),
-        content: const Text('Are you sure you want to sign out?'),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: const Text(
+          'Sign out?',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        content: const Text(
+          'Are you sure you want to sign out?',
+          style: TextStyle(fontSize: 15, color: _secondary),
+        ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel', style: TextStyle(color: _secondary)),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
-              context.read<BusinessAuthProvider>().logout();
+              Navigator.pop(ctx);
+              auth.logout();
               context.go('/entry');
             },
             child: const Text(
               'Sign Out',
-              style: TextStyle(color: AppColors.red),
+              style: TextStyle(color: _urgent, fontWeight: FontWeight.w600),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  void _snack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 }
