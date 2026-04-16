@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plagit/core/demo_content_helpers.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class UnifiedMessagesView extends StatelessWidget {
   const UnifiedMessagesView({super.key});
@@ -89,7 +91,7 @@ class UnifiedMessagesView extends StatelessWidget {
                   // ── Candidate Messages ──
                   if (MockData.conversations.isNotEmpty) ...[
                     _SectionHeader(
-                      label: 'CANDIDATE MESSAGES',
+                      label: AppLocalizations.of(context).candidateMessages,
                       borderColor: AppColors.teal,
                     ),
                     const SizedBox(height: 12),
@@ -110,7 +112,7 @@ class UnifiedMessagesView extends StatelessWidget {
                   // ── Business Messages ──
                   if (MockData.businessConversations.isNotEmpty) ...[
                     _SectionHeader(
-                      label: 'BUSINESS MESSAGES',
+                      label: AppLocalizations.of(context).businessMessages,
                       borderColor: AppColors.purple,
                     ),
                     const SizedBox(height: 12),
@@ -132,7 +134,7 @@ class UnifiedMessagesView extends StatelessWidget {
                   // ── Service Inquiries ──
                   if (MockData.serviceConversations.isNotEmpty) ...[
                     _SectionHeader(
-                      label: 'SERVICE INQUIRIES',
+                      label: AppLocalizations.of(context).serviceInquiries,
                       borderColor: AppColors.amber,
                     ),
                     const SizedBox(height: 12),
@@ -257,7 +259,7 @@ class _CandidateRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    lastMessage,
+                    localizeDemoLastMessage(context, lastMessage),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -363,7 +365,7 @@ class _BusinessRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    lastMessage,
+                    localizeDemoLastMessage(context, lastMessage),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -469,7 +471,7 @@ class _ServiceRow extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    lastMessage,
+                    localizeDemoLastMessage(context, lastMessage),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(

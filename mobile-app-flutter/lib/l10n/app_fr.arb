@@ -1,0 +1,1902 @@
+{
+  "@@locale": "fr",
+  "appName": "Plagit",
+  "welcome": "Bienvenue",
+  "signIn": "Se connecter",
+  "signUp": "S'inscrire",
+  "createAccount": "Créer un compte",
+  "createBusinessAccount": "Créer un compte entreprise",
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "email": "Adresse e-mail",
+  "password": "Mot de passe",
+  "continueLabel": "Continuer",
+  "cancel": "Annuler",
+  "save": "Enregistrer",
+  "done": "Terminé",
+  "retry": "Réessayer",
+  "search": "Rechercher",
+  "back": "Retour",
+  "next": "Suivant",
+  "apply": "Postuler",
+  "clear": "Effacer",
+  "clearAll": "Tout effacer",
+  "edit": "Modifier",
+  "delete": "Supprimer",
+  "confirm": "Confirmer",
+  "home": "Accueil",
+  "jobs": "Emplois",
+  "messages": "Messages",
+  "profile": "Profil",
+  "settings": "Paramètres",
+  "language": "Langue",
+  "logout": "Déconnexion",
+  "categoryAndRole": "Catégorie et rôle",
+  "selectCategory": "Choisir une catégorie",
+  "subcategory": "Sous-catégorie",
+  "role": "Rôle",
+  "recentSearches": "Recherches récentes",
+  "noResultsFor": "Aucun résultat pour « {query} »",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "mostPopular": "Les plus populaires",
+  "allCategories": "Toutes les catégories",
+  "selectVenueTypeAndRole": "Choisir le type d'établissement et le rôle requis",
+  "selectCategoryAndRole": "Choisir la catégorie et le rôle",
+  "businessDetails": "Détails de l'entreprise",
+  "yourDetails": "Vos informations",
+  "companyName": "Nom de l'entreprise",
+  "contactPerson": "Personne de contact",
+  "location": "Lieu",
+  "website": "Site web",
+  "fullName": "Nom complet",
+  "yearsExperience": "Années d'expérience",
+  "languagesSpoken": "Langues parlées",
+  "jobType": "Type d'emploi",
+  "jobTypeFullTime": "Temps plein",
+  "jobTypePartTime": "Temps partiel",
+  "jobTypeTemporary": "Temporaire",
+  "jobTypeFreelance": "Indépendant",
+  "openToInternational": "Ouvert aux candidats internationaux",
+  "passwordHint": "Mot de passe (min. 8 caractères)",
+  "termsOfServiceNote": "En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.",
+  "networkError": "Erreur réseau",
+  "somethingWentWrong": "Une erreur est survenue",
+  "loading": "Chargement…",
+  "errorGeneric": "Une erreur inattendue s'est produite. Réessayez.",
+  "joinAsCandidate": "Rejoindre en tant que Candidat",
+  "joinAsBusiness": "Rejoindre en tant qu'Entreprise",
+  "findYourNextRole": "Trouvez votre prochain poste dans l'hôtellerie-restauration",
+  "candidateLoginSubtitle": "Connectez-vous avec les meilleurs employeurs à Londres, Dubaï et au-delà.",
+  "businessLoginSubtitle": "Atteignez les meilleurs talents de l'hôtellerie et développez votre équipe.",
+  "rememberMe": "Se souvenir de moi",
+  "forgotPassword": "Mot de passe oublié ?",
+  "lookingForStaff": "Vous cherchez du personnel ? ",
+  "lookingForJob": "Vous cherchez un emploi ? ",
+  "switchToBusiness": "Passer à Entreprise",
+  "switchToCandidate": "Passer à Candidat",
+  "createYourProfile": "Créez votre profil et faites-vous découvrir par les meilleurs employeurs.",
+  "createBusinessProfile": "Créez le profil de votre entreprise et commencez à recruter les meilleurs talents de l'hôtellerie.",
+  "locationCityCountry": "Lieu (ville, pays)",
+  "termsAgreement": "En créant un compte, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.",
+  "searchHospitalityHint": "Rechercher catégorie, sous-catégorie ou rôle…",
+  "mostCommonRoles": "Rôles les plus courants",
+  "allRoles": "Tous les rôles",
+  "suggestionCount": "{count,plural, =1{1 suggestion}other{{count} suggestions}}",
+  "@suggestionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subcategoriesCount": "{count,plural, =1{1 sous-catégorie}other{{count} sous-catégories}}",
+  "@subcategoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rolesCount": "{count,plural, =1{1 rôle}other{{count} rôles}}",
+  "@rolesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kindCategory": "Catégorie",
+  "kindSubcategory": "Sous-catégorie",
+  "kindRole": "Rôle",
+  "resetPassword": "Réinitialiser le mot de passe",
+  "forgotPasswordSubtitle": "Saisissez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+  "sendResetLink": "Envoyer le lien",
+  "resetEmailSent": "Si un compte existe pour cet e-mail, un lien de réinitialisation a été envoyé.",
+  "profileSetupTitle": "Complétez votre profil",
+  "profileSetupSubtitle": "Un profil complet est découvert plus rapidement.",
+  "uploadPhoto": "Ajouter une photo",
+  "uploadCV": "Téléverser un CV",
+  "skipForNow": "Passer pour l'instant",
+  "finish": "Terminer",
+  "noInternet": "Aucune connexion Internet. Vérifiez votre réseau.",
+  "tryAgain": "Réessayer",
+  "emptyJobs": "Aucun emploi pour le moment",
+  "emptyApplications": "Aucune candidature pour le moment",
+  "emptyMessages": "Aucun message pour le moment",
+  "emptyNotifications": "Vous êtes à jour",
+  "onboardingRoleTitle": "Quel rôle recherchez-vous ?",
+  "onboardingRoleSubtitle": "Sélectionnez tout ce qui s'applique",
+  "onboardingExperienceTitle": "Combien d'expérience avez-vous ?",
+  "onboardingLocationTitle": "Où êtes-vous basé ?",
+  "onboardingLocationHint": "Saisissez votre ville ou code postal",
+  "useMyCurrentLocation": "Utiliser ma position actuelle",
+  "onboardingAvailabilityTitle": "Que recherchez-vous ?",
+  "finishSetup": "Terminer la configuration",
+  "goodMorning": "Bonjour",
+  "goodAfternoon": "Bon après-midi",
+  "goodEvening": "Bonsoir",
+  "findJobs": "Trouver des emplois",
+  "applications": "Candidatures",
+  "community": "Communauté",
+  "recommendedForYou": "Recommandés pour vous",
+  "seeAll": "Tout voir",
+  "searchJobsHint": "Rechercher emplois, rôles, lieux…",
+  "searchJobs": "Rechercher des emplois",
+  "postedJob": "Publié",
+  "applyNow": "Postuler",
+  "applied": "Candidature envoyée",
+  "saveJob": "Enregistrer",
+  "saved": "Enregistré",
+  "jobDescription": "Description du poste",
+  "requirements": "Exigences",
+  "benefits": "Avantages",
+  "salary": "Salaire",
+  "contract": "Contrat",
+  "schedule": "Horaires",
+  "viewCompany": "Voir l'entreprise",
+  "interview": "Entretien",
+  "interviews": "Entretiens",
+  "notifications": "Notifications",
+  "matches": "Correspondances",
+  "quickPlug": "Quick Plug",
+  "discover": "Découvrir",
+  "shortlist": "Présélection",
+  "message": "Message",
+  "messageCandidate": "Message",
+  "nextInterview": "Prochain entretien",
+  "loadingDashboard": "Chargement du tableau de bord…",
+  "tryAgainCta": "Réessayer",
+  "careerDashboard": "TABLEAU DE BORD CARRIÈRE",
+  "yourNextInterview": "Votre prochain entretien\nest prévu",
+  "yourCareerTakingOff": "Votre carrière\ndécolle",
+  "yourCareerOnTheMove": "Votre carrière\nest en mouvement",
+  "yourJourneyStartsHere": "Votre parcours\ncommence ici",
+  "applyFirstJob": "Postulez à votre premier emploi pour commencer",
+  "interviewComingUp": "Entretien à venir",
+  "unlockPlagitPremium": "Débloquer Plagit Premium",
+  "premiumSubtitle": "Démarquez-vous auprès des meilleurs établissements — matchez plus vite",
+  "premiumActive": "Premium Actif",
+  "premiumActiveSubtitle": "Visibilité prioritaire activée · Gérer l'abonnement",
+  "noJobsFound": "Aucun emploi ne correspond à votre recherche",
+  "noApplicationsYet": "Aucune candidature pour le moment",
+  "startApplying": "Commencez à explorer les emplois pour postuler",
+  "noMessagesYet": "Aucun message pour le moment",
+  "allCaughtUp": "Vous êtes à jour",
+  "noNotificationsYet": "Aucune notification pour le moment",
+  "about": "À propos",
+  "experience": "Expérience",
+  "skills": "Compétences",
+  "languages": "Langues",
+  "availability": "Disponibilité",
+  "verified": "Vérifié",
+  "totalViews": "Vues totales",
+  "verifiedVenuePrefix": "Vérifié",
+  "notVerified": "Non vérifié",
+  "pendingReview": "En cours de révision",
+  "viewProfile": "Voir le profil",
+  "editProfile": "Modifier le profil",
+  "share": "Partager",
+  "report": "Signaler",
+  "block": "Bloquer",
+  "typeMessage": "Écrire un message…",
+  "send": "Envoyer",
+  "today": "Aujourd'hui",
+  "yesterday": "Hier",
+  "now": "maintenant",
+  "minutesAgo": "{count,plural, =1{il y a 1 min}other{il y a {count} min}}",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{count,plural, =1{il y a 1 h}other{il y a {count} h}}",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count,plural, =1{il y a 1 j}other{il y a {count} j}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filters": "Filtres",
+  "refineSearch": "Affiner la recherche",
+  "distance": "Distance",
+  "applyFilters": "Appliquer les filtres",
+  "reset": "Réinitialiser",
+  "noResultsTitle": "Aucun résultat pour « {query} »",
+  "@noResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "noResultsSubtitle": "Essayez un autre mot-clé ou effacez la recherche.",
+  "recentSearchesEmptyTitle": "Aucune recherche récente",
+  "recentSearchesEmptyHint": "Vos recherches récentes apparaîtront ici",
+  "allJobs": "Tous les emplois",
+  "nearby": "À proximité",
+  "saved2": "Enregistrés",
+  "remote": "À distance",
+  "inPerson": "En personne",
+  "aboutTheJob": "À propos du poste",
+  "aboutCompany": "À propos de l'entreprise",
+  "applyForJob": "Postuler à cet emploi",
+  "unsaveJob": "Retirer",
+  "noJobsNearby": "Aucun emploi à proximité",
+  "noSavedJobs": "Aucun emploi enregistré",
+  "adjustFilters": "Ajustez vos filtres pour voir plus d'emplois",
+  "fullTime": "Temps plein",
+  "partTime": "Temps partiel",
+  "temporary": "Temporaire",
+  "freelance": "Indépendant",
+  "postedAgo": "Publié {time}",
+  "@postedAgo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmAway": "à {km} km",
+  "@kmAway": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "jobDetails": "Détails du poste",
+  "aboutThisRole": "À propos de ce poste",
+  "aboutTheBusiness": "À propos de l'entreprise",
+  "urgentHiring": "Recrutement urgent",
+  "distanceRadius": "Rayon de distance",
+  "contractType": "Type de contrat",
+  "shiftType": "Type d'horaire",
+  "all": "Tous",
+  "casual": "Occasionnel",
+  "seasonal": "Saisonnier",
+  "morning": "Matin",
+  "afternoon": "Après-midi",
+  "evening": "Soirée",
+  "night": "Nuit",
+  "startDate": "Date de début",
+  "shiftHours": "Heures de service",
+  "category": "Catégorie",
+  "venueType": "Type d'établissement",
+  "employment": "Emploi",
+  "pay": "Rémunération",
+  "duration": "Durée",
+  "weeklyHours": "Heures hebdomadaires",
+  "businessLocation": "Lieu de l'entreprise",
+  "jobViews": "Vues de l'annonce",
+  "positions": "{count,plural, =1{1 poste}other{{count} postes}}",
+  "@positions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthsCount": "{count,plural, =1{1 mois}other{{count} mois}}",
+  "@monthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myApplications": "Mes candidatures",
+  "active": "Active",
+  "interviewStatus": "Entretien",
+  "rejected": "Refusée",
+  "offer": "Offre",
+  "appliedOn": "Candidature le {date}",
+  "@appliedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "viewJob": "Voir l'annonce",
+  "withdraw": "Retirer la candidature",
+  "applicationStatus": "Statut de la candidature",
+  "noConversations": "Aucune conversation pour le moment",
+  "startConversation": "Répondez à une offre pour commencer à discuter",
+  "online": "En ligne",
+  "offline": "Hors ligne",
+  "lastSeen": "Vu {time}",
+  "@lastSeen": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "newNotification": "Nouveau",
+  "markAllRead": "Tout marquer comme lu",
+  "yourProfile": "Votre profil",
+  "completionPercent": "{percent} % complété",
+  "@completionPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "personalDetails": "Informations personnelles",
+  "phone": "Téléphone",
+  "bio": "Bio",
+  "addPhoto": "Ajouter une photo",
+  "addCV": "Ajouter un CV",
+  "saveChanges": "Enregistrer les modifications",
+  "logoutConfirm": "Voulez-vous vraiment vous déconnecter ?",
+  "subscription": "Abonnement",
+  "support": "Assistance",
+  "privacy": "Confidentialité",
+  "terms": "Conditions",
+  "applicationDetails": "Détails de la candidature",
+  "timeline": "Chronologie",
+  "submitted": "Envoyée",
+  "underReview": "En cours d'examen",
+  "interviewScheduled": "Entretien planifié",
+  "offerExtended": "Offre envoyée",
+  "withdrawApp": "Retirer la candidature",
+  "withdrawConfirm": "Voulez-vous vraiment retirer cette candidature ?",
+  "applicationWithdrawn": "Candidature retirée",
+  "statusApplied": "Envoyée",
+  "statusInReview": "En examen",
+  "statusInterview": "Entretien",
+  "statusHired": "Embauché",
+  "statusClosed": "Clôturée",
+  "statusRejected": "Refusée",
+  "statusOffer": "Offre",
+  "messagesSearch": "Rechercher des messages…",
+  "noMessagesTitle": "Aucun message pour le moment",
+  "noMessagesSubtitle": "Répondez à une offre pour commencer à discuter",
+  "youOnline": "Vous êtes en ligne",
+  "noNotificationsTitle": "Aucune notification pour le moment",
+  "noNotificationsSubtitle": "Nous vous avertirons dès qu'il se passera quelque chose",
+  "today2": "Aujourd'hui",
+  "earlier": "Plus tôt",
+  "completeYourProfile": "Complétez votre profil",
+  "profileCompletion": "Complétion du profil",
+  "personalInfo": "Infos personnelles",
+  "professional": "Professionnel",
+  "preferences": "Préférences",
+  "documents": "Documents",
+  "myCV": "Mon CV",
+  "premium": "Premium",
+  "addLanguages": "Ajouter des langues",
+  "addExperience": "Ajouter une expérience",
+  "addAvailability": "Ajouter une disponibilité",
+  "matchesTitle": "Vos correspondances",
+  "noMatchesTitle": "Aucune correspondance pour le moment",
+  "noMatchesSubtitle": "Continuez à postuler — vos correspondances apparaîtront ici",
+  "interestedBusinesses": "Entreprises intéressées",
+  "accept": "Accepter",
+  "decline": "Décliner",
+  "newMatch": "Nouvelle correspondance",
+  "quickPlugTitle": "Quick Plug",
+  "quickPlugEmpty": "Aucune nouvelle entreprise pour le moment",
+  "quickPlugSubtitle": "Revenez plus tard pour de nouvelles opportunités",
+  "uploadYourCV": "Téléversez votre CV",
+  "cvSubtitle": "Ajoutez un CV pour postuler plus vite et vous démarquer",
+  "chooseFile": "Choisir un fichier",
+  "removeCV": "Supprimer le CV",
+  "noCVUploaded": "Aucun CV téléversé",
+  "discoverCompanies": "Découvrir les entreprises",
+  "exploreSubtitle": "Explorez les meilleurs établissements hôteliers",
+  "follow": "Suivre",
+  "following": "Suivi",
+  "view": "Voir",
+  "selectLanguages": "Choisir des langues",
+  "selectedCount": "{count} sélectionné(s)",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allLanguages": "Toutes les langues",
+  "uploadCVBig": "Téléversez votre CV pour pré-remplir votre profil automatiquement et gagner du temps.",
+  "supportedFormats": "Formats pris en charge : PDF, DOC, DOCX",
+  "fillManually": "Remplir manuellement",
+  "fillManuallySubtitle": "Saisissez vos informations vous-même et complétez votre profil étape par étape.",
+  "photoUploadSoon": "Téléversement de photo bientôt disponible — utilisez en attendant un avatar professionnel.",
+  "yourCV": "Votre CV",
+  "aboutYou": "À propos de vous",
+  "optional": "Optionnel",
+  "completeProfile": "Compléter le profil",
+  "openToRelocation": "Ouvert à la mobilité",
+  "matchLabel": "Match",
+  "accepted": "Accepté",
+  "deny": "Refuser",
+  "featured": "Mis en avant",
+  "reviewYourProfile": "Vérifiez votre profil",
+  "nothingSavedYet": "Rien ne sera enregistré tant que vous n'aurez pas confirmé.",
+  "editAnyField": "Vous pouvez modifier tous les champs extraits avant de sauvegarder.",
+  "saveToProfile": "Enregistrer dans le profil",
+  "findCompanies": "Trouver des entreprises",
+  "mapView": "Vue carte",
+  "mapComingSoon": "Vue carte bientôt disponible.",
+  "noCompaniesFound": "Aucune entreprise trouvée",
+  "tryWiderRadius": "Essayez un rayon plus large ou une autre catégorie.",
+  "verifiedOnly": "Vérifiées uniquement",
+  "resetFilters": "Réinitialiser les filtres",
+  "available": "Disponible",
+  "lookingFor": "Recherche : {role}",
+  "@lookingFor": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "boostMyProfile": "Booster mon profil",
+  "openToRelocationTravel": "Ouvert à la mobilité / aux déplacements",
+  "tellEmployersAboutYourself": "Parlez de vous aux employeurs…",
+  "profileUpdated": "Profil mis à jour",
+  "contractPreference": "Préférence de contrat",
+  "restorePurchases": "Restaurer les achats",
+  "languagePickerSoon": "Sélecteur de langue bientôt disponible",
+  "selectCategoryRoleShort": "Choisir catégorie et rôle",
+  "cvUploadSoon": "Téléversement de CV bientôt disponible",
+  "restorePurchasesSoon": "Restauration des achats bientôt disponible",
+  "photoUploadShort": "Téléversement de photo bientôt disponible",
+  "hireBestTalent": "Recrutez les meilleurs talents de l'hôtellerie",
+  "businessLoginSub": "Publiez des offres et connectez-vous avec des candidats vérifiés.",
+  "lookingForWork": "Vous cherchez un emploi ? ",
+  "postJob": "Publier une offre",
+  "editJob": "Modifier l'offre",
+  "jobTitle": "Intitulé du poste",
+  "jobDescription2": "Description du poste",
+  "publish": "Publier",
+  "saveDraft": "Enregistrer le brouillon",
+  "applicantsTitle": "Candidats",
+  "newApplicants": "Nouveaux candidats",
+  "noApplicantsYet": "Aucun candidat pour le moment",
+  "noApplicantsSubtitle": "Les candidats apparaîtront ici dès qu'ils postuleront.",
+  "scheduleInterview": "Planifier un entretien",
+  "sendInvite": "Envoyer l'invitation",
+  "interviewSent": "Invitation d'entretien envoyée",
+  "rejectCandidate": "Refuser",
+  "shortlistCandidate": "Présélectionner",
+  "hiringDashboard": "TABLEAU DE BORD RECRUTEMENT",
+  "yourPipelineActive": "Votre pipeline\nest actif",
+  "postJobToStart": "Publiez une offre pour commencer à recruter",
+  "reviewApplicants": "Examinez {count} nouveaux candidats",
+  "@reviewApplicants": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "replyMessages": "Répondez à {count} messages non lus",
+  "@replyMessages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviews2": "Entretiens",
+  "businessProfile": "Profil d'entreprise",
+  "venueGallery": "Galerie de l'établissement",
+  "addPhotos": "Ajouter des photos",
+  "businessName": "Nom de l'entreprise",
+  "venueTypeLabel": "Type d'établissement",
+  "selectedItems": "{count} sélectionné(s)",
+  "@selectedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hiringProgress": "Progression du recrutement",
+  "unlockBusinessPremium": "Débloquer Business Premium",
+  "businessPremiumSubtitle": "Accès prioritaire aux meilleurs candidats",
+  "scheduleFromApplicants": "Planifier depuis les candidats",
+  "recentApplicants": "Candidats récents",
+  "viewAll": "Tout voir ›",
+  "recentActivity": "Activité récente",
+  "candidatePipeline": "Pipeline de candidats",
+  "allApplicants": "Tous les candidats",
+  "searchCandidates": "Rechercher candidats, offres, entretiens…",
+  "thisWeek": "Cette semaine",
+  "thisMonth": "Ce mois-ci",
+  "allTime": "Tout le temps",
+  "post": "Publication",
+  "candidates": "Candidats",
+  "applicantDetail": "Détails du candidat",
+  "candidateProfile": "Profil du candidat",
+  "shortlistTitle": "Présélection",
+  "noShortlistedCandidates": "Aucun candidat présélectionné pour le moment",
+  "shortlistEmpty": "Les candidats que vous présélectionnez apparaîtront ici",
+  "removeFromShortlist": "Retirer de la présélection",
+  "viewMessages": "Voir les messages",
+  "manageJobs": "Gérer les offres",
+  "yourJobs": "Vos offres",
+  "noJobsPosted": "Aucune offre publiée",
+  "noJobsPostedSubtitle": "Publiez votre première offre pour commencer à recruter",
+  "draftJobs": "Brouillons",
+  "activeJobs": "Actives",
+  "expiredJobs": "Expirées",
+  "closedJobs": "Clôturées",
+  "createJob": "Créer une offre",
+  "jobDetailsTitle": "Détails de l'offre",
+  "salaryRange": "Fourchette salariale",
+  "currency": "Devise",
+  "monthly": "Mensuel",
+  "annual": "Annuel",
+  "hourly": "Horaire",
+  "minSalary": "Min",
+  "maxSalary": "Max",
+  "perks": "Avantages",
+  "addPerk": "Ajouter un avantage",
+  "remove": "Supprimer",
+  "preview": "Aperçu",
+  "publishJob": "Publier l'offre",
+  "jobPublished": "Offre publiée",
+  "jobUpdated": "Offre mise à jour",
+  "jobSavedDraft": "Enregistrée en brouillon",
+  "fillRequired": "Veuillez remplir les champs obligatoires",
+  "jobUrgent": "Marquer comme urgent",
+  "addAtLeastOne": "Ajoutez au moins une exigence",
+  "createUpdate": "Créer une publication",
+  "shareCompanyNews": "Partagez l'actualité de l'entreprise",
+  "addStory": "Ajouter une story",
+  "showWorkplace": "Montrez votre lieu de travail",
+  "viewShortlist": "Voir la présélection",
+  "yourSavedCandidates": "Vos candidats enregistrés",
+  "inviteCandidate": "Inviter le candidat",
+  "reachOutDirectly": "Contactez directement",
+  "activeJobsCount": "{count,plural, =1{1 offre active}other{{count} offres actives}}",
+  "@activeJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "employmentType": "Type d'emploi",
+  "requiredRole": "Rôle requis",
+  "selectCategoryRole2": "Choisir catégorie et rôle",
+  "hiresNeeded": "Embauches nécessaires",
+  "compensation": "Rémunération",
+  "useSalaryRange": "Utiliser une fourchette salariale",
+  "contractDuration": "Durée du contrat",
+  "limitReached": "Limite atteinte",
+  "upgradePlan": "Passer à un plan supérieur",
+  "usingXofY": "Vous utilisez {used} offres sur {total}.",
+  "@usingXofY": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "businessInterviewsTitle": "Entretiens",
+  "noInterviewsYet": "Aucun entretien planifié",
+  "scheduleFirstInterview": "Planifiez votre premier entretien avec un candidat",
+  "sendInterviewInvite": "Envoyer l'invitation à un entretien",
+  "interviewSentTitle": "Invitation envoyée !",
+  "interviewSentSubtitle": "Le candidat a été notifié.",
+  "scheduleInterviewTitle": "Planifier un entretien",
+  "interviewType": "Type d'entretien",
+  "inPersonInterview": "En personne",
+  "videoCallInterview": "Appel vidéo",
+  "phoneCallInterview": "Appel téléphonique",
+  "interviewDate": "Date",
+  "interviewTime": "Heure",
+  "interviewLocation": "Lieu",
+  "interviewNotes": "Notes",
+  "optionalLabel": "Optionnel",
+  "sendInviteCta": "Envoyer l'invitation",
+  "messagesCountLabel": "{count,plural, =1{1 message}other{{count} messages}}",
+  "@messagesCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNewMessages": "Aucun nouveau message",
+  "subscriptionTitle": "Abonnement",
+  "currentPlan": "Forfait actuel",
+  "manage": "Gérer",
+  "upgrade": "Passer à supérieur",
+  "renewalDate": "Date de renouvellement",
+  "nearbyTalent": "Talents à proximité",
+  "searchNearby": "Rechercher à proximité",
+  "communityTitle": "Communauté",
+  "createPost": "Créer une publication",
+  "insights": "Statistiques",
+  "viewsLabel": "Vues",
+  "applicationsLabel": "Candidatures",
+  "conversionRate": "Taux de conversion",
+  "topPerformingJob": "Annonce la plus performante",
+  "viewAllSimple": "Tout voir",
+  "viewAllApplicantsForJob": "Voir tous les candidats pour cette offre",
+  "noUpcomingInterviews": "Aucun entretien à venir",
+  "noActivityYet": "Aucune activité pour le moment",
+  "noResultsFound": "Aucun résultat trouvé",
+  "renewsAutomatically": "Renouvellement automatique",
+  "plagitBusinessPlans": "Forfaits Plagit Business",
+  "scaleYourHiringSubtitle": "Développez vos recrutements avec le forfait adapté à votre entreprise.",
+  "yearly": "Annuel",
+  "saveWithAnnualBilling": "Économisez avec la facturation annuelle",
+  "chooseYourPlanSubtitle": "Choisissez le forfait adapté à vos besoins de recrutement.",
+  "continueWithPlan": "Continuer avec {plan}",
+  "@continueWithPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionAutoRenewNote": "L'abonnement se renouvelle automatiquement. Annulez à tout moment dans les Paramètres.",
+  "purchaseFlowComingSoon": "Achat bientôt disponible",
+  "applicant": "Candidat",
+  "applicantNotFound": "Candidat introuvable",
+  "cvViewerComingSoon": "Visionneuse de CV bientôt disponible",
+  "viewCV": "Voir le CV",
+  "application": "Candidature",
+  "messagingComingSoon": "Messagerie bientôt disponible",
+  "interviewConfirmed": "Entretien confirmé",
+  "interviewMarkedCompleted": "Entretien marqué comme terminé",
+  "cancelInterviewConfirm": "Voulez-vous vraiment annuler cet entretien ?",
+  "yesCancel": "Oui, annuler",
+  "interviewNotFound": "Entretien introuvable",
+  "openingMeetingLink": "Ouverture du lien de réunion…",
+  "rescheduleComingSoon": "Replanification bientôt disponible",
+  "notesFeatureComingSoon": "Notes bientôt disponibles",
+  "candidateMarkedHired": "Candidat marqué comme embauché !",
+  "feedbackComingSoon": "Avis bientôt disponibles",
+  "googleMapsComingSoon": "Intégration Google Maps bientôt disponible",
+  "noCandidatesNearby": "Aucun candidat à proximité",
+  "tryExpandingRadius": "Essayez d'élargir votre rayon de recherche.",
+  "candidate": "Candidat",
+  "forOpenPosition": "Pour poste ouvert",
+  "dateAndTimeUpper": "DATE ET HEURE",
+  "interviewTypeUpper": "TYPE D'ENTRETIEN",
+  "timezoneUpper": "FUSEAU HORAIRE",
+  "highlights": "Points forts",
+  "cvNotAvailable": "CV non disponible",
+  "cvWillAppearHere": "Apparaîtra ici une fois téléversé",
+  "seenEveryone": "Vous avez tout vu",
+  "checkBackForCandidates": "Revenez plus tard pour de nouveaux candidats.",
+  "dailyLimitReached": "Limite quotidienne atteinte",
+  "upgradeForUnlimitedSwipes": "Passez à un forfait supérieur pour des swipes illimités.",
+  "distanceUpper": "DISTANCE",
+  "inviteToInterview": "Inviter à un entretien",
+  "details": "Détails",
+  "shortlistedSuccessfully": "Ajouté à la présélection",
+  "tabDashboard": "Tableau de bord",
+  "tabCandidates": "Candidats",
+  "tabActivity": "Activité",
+  "statusPosted": "Publié",
+  "statusApplicants": "Candidats",
+  "statusInterviewsShort": "Entretiens",
+  "statusHiredShort": "Embauchés",
+  "jobLiveVisible": "Votre annonce est en ligne et visible",
+  "postJobShort": "Publier",
+  "messagesTitle": "Messages",
+  "online2": "En ligne",
+  "candidateUpper": "CANDIDAT",
+  "searchConversationsHint": "Rechercher conversations, candidats, rôles…",
+  "filterUnread": "Non lus",
+  "filterAll": "Tous",
+  "whenCandidatesMessage": "Lorsque les candidats vous écrivent, les conversations apparaissent ici.",
+  "trySwitchingFilter": "Essayez un autre filtre.",
+  "reply": "Répondre",
+  "selectItems": "Sélectionner des éléments",
+  "countSelected": "{count} sélectionné(s)",
+  "@countSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "Tout sélectionner",
+  "deleteConversation": "Supprimer la conversation ?",
+  "deleteAllConversations": "Supprimer toutes les conversations ?",
+  "deleteSelectedNote": "Les conversations sélectionnées seront supprimées de votre boîte. Le candidat garde sa copie.",
+  "deleteAll": "Tout supprimer",
+  "selectConversations": "Sélectionner les conversations",
+  "feedTab": "Fil",
+  "myPostsTab": "Mes publications",
+  "savedTab": "Enregistrés",
+  "postingAs": "Publier en tant que {name}",
+  "@postingAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noPostsYet": "Vous n'avez rien publié",
+  "nothingHereYet": "Rien ici pour le moment",
+  "shareVenueUpdate": "Partagez une actualité de votre établissement pour développer votre présence communautaire.",
+  "communityPostsAppearHere": "Les publications de la communauté apparaîtront ici.",
+  "createFirstPost": "Créer la première publication",
+  "yourPostUpper": "VOTRE PUBLICATION",
+  "businessLabel": "Entreprise",
+  "profileNotAvailable": "Profil non disponible",
+  "companyProfile": "Profil d'entreprise",
+  "premiumVenue": "Établissement premium",
+  "businessDetailsTitle": "Détails de l'entreprise",
+  "businessNameLabel": "Nom de l'entreprise",
+  "categoryLabel": "Catégorie",
+  "locationLabel": "Localisation",
+  "verificationLabel": "Vérification",
+  "pendingLabel": "En attente",
+  "notSet": "Non défini",
+  "contactLabel": "Contact",
+  "emailLabel": "E-mail",
+  "phoneLabel": "Téléphone",
+  "editProfileTitle": "Modifier le profil",
+  "companyNameField": "Nom de l'entreprise",
+  "phoneField": "Téléphone",
+  "locationField": "Localisation",
+  "signOut": "Se déconnecter",
+  "signOutTitle": "Se déconnecter ?",
+  "signOutConfirm": "Voulez-vous vraiment vous déconnecter ?",
+  "activeCountLabel": "{count,plural, =1{1 active}other{{count} actives}}",
+  "@activeCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newThisWeekLabel": "{count,plural, =1{1 nouveau cette semaine}other{{count} nouveaux cette semaine}}",
+  "@newThisWeekLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jobStatusActive": "Active",
+  "jobStatusPaused": "En pause",
+  "jobStatusClosed": "Clôturée",
+  "jobStatusDraft": "Brouillon",
+  "contractCasual": "Occasionnel",
+  "planBasic": "Basic",
+  "planPro": "Pro",
+  "planPremium": "Premium",
+  "bestForMaxVisibility": "Idéal pour une visibilité maximale",
+  "saveDollarsPerYear": "Économisez {currency}{amount}/an",
+  "@saveDollarsPerYear": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "planBasicFeature1": "Jusqu'à 3 offres publiées",
+  "planBasicFeature2": "Consultation des profils de candidats",
+  "planBasicFeature3": "Recherche de candidats basique",
+  "planBasicFeature4": "Assistance par e-mail",
+  "planProFeature1": "Jusqu'à 10 offres publiées",
+  "planProFeature2": "Recherche avancée de candidats",
+  "planProFeature3": "Tri prioritaire des candidats",
+  "planProFeature4": "Accès Quick Plug",
+  "planProFeature5": "Assistance par chat",
+  "planPremiumFeature1": "Offres d'emploi illimitées",
+  "planPremiumFeature2": "Annonces mises en avant",
+  "planPremiumFeature3": "Analyses avancées",
+  "planPremiumFeature4": "Quick Plug illimité",
+  "planPremiumFeature5": "Matching prioritaire des candidats",
+  "planPremiumFeature6": "Gestionnaire de compte dédié",
+  "currentSelectionCheck": "Sélection actuelle ✓",
+  "selectPlanName": "Choisir {plan}",
+  "@selectPlanName": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "perYear": "/an",
+  "perMonth": "/mois",
+  "jobTitleHintExample": "ex. Chef de cuisine",
+  "locationHintExample": "ex. Dubaï, EAU",
+  "annualSalaryLabel": "Salaire annuel ({currency})",
+  "@annualSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyPayLabel": "Salaire mensuel ({currency})",
+  "@monthlyPayLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "hourlyRateLabel": "Taux horaire ({currency})",
+  "@hourlyRateLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "minSalaryLabel": "Min ({currency})",
+  "@minSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "maxSalaryLabel": "Max ({currency})",
+  "@maxSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursPerWeekLabel": "Heures / semaine",
+  "expectedHoursWeekLabel": "Heures prévues / semaine (optionnel)",
+  "bonusTipsLabel": "Prime / Pourboires (optionnel)",
+  "bonusTipsHint": "ex. Pourboires et frais de service",
+  "housingIncludedLabel": "Logement inclus",
+  "travelIncludedLabel": "Déplacement inclus",
+  "overtimeAvailableLabel": "Heures supplémentaires disponibles",
+  "flexibleScheduleLabel": "Horaires flexibles",
+  "weekendShiftsLabel": "Service le week-end",
+  "describeRoleHint": "Décrivez le poste, les responsabilités et ce qui rend cette offre unique…",
+  "requirementsHint": "Compétences, expérience, certifications requises…",
+  "previewPrefix": "Aperçu : {text}",
+  "@previewPrefix": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "monthsShort": "{count} mois",
+  "@monthsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "roleAll": "Tous",
+  "roleChef": "Chef",
+  "roleWaiter": "Serveur",
+  "roleBartender": "Barman",
+  "roleHost": "Hôte",
+  "roleManager": "Manager",
+  "roleReception": "Réception",
+  "roleKitchenPorter": "Plongeur",
+  "roleRelocate": "Mobilité",
+  "experience02Years": "0-2 ans",
+  "experience35Years": "3-5 ans",
+  "experience5PlusYears": "5+ ans",
+  "roleUpper": "RÔLE",
+  "experienceUpper": "EXPÉRIENCE",
+  "cvLabel": "CV",
+  "addShort": "Ajouter",
+  "photosCount": "{count,plural, =1{1 photo}other{{count} photos}}",
+  "@photosCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "candidatesFoundCount": "{count,plural, =1{1 candidat trouvé}other{{count} candidats trouvés}}",
+  "@candidatesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "maxKmLabel": "max 50 km",
+  "shortlistAction": "Présélectionner",
+  "messageAction": "Message",
+  "interviewAction": "Entretien",
+  "viewAction": "Voir",
+  "rejectAction": "Refuser",
+  "basedIn": "Basé à",
+  "verificationPending": "Vérification en attente",
+  "refreshAction": "Actualiser",
+  "upgradeAction": "Passer Premium",
+  "searchJobsByTitleHint": "Rechercher par intitulé, rôle ou lieu…",
+  "xShortlisted": "{name} présélectionné(e)",
+  "@xShortlisted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "xRejected": "{name} refusé(e)",
+  "@xRejected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectConfirmName": "Voulez-vous vraiment refuser {name} ?",
+  "@rejectConfirmName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appliedToRoleOn": "Candidature envoyée pour {role} le {date}",
+  "@appliedToRoleOn": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "appliedDatePrefix": "Candidature envoyée le {date}",
+  "@appliedDatePrefix": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "salaryExpectationTitle": "Prétentions salariales",
+  "previousEmployer": "Employeur précédent",
+  "earlierVenue": "Établissement antérieur",
+  "presentLabel": "En cours",
+  "skillCustomerService": "Service client",
+  "skillTeamwork": "Travail d'équipe",
+  "skillCommunication": "Communication",
+  "stepApplied": "Candidature envoyée",
+  "stepViewed": "Vu",
+  "stepShortlisted": "Présélectionné",
+  "stepInterviewScheduled": "Entretien planifié",
+  "stepRejected": "Refusé",
+  "stepUnderReview": "En cours d'examen",
+  "stepPendingReview": "En attente d'examen",
+  "sortNewest": "Plus récents",
+  "sortMostExperienced": "Plus expérimentés",
+  "sortBestMatch": "Meilleur match",
+  "filterApplied": "Envoyée",
+  "filterUnderReview": "En examen",
+  "filterShortlisted": "Présélectionnés",
+  "filterInterview": "Entretien",
+  "filterHired": "Embauchés",
+  "filterRejected": "Refusés",
+  "confirmed": "Confirmé",
+  "pending": "En attente",
+  "completed": "Terminé",
+  "cancelled": "Annulé",
+  "videoLabel": "Vidéo",
+  "viewDetails": "Voir les détails",
+  "interviewDetails": "Détails de l'entretien",
+  "interviewConfirmedHeadline": "Entretien confirmé",
+  "interviewConfirmedSubline": "Tout est prêt. Nous vous rappellerons à l'approche.",
+  "dateLabel": "Date",
+  "timeLabel": "Heure",
+  "formatLabel": "Format",
+  "joinMeeting": "Rejoindre",
+  "viewJobAction": "Voir l'offre",
+  "addToCalendar": "Ajouter au calendrier",
+  "needsYourAttention": "Nécessite votre attention",
+  "reviewAction": "Examiner",
+  "applicationsCount": "{count, plural, =1{1 candidature} other{{count} candidatures}}",
+  "@applicationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sortMostRecent": "Plus récents",
+  "interviewScheduledLabel": "Entretien planifié",
+  "editAction": "Modifier",
+  "currentPlanLabel": "Forfait actuel",
+  "freePlan": "Forfait gratuit",
+  "profileStrength": "Force du profil",
+  "detailsLabel": "Détails",
+  "basedInLabel": "Basé à",
+  "verificationLabel2": "Vérification",
+  "contactLabel2": "Contact",
+  "notSetLabel": "Non défini",
+  "chipAll": "Tous",
+  "chipFullTime": "Temps plein",
+  "chipPartTime": "Temps partiel",
+  "chipTemporary": "Temporaire",
+  "chipCasual": "Occasionnel",
+  "sortBestMatchLabel": "Meilleur match",
+  "sortAZ": "A-Z",
+  "sortBy": "Trier par",
+  "featuredBadge": "Mis en avant",
+  "urgentBadge": "Urgent",
+  "salaryOnRequest": "Salaire sur demande",
+  "upgradeToPremium": "Passer à Premium",
+  "urgentJobsOnly": "Offres urgentes uniquement",
+  "showOnlyUrgentListings": "Afficher uniquement les offres urgentes",
+  "verifiedBusinessesOnly": "Entreprises vérifiées uniquement",
+  "showOnlyVerifiedBusinesses": "Afficher uniquement les entreprises vérifiées",
+  "split": "Partage",
+  "payUpper": "RÉMUNÉRATION",
+  "typeUpper": "TYPE",
+  "whereUpper": "LIEU",
+  "payLabel": "Rémunération",
+  "typeLabel": "Type",
+  "whereLabel": "Lieu",
+  "whereYouWillWork": "Où vous travaillerez",
+  "mapPreviewDirections": "Aperçu carte · ouvrir pour l'itinéraire complet",
+  "directionsAction": "Itinéraire",
+  "communityTabForYou": "Pour vous",
+  "communityTabFollowing": "Abonnements",
+  "communityTabNearby": "À proximité",
+  "communityTabSaved": "Enregistrés",
+  "viewProfileAction": "Voir le profil",
+  "copyLinkAction": "Copier le lien",
+  "savePostAction": "Enregistrer la publication",
+  "unsavePostAction": "Retirer la publication",
+  "hideThisPost": "Masquer cette publication",
+  "reportPost": "Signaler la publication",
+  "cancelAction": "Annuler",
+  "newPostTitle": "Nouvelle publication",
+  "youLabel": "Vous",
+  "postingToCommunityAsBusiness": "Publication dans la communauté en tant qu'Entreprise",
+  "postingToCommunityAsPro": "Publication dans la communauté en tant que Pro de l'hôtellerie",
+  "whatsOnYourMind": "Qu'avez-vous en tête ?",
+  "publishAction": "Publier",
+  "attachmentPhoto": "Photo",
+  "attachmentVideo": "Vidéo",
+  "attachmentLocation": "Lieu",
+  "boostMyProfileCta": "Booster mon profil",
+  "unlockYourFullPotential": "Libérez tout votre potentiel",
+  "annualPlan": "Annuel",
+  "monthlyPlan": "Mensuel",
+  "bestValueBadge": "MEILLEURE OFFRE",
+  "whatsIncluded": "Ce qui est inclus",
+  "continueWithAnnual": "Continuer avec Annuel",
+  "continueWithMonthly": "Continuer avec Mensuel",
+  "maybeLater": "Plus tard",
+  "restorePurchasesLabel": "Restaurer les achats",
+  "subscriptionAutoRenewsNote": "L'abonnement se renouvelle automatiquement. Annulez à tout moment dans les Paramètres.",
+  "appStatusPillApplied": "Envoyée",
+  "appStatusPillUnderReview": "En examen",
+  "appStatusPillShortlisted": "Présélectionné",
+  "appStatusPillInterviewInvited": "Entretien proposé",
+  "appStatusPillInterviewScheduled": "Entretien planifié",
+  "appStatusPillHired": "Embauché",
+  "appStatusPillRejected": "Refusée",
+  "appStatusPillWithdrawn": "Retirée",
+  "jobActionPause": "Suspendre l'offre",
+  "jobActionResume": "Reprendre l'offre",
+  "jobActionClose": "Clôturer l'offre",
+  "statusConfirmedLower": "confirmé",
+  "postInsightsTitle": "Statistiques de publication",
+  "postInsightsSubtitle": "Qui voit votre contenu",
+  "recentViewers": "Spectateurs récents",
+  "lockedBadge": "VERROUILLÉ",
+  "viewerBreakdown": "Répartition des spectateurs",
+  "viewersByRole": "Spectateurs par rôle",
+  "topLocations": "Principales localisations",
+  "businesses": "Entreprises",
+  "saveToCollectionTitle": "Enregistrer dans une collection",
+  "chooseCategory": "Choisir une catégorie",
+  "removeFromCollection": "Retirer de la collection",
+  "newApplicationTemplate": "Nouvelle candidature — {role}",
+  "@newApplicationTemplate": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryRestaurants": "Restaurants",
+  "categoryCookingVideos": "Vidéos de cuisine",
+  "categoryJobsTips": "Conseils emploi",
+  "categoryHospitalityNews": "Actu hôtellerie",
+  "categoryRecipes": "Recettes",
+  "categoryOther": "Autre",
+  "premiumHeroTagline": "Plus de visibilité, alertes prioritaires et filtres avancés pour les pros de l'hôtellerie exigeants.",
+  "benefitAdvancedFilters": "Filtres de recherche avancés",
+  "benefitPriorityNotifications": "Alertes d'emploi prioritaires",
+  "benefitProfileVisibility": "Visibilité accrue du profil",
+  "benefitPremiumBadge": "Badge de profil Premium",
+  "benefitEarlyAccess": "Accès anticipé aux nouvelles offres",
+  "unlockCandidatePremium": "Débloquer Candidate Premium",
+  "getStartedAction": "Commencer",
+  "findYourFirstJob": "Trouvez votre premier emploi",
+  "browseHospitalityRolesNearby": "Parcourez des centaines de postes hôteliers près de chez vous",
+  "seeWhoViewedYourPostTitle": "Voir qui a vu votre publication",
+  "upgradeToPremiumCta": "Passer à Premium",
+  "upgradeToPremiumSubtitle": "Passez à Premium pour voir les entreprises vérifiées, recruteurs et leaders de l'hôtellerie qui ont consulté votre contenu.",
+  "verifiedBusinessViewers": "Spectateurs d'entreprises vérifiées",
+  "recruiterHiringManagerActivity": "Activité des recruteurs et responsables du recrutement",
+  "cityLevelReachBreakdown": "Portée au niveau des villes",
+  "liveApplicationsCount": "{count, plural, =1{1 en direct} other{{count} en direct}}",
+  "nearbyJobsCount": "{count, plural, =1{1 à proximité} other{{count} à proximité}}",
+  "jobsNearYouCount": "{count, plural, =1{1 emploi près de vous} other{{count} emplois près de vous}}",
+  "applicationsUnderReviewCount": "{count, plural, =1{1 candidature en cours d'examen} other{{count} candidatures en cours d'examen}}",
+  "interviewsScheduledCount": "{count, plural, =1{1 entretien planifié} other{{count} entretiens planifiés}}",
+  "unreadMessagesCount": "{count, plural, =1{1 message non lu} other{{count} messages non lus}}",
+  "unreadMessagesFromEmployersCount": "{count, plural, =1{1 message non lu d'employeurs} other{{count} messages non lus d'employeurs}}",
+  "stepsLeftCount": "{count, plural, =1{1 étape restante} other{{count} étapes restantes}}",
+  "profileCompleteGreatWork": "Profil complet — beau travail",
+  "@liveApplicationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@nearbyJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@jobsNearYouCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@applicationsUnderReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@interviewsScheduledCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@unreadMessagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@unreadMessagesFromEmployersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@stepsLeftCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "yearsCount": "{count, plural, =1{1 an} other{{count} ans}}",
+  "@yearsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perHour": "/h",
+  "hoursPerWeekShort": "{count, plural, =1{1 h/sem} other{{count} h/sem}}",
+  "@hoursPerWeekShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forMonthsCount": "{count, plural, =1{pendant 1 mois} other{pendant {count} mois}}",
+  "@forMonthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewsCount": "{count, plural, =1{1 entretien} other{{count} entretiens}}",
+  "@interviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickActionFindJobs": "Trouver des emplois",
+  "quickActionMyApplications": "Mes candidatures",
+  "quickActionUpdateProfile": "Mettre à jour le profil",
+  "quickActionCreatePost": "Créer une publication",
+  "quickActionViewInterviews": "Voir les entretiens",
+  "confirmSubscriptionTitle": "Confirmer l'abonnement",
+  "confirmAndSubscribeCta": "Confirmer et s'abonner",
+  "timelineLabel": "Chronologie",
+  "interviewLabel": "Entretien",
+  "payOnRequest": "Rémunération sur demande",
+  "rateOnRequest": "Taux sur demande",
+  "quickActionFindJobsSubtitle": "Découvrez des postes près de chez vous",
+  "quickActionMyApplicationsSubtitle": "Suivez toutes vos candidatures",
+  "quickActionUpdateProfileSubtitle": "Améliorez votre visibilité et votre score de match",
+  "quickActionCreatePostSubtitle": "Partagez votre travail avec la communauté",
+  "quickActionViewInterviewsSubtitle": "Préparez-vous pour la suite",
+  "offerLabel": "Offre",
+  "hiringForTemplate": "Recrute pour {role}",
+  "@hiringForTemplate": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToOpenInMaps": "Toucher pour ouvrir dans Plans",
+  "alreadyAppliedToJob": "Vous avez déjà postulé à cette offre.",
+  "changePhoto": "Changer la photo",
+  "changeAvatar": "Changer l'avatar",
+  "addPhotoAction": "Ajouter une photo",
+  "nationalityLabel": "Nationalité",
+  "targetRoleLabel": "Poste recherché",
+  "salaryExpectationLabel": "Prétentions salariales",
+  "addLanguageCta": "+ Ajouter une langue",
+  "experienceLabel": "Expérience",
+  "nameLabel": "Nom",
+  "zeroHours": "Zéro heure",
+  "checkInterviewDetailsLine": "Vérifiez les détails de votre entretien",
+  "interviewInvitedSubline": "L'employeur souhaite vous rencontrer — confirmez un créneau",
+  "shortlistedSubline": "Vous êtes présélectionné — attendez l'étape suivante",
+  "underReviewSubline": "L'employeur examine votre profil",
+  "hiredHeadline": "Embauché",
+  "hiredSubline": "Félicitations ! Vous avez reçu une offre",
+  "applicationSubmittedHeadline": "Candidature envoyée",
+  "applicationSubmittedSubline": "L'employeur examinera votre candidature",
+  "withdrawnHeadline": "Retirée",
+  "withdrawnSubline": "Vous avez retiré cette candidature",
+  "notSelectedHeadline": "Non retenu",
+  "notSelectedSubline": "Merci de votre intérêt",
+  "jobsFoundCount": "{count, plural, =1{1 offre trouvée} other{{count} offres trouvées}}",
+  "@jobsFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsTotalCount": "{count, plural, =1{1 au total} other{{count} au total}}",
+  "@applicationsTotalCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsInReviewCount": "{count, plural, =1{1 en cours d'examen} other{{count} en cours d'examen}}",
+  "@applicationsInReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsLiveCount": "{count, plural, =1{1 active} other{{count} actives}}",
+  "@applicationsLiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewsPendingConfirmTime": "{count, plural, =1{1 entretien en attente — confirmez un créneau.} other{{count} entretiens en attente — confirmez un créneau.}}",
+  "@interviewsPendingConfirmTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notifInterviewConfirmedTitle": "Entretien confirmé — {name}",
+  "@notifInterviewConfirmedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInterviewRequestTitle": "Demande d'entretien — {name}",
+  "@notifInterviewRequestTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApplicationUpdateTitle": "Mise à jour de candidature — {name}",
+  "@notifApplicationUpdateTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifOfferReceivedTitle": "Offre reçue — {name}",
+  "@notifOfferReceivedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifMessageFromTitle": "Message de — {name}",
+  "@notifMessageFromTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInterviewReminderTitle": "Rappel d'entretien — {name}",
+  "@notifInterviewReminderTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifProfileViewedTitle": "Profil consulté — {name}",
+  "@notifProfileViewedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifNewJobMatchTitle": "Nouveau match d'emploi — {name}",
+  "@notifNewJobMatchTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApplicationViewedTitle": "Candidature consultée par — {name}",
+  "@notifApplicationViewedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifShortlistedTitle": "Présélectionné chez — {name}",
+  "@notifShortlistedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifCompleteProfile": "Complétez votre profil pour de meilleurs matchs",
+  "notifCompleteBusinessProfile": "Complétez le profil de votre entreprise pour plus de visibilité",
+  "notifNewJobViews": "Votre offre {role} a {count} nouvelles vues",
+  "@notifNewJobViews": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "notifAppliedForRole": "{name} a postulé pour {role}",
+  "@notifAppliedForRole": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "notifNewApplicationNameRole": "Nouvelle candidature : {name} pour {role}",
+  "@notifNewApplicationNameRole": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTyping": "Écrit…",
+  "chatStatusSeen": "Vu",
+  "chatStatusDelivered": "Livré",
+  "entryTagline": "La plateforme de recrutement pour les professionnels de l'hôtellerie.",
+  "entryFindWork": "Trouver un emploi",
+  "entryFindWorkSubtitle": "Parcourez les offres et faites-vous recruter par les meilleurs établissements",
+  "entryHireStaff": "Recruter du personnel",
+  "entryHireStaffSubtitle": "Publiez des offres et trouvez les meilleurs talents de l'hôtellerie",
+  "entryFindCompanies": "Trouver des entreprises",
+  "entryFindCompaniesSubtitle": "Découvrez des établissements hôteliers et prestataires de services",
+  "servicesEntryTitle": "Recherche d'entreprises",
+  "servicesHospitalityServices": "Services hôteliers",
+  "servicesEntrySubtitle": "Enregistrez votre entreprise de services ou trouvez des prestataires hôteliers près de chez vous",
+  "servicesRegisterCardTitle": "S'inscrire comme entreprise",
+  "servicesRegisterCardSubtitle": "Référencez votre service hôtelier et faites-vous découvrir par les clients",
+  "servicesLookingCardTitle": "Je cherche une entreprise",
+  "servicesLookingCardSubtitle": "Trouvez des prestataires hôteliers près de chez vous",
+  "registerBusinessTitle": "Inscrivez votre entreprise",
+  "enterCompanyName": "Saisissez le nom de l'entreprise",
+  "subcategoryOptional": "Sous-catégorie (optionnel)",
+  "subcategoryHintFloristDj": "ex. Fleuriste, Services DJ",
+  "searchCompaniesHint": "Rechercher des entreprises…",
+  "browseCategories": "Parcourir les catégories",
+  "companiesFoundCount": "{count, plural, =1{1 entreprise trouvée} other{{count} entreprises trouvées}}",
+  "@companiesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serviceCategoryFoodBeverage": "Fournisseurs alimentation et boissons",
+  "serviceCategoryEventServices": "Services événementiels",
+  "serviceCategoryDecorDesign": "Décoration et design",
+  "serviceCategoryEntertainment": "Divertissement",
+  "serviceCategoryEquipmentOps": "Équipement et opérations",
+  "serviceCategoryCleaningMaintenance": "Nettoyage et maintenance",
+  "distanceMiles": "{value} mi",
+  "@distanceMiles": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "distanceKilometers": "{value} km",
+  "@distanceKilometers": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "postDetailTitle": "Publication",
+  "likeAction": "J'aime",
+  "commentAction": "Commenter",
+  "saveActionLabel": "Enregistrer",
+  "commentsTitle": "Commentaires",
+  "addCommentHint": "Ajouter un commentaire…",
+  "likesCount": "{count,plural, =1{1 j'aime}other{{count} j'aime}}",
+  "@likesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commentsCount": "{count,plural, =1{1 commentaire}other{{count} commentaires}}",
+  "@commentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savesCount": "{count,plural, =1{1 enregistrement}other{{count} enregistrements}}",
+  "@savesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoMinutesShort": "{count} min",
+  "@timeAgoMinutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoHoursShort": "{count} h",
+  "@timeAgoHoursShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoDaysShort": "{count} j",
+  "@timeAgoDaysShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoNow": "maintenant",
+  "activityTitle": "Activité",
+  "activityLikedPost": "a aimé votre publication",
+  "activityCommented": "a commenté votre publication",
+  "activityStartedFollowing": "a commencé à vous suivre",
+  "activityMentioned": "vous a mentionné",
+  "activitySystemUpdate": "vous a envoyé une mise à jour",
+  "noActivityYetDesc": "Lorsque des personnes aimeront, commenteront ou vous suivront, cela s'affichera ici.",
+  "activeStatus": "Actif",
+  "activeBadge": "ACTIF",
+  "nextRenewalLabel": "Prochain renouvellement",
+  "startedLabel": "Commencé",
+  "statusLabel": "Statut",
+  "billingAndCancellation": "Facturation et annulation",
+  "billingAndCancellationCopy": "Votre abonnement est facturé via votre compte App Store / Google Play. Vous pouvez annuler à tout moment depuis les Paramètres de votre appareil — vous conservez l'accès premium jusqu'à la date de renouvellement.",
+  "premiumIsActive": "Premium est actif",
+  "premiumThanksCopy": "Merci de soutenir Plagit. Vous avez un accès complet à toutes les fonctionnalités premium.",
+  "manageSubscription": "Gérer l'abonnement",
+  "candidatePremiumPlanName": "Candidate Premium",
+  "renewsOnDate": "Renouvellement le {date}",
+  "@renewsOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fullViewerAccessLine": "Accès complet aux spectateurs · toutes les statistiques débloquées",
+  "premiumActiveBadge": "Premium actif",
+  "fullInsightsUnlocked": "Statistiques complètes et détails des spectateurs débloqués.",
+  "noViewersInCategory": "Aucun spectateur dans cette catégorie pour le moment",
+  "onlyVerifiedViewersShown": "Seuls les spectateurs vérifiés avec un profil public sont affichés.",
+  "notEnoughDataYet": "Pas encore assez de données.",
+  "noViewInsightsYet": "Aucune statistique de vue pour le moment",
+  "noViewInsightsDesc": "Les statistiques apparaîtront quand votre publication aura plus de vues.",
+  "suspiciousEngagementDetected": "Engagement suspect détecté",
+  "patternReviewRequired": "Examen du schéma requis",
+  "adminInsightsFooter": "Vue admin — mêmes statistiques que l'auteur, plus les alertes de modération. Agrégées uniquement, aucune identité individuelle de spectateur exposée.",
+  "viewerKindBusiness": "Entreprise",
+  "viewerKindCandidate": "Candidat",
+  "viewerKindRecruiter": "Recruteur",
+  "viewerKindHiringManager": "Responsable du recrutement",
+  "viewerKindBusinessesPlural": "Entreprises",
+  "viewerKindCandidatesPlural": "Candidats",
+  "viewerKindRecruitersPlural": "Recruteurs",
+  "viewerKindHiringManagersPlural": "Responsables du recrutement",
+  "searchPeoplePostsVenuesHint": "Rechercher personnes, publications, établissements…",
+  "searchCommunityTitle": "Rechercher dans la communauté",
+  "roleSommelier": "Sommelier",
+  "candidatePremiumActivated": "Vous êtes maintenant Candidate Premium",
+  "purchasesRestoredPremium": "Achats restaurés — vous êtes maintenant Candidate Premium",
+  "nothingToRestore": "Rien à restaurer",
+  "noValidSubscriptionPremiumRemoved": "Aucun abonnement valide trouvé — accès premium retiré",
+  "restoreFailedWithError": "Échec de la restauration. {error}",
+  "@restoreFailedWithError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionTitleAnnual": "Candidate Premium · Annuel",
+  "subscriptionTitleMonthly": "Candidate Premium · Mensuel",
+  "pricePerYearSlash": "{price} / an",
+  "@pricePerYearSlash": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "pricePerMonthSlash": "{price} / mois",
+  "@pricePerMonthSlash": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbyJobsTitle": "Emplois à proximité",
+  "@nearbyJobsTitle": {},
+  "expandRadius": "Élargir le rayon",
+  "@expandRadius": {},
+  "noJobsInRadius": "Aucun emploi dans ce rayon",
+  "@noJobsInRadius": {},
+  "jobsWithinRadius": "{count, plural, =1{1 emploi dans un rayon de {radius} miles} other{{count} emplois dans un rayon de {radius} miles}}",
+  "@jobsWithinRadius": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "radius": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewAcceptedSnack": "Entretien accepté !",
+  "@interviewAcceptedSnack": {},
+  "declineInterviewTitle": "Décliner l'entretien",
+  "@declineInterviewTitle": {},
+  "declineInterviewConfirm": "Voulez-vous vraiment décliner cet entretien ?",
+  "@declineInterviewConfirm": {},
+  "addedToCalendar": "Ajouté au calendrier",
+  "@addedToCalendar": {},
+  "removeCompanyTitle": "Retirer ?",
+  "@removeCompanyTitle": {},
+  "removeCompanyConfirm": "Voulez-vous vraiment retirer cette entreprise de votre liste enregistrée ?",
+  "@removeCompanyConfirm": {},
+  "signOutAllRolesConfirm": "Voulez-vous vraiment vous déconnecter de tous les rôles ?",
+  "@signOutAllRolesConfirm": {},
+  "tapToViewAllConversations": "Toucher pour voir toutes les conversations",
+  "@tapToViewAllConversations": {},
+  "savedJobsTitle": "Emplois enregistrés",
+  "@savedJobsTitle": {},
+  "savedJobsCount": "{count, plural, =1{1 emploi enregistré} other{{count} emplois enregistrés}}",
+  "@savedJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "removeFromSavedTitle": "Retirer des enregistrés ?",
+  "@removeFromSavedTitle": {},
+  "removeFromSavedConfirm": "Cette offre sera retirée de votre liste enregistrée.",
+  "@removeFromSavedConfirm": {},
+  "noSavedJobsSubtitle": "Parcourez les offres et enregistrez celles qui vous plaisent",
+  "@noSavedJobsSubtitle": {},
+  "browseJobsAction": "Parcourir les offres",
+  "@browseJobsAction": {},
+  "matchingJobsCount": "{count, plural, =1{1 offre correspondante} other{{count} offres correspondantes}}",
+  "@matchingJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savedPostsTitle": "Publications enregistrées",
+  "@savedPostsTitle": {},
+  "searchSavedPostsHint": "Rechercher dans les publications enregistrées…",
+  "@searchSavedPostsHint": {},
+  "skipAction": "Passer",
+  "submitAction": "Envoyer",
+  "doneAction": "Terminé",
+  "resetYourPasswordTitle": "Réinitialiser votre mot de passe",
+  "enterEmailForResetCode": "Saisissez votre e-mail pour recevoir un code",
+  "sendResetCode": "Envoyer le code",
+  "enterResetCode": "Saisir le code",
+  "resendCode": "Renvoyer le code",
+  "passwordResetComplete": "Mot de passe réinitialisé",
+  "backToSignIn": "Retour à la connexion",
+  "passwordChanged": "Mot de passe changé",
+  "passwordUpdatedShort": "Votre mot de passe a été mis à jour.",
+  "passwordUpdatedRelogin": "Votre mot de passe a été mis à jour. Reconnectez-vous avec le nouveau.",
+  "updatePassword": "Mettre à jour le mot de passe",
+  "changePasswordTitle": "Changer le mot de passe",
+  "passwordRequirements": "Exigences du mot de passe",
+  "newPasswordHint": "Nouveau mot de passe (min 8 caractères)",
+  "confirmPasswordField": "Confirmer le mot de passe",
+  "enterEmailField": "Saisir l'e-mail",
+  "enterPasswordField": "Saisir le mot de passe",
+  "welcomeBack": "Bon retour !",
+  "selectHowToUse": "Choisissez comment utiliser Plagit aujourd'hui",
+  "continueAsCandidate": "Continuer en tant que candidat",
+  "continueAsBusiness": "Continuer en tant qu'entreprise",
+  "signInToPlagit": "Se connecter à Plagit",
+  "enterCredentials": "Saisissez vos identifiants pour continuer",
+  "adminPortal": "Portail Admin",
+  "plagitAdmin": "Plagit Admin",
+  "signInToAdminAccount": "Connectez-vous à votre compte admin",
+  "admin": "Admin",
+  "searchJobsRolesRestaurantsHint": "Rechercher emplois, rôles, restaurants...",
+  "exploreNearbyJobs": "Explorer les emplois à proximité",
+  "findOpportunitiesOnMap": "Trouvez des opportunités sur la carte",
+  "featuredJobs": "Emplois en vedette",
+  "jobsNearYou": "Emplois près de vous",
+  "jobsMatchingRoleType": "Emplois correspondant à votre rôle et type",
+  "availableNow": "Disponible maintenant",
+  "noNearbyJobsYet": "Aucun emploi à proximité",
+  "tryIncreasingRadius": "Élargissez le rayon ou changez les filtres",
+  "checkBackForOpportunities": "Revenez bientôt pour de nouvelles opportunités",
+  "noNotifications": "Aucune notification",
+  "okAction": "OK",
+  "onlineNow": "En ligne maintenant",
+  "businessUpper": "ENTREPRISE",
+  "waitingForBusinessFirstMessage": "En attente du premier message de l'entreprise",
+  "whenEmployersMessageYou": "Les messages des employeurs apparaîtront ici.",
+  "replyToCandidate": "Répondre au candidat…",
+  "quickFeedback": "Avis rapide",
+  "helpImproveMatches": "Aidez-nous à améliorer vos matchs",
+  "thanksForFeedback": "Merci pour votre avis !",
+  "accountSettings": "Paramètres du compte",
+  "notificationSettings": "Paramètres de notifications",
+  "privacyAndSecurity": "Confidentialité et sécurité",
+  "helpAndSupport": "Aide et support",
+  "activeRoleUpper": "RÔLE ACTIF",
+  "meetingLink": "Lien de réunion",
+  "joinMeeting2": "Rejoindre la réunion",
+  "notes": "Notes",
+  "completeBusinessProfileTitle": "Complétez votre profil entreprise",
+  "businessDescription": "Description de l'entreprise",
+  "finishSetupAction": "Terminer la configuration",
+  "describeBusinessHintLong": "Décrivez votre entreprise, sa culture et ce qui en fait un excellent lieu de travail... (min 150 caractères)",
+  "describeBusinessHintShort": "Décrivez votre entreprise...",
+  "writeShortIntroAboutYourself": "Rédigez une courte présentation...",
+  "createBusinessAccountTitle": "Créer un compte entreprise",
+  "businessDetailsSection": "Détails de l'entreprise",
+  "openToInternationalCandidates": "Ouvert aux candidats internationaux",
+  "createAccountShort": "Créer un compte",
+  "yourDetailsSection": "Vos informations",
+  "jobTypeField": "Type d'emploi",
+  "communityFeed": "Fil de la communauté",
+  "postPublished": "Publication publiée",
+  "postHidden": "Publication masquée",
+  "postReportedReview": "Publication signalée — l'admin va l'examiner",
+  "postNotFound": "Publication introuvable",
+  "goBack": "Retour",
+  "linkCopied": "Lien copié",
+  "removedFromSaved": "Retiré des enregistrés",
+  "noPostsFound": "Aucune publication trouvée",
+  "tipsStoriesAdvice": "Conseils, histoires et retours de professionnels",
+  "searchTalentPostsRolesHint": "Rechercher talents, publications, rôles…",
+  "videoAttachmentsComingSoon": "Pièces vidéo bientôt disponibles",
+  "locationTaggingComingSoon": "Géolocalisation bientôt disponible",
+  "fullImageViewerComingSoon": "Visualiseur d'images bientôt disponible",
+  "shareComingSoon": "Partage bientôt disponible",
+  "findServices": "Trouver des services",
+  "findHospitalityServices": "Services pour l'hôtellerie",
+  "browseServices": "Parcourir les services",
+  "searchServicesCompaniesLocationsHint": "Rechercher services, entreprises, lieux...",
+  "searchCompaniesServicesLocationsHint": "Rechercher entreprises, services, lieux...",
+  "nearbyCompanies": "Entreprises à proximité",
+  "nearYou": "Près de vous",
+  "listLabel": "Liste",
+  "mapViewLabel": "Vue carte",
+  "noServicesFound": "Aucun service trouvé",
+  "noCompaniesFoundNearby": "Aucune entreprise à proximité",
+  "noSavedCompanies": "Aucune entreprise enregistrée",
+  "savedCompaniesTitle": "Entreprises enregistrées",
+  "saveCompaniesForLater": "Enregistrez des entreprises pour les retrouver",
+  "latestUpdates": "Dernières actualités",
+  "noPromotions": "Aucune promotion",
+  "companyHasNoPromotions": "Cette entreprise n'a pas de promotions actives.",
+  "companyHasNoUpdates": "Cette entreprise n'a pas publié de mises à jour.",
+  "promotionsAndOffers": "Promotions et offres",
+  "promotionNotFound": "Promotion introuvable",
+  "promotionDetails": "Détails de la promotion",
+  "termsAndConditions": "Conditions générales",
+  "relatedPosts": "Publications liées",
+  "viewOffer": "Voir l'offre",
+  "offerBadge": "OFFRE",
+  "requestQuote": "Demander un devis",
+  "sendRequest": "Envoyer la demande",
+  "quoteRequestSent": "Demande de devis envoyée !",
+  "inquiry": "Demande",
+  "dateNeeded": "Date souhaitée",
+  "serviceType": "Type de service",
+  "serviceArea": "Zone de service",
+  "servicesOffered": "Services proposés",
+  "servicesLabel": "Services",
+  "servicePlans": "Forfaits de service",
+  "growYourServiceBusiness": "Développez votre activité",
+  "getDiscoveredPremium": "Soyez découvert par plus de clients avec un profil premium.",
+  "unlockPremium": "Activer Premium",
+  "getMoreVisibility": "Plus de visibilité et de meilleurs matchs",
+  "plagitPremiumUpper": "PLAGIT PREMIUM",
+  "premiumOnly": "Premium uniquement",
+  "savePercent17": "Économisez 17 %",
+  "registerBusinessCta": "Enregistrer l'entreprise",
+  "registrationSubmitted": "Inscription envoyée",
+  "serviceDescription": "Description du service",
+  "describeServicesHint": "Décrivez vos services, expérience et ce qui vous distingue...",
+  "websiteOptional": "Site web (facultatif)",
+  "viewCompanyProfileCta": "Voir le profil de l'entreprise",
+  "contactCompany": "Contacter l'entreprise",
+  "aboutUs": "À propos",
+  "address": "Adresse",
+  "city": "Ville",
+  "yourLocation": "Votre emplacement",
+  "enterYourCity": "Saisissez votre ville",
+  "clearFilters": "Effacer les filtres",
+  "tryDifferentSearchTerm": "Essayez un autre terme",
+  "tryDifferentOrAdjust": "Essayez une autre recherche, catégorie ou filtres.",
+  "noPostsYetCompany": "Aucun post pour le moment",
+  "requestQuoteFromCompany": "Demander un devis à {companyName}",
+  "@requestQuoteFromCompany": {
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+  "validUntilDate": "Valable jusqu'au {validUntil}",
+  "@validUntilDate": {
+    "placeholders": {
+      "validUntil": {
+        "type": "String"
+      }
+    }
+  },
+  "employerCheckingProfile": "Un employeur consulte votre profil en ce moment",
+  "profileStrengthPercent": "Votre profil est complété à {percent}%",
+  "@profileStrengthPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "profileGetsMoreViews": "Un profil complet reçoit 3× plus de vues",
+  "applicationUpdate": "Mise à jour candidature",
+  "findJobsAndApply": "Trouver des jobs et postuler",
+  "manageJobsAndHiring": "Gérer jobs et recrutement",
+  "managePlatform": "Gérer la plateforme",
+  "findHospitalityCompanies": "Trouver des entreprises hospitality",
+  "candidateMessages": "MESSAGES CANDIDATS",
+  "businessMessages": "MESSAGES ENTREPRISES",
+  "serviceInquiries": "DEMANDES DE SERVICE",
+  "acceptInterview": "Accepter l'entretien"
+}
