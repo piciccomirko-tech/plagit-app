@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/service_category_helpers.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 const _orange = Color(0xFFF97316);
 
@@ -44,6 +46,7 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -59,9 +62,9 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
             }
           },
         ),
-        title: const Text(
-          'Register Your Business',
-          style: TextStyle(
+        title: Text(
+          l.registerBusinessTitle,
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.charcoal,
@@ -110,17 +113,18 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
 
   // ── Step 0: Business Info ──
   Widget _buildStep0() {
+    final l = AppLocalizations.of(context);
     final categories = MockData.serviceCategories;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Company Name',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        Text(l.companyName,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
-        _textField(_nameCtrl, 'Enter company name'),
+        _textField(_nameCtrl, l.enterCompanyName),
         const SizedBox(height: 16),
-        const Text('Category',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        Text(l.kindCategory,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         Wrap(
           spacing: 8,
@@ -138,7 +142,7 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
                   border: selected ? null : Border.all(color: AppColors.divider),
                 ),
                 child: Text(
-                  cat['name'] as String,
+                  localizedServiceCategory(context, cat['name'] as String),
                   style: TextStyle(
                     fontSize: 13,
                     color: selected ? Colors.white : AppColors.secondary,
@@ -150,13 +154,13 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
           }),
         ),
         const SizedBox(height: 16),
-        const Text('Subcategory (optional)',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        Text(l.subcategoryOptional,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
-        _textField(_subcategoryCtrl, 'e.g. Florist, DJ Services'),
+        _textField(_subcategoryCtrl, l.subcategoryHintFloristDj),
         const SizedBox(height: 32),
         _primaryButton(
-          'Next',
+          l.next,
           enabled: _nameCtrl.text.trim().isNotEmpty,
           onTap: () => setState(() => _step = 1),
         ),
@@ -169,22 +173,22 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Address',
+        Text(AppLocalizations.of(context).address,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         _textField(_addressCtrl, 'Street address', icon: Icons.pin_drop),
         const SizedBox(height: 16),
-        const Text('City',
+        Text(AppLocalizations.of(context).city,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         _textField(_cityCtrl, 'City'),
         const SizedBox(height: 16),
-        const Text('Phone',
+        Text(AppLocalizations.of(context).phone,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         _textField(_phoneCtrl, 'Phone number'),
         const SizedBox(height: 16),
-        const Text('Website (optional)',
+        Text(AppLocalizations.of(context).websiteOptional,
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         _textField(_websiteCtrl, 'www.example.com'),
@@ -200,6 +204,7 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
 
   // ── Step 2: Profile ──
   Widget _buildStep2() {
+    final l = AppLocalizations.of(context);
     final initials = _nameCtrl.text.trim().isNotEmpty
         ? _nameCtrl.text.trim().split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join().toUpperCase()
         : '';
@@ -230,8 +235,8 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
           ),
         ),
         const SizedBox(height: 16),
-        const Text('Business Description',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        Text(l.businessDescription,
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
@@ -244,8 +249,8 @@ class _ServiceRegisterViewState extends State<ServiceRegisterView> {
             maxLines: 5,
             maxLength: 500,
             onChanged: (_) => setState(() {}),
-            decoration: const InputDecoration(
-              hintText: 'Describe your business...',
+            decoration: InputDecoration(
+              hintText: AppLocalizations.of(context).describeBusinessHintShort,
               hintStyle: TextStyle(color: AppColors.tertiary, fontSize: 14),
               border: InputBorder.none,
               contentPadding: EdgeInsets.all(14),

@@ -2,11 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:plagit/core/demo_content_helpers.dart';
 import 'package:plagit/core/widgets/app_back_title_bar.dart';
 import 'package:plagit/core/widgets/app_selection_bar.dart';
 import 'package:plagit/core/widgets/header_action_icon.dart';
 import 'package:plagit/core/widgets/profile_photo.dart';
 import 'package:plagit/core/widgets/search_screen.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/conversation.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';
@@ -84,8 +86,8 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
       MaterialPageRoute<void>(
         builder: (_) => SearchScreen(
           scope: RecentSearchScope.candidateMessages,
-          title: 'Search Messages',
-          hintText: 'Search conversations, businesses, roles…',
+          title: AppLocalizations.of(context).search,
+          hintText: AppLocalizations.of(context).messagesSearch,
           resultsBuilder: (ctx, query) {
             final convos = ctx.watch<CandidateMessagesProvider>().conversations;
             final q = query.toLowerCase();
@@ -157,7 +159,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                                 ),
                               const SizedBox(height: 2),
                               Text(
-                                c.lastMessage,
+                                localizeDemoLastMessage(context, c.lastMessage),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   color: _secondary,
@@ -394,7 +396,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
 
   Widget _buildDefaultBar(List<Conversation> allConvos) {
     return AppBackTitleBar(
-      title: 'Messages',
+      title: AppLocalizations.of(context).messages,
       onBack: () => context.canPop() ? context.pop() : null,
       padding: EdgeInsets.zero,
       backBackgroundColor: _surface,
@@ -540,13 +542,13 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
+            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: _secondary)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w700),
+            child: Text(
+              AppLocalizations.of(context).delete,
+              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -577,13 +579,13 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
+            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: _secondary)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w700),
+            child: Text(
+              AppLocalizations.of(context).delete,
+              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -614,7 +616,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
+            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: _secondary)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
@@ -656,7 +658,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
               const SizedBox(height: 8),
               _MenuItem(
                 icon: CupertinoIcons.checkmark_circle,
-                label: 'Select conversations',
+                label: AppLocalizations.of(context).selectConversations,
                 onTap: () {
                   Navigator.pop(ctx);
                   setState(() => _selecting = true);
@@ -664,7 +666,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
               ),
               _MenuItem(
                 icon: CupertinoIcons.trash_fill,
-                label: 'Delete all',
+                label: AppLocalizations.of(context).deleteAll,
                 color: _urgent,
                 onTap: () {
                   Navigator.pop(ctx);
@@ -875,7 +877,7 @@ class _ConvoRow extends StatelessWidget {
                   ],
                   const SizedBox(height: 2),
                   Text(
-                    c.lastMessage,
+                    localizeDemoLastMessage(context, c.lastMessage),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: isUnread ? FontWeight.w500 : FontWeight.w400,
