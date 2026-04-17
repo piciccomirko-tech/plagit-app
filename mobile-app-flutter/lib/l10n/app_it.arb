@@ -2133,5 +2133,12 @@
   "adminStatNew": "Nuovi",
   "adminStatReviewed": "Revisionati",
   "adminStatShortlisted": "In shortlist",
-  "adminStatRejected": "Respinti"
+  "adminStatRejected": "Respinti",
+  "rePrefix": "Rif: {context}",
+  "conversationCount": "{count, plural, =1{1 conversazione} other{{count} conversazioni}}",
+  "unreadCount": "{count} non letti",
+  "removeChatBody": "Rimuovere la chat con {company}? Viene eliminata solo la tua copia — l'altra parte conserva la sua.",
+  "deleteConversationsCount": "{count, plural, =1{Elimina 1 conversazione?} other{Elimina {count} conversazioni?}}",
+  "selectedChatsBody": "Le chat selezionate verranno rimosse dalla tua casella. L'altra parte conserva comunque la propria copia.",
+  "clearInboxBody": "Questo cancellerà la tua casella ({count, plural, =1{1 conversazione} other{{count} conversazioni}}). Non è possibile annullare dalla tua parte."
 }

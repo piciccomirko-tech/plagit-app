@@ -2133,5 +2133,12 @@
   "adminStatNew": "جديد",
   "adminStatReviewed": "تمت المراجعة",
   "adminStatShortlisted": "القائمة القصيرة",
-  "adminStatRejected": "مرفوضون"
+  "adminStatRejected": "مرفوضون",
+  "rePrefix": "رد: {context}",
+  "conversationCount": "{count, plural, =0{لا محادثات} =1{محادثة واحدة} =2{محادثتان} few{{count} محادثات} many{{count} محادثة} other{{count} محادثة}}",
+  "unreadCount": "{count} غير مقروءة",
+  "removeChatBody": "هل تريد إزالة المحادثة مع {company}؟ سيتم حذف نسختك فقط — يحتفظ الطرف الآخر بنسخته.",
+  "deleteConversationsCount": "{count, plural, =1{حذف محادثة واحدة؟} =2{حذف محادثتين؟} few{حذف {count} محادثات؟} many{حذف {count} محادثة؟} other{حذف {count} محادثة؟}}",
+  "selectedChatsBody": "ستتم إزالة المحادثات المحددة من صندوق الوارد. يحتفظ الطرف الآخر بنسخته.",
+  "clearInboxBody": "سيؤدي هذا إلى مسح صندوق الوارد بالكامل ({count, plural, =1{محادثة واحدة} other{{count} محادثة}}). لا يمكن التراجع عن هذا من جانبك."
 }

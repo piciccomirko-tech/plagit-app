@@ -5591,4 +5591,56 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejected';
+
+  @override
+  String rePrefix(String context) {
+    return 'Re: $context';
+  }
+
+  @override
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversations',
+      one: '1 conversation',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count unread';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'Remove your chat with $company? Only your copy is deleted — the other side keeps theirs.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count conversations?',
+      one: 'Delete 1 conversation?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'Selected chats will be removed from your inbox. The other side still keeps their copy.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversations',
+      one: '1 conversation',
+    );
+    return 'This will clear your entire inbox ($_temp0). This cannot be undone from your side.';
+  }
 }

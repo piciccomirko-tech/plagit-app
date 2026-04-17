@@ -5466,4 +5466,37 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminStatRejected => '已拒绝';
+
+  @override
+  String rePrefix(String context) {
+    return '回复：$context';
+  }
+
+  @override
+  String conversationCount(int count) {
+    return '$count 个对话';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count 条未读';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return '移除与 $company 的聊天？仅删除您的副本 — 对方仍保留其副本。';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    return '删除 $count 个对话？';
+  }
+
+  @override
+  String get selectedChatsBody => '所选聊天将从您的收件箱中移除。对方仍保留其副本。';
+
+  @override
+  String clearInboxBody(int count) {
+    return '这将清空您的整个收件箱（$count 个对话）。此操作在您这边无法撤销。';
+  }
 }

@@ -2381,5 +2381,12 @@
   "adminStatNew": "Nuevos",
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Preseleccionados",
-  "adminStatRejected": "Rechazados"
+  "adminStatRejected": "Rechazados",
+  "rePrefix": "Re: {context}",
+  "conversationCount": "{count, plural, =1{1 conversación} other{{count} conversaciones}}",
+  "unreadCount": "{count} sin leer",
+  "removeChatBody": "¿Eliminar tu chat con {company}? Solo se elimina tu copia — la otra parte conserva la suya.",
+  "deleteConversationsCount": "{count, plural, =1{¿Eliminar 1 conversación?} other{¿Eliminar {count} conversaciones?}}",
+  "selectedChatsBody": "Los chats seleccionados se eliminarán de tu bandeja de entrada. La otra parte conserva su copia.",
+  "clearInboxBody": "Esto vaciará tu bandeja de entrada ({count, plural, =1{1 conversación} other{{count} conversaciones}}). No se puede deshacer desde tu lado."
 }
