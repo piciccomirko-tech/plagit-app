@@ -2202,5 +2202,21 @@
   "adminDialogUnverifyBody": "¿Eliminar la verificación de {name}?",
   "adminDialogReactivateBody": "¿Reactivar a {name}?",
   "adminDialogSuspendBusinessBody": "¿Suspender a {name}? Todos los empleos se pausarán.",
-  "adminDialogSuspendCandidateBody": "¿Suspender a {name}? Perderá el acceso."
+  "adminDialogSuspendCandidateBody": "¿Suspender a {name}? Perderá el acceso.",
+  "adminFieldName": "Nombre",
+  "adminFieldEmail": "Correo electrónico",
+  "adminFieldPhone": "Teléfono",
+  "adminFieldLocation": "Ubicación",
+  "adminFieldPlan": "Plan",
+  "adminFieldVerified": "Verificado",
+  "adminFieldStatus": "Estado",
+  "adminFieldJoined": "Registrado",
+  "adminFieldCategory": "Categoría",
+  "adminFieldSize": "Tamaño",
+  "adminFieldRole": "Rol",
+  "adminFieldProfileCompletion": "Perfil completado",
+  "adminStatApplicants": "Candidatos",
+  "adminStatSaved": "Guardados",
+  "adminPlaceholderAddNote": "Añadir una nota...",
+  "adminEmptyNoJobsPosted": "No hay empleos publicados"
 }

@@ -2202,5 +2202,21 @@
   "adminDialogUnverifyBody": "Снять верификацию с {name}?",
   "adminDialogReactivateBody": "Реактивировать {name}?",
   "adminDialogSuspendBusinessBody": "Приостановить {name}? Все вакансии будут приостановлены.",
-  "adminDialogSuspendCandidateBody": "Приостановить {name}? Доступ будет закрыт."
+  "adminDialogSuspendCandidateBody": "Приостановить {name}? Доступ будет закрыт.",
+  "adminFieldName": "Имя",
+  "adminFieldEmail": "Электронная почта",
+  "adminFieldPhone": "Телефон",
+  "adminFieldLocation": "Местоположение",
+  "adminFieldPlan": "Тариф",
+  "adminFieldVerified": "Подтверждён",
+  "adminFieldStatus": "Статус",
+  "adminFieldJoined": "Присоединился",
+  "adminFieldCategory": "Категория",
+  "adminFieldSize": "Размер",
+  "adminFieldRole": "Роль",
+  "adminFieldProfileCompletion": "Заполнение профиля",
+  "adminStatApplicants": "Кандидаты",
+  "adminStatSaved": "Сохранённые",
+  "adminPlaceholderAddNote": "Добавить заметку...",
+  "adminEmptyNoJobsPosted": "Нет опубликованных вакансий"
 }

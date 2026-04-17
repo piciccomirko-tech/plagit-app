@@ -3256,5 +3256,69 @@
         "type": "String"
       }
     }
+  },
+  "adminFieldName": "Name",
+  "@adminFieldName": {
+    "description": "adminFieldName"
+  },
+  "adminFieldEmail": "Email",
+  "@adminFieldEmail": {
+    "description": "adminFieldEmail"
+  },
+  "adminFieldPhone": "Phone",
+  "@adminFieldPhone": {
+    "description": "adminFieldPhone"
+  },
+  "adminFieldLocation": "Location",
+  "@adminFieldLocation": {
+    "description": "adminFieldLocation"
+  },
+  "adminFieldPlan": "Plan",
+  "@adminFieldPlan": {
+    "description": "adminFieldPlan"
+  },
+  "adminFieldVerified": "Verified",
+  "@adminFieldVerified": {
+    "description": "adminFieldVerified"
+  },
+  "adminFieldStatus": "Status",
+  "@adminFieldStatus": {
+    "description": "adminFieldStatus"
+  },
+  "adminFieldJoined": "Joined",
+  "@adminFieldJoined": {
+    "description": "adminFieldJoined"
+  },
+  "adminFieldCategory": "Category",
+  "@adminFieldCategory": {
+    "description": "adminFieldCategory"
+  },
+  "adminFieldSize": "Size",
+  "@adminFieldSize": {
+    "description": "adminFieldSize"
+  },
+  "adminFieldRole": "Role",
+  "@adminFieldRole": {
+    "description": "adminFieldRole"
+  },
+  "adminFieldProfileCompletion": "Profile Completion",
+  "@adminFieldProfileCompletion": {
+    "description": "adminFieldProfileCompletion"
+  },
+  "adminStatApplicants": "Applicants",
+  "@adminStatApplicants": {
+    "description": "adminStatApplicants"
+  },
+  "adminStatSaved": "Saved",
+  "@adminStatSaved": {
+    "description": "adminStatSaved"
+  },
+  "adminPlaceholderAddNote": "Add a note...",
+  "@adminPlaceholderAddNote": {
+    "description": "adminPlaceholderAddNote"
+  },
+  "adminEmptyNoJobsPosted": "No jobs posted",
+  "@adminEmptyNoJobsPosted": {
+    "description": "adminEmptyNoJobsPosted"
   }
 }

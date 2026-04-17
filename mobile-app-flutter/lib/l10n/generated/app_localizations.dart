@@ -9067,6 +9067,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Suspend {name}? They will lose access.'**
   String adminDialogSuspendCandidateBody(String name);
+
+  /// adminFieldName
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get adminFieldName;
+
+  /// adminFieldEmail
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get adminFieldEmail;
+
+  /// adminFieldPhone
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get adminFieldPhone;
+
+  /// adminFieldLocation
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get adminFieldLocation;
+
+  /// adminFieldPlan
+  ///
+  /// In en, this message translates to:
+  /// **'Plan'**
+  String get adminFieldPlan;
+
+  /// adminFieldVerified
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get adminFieldVerified;
+
+  /// adminFieldStatus
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get adminFieldStatus;
+
+  /// adminFieldJoined
+  ///
+  /// In en, this message translates to:
+  /// **'Joined'**
+  String get adminFieldJoined;
+
+  /// adminFieldCategory
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get adminFieldCategory;
+
+  /// adminFieldSize
+  ///
+  /// In en, this message translates to:
+  /// **'Size'**
+  String get adminFieldSize;
+
+  /// adminFieldRole
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get adminFieldRole;
+
+  /// adminFieldProfileCompletion
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Completion'**
+  String get adminFieldProfileCompletion;
+
+  /// adminStatApplicants
+  ///
+  /// In en, this message translates to:
+  /// **'Applicants'**
+  String get adminStatApplicants;
+
+  /// adminStatSaved
+  ///
+  /// In en, this message translates to:
+  /// **'Saved'**
+  String get adminStatSaved;
+
+  /// adminPlaceholderAddNote
+  ///
+  /// In en, this message translates to:
+  /// **'Add a note...'**
+  String get adminPlaceholderAddNote;
+
+  /// adminEmptyNoJobsPosted
+  ///
+  /// In en, this message translates to:
+  /// **'No jobs posted'**
+  String get adminEmptyNoJobsPosted;
 }
 
 class _AppLocalizationsDelegate

@@ -4917,4 +4917,52 @@ class AppLocalizationsZh extends AppLocalizations {
   String adminDialogSuspendCandidateBody(String name) {
     return '暂停 $name？其访问权限将被取消。';
   }
+
+  @override
+  String get adminFieldName => '姓名';
+
+  @override
+  String get adminFieldEmail => '电子邮件';
+
+  @override
+  String get adminFieldPhone => '电话';
+
+  @override
+  String get adminFieldLocation => '位置';
+
+  @override
+  String get adminFieldPlan => '套餐';
+
+  @override
+  String get adminFieldVerified => '已验证';
+
+  @override
+  String get adminFieldStatus => '状态';
+
+  @override
+  String get adminFieldJoined => '加入时间';
+
+  @override
+  String get adminFieldCategory => '类别';
+
+  @override
+  String get adminFieldSize => '规模';
+
+  @override
+  String get adminFieldRole => '角色';
+
+  @override
+  String get adminFieldProfileCompletion => '资料完成度';
+
+  @override
+  String get adminStatApplicants => '申请人';
+
+  @override
+  String get adminStatSaved => '已保存';
+
+  @override
+  String get adminPlaceholderAddNote => '添加备注...';
+
+  @override
+  String get adminEmptyNoJobsPosted => '暂无发布的职位';
 }
