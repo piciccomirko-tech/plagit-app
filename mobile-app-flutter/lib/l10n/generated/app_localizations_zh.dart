@@ -4700,4 +4700,118 @@ class AppLocalizationsZh extends AppLocalizations {
   String adminBadgeNDaysWaiting(int count) {
     return '等待 $count 天';
   }
+
+  @override
+  String get adminPeriodWeek => '周';
+
+  @override
+  String get adminPeriodMonth => '月';
+
+  @override
+  String get adminPeriodYear => '年';
+
+  @override
+  String get adminKpiNewCandidates => '新候选人';
+
+  @override
+  String get adminKpiNewBusinesses => '新企业';
+
+  @override
+  String get adminKpiJobsPosted => '已发布职位';
+
+  @override
+  String get adminSectionApplicationFunnel => '申请漏斗';
+
+  @override
+  String get adminSectionPlatformGrowth => '平台增长';
+
+  @override
+  String get adminSectionPremiumConversion => '高级版转化';
+
+  @override
+  String get adminSectionTopLocations => '热门地点';
+
+  @override
+  String get adminStatusViewed => '已查看';
+
+  @override
+  String get adminWeekdayMon => '周一';
+
+  @override
+  String get adminWeekdayTue => '周二';
+
+  @override
+  String get adminWeekdayWed => '周三';
+
+  @override
+  String get adminWeekdayThu => '周四';
+
+  @override
+  String get adminWeekdayFri => '周五';
+
+  @override
+  String get adminWeekdaySat => '周六';
+
+  @override
+  String get adminWeekdaySun => '周日';
+
+  @override
+  String get adminFilterReported => '已举报';
+
+  @override
+  String get adminFilterHidden => '已隐藏';
+
+  @override
+  String get adminEmptyPostsTitle => '暂无帖子';
+
+  @override
+  String get adminEmptyContentFilter => '没有内容匹配此筛选条件。';
+
+  @override
+  String get adminBannerReportedReview => '已举报 — 需要审核';
+
+  @override
+  String get adminBannerHiddenFromFeed => '已从信息流隐藏';
+
+  @override
+  String get adminActionInsights => '洞察';
+
+  @override
+  String get adminActionHide => '隐藏';
+
+  @override
+  String get adminActionRemove => '移除';
+
+  @override
+  String get adminActionCancel => '取消';
+
+  @override
+  String get adminDialogRemovePostTitle => '移除帖子？';
+
+  @override
+  String get adminDialogRemovePostBody => '这将永久删除该帖子及其评论。此操作无法撤销。';
+
+  @override
+  String get adminSnackbarReportCleared => '举报已清除';
+
+  @override
+  String get adminSnackbarPostHidden => '帖子已从信息流隐藏';
+
+  @override
+  String get adminSnackbarPostRemoved => '帖子已移除';
+
+  @override
+  String adminCountReported(int count) {
+    return '$count 个已举报';
+  }
+
+  @override
+  String adminCountHidden(int count) {
+    return '$count 个已隐藏';
+  }
+
+  @override
+  String adminMiscPremiumOutOfTotal(int premium, int total) {
+    return '$total 中有 $premium 个高级版';
+  }
 }

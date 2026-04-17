@@ -4866,4 +4866,119 @@ class AppLocalizationsDe extends AppLocalizations {
   String adminBadgeNDaysWaiting(int count) {
     return '$count Tage Wartezeit';
   }
+
+  @override
+  String get adminPeriodWeek => 'Woche';
+
+  @override
+  String get adminPeriodMonth => 'Monat';
+
+  @override
+  String get adminPeriodYear => 'Jahr';
+
+  @override
+  String get adminKpiNewCandidates => 'Neue Kandidaten';
+
+  @override
+  String get adminKpiNewBusinesses => 'Neue Unternehmen';
+
+  @override
+  String get adminKpiJobsPosted => 'Veröffentlichte Jobs';
+
+  @override
+  String get adminSectionApplicationFunnel => 'Bewerbungs-Funnel';
+
+  @override
+  String get adminSectionPlatformGrowth => 'Plattform-Wachstum';
+
+  @override
+  String get adminSectionPremiumConversion => 'Premium-Konversion';
+
+  @override
+  String get adminSectionTopLocations => 'Top-Standorte';
+
+  @override
+  String get adminStatusViewed => 'Angesehen';
+
+  @override
+  String get adminWeekdayMon => 'Mo';
+
+  @override
+  String get adminWeekdayTue => 'Di';
+
+  @override
+  String get adminWeekdayWed => 'Mi';
+
+  @override
+  String get adminWeekdayThu => 'Do';
+
+  @override
+  String get adminWeekdayFri => 'Fr';
+
+  @override
+  String get adminWeekdaySat => 'Sa';
+
+  @override
+  String get adminWeekdaySun => 'So';
+
+  @override
+  String get adminFilterReported => 'Gemeldet';
+
+  @override
+  String get adminFilterHidden => 'Ausgeblendet';
+
+  @override
+  String get adminEmptyPostsTitle => 'Keine Beiträge';
+
+  @override
+  String get adminEmptyContentFilter => 'Kein Inhalt entspricht diesem Filter.';
+
+  @override
+  String get adminBannerReportedReview => 'GEMELDET — PRÜFUNG ERFORDERLICH';
+
+  @override
+  String get adminBannerHiddenFromFeed => 'AUS FEED AUSGEBLENDET';
+
+  @override
+  String get adminActionInsights => 'Analysen';
+
+  @override
+  String get adminActionHide => 'Ausblenden';
+
+  @override
+  String get adminActionRemove => 'Entfernen';
+
+  @override
+  String get adminActionCancel => 'Abbrechen';
+
+  @override
+  String get adminDialogRemovePostTitle => 'Beitrag entfernen?';
+
+  @override
+  String get adminDialogRemovePostBody =>
+      'Dies löscht den Beitrag und seine Kommentare dauerhaft. Diese Aktion kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get adminSnackbarReportCleared => 'Meldung aufgehoben';
+
+  @override
+  String get adminSnackbarPostHidden => 'Beitrag aus Feed ausgeblendet';
+
+  @override
+  String get adminSnackbarPostRemoved => 'Beitrag entfernt';
+
+  @override
+  String adminCountReported(int count) {
+    return '$count gemeldet';
+  }
+
+  @override
+  String adminCountHidden(int count) {
+    return '$count ausgeblendet';
+  }
+
+  @override
+  String adminMiscPremiumOutOfTotal(int premium, int total) {
+    return '$premium Premium von $total insgesamt';
+  }
 }

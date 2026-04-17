@@ -4875,4 +4875,120 @@ class AppLocalizationsFr extends AppLocalizations {
   String adminBadgeNDaysWaiting(int count) {
     return '$count jours d\'attente';
   }
+
+  @override
+  String get adminPeriodWeek => 'Semaine';
+
+  @override
+  String get adminPeriodMonth => 'Mois';
+
+  @override
+  String get adminPeriodYear => 'Année';
+
+  @override
+  String get adminKpiNewCandidates => 'Nouveaux candidats';
+
+  @override
+  String get adminKpiNewBusinesses => 'Nouvelles entreprises';
+
+  @override
+  String get adminKpiJobsPosted => 'Offres publiées';
+
+  @override
+  String get adminSectionApplicationFunnel => 'Entonnoir des candidatures';
+
+  @override
+  String get adminSectionPlatformGrowth => 'Croissance de la plateforme';
+
+  @override
+  String get adminSectionPremiumConversion => 'Conversion premium';
+
+  @override
+  String get adminSectionTopLocations => 'Principaux lieux';
+
+  @override
+  String get adminStatusViewed => 'Vu';
+
+  @override
+  String get adminWeekdayMon => 'Lun';
+
+  @override
+  String get adminWeekdayTue => 'Mar';
+
+  @override
+  String get adminWeekdayWed => 'Mer';
+
+  @override
+  String get adminWeekdayThu => 'Jeu';
+
+  @override
+  String get adminWeekdayFri => 'Ven';
+
+  @override
+  String get adminWeekdaySat => 'Sam';
+
+  @override
+  String get adminWeekdaySun => 'Dim';
+
+  @override
+  String get adminFilterReported => 'Signalés';
+
+  @override
+  String get adminFilterHidden => 'Masqués';
+
+  @override
+  String get adminEmptyPostsTitle => 'Aucune publication';
+
+  @override
+  String get adminEmptyContentFilter =>
+      'Aucun contenu ne correspond à ce filtre.';
+
+  @override
+  String get adminBannerReportedReview => 'SIGNALÉ — RÉVISION REQUISE';
+
+  @override
+  String get adminBannerHiddenFromFeed => 'MASQUÉ DU FIL';
+
+  @override
+  String get adminActionInsights => 'Analyses';
+
+  @override
+  String get adminActionHide => 'Masquer';
+
+  @override
+  String get adminActionRemove => 'Supprimer';
+
+  @override
+  String get adminActionCancel => 'Annuler';
+
+  @override
+  String get adminDialogRemovePostTitle => 'Supprimer la publication ?';
+
+  @override
+  String get adminDialogRemovePostBody =>
+      'Ceci supprime définitivement la publication et ses commentaires. Cette action est irréversible.';
+
+  @override
+  String get adminSnackbarReportCleared => 'Signalement effacé';
+
+  @override
+  String get adminSnackbarPostHidden => 'Publication masquée du fil';
+
+  @override
+  String get adminSnackbarPostRemoved => 'Publication supprimée';
+
+  @override
+  String adminCountReported(int count) {
+    return '$count signalés';
+  }
+
+  @override
+  String adminCountHidden(int count) {
+    return '$count masqués';
+  }
+
+  @override
+  String adminMiscPremiumOutOfTotal(int premium, int total) {
+    return '$premium premium sur $total au total';
+  }
 }

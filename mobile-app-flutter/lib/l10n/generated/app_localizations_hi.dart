@@ -4822,4 +4822,119 @@ class AppLocalizationsHi extends AppLocalizations {
   String adminBadgeNDaysWaiting(int count) {
     return '$count days waiting';
   }
+
+  @override
+  String get adminPeriodWeek => 'Week';
+
+  @override
+  String get adminPeriodMonth => 'Month';
+
+  @override
+  String get adminPeriodYear => 'Year';
+
+  @override
+  String get adminKpiNewCandidates => 'New Candidates';
+
+  @override
+  String get adminKpiNewBusinesses => 'New Businesses';
+
+  @override
+  String get adminKpiJobsPosted => 'Jobs Posted';
+
+  @override
+  String get adminSectionApplicationFunnel => 'Application Funnel';
+
+  @override
+  String get adminSectionPlatformGrowth => 'Platform Growth';
+
+  @override
+  String get adminSectionPremiumConversion => 'Premium Conversion';
+
+  @override
+  String get adminSectionTopLocations => 'Top Locations';
+
+  @override
+  String get adminStatusViewed => 'Viewed';
+
+  @override
+  String get adminWeekdayMon => 'Mon';
+
+  @override
+  String get adminWeekdayTue => 'Tue';
+
+  @override
+  String get adminWeekdayWed => 'Wed';
+
+  @override
+  String get adminWeekdayThu => 'Thu';
+
+  @override
+  String get adminWeekdayFri => 'Fri';
+
+  @override
+  String get adminWeekdaySat => 'Sat';
+
+  @override
+  String get adminWeekdaySun => 'Sun';
+
+  @override
+  String get adminFilterReported => 'Reported';
+
+  @override
+  String get adminFilterHidden => 'Hidden';
+
+  @override
+  String get adminEmptyPostsTitle => 'No posts';
+
+  @override
+  String get adminEmptyContentFilter => 'No content matches this filter.';
+
+  @override
+  String get adminBannerReportedReview => 'REPORTED — REVIEW REQUIRED';
+
+  @override
+  String get adminBannerHiddenFromFeed => 'HIDDEN FROM FEED';
+
+  @override
+  String get adminActionInsights => 'Insights';
+
+  @override
+  String get adminActionHide => 'Hide';
+
+  @override
+  String get adminActionRemove => 'Remove';
+
+  @override
+  String get adminActionCancel => 'Cancel';
+
+  @override
+  String get adminDialogRemovePostTitle => 'Remove Post?';
+
+  @override
+  String get adminDialogRemovePostBody =>
+      'This permanently deletes the post and its comments. This action cannot be undone.';
+
+  @override
+  String get adminSnackbarReportCleared => 'Report cleared';
+
+  @override
+  String get adminSnackbarPostHidden => 'Post hidden from feed';
+
+  @override
+  String get adminSnackbarPostRemoved => 'Post removed';
+
+  @override
+  String adminCountReported(int count) {
+    return '$count reported';
+  }
+
+  @override
+  String adminCountHidden(int count) {
+    return '$count hidden';
+  }
+
+  @override
+  String adminMiscPremiumOutOfTotal(int premium, int total) {
+    return '$premium premium out of $total total';
+  }
 }
