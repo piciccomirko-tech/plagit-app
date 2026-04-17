@@ -5203,4 +5203,112 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'Нет опубликованных вакансий';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'Сведения о подписке';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'Подписка не найдена';
+
+  @override
+  String get adminSectionPlanDetails => 'Детали тарифа';
+
+  @override
+  String get adminFieldPrice => 'Цена';
+
+  @override
+  String get adminFieldStartDate => 'Дата начала';
+
+  @override
+  String get adminFieldRenewalDate => 'Дата продления';
+
+  @override
+  String get adminSectionAdminOverride => 'Переопределение админом';
+
+  @override
+  String get adminPlanCandidatePremium => 'Кандидат Premium';
+
+  @override
+  String get adminPlanBusinessPro => 'Business Pro';
+
+  @override
+  String get adminPlanBusinessPremium => 'Business Premium';
+
+  @override
+  String get adminPlanFree => 'Бесплатно';
+
+  @override
+  String get adminFieldNewRenewalDate => 'Новая дата продления';
+
+  @override
+  String get adminPlaceholderDateExample => 'напр. 15 июн 2026';
+
+  @override
+  String get adminFieldReason => 'Причина';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'Причина переопределения...';
+
+  @override
+  String get adminActionApplyOverride => 'Применить переопределение';
+
+  @override
+  String get adminSectionHistory => 'История';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'Подписка создана';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'Платёж обработан';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'Нет заметок админа.';
+
+  @override
+  String get adminSectionAuditDetail => 'Сведения аудита';
+
+  @override
+  String get adminEmptyEntryNotFound => 'Запись не найдена';
+
+  @override
+  String get adminFieldAdmin => 'Админ';
+
+  @override
+  String get adminFieldAction => 'Действие';
+
+  @override
+  String get adminFieldTimestamp => 'Метка времени';
+
+  @override
+  String get adminFieldTarget => 'Цель';
+
+  @override
+  String get adminFieldType => 'Тип';
+
+  @override
+  String get adminSectionChanges => 'Изменения';
+
+  @override
+  String get adminFieldIpAddress => 'IP-адрес';
+
+  @override
+  String get adminAuditUnverified => 'Не подтверждён';
+
+  @override
+  String get adminAuditStandard => 'Обычный';
+
+  @override
+  String get adminAuditFeatured => 'Рекомендуемый';
+
+  @override
+  String get adminAuditPreviousStatus => 'Прежний статус';
+
+  @override
+  String get adminAuditOverridden => 'Переопределено';
+
+  @override
+  String get adminAuditPrevious => 'Ранее';
+
+  @override
+  String get adminAuditUpdated => 'Обновлено';
 }

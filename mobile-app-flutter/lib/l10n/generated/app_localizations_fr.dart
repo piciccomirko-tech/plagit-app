@@ -5144,4 +5144,112 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'Aucune offre publiée';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'Détail de l\'abonnement';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'Abonnement introuvable';
+
+  @override
+  String get adminSectionPlanDetails => 'Détails du forfait';
+
+  @override
+  String get adminFieldPrice => 'Prix';
+
+  @override
+  String get adminFieldStartDate => 'Date de début';
+
+  @override
+  String get adminFieldRenewalDate => 'Date de renouvellement';
+
+  @override
+  String get adminSectionAdminOverride => 'Remplacement admin';
+
+  @override
+  String get adminPlanCandidatePremium => 'Candidat Premium';
+
+  @override
+  String get adminPlanBusinessPro => 'Business Pro';
+
+  @override
+  String get adminPlanBusinessPremium => 'Business Premium';
+
+  @override
+  String get adminPlanFree => 'Gratuit';
+
+  @override
+  String get adminFieldNewRenewalDate => 'Nouvelle date de renouvellement';
+
+  @override
+  String get adminPlaceholderDateExample => 'ex. 15 juin 2026';
+
+  @override
+  String get adminFieldReason => 'Motif';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'Motif du remplacement...';
+
+  @override
+  String get adminActionApplyOverride => 'Appliquer le remplacement';
+
+  @override
+  String get adminSectionHistory => 'Historique';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'Abonnement créé';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'Paiement traité';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'Aucune note admin.';
+
+  @override
+  String get adminSectionAuditDetail => 'Détail d\'audit';
+
+  @override
+  String get adminEmptyEntryNotFound => 'Entrée introuvable';
+
+  @override
+  String get adminFieldAdmin => 'Admin';
+
+  @override
+  String get adminFieldAction => 'Action';
+
+  @override
+  String get adminFieldTimestamp => 'Horodatage';
+
+  @override
+  String get adminFieldTarget => 'Cible';
+
+  @override
+  String get adminFieldType => 'Type';
+
+  @override
+  String get adminSectionChanges => 'Modifications';
+
+  @override
+  String get adminFieldIpAddress => 'Adresse IP';
+
+  @override
+  String get adminAuditUnverified => 'Non vérifié';
+
+  @override
+  String get adminAuditStandard => 'Standard';
+
+  @override
+  String get adminAuditFeatured => 'Mis en avant';
+
+  @override
+  String get adminAuditPreviousStatus => 'Statut précédent';
+
+  @override
+  String get adminAuditOverridden => 'Remplacé';
+
+  @override
+  String get adminAuditPrevious => 'Précédent';
+
+  @override
+  String get adminAuditUpdated => 'Mis à jour';
 }

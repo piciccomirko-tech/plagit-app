@@ -9163,6 +9163,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No jobs posted'**
   String get adminEmptyNoJobsPosted;
+
+  /// adminSectionSubscriptionDetail
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Detail'**
+  String get adminSectionSubscriptionDetail;
+
+  /// adminEmptySubscriptionNotFound
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription not found'**
+  String get adminEmptySubscriptionNotFound;
+
+  /// adminSectionPlanDetails
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Details'**
+  String get adminSectionPlanDetails;
+
+  /// adminFieldPrice
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get adminFieldPrice;
+
+  /// adminFieldStartDate
+  ///
+  /// In en, this message translates to:
+  /// **'Start Date'**
+  String get adminFieldStartDate;
+
+  /// adminFieldRenewalDate
+  ///
+  /// In en, this message translates to:
+  /// **'Renewal Date'**
+  String get adminFieldRenewalDate;
+
+  /// adminSectionAdminOverride
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Override'**
+  String get adminSectionAdminOverride;
+
+  /// adminPlanCandidatePremium
+  ///
+  /// In en, this message translates to:
+  /// **'Candidate Premium'**
+  String get adminPlanCandidatePremium;
+
+  /// adminPlanBusinessPro
+  ///
+  /// In en, this message translates to:
+  /// **'Business Pro'**
+  String get adminPlanBusinessPro;
+
+  /// adminPlanBusinessPremium
+  ///
+  /// In en, this message translates to:
+  /// **'Business Premium'**
+  String get adminPlanBusinessPremium;
+
+  /// adminPlanFree
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get adminPlanFree;
+
+  /// adminFieldNewRenewalDate
+  ///
+  /// In en, this message translates to:
+  /// **'New Renewal Date'**
+  String get adminFieldNewRenewalDate;
+
+  /// adminPlaceholderDateExample
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Jun 15, 2026'**
+  String get adminPlaceholderDateExample;
+
+  /// adminFieldReason
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get adminFieldReason;
+
+  /// adminPlaceholderReasonOverride
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for override...'**
+  String get adminPlaceholderReasonOverride;
+
+  /// adminActionApplyOverride
+  ///
+  /// In en, this message translates to:
+  /// **'Apply Override'**
+  String get adminActionApplyOverride;
+
+  /// adminSectionHistory
+  ///
+  /// In en, this message translates to:
+  /// **'History'**
+  String get adminSectionHistory;
+
+  /// adminTimelineSubscriptionCreated
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription created'**
+  String get adminTimelineSubscriptionCreated;
+
+  /// adminTimelinePaymentProcessed
+  ///
+  /// In en, this message translates to:
+  /// **'Payment processed'**
+  String get adminTimelinePaymentProcessed;
+
+  /// adminEmptyNoAdminNotes
+  ///
+  /// In en, this message translates to:
+  /// **'No admin notes yet.'**
+  String get adminEmptyNoAdminNotes;
+
+  /// adminSectionAuditDetail
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Detail'**
+  String get adminSectionAuditDetail;
+
+  /// adminEmptyEntryNotFound
+  ///
+  /// In en, this message translates to:
+  /// **'Entry not found'**
+  String get adminEmptyEntryNotFound;
+
+  /// adminFieldAdmin
+  ///
+  /// In en, this message translates to:
+  /// **'Admin'**
+  String get adminFieldAdmin;
+
+  /// adminFieldAction
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get adminFieldAction;
+
+  /// adminFieldTimestamp
+  ///
+  /// In en, this message translates to:
+  /// **'Timestamp'**
+  String get adminFieldTimestamp;
+
+  /// adminFieldTarget
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get adminFieldTarget;
+
+  /// adminFieldType
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get adminFieldType;
+
+  /// adminSectionChanges
+  ///
+  /// In en, this message translates to:
+  /// **'Changes'**
+  String get adminSectionChanges;
+
+  /// adminFieldIpAddress
+  ///
+  /// In en, this message translates to:
+  /// **'IP Address'**
+  String get adminFieldIpAddress;
+
+  /// adminAuditUnverified
+  ///
+  /// In en, this message translates to:
+  /// **'Unverified'**
+  String get adminAuditUnverified;
+
+  /// adminAuditStandard
+  ///
+  /// In en, this message translates to:
+  /// **'Standard'**
+  String get adminAuditStandard;
+
+  /// adminAuditFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get adminAuditFeatured;
+
+  /// adminAuditPreviousStatus
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Status'**
+  String get adminAuditPreviousStatus;
+
+  /// adminAuditOverridden
+  ///
+  /// In en, this message translates to:
+  /// **'Overridden'**
+  String get adminAuditOverridden;
+
+  /// adminAuditPrevious
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get adminAuditPrevious;
+
+  /// adminAuditUpdated
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get adminAuditUpdated;
 }
 
 class _AppLocalizationsDelegate

@@ -38,7 +38,16 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - Riusati: `adminStatActiveJobs`, `adminMenuApplications`, `adminMenuInterviews`, `adminTabProfile`
   - build bump 1.0.0+6 → 1.0.0+7, branch `phase4bis-admin-i18n`
   - **2 detail sostanzialmente chiusi**: residui solo su dati runtime/mock esclusi per scelta (Admin User, fake phone, mock notes/activity, numero 75%, 3 ICU opzionali)
-- TODO — Fase 5 (detail rimanenti: job, verification, support, interview, moderation, subscription, application, audit detail)
+- DONE (Fase 5C — 2026-04-17) — subscription + audit detail:
+  - `admin_subscription_detail_view.dart`, `admin_audit_detail_view.dart`
+  - Coperti: topbar/title, empty state, section titles, info-row labels, dropdown values (plan), placeholder, action button, timeline entries, change-diff text, IP address label
+  - 36 nuove chiavi (plan×4, field×9, section×6, placeholder×2, timeline×2, empty×3, action×1, audit×7, misc×2)
+  - Riusati: `adminTabNotes`, `adminFieldPlan`, `adminFieldStatus`, `aStatusLabel` per Active/Suspended/Verified/Open/Resolved
+  - Refactor: `_changeText` ora riceve `AppLocalizations`, nuovo helper `_actionLabel`
+  - build bump 1.0.0+7 → 1.0.0+8, branch `phase5c-admin-i18n`
+  - analyze: **0 issues** (no pre-esistenti)
+- TODO — Fase 5A (application + interview detail)
+- TODO — Fase 5B (verification + moderation + support detail)
 
 ### Candidate / Business
 - Non toccati in questa sessione
@@ -58,7 +67,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
-(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis → totale cumulativo 224 chiavi × 9 locali)
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C → totale cumulativo 260 chiavi × 9 locali)
 
 ## Decisioni tecniche
 

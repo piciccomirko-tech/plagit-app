@@ -5088,4 +5088,112 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'No jobs posted';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'Subscription Detail';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'Subscription not found';
+
+  @override
+  String get adminSectionPlanDetails => 'Plan Details';
+
+  @override
+  String get adminFieldPrice => 'Price';
+
+  @override
+  String get adminFieldStartDate => 'Start Date';
+
+  @override
+  String get adminFieldRenewalDate => 'Renewal Date';
+
+  @override
+  String get adminSectionAdminOverride => 'Admin Override';
+
+  @override
+  String get adminPlanCandidatePremium => 'Candidate Premium';
+
+  @override
+  String get adminPlanBusinessPro => 'Business Pro';
+
+  @override
+  String get adminPlanBusinessPremium => 'Business Premium';
+
+  @override
+  String get adminPlanFree => 'Free';
+
+  @override
+  String get adminFieldNewRenewalDate => 'New Renewal Date';
+
+  @override
+  String get adminPlaceholderDateExample => 'e.g. Jun 15, 2026';
+
+  @override
+  String get adminFieldReason => 'Reason';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'Reason for override...';
+
+  @override
+  String get adminActionApplyOverride => 'Apply Override';
+
+  @override
+  String get adminSectionHistory => 'History';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'Subscription created';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'Payment processed';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'No admin notes yet.';
+
+  @override
+  String get adminSectionAuditDetail => 'Audit Detail';
+
+  @override
+  String get adminEmptyEntryNotFound => 'Entry not found';
+
+  @override
+  String get adminFieldAdmin => 'Admin';
+
+  @override
+  String get adminFieldAction => 'Action';
+
+  @override
+  String get adminFieldTimestamp => 'Timestamp';
+
+  @override
+  String get adminFieldTarget => 'Target';
+
+  @override
+  String get adminFieldType => 'Type';
+
+  @override
+  String get adminSectionChanges => 'Changes';
+
+  @override
+  String get adminFieldIpAddress => 'IP Address';
+
+  @override
+  String get adminAuditUnverified => 'Unverified';
+
+  @override
+  String get adminAuditStandard => 'Standard';
+
+  @override
+  String get adminAuditFeatured => 'Featured';
+
+  @override
+  String get adminAuditPreviousStatus => 'Previous Status';
+
+  @override
+  String get adminAuditOverridden => 'Overridden';
+
+  @override
+  String get adminAuditPrevious => 'Previous';
+
+  @override
+  String get adminAuditUpdated => 'Updated';
 }

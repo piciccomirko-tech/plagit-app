@@ -4965,4 +4965,112 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => '暂无发布的职位';
+
+  @override
+  String get adminSectionSubscriptionDetail => '订阅详情';
+
+  @override
+  String get adminEmptySubscriptionNotFound => '未找到订阅';
+
+  @override
+  String get adminSectionPlanDetails => '套餐详情';
+
+  @override
+  String get adminFieldPrice => '价格';
+
+  @override
+  String get adminFieldStartDate => '开始日期';
+
+  @override
+  String get adminFieldRenewalDate => '续订日期';
+
+  @override
+  String get adminSectionAdminOverride => '管理员覆盖';
+
+  @override
+  String get adminPlanCandidatePremium => '候选人高级版';
+
+  @override
+  String get adminPlanBusinessPro => '商业专业版';
+
+  @override
+  String get adminPlanBusinessPremium => '商业高级版';
+
+  @override
+  String get adminPlanFree => '免费';
+
+  @override
+  String get adminFieldNewRenewalDate => '新续订日期';
+
+  @override
+  String get adminPlaceholderDateExample => '例如：2026年6月15日';
+
+  @override
+  String get adminFieldReason => '原因';
+
+  @override
+  String get adminPlaceholderReasonOverride => '覆盖原因...';
+
+  @override
+  String get adminActionApplyOverride => '应用覆盖';
+
+  @override
+  String get adminSectionHistory => '历史';
+
+  @override
+  String get adminTimelineSubscriptionCreated => '订阅已创建';
+
+  @override
+  String get adminTimelinePaymentProcessed => '付款已处理';
+
+  @override
+  String get adminEmptyNoAdminNotes => '暂无管理员备注。';
+
+  @override
+  String get adminSectionAuditDetail => '审计详情';
+
+  @override
+  String get adminEmptyEntryNotFound => '未找到条目';
+
+  @override
+  String get adminFieldAdmin => '管理员';
+
+  @override
+  String get adminFieldAction => '操作';
+
+  @override
+  String get adminFieldTimestamp => '时间戳';
+
+  @override
+  String get adminFieldTarget => '目标';
+
+  @override
+  String get adminFieldType => '类型';
+
+  @override
+  String get adminSectionChanges => '变更';
+
+  @override
+  String get adminFieldIpAddress => 'IP 地址';
+
+  @override
+  String get adminAuditUnverified => '未验证';
+
+  @override
+  String get adminAuditStandard => '标准';
+
+  @override
+  String get adminAuditFeatured => '精选';
+
+  @override
+  String get adminAuditPreviousStatus => '先前状态';
+
+  @override
+  String get adminAuditOverridden => '已覆盖';
+
+  @override
+  String get adminAuditPrevious => '先前';
+
+  @override
+  String get adminAuditUpdated => '已更新';
 }
