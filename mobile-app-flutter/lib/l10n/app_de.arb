@@ -2382,11 +2382,6 @@
   "adminStatReviewed": "Geprüft",
   "adminStatShortlisted": "Engere Auswahl",
   "adminStatRejected": "Abgelehnt",
-  "rePrefix": "Re: {context}",
-  "conversationCount": "{count, plural, =1{1 Konversation} other{{count} Konversationen}}",
-  "unreadCount": "{count} ungelesen",
-  "removeChatBody": "Chat mit {company} entfernen? Nur deine Kopie wird gelöscht — die andere Seite behält ihre.",
-  "deleteConversationsCount": "{count, plural, =1{1 Konversation löschen?} other{{count} Konversationen löschen?}}",
-  "selectedChatsBody": "Ausgewählte Chats werden aus deinem Posteingang entfernt. Die andere Seite behält ihre Kopie.",
-  "clearInboxBody": "Dadurch wird dein gesamter Posteingang geleert ({count, plural, =1{1 Konversation} other{{count} Konversationen}}). Dies kann von deiner Seite nicht rückgängig gemacht werden."
+  "quickPlugNewBadge": "{count, plural, =1{1 neu} other{{count} neu}}",
+  "orLabel": "oder"
 }

@@ -1,282 +1,237 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/city_helpers.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/quick_plug_match.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 
-/// Candidate Quick Plug — rebuilt in Community-screen design language.
-class CandidateQuickPlugView extends StatelessWidget {
+const _bgMain = Color(0xFFF6F7F8);
+const _cardBg = Color(0xFFFFFFFF);
+const _surface = Color(0xFFF9FAFB);
+const _charcoal = Color(0xFF1A1C24);
+const _secondary = Color(0xFF707580);
+const _tertiary = Color(0xFF9EA3AD);
+const _tealMain = Color(0xFF2BB8B0);
+const _urgent = Color(0xFFF55748);
+const _purple = Color(0xFF8F59F5);
+const _border = Color(0xFFE6E8ED);
+
+class CandidateQuickPlugView extends StatefulWidget {
   const CandidateQuickPlugView({super.key});
 
   @override
+  State<CandidateQuickPlugView> createState() => _CandidateQuickPlugViewState();
+}
+
+class _CandidateQuickPlugViewState extends State<CandidateQuickPlugView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CandidateQuickPlugProvider>().load();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final sub = context.watch<CandidateAuthProvider>().subscription;
+    final provider = context.watch<CandidateQuickPlugProvider>();
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: _bgMain,
       body: SafeArea(
         child: Column(
           children: [
-            // ── Top bar ──
+            // ── HEADER ──
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
               child: Row(
                 children: [
-                  const SizedBox(width: 36),
-                  const Spacer(),
-                  const Text('Quick Plug', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
-                  const Spacer(),
-                  Container(
-                    width: 36, height: 36,
-                    decoration: BoxDecoration(color: AppColors.purple.withValues(alpha: 0.08), shape: BoxShape.circle),
-                    child: const Icon(Icons.bolt, size: 18, color: AppColors.purple),
-                  ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 4, 20, 40),
-                children: [
-                  // ── Hero ──
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: 52, height: 52,
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(colors: [AppColors.purple.withValues(alpha: 0.15), AppColors.purple.withValues(alpha: 0.05)]),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.bolt, size: 22, color: AppColors.purple),
-                        ),
-                        const SizedBox(height: 14),
-                        const Text('Premium Speed Tools', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
-                        const SizedBox(height: 4),
-                        const Text('Get hired faster with premium features', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
-                      ],
+                  GestureDetector(
+                    onTap: () => context.canPop() ? context.pop() : null,
+                    child: Container(
+                      width: 36, height: 36,
+                      decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(18)),
+                      child: const Icon(Icons.chevron_left, size: 28, color: _charcoal),
                     ),
                   ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Feature cards ──
-                  _featureCard(
-                    context,
-                    icon: Icons.rocket_launch,
-                    color: AppColors.teal,
-                    title: 'Boost My Profile',
-                    subtitle: 'Get seen by more employers today',
-                    active: sub.canBoostProfile,
-                    onTap: () => sub.canBoostProfile ? _activeSnack(context) : _premiumSnack(context),
-                  ),
-                  const SizedBox(height: 12),
-                  _featureCard(
-                    context,
-                    icon: Icons.bolt,
-                    color: AppColors.purple,
-                    title: 'Quick Apply',
-                    subtitle: 'Apply to matching jobs instantly',
-                    active: sub.canQuickApply,
-                    onTap: () => sub.canQuickApply ? _activeSnack(context) : _premiumSnack(context),
-                  ),
-                  const SizedBox(height: 12),
-                  _featureCard(
-                    context,
-                    icon: Icons.notifications_active,
-                    color: AppColors.amber,
-                    title: 'Priority Notifications',
-                    subtitle: 'Be first to know about new jobs',
-                    active: sub.hasPriorityNotifications,
-                    onTap: () => sub.hasPriorityNotifications ? _activeSnack(context) : _premiumSnack(context),
-                  ),
-                  const SizedBox(height: 12),
-                  _featureCard(
-                    context,
-                    icon: Icons.tune,
-                    color: const Color(0xFF3B82F6),
-                    title: 'Advanced Filters',
-                    subtitle: 'Filter by salary, distance, contract',
-                    active: sub.hasAdvancedFilters,
-                    onTap: () => sub.hasAdvancedFilters ? _activeSnack(context) : _premiumSnack(context),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  // ── Upgrade CTA ──
-                  if (!sub.plan.isPremium)
-                    GestureDetector(
-                      onTap: () => context.push('/candidate/subscription'),
-                      child: Container(
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [AppColors.teal.withValues(alpha: 0.06), AppColors.purple.withValues(alpha: 0.04)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.teal.withValues(alpha: 0.15)),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 44, height: 44,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(colors: [AppColors.amber.withValues(alpha: 0.2), AppColors.amber.withValues(alpha: 0.05)]),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.workspace_premium, size: 20, color: AppColors.amber),
-                            ),
-                            const SizedBox(width: 14),
-                            const Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Go Premium', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                                  SizedBox(height: 2),
-                                  Text('Unlock all features \u00B7 \u00A39.99/month', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                              decoration: BoxDecoration(
-                                gradient: const LinearGradient(colors: [AppColors.teal, AppColors.darkTeal]),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: const Text('Upgrade', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white)),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  else
+                  const SizedBox(width: 10),
+                  const Icon(Icons.bolt, size: 28, color: _purple),
+                  const SizedBox(width: 4),
+                  Text(AppLocalizations.of(context).quickPlug, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: _charcoal)),
+                  const Spacer(),
+                  if (provider.pendingCount > 0)
                     Container(
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 44, height: 44,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: [AppColors.amber.withValues(alpha: 0.2), AppColors.amber.withValues(alpha: 0.05)]),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(Icons.workspace_premium, size: 20, color: AppColors.amber),
-                          ),
-                          const SizedBox(width: 14),
-                          const Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('Premium Active', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                                SizedBox(height: 2),
-                                Text('All features are unlocked', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            decoration: BoxDecoration(color: AppColors.green.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(100)),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.check_circle, size: 12, color: AppColors.green),
-                                SizedBox(width: 4),
-                                Text('Active', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.green)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(color: _tealMain.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(100)),
+                      child: Text(AppLocalizations.of(context).quickPlugNewBadge(provider.pendingCount), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _tealMain)),
                     ),
                 ],
               ),
             ),
+
+            const SizedBox(height: 16),
+
+            // ── CONTENT ──
+            if (provider.loading)
+              const Expanded(child: Center(child: CircularProgressIndicator(color: _purple)))
+            else if (provider.error != null)
+              Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.wifi_off, size: 40, color: _tertiary),
+                const SizedBox(height: 16),
+                Text(provider.error!, style: const TextStyle(fontSize: 14, color: _secondary), textAlign: TextAlign.center),
+                const SizedBox(height: 12),
+                GestureDetector(onTap: () => provider.load(), child: Text(AppLocalizations.of(context).retry, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _purple))),
+              ])))
+            else if (provider.pendingLikes.isEmpty)
+              Expanded(child: _emptyState())
+            else
+              Expanded(child: _likesList(provider)),
           ],
         ),
       ),
     );
   }
 
-  Widget _featureCard(BuildContext context, {
-    required IconData icon,
-    required Color color,
-    required String title,
-    required String subtitle,
-    required bool active,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))],
+  Widget _emptyState() {
+    return Center(child: Padding(padding: const EdgeInsets.symmetric(horizontal: 24), child: Column(mainAxisSize: MainAxisSize.min, children: [
+      Container(width: 64, height: 64, decoration: BoxDecoration(color: _purple.withValues(alpha: 0.10), shape: BoxShape.circle),
+        child: const Icon(Icons.business_center, size: 28, color: _purple)),
+      const SizedBox(height: 20),
+      Text(AppLocalizations.of(context).quickPlugEmpty, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: _charcoal)),
+      const SizedBox(height: 8),
+      Text(AppLocalizations.of(context).quickPlugSubtitle, style: const TextStyle(fontSize: 15, color: _secondary), textAlign: TextAlign.center),
+      const SizedBox(height: 24),
+      GestureDetector(
+        onTap: () => context.push('/candidate/subscription'),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(color: _purple, borderRadius: BorderRadius.circular(100)),
+          child: Text(AppLocalizations.of(context).boostMyProfileCta, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white)),
         ),
-        child: Row(
-          children: [
-            Container(
-              width: 40, height: 40,
-              decoration: BoxDecoration(color: color.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, size: 18, color: color),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
+      ),
+    ])));
+  }
+
+  Widget _likesList(CandidateQuickPlugProvider provider) {
+    final likes = provider.pendingLikes;
+
+    return ListView.separated(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+      itemCount: likes.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      itemBuilder: (context, i) {
+        final like = likes[i];
+        return _InterestCard(
+          like: like,
+          onAccept: () => provider.accept(like.id),
+          onReject: () => provider.reject(like.id),
+        );
+      },
+    );
+  }
+}
+
+class _InterestCard extends StatelessWidget {
+  final QuickPlugLike like;
+  final VoidCallback onAccept;
+  final VoidCallback onReject;
+
+  const _InterestCard({required this.like, required this.onAccept, required this.onReject});
+
+  String get _timeAgo {
+    final diff = DateTime.now().difference(like.likedAt);
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    return '${diff.inDays}d ago';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: _border.withValues(alpha: 0.7)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Business info row
+          Row(
+            children: [
+              // Avatar
+              Container(
+                width: 48, height: 48,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [_tealMain, Color(0xFF1A9090)]),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Center(child: Text(like.businessInitials, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white))),
+              ),
+              const SizedBox(width: 14),
+              Expanded(child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                  Row(children: [
+                    Flexible(child: Text(like.businessName, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: _charcoal), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                    if (like.businessVerified) ...[
+                      const SizedBox(width: 6),
+                      const Icon(Icons.verified, size: 16, color: _tealMain),
+                    ],
+                  ]),
                   const SizedBox(height: 2),
-                  Text(subtitle, style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
+                  if (like.jobTitle != null)
+                    Text(AppLocalizations.of(context).lookingFor(like.jobTitle!), style: const TextStyle(fontSize: 13, color: _secondary)),
+                  Row(children: [
+                    const Icon(Icons.location_on, size: 12, color: _tertiary),
+                    const SizedBox(width: 3),
+                    Text(localizedCity(context, like.location), style: const TextStyle(fontSize: 12, color: _tertiary)),
+                    const Spacer(),
+                    Text(_timeAgo, style: const TextStyle(fontSize: 11, color: _tertiary)),
+                  ]),
                 ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            if (active)
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(100)),
-                child: const Text('Active', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.teal)),
-              )
-            else
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(Icons.lock_outline, size: 14, color: AppColors.tertiary),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
-                ],
-              ),
-          ],
-        ),
+              )),
+            ],
+          ),
+
+          const SizedBox(height: 14),
+
+          // Action buttons
+          Row(
+            children: [
+              // Reject
+              Expanded(child: GestureDetector(
+                onTap: onReject,
+                child: Container(
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: _urgent.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: _urgent.withValues(alpha: 0.15)),
+                  ),
+                  child: Center(child: Text(AppLocalizations.of(context).decline, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: _urgent))),
+                ),
+              )),
+              const SizedBox(width: 10),
+              // Accept
+              Expanded(flex: 2, child: GestureDetector(
+                onTap: onAccept,
+                child: Container(
+                  height: 44,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(colors: [_tealMain, Color(0xFF1A9090)]),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(child: Text(AppLocalizations.of(context).accept, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white))),
+                ),
+              )),
+            ],
+          ),
+        ],
       ),
-    );
-  }
-
-  static void _premiumSnack(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Premium feature \u2014 upgrade to unlock'), behavior: SnackBarBehavior.floating),
-    );
-  }
-
-  static void _activeSnack(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Feature is active!'), behavior: SnackBarBehavior.floating),
     );
   }
 }

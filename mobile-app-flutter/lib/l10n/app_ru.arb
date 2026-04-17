@@ -2382,11 +2382,6 @@
   "adminStatReviewed": "Проверено",
   "adminStatShortlisted": "В шортлисте",
   "adminStatRejected": "Отклонены",
-  "rePrefix": "Re: {context}",
-  "conversationCount": "{count, plural, =1{1 беседа} few{{count} беседы} many{{count} бесед} other{{count} беседы}}",
-  "unreadCount": "{count} непрочитанных",
-  "removeChatBody": "Удалить ваш чат с {company}? Удалится только ваша копия — у собеседника останется своя.",
-  "deleteConversationsCount": "{count, plural, =1{Удалить 1 беседу?} few{Удалить {count} беседы?} many{Удалить {count} бесед?} other{Удалить {count} беседы?}}",
-  "selectedChatsBody": "Выбранные чаты будут удалены из вашего ящика. У собеседника останется своя копия.",
-  "clearInboxBody": "Это очистит весь ваш ящик ({count, plural, =1{1 беседа} few{{count} беседы} many{{count} бесед} other{{count} беседы}}). Отменить с вашей стороны невозможно."
+  "quickPlugNewBadge": "{count, plural, =1{1 новый} few{{count} новых} many{{count} новых} other{{count} новых}}",
+  "orLabel": "или"
 }
