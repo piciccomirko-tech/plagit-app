@@ -726,5 +726,12 @@
   "candidateMessages": "CANDIDATE MESSAGES",
   "businessMessages": "BUSINESS MESSAGES",
   "serviceInquiries": "SERVICE INQUIRIES",
-  "acceptInterview": "Accept Interview"
+  "acceptInterview": "Accept Interview",
+  "switchRoleTitle": "Switch Role",
+  "postsTab": "Posts",
+  "galleryTab": "Gallery",
+  "promotionsTab": "Promotions",
+  "filterUpdates": "Updates",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }

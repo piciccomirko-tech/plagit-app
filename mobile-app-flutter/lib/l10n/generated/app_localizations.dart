@@ -10141,6 +10141,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rejected'**
   String get adminStatRejected;
+
+  /// Title of the role switcher modal sheet
+  ///
+  /// In en, this message translates to:
+  /// **'Switch Role'**
+  String get switchRoleTitle;
+
+  /// Service company profile tab: Posts
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get postsTab;
+
+  /// Service company profile tab: Gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get galleryTab;
+
+  /// Service company profile tab: Promotions
+  ///
+  /// In en, this message translates to:
+  /// **'Promotions'**
+  String get promotionsTab;
+
+  /// Filter chip label: Updates (service notifications)
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get filterUpdates;
+
+  /// Uppercase PRO badge shown in premium UI
+  ///
+  /// In en, this message translates to:
+  /// **'PRO'**
+  String get badgePro;
+
+  /// Uppercase ADMIN badge shown in premium UI
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get badgeAdmin;
 }
 
 class _AppLocalizationsDelegate

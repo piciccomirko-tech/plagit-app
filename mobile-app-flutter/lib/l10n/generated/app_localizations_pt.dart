@@ -5631,4 +5631,25 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejeitados';
+
+  @override
+  String get switchRoleTitle => 'Trocar função';
+
+  @override
+  String get postsTab => 'Publicações';
+
+  @override
+  String get galleryTab => 'Galeria';
+
+  @override
+  String get promotionsTab => 'Promoções';
+
+  @override
+  String get filterUpdates => 'Atualizações';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

@@ -2133,5 +2133,12 @@
   "adminStatNew": "جديد",
   "adminStatReviewed": "تمت المراجعة",
   "adminStatShortlisted": "القائمة القصيرة",
-  "adminStatRejected": "مرفوضون"
+  "adminStatRejected": "مرفوضون",
+  "switchRoleTitle": "تبديل الدور",
+  "postsTab": "المنشورات",
+  "galleryTab": "المعرض",
+  "promotionsTab": "العروض",
+  "filterUpdates": "التحديثات",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }

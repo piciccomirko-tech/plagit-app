@@ -5466,4 +5466,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminStatRejected => '已拒绝';
+
+  @override
+  String get switchRoleTitle => '切换角色';
+
+  @override
+  String get postsTab => '帖子';
+
+  @override
+  String get galleryTab => '图库';
+
+  @override
+  String get promotionsTab => '促销';
+
+  @override
+  String get filterUpdates => '更新';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

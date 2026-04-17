@@ -2381,5 +2381,12 @@
   "adminStatNew": "新的",
   "adminStatReviewed": "已审核",
   "adminStatShortlisted": "入围",
-  "adminStatRejected": "已拒绝"
+  "adminStatRejected": "已拒绝",
+  "switchRoleTitle": "切换角色",
+  "postsTab": "帖子",
+  "galleryTab": "图库",
+  "promotionsTab": "促销",
+  "filterUpdates": "更新",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }

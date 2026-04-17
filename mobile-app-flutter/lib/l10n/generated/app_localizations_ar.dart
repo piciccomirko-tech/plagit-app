@@ -5644,4 +5644,25 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'مرفوضون';
+
+  @override
+  String get switchRoleTitle => 'تبديل الدور';
+
+  @override
+  String get postsTab => 'المنشورات';
+
+  @override
+  String get galleryTab => 'المعرض';
+
+  @override
+  String get promotionsTab => 'العروض';
+
+  @override
+  String get filterUpdates => 'التحديثات';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

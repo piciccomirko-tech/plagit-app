@@ -5648,4 +5648,25 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rechazados';
+
+  @override
+  String get switchRoleTitle => 'Cambiar rol';
+
+  @override
+  String get postsTab => 'Publicaciones';
+
+  @override
+  String get galleryTab => 'Galería';
+
+  @override
+  String get promotionsTab => 'Promociones';
+
+  @override
+  String get filterUpdates => 'Actualizaciones';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

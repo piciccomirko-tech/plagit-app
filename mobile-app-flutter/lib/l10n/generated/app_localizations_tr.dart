@@ -5591,4 +5591,25 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejected';
+
+  @override
+  String get switchRoleTitle => 'Switch Role';
+
+  @override
+  String get postsTab => 'Posts';
+
+  @override
+  String get galleryTab => 'Gallery';
+
+  @override
+  String get promotionsTab => 'Promotions';
+
+  @override
+  String get filterUpdates => 'Updates';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

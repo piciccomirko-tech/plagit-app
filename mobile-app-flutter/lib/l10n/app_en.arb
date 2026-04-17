@@ -4005,5 +4005,33 @@
   "adminStatRejected": "Rejected",
   "@adminStatRejected": {
     "description": "Admin job detail: adminStatRejected"
+  },
+  "switchRoleTitle": "Switch Role",
+  "postsTab": "Posts",
+  "galleryTab": "Gallery",
+  "promotionsTab": "Promotions",
+  "filterUpdates": "Updates",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN",
+  "@switchRoleTitle": {
+    "description": "Title of the role switcher modal sheet"
+  },
+  "@postsTab": {
+    "description": "Service company profile tab: Posts"
+  },
+  "@galleryTab": {
+    "description": "Service company profile tab: Gallery"
+  },
+  "@promotionsTab": {
+    "description": "Service company profile tab: Promotions"
+  },
+  "@filterUpdates": {
+    "description": "Filter chip label: Updates (service notifications)"
+  },
+  "@badgePro": {
+    "description": "Uppercase PRO badge shown in premium UI"
+  },
+  "@badgeAdmin": {
+    "description": "Uppercase ADMIN badge shown in premium UI"
   }
 }

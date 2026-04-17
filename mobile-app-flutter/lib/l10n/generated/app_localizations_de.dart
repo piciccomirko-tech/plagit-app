@@ -5640,4 +5640,25 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Abgelehnt';
+
+  @override
+  String get switchRoleTitle => 'Rolle wechseln';
+
+  @override
+  String get postsTab => 'Beiträge';
+
+  @override
+  String get galleryTab => 'Galerie';
+
+  @override
+  String get promotionsTab => 'Angebote';
+
+  @override
+  String get filterUpdates => 'Updates';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

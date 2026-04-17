@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class RoleSwitcher extends StatelessWidget {
   final String currentRole;
@@ -60,20 +61,21 @@ class RoleSwitcher extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (ctx) {
+        final l = AppLocalizations.of(ctx);
         return Container(
           padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Switch Role',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                l.switchRoleTitle,
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               _RoleRow(
                 icon: Icons.person,
                 color: AppColors.teal,
-                label: 'Candidate',
+                label: l.candidate,
                 isCurrent: currentRole == 'candidate',
                 onTap: () {
                   Navigator.pop(ctx);
@@ -83,7 +85,7 @@ class RoleSwitcher extends StatelessWidget {
               _RoleRow(
                 icon: Icons.business,
                 color: AppColors.purple,
-                label: 'Business',
+                label: l.businessLabel,
                 isCurrent: currentRole == 'business',
                 onTap: () {
                   Navigator.pop(ctx);
@@ -93,7 +95,7 @@ class RoleSwitcher extends StatelessWidget {
               _RoleRow(
                 icon: Icons.shield,
                 color: AppColors.navy,
-                label: 'Admin',
+                label: l.admin,
                 isCurrent: currentRole == 'admin',
                 onTap: () {
                   Navigator.pop(ctx);
@@ -103,7 +105,7 @@ class RoleSwitcher extends StatelessWidget {
               _RoleRow(
                 icon: Icons.grid_view,
                 color: _orange,
-                label: 'Browse Services',
+                label: l.browseServices,
                 isCurrent: currentRole == 'services',
                 onTap: () {
                   Navigator.pop(ctx);
@@ -113,9 +115,9 @@ class RoleSwitcher extends StatelessWidget {
               const SizedBox(height: 16),
               TextButton(
                 onPressed: () => Navigator.pop(ctx),
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: AppColors.secondary, fontSize: 14),
+                child: Text(
+                  l.cancel,
+                  style: const TextStyle(color: AppColors.secondary, fontSize: 14),
                 ),
               ),
             ],

@@ -2381,5 +2381,12 @@
   "adminStatNew": "Novos",
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Pré-selecionados",
-  "adminStatRejected": "Rejeitados"
+  "adminStatRejected": "Rejeitados",
+  "switchRoleTitle": "Trocar função",
+  "postsTab": "Publicações",
+  "galleryTab": "Galeria",
+  "promotionsTab": "Promoções",
+  "filterUpdates": "Atualizações",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }
