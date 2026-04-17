@@ -148,7 +148,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                               ),
                               if (c.jobContext.isNotEmpty)
                                 Text(
-                                  'Re: ${c.jobContext}',
+                                  AppLocalizations.of(context).rePrefix(c.jobContext),
                                   style: const TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
@@ -215,7 +215,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
               child: Row(
                 children: [
                   Text(
-                    '${allConvos.length} conversation${allConvos.length == 1 ? '' : 's'}',
+                    AppLocalizations.of(context).conversationCount(allConvos.length),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -234,7 +234,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                     ),
                     const SizedBox(width: 6),
                     Text(
-                      '$totalUnread unread',
+                      AppLocalizations.of(context).unreadCount(totalUnread),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,
@@ -272,9 +272,9 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                       GestureDetector(
                         onTap: () =>
                             context.read<CandidateMessagesProvider>().load(),
-                        child: const Text(
-                          'Retry',
-                          style: TextStyle(
+                        child: Text(
+                          AppLocalizations.of(context).retry,
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: _tealMain,
@@ -370,18 +370,18 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'No messages yet',
-              style: TextStyle(
+            Text(
+              AppLocalizations.of(context).noMessagesYet,
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: _charcoal,
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              "When employers message you, they'll appear here.",
-              style: TextStyle(fontSize: 13, color: _secondary),
+            Text(
+              AppLocalizations.of(context).whenEmployersMessageYou,
+              style: const TextStyle(fontSize: 13, color: _secondary),
               textAlign: TextAlign.center,
             ),
           ],
@@ -436,7 +436,9 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
       selectedCount: count,
       onCancel: _exitSelection,
       padding: EdgeInsets.zero,
-      title: count == 0 ? 'Select items' : '$count selected',
+      title: count == 0
+          ? AppLocalizations.of(context).selectItems
+          : AppLocalizations.of(context).countSelected(count),
       titleStyle: const TextStyle(
         fontSize: 17,
         fontWeight: FontWeight.w700,
@@ -471,7 +473,9 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
               });
             },
             child: Text(
-              _selected.length == allConvos.length ? 'Clear' : 'Select all',
+              _selected.length == allConvos.length
+                  ? AppLocalizations.of(context).clear
+                  : AppLocalizations.of(context).selectAll,
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -503,14 +507,14 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
       alignment: Alignment.centerRight,
       padding: const EdgeInsets.only(right: 24),
       color: _urgent,
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(CupertinoIcons.trash_fill, size: 18, color: Colors.white),
-          SizedBox(width: 6),
+          const Icon(CupertinoIcons.trash_fill, size: 18, color: Colors.white),
+          const SizedBox(width: 6),
           Text(
-            'Delete',
-            style: TextStyle(
+            AppLocalizations.of(context).delete,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -527,16 +531,16 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Delete conversation?',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context).deleteConversation,
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
             color: _charcoal,
           ),
         ),
         content: Text(
-          'Remove your chat with ${c.company}? Only your copy is deleted — the other side keeps theirs.',
+          AppLocalizations.of(context).removeChatBody(c.company),
           style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
         ),
         actions: [
@@ -565,16 +569,16 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Delete $count conversation${count == 1 ? '' : 's'}?',
+          AppLocalizations.of(context).deleteConversationsCount(count),
           style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
             color: _charcoal,
           ),
         ),
-        content: const Text(
-          'Selected chats will be removed from your inbox. The other side still keeps their copy.',
-          style: TextStyle(fontSize: 14, color: _secondary, height: 1.4),
+        content: Text(
+          AppLocalizations.of(context).selectedChatsBody,
+          style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
         ),
         actions: [
           TextButton(
@@ -601,16 +605,16 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Delete all conversations?',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context).deleteAllConversations,
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w700,
             color: _charcoal,
           ),
         ),
         content: Text(
-          'This will clear your entire inbox (${allConvos.length} conversation${allConvos.length == 1 ? '' : 's'}). This cannot be undone from your side.',
+          AppLocalizations.of(context).clearInboxBody(allConvos.length),
           style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
         ),
         actions: [
@@ -620,9 +624,9 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Delete all',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w800),
+            child: Text(
+              AppLocalizations.of(context).deleteAll,
+              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w800),
             ),
           ),
         ],
@@ -686,9 +690,9 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.center,
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context).cancel,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                         color: _charcoal,
@@ -867,7 +871,7 @@ class _ConvoRow extends StatelessWidget {
                   if (c.jobContext.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
-                      'Re: ${c.jobContext}',
+                      AppLocalizations.of(context).rePrefix(c.jobContext),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w500,

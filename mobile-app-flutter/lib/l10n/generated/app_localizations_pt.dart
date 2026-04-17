@@ -5633,8 +5633,54 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminStatRejected => 'Rejeitados';
 
   @override
-  String get businessFieldMeetingLink => 'Link da reunião';
+  String rePrefix(String context) {
+    return 'Re: $context';
+  }
 
   @override
-  String get businessFieldLocation => 'Localização';
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversas',
+      one: '1 conversa',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count não lidas';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'Remover a conversa com $company? Apenas a tua cópia é eliminada — a outra parte mantém a sua.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Eliminar $count conversas?',
+      one: 'Eliminar 1 conversa?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'As conversas selecionadas serão removidas da tua caixa de entrada. A outra parte mantém a sua cópia.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversas',
+      one: '1 conversa',
+    );
+    return 'Isto irá limpar toda a caixa de entrada ($_temp0). Não pode ser anulado do teu lado.';
+  }
 }

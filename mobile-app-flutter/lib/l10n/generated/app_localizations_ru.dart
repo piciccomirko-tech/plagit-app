@@ -5709,8 +5709,60 @@ class AppLocalizationsRu extends AppLocalizations {
   String get adminStatRejected => 'Отклонены';
 
   @override
-  String get businessFieldMeetingLink => 'Ссылка на встречу';
+  String rePrefix(String context) {
+    return 'Re: $context';
+  }
 
   @override
-  String get businessFieldLocation => 'Место';
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count беседы',
+      many: '$count бесед',
+      few: '$count беседы',
+      one: '1 беседа',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count непрочитанных';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'Удалить ваш чат с $company? Удалится только ваша копия — у собеседника останется своя.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Удалить $count беседы?',
+      many: 'Удалить $count бесед?',
+      few: 'Удалить $count беседы?',
+      one: 'Удалить 1 беседу?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'Выбранные чаты будут удалены из вашего ящика. У собеседника останется своя копия.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count беседы',
+      many: '$count бесед',
+      few: '$count беседы',
+      one: '1 беседа',
+    );
+    return 'Это очистит весь ваш ящик ($_temp0). Отменить с вашей стороны невозможно.';
+  }
 }

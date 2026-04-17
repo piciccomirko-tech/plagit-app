@@ -5622,8 +5622,54 @@ class AppLocalizationsIt extends AppLocalizations {
   String get adminStatRejected => 'Respinti';
 
   @override
-  String get businessFieldMeetingLink => 'Link riunione';
+  String rePrefix(String context) {
+    return 'Rif: $context';
+  }
 
   @override
-  String get businessFieldLocation => 'Posizione';
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversazioni',
+      one: '1 conversazione',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count non letti';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'Rimuovere la chat con $company? Viene eliminata solo la tua copia — l\'altra parte conserva la sua.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Elimina $count conversazioni?',
+      one: 'Elimina 1 conversazione?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'Le chat selezionate verranno rimosse dalla tua casella. L\'altra parte conserva comunque la propria copia.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversazioni',
+      one: '1 conversazione',
+    );
+    return 'Questo cancellerà la tua casella ($_temp0). Non è possibile annullare dalla tua parte.';
+  }
 }

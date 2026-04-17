@@ -727,6 +727,11 @@
   "businessMessages": "BUSINESS MESSAGES",
   "serviceInquiries": "SERVICE INQUIRIES",
   "acceptInterview": "Accept Interview",
-  "businessFieldMeetingLink": "Meeting Link",
-  "businessFieldLocation": "Location"
+  "rePrefix": "Re: {context}",
+  "conversationCount": "{count, plural, =1{1 conversation} other{{count} conversations}}",
+  "unreadCount": "{count} unread",
+  "removeChatBody": "Remove your chat with {company}? Only your copy is deleted — the other side keeps theirs.",
+  "deleteConversationsCount": "{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}",
+  "selectedChatsBody": "Selected chats will be removed from your inbox. The other side still keeps their copy.",
+  "clearInboxBody": "This will clear your entire inbox ({count, plural, =1{1 conversation} other{{count} conversations}}). This cannot be undone from your side."
 }
