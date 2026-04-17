@@ -5461,4 +5461,134 @@ class AppLocalizationsTr extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'Report created by Platform auto-detection';
+
+  @override
+  String get adminActionPause => 'Pause';
+
+  @override
+  String get adminActionClose => 'Close';
+
+  @override
+  String get adminActionViewApplicants => 'View Applicants';
+
+  @override
+  String get adminBadgeFeatured => 'Featured';
+
+  @override
+  String get adminFieldPosted => 'Posted';
+
+  @override
+  String get adminFieldViews => 'Views';
+
+  @override
+  String get adminFieldPay => 'Pay';
+
+  @override
+  String get adminFieldEmployment => 'Employment';
+
+  @override
+  String get adminFieldSummary => 'Summary';
+
+  @override
+  String get adminFieldAnnual => 'Annual';
+
+  @override
+  String get adminFieldMonthly => 'Monthly';
+
+  @override
+  String get adminFieldDuration => 'Duration';
+
+  @override
+  String get adminFieldHourly => 'Hourly';
+
+  @override
+  String get adminFieldWeeklyHours => 'Weekly hours';
+
+  @override
+  String get adminFieldBonus => 'Bonus';
+
+  @override
+  String get adminFieldShift => 'Shift';
+
+  @override
+  String get adminFieldSalaryRange => 'Salary range';
+
+  @override
+  String get adminMiscNotSpecified => 'Not specified';
+
+  @override
+  String get adminSectionModeration => 'Moderation';
+
+  @override
+  String get adminSectionCompensationReview => 'Compensation Review';
+
+  @override
+  String get adminSectionApplicantsSummary => 'Applicants Summary';
+
+  @override
+  String get adminSectionExtras => 'Extras';
+
+  @override
+  String get adminPlaceholderFlagReason => 'Reason for flagging...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'Job featured';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'Job unfeatured';
+
+  @override
+  String get adminSnackbarJobRemoved => 'Job removed';
+
+  @override
+  String get adminDialogPauseJobTitle => 'Pause Job';
+
+  @override
+  String get adminDialogPauseJobBody => 'Pause this job listing?';
+
+  @override
+  String get adminDialogCloseJobTitle => 'Close Job';
+
+  @override
+  String get adminDialogCloseJobBody => 'Close this job listing permanently?';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'Remove Job';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'Remove this job completely? This cannot be undone.';
+
+  @override
+  String get adminModerationFlagThis => 'Flag this job';
+
+  @override
+  String get adminModerationIsFlagged => 'This job is flagged';
+
+  @override
+  String get adminPerkHousing => 'Housing included';
+
+  @override
+  String get adminPerkTravel => 'Travel included';
+
+  @override
+  String get adminPerkOvertime => 'Overtime available';
+
+  @override
+  String get adminPerkFlexible => 'Flexible schedule';
+
+  @override
+  String get adminPerkWeekend => 'Weekend shifts';
+
+  @override
+  String get adminStatNew => 'New';
+
+  @override
+  String get adminStatReviewed => 'Reviewed';
+
+  @override
+  String get adminStatShortlisted => 'Shortlisted';
+
+  @override
+  String get adminStatRejected => 'Rejected';
 }

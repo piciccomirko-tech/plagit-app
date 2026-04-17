@@ -5510,4 +5510,134 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'Bericht durch automatische Erkennung der Plattform erstellt';
+
+  @override
+  String get adminActionPause => 'Pausieren';
+
+  @override
+  String get adminActionClose => 'Schließen';
+
+  @override
+  String get adminActionViewApplicants => 'Bewerber anzeigen';
+
+  @override
+  String get adminBadgeFeatured => 'Hervorgehoben';
+
+  @override
+  String get adminFieldPosted => 'Veröffentlicht';
+
+  @override
+  String get adminFieldViews => 'Aufrufe';
+
+  @override
+  String get adminFieldPay => 'Bezahlung';
+
+  @override
+  String get adminFieldEmployment => 'Beschäftigung';
+
+  @override
+  String get adminFieldSummary => 'Zusammenfassung';
+
+  @override
+  String get adminFieldAnnual => 'Jährlich';
+
+  @override
+  String get adminFieldMonthly => 'Monatlich';
+
+  @override
+  String get adminFieldDuration => 'Dauer';
+
+  @override
+  String get adminFieldHourly => 'Stündlich';
+
+  @override
+  String get adminFieldWeeklyHours => 'Wochenstunden';
+
+  @override
+  String get adminFieldBonus => 'Bonus';
+
+  @override
+  String get adminFieldShift => 'Schicht';
+
+  @override
+  String get adminFieldSalaryRange => 'Gehaltsspanne';
+
+  @override
+  String get adminMiscNotSpecified => 'Nicht angegeben';
+
+  @override
+  String get adminSectionModeration => 'Moderation';
+
+  @override
+  String get adminSectionCompensationReview => 'Vergütungsprüfung';
+
+  @override
+  String get adminSectionApplicantsSummary => 'Bewerberübersicht';
+
+  @override
+  String get adminSectionExtras => 'Extras';
+
+  @override
+  String get adminPlaceholderFlagReason => 'Grund der Meldung...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'Job hervorgehoben';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'Job nicht mehr hervorgehoben';
+
+  @override
+  String get adminSnackbarJobRemoved => 'Job entfernt';
+
+  @override
+  String get adminDialogPauseJobTitle => 'Job pausieren';
+
+  @override
+  String get adminDialogPauseJobBody => 'Diese Anzeige pausieren?';
+
+  @override
+  String get adminDialogCloseJobTitle => 'Job schließen';
+
+  @override
+  String get adminDialogCloseJobBody => 'Diese Anzeige dauerhaft schließen?';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'Job entfernen';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'Diesen Job vollständig entfernen? Dies kann nicht rückgängig gemacht werden.';
+
+  @override
+  String get adminModerationFlagThis => 'Diesen Job melden';
+
+  @override
+  String get adminModerationIsFlagged => 'Dieser Job ist gemeldet';
+
+  @override
+  String get adminPerkHousing => 'Unterkunft inklusive';
+
+  @override
+  String get adminPerkTravel => 'Reise inklusive';
+
+  @override
+  String get adminPerkOvertime => 'Überstunden möglich';
+
+  @override
+  String get adminPerkFlexible => 'Flexibler Zeitplan';
+
+  @override
+  String get adminPerkWeekend => 'Wochenendschichten';
+
+  @override
+  String get adminStatNew => 'Neu';
+
+  @override
+  String get adminStatReviewed => 'Geprüft';
+
+  @override
+  String get adminStatShortlisted => 'Engere Auswahl';
+
+  @override
+  String get adminStatRejected => 'Abgelehnt';
 }
