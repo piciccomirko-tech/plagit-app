@@ -21,7 +21,10 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - `admin_verifications_view.dart`, `admin_moderation_view.dart`
   - `admin_support_view.dart`, `admin_audit_view.dart`
   - extended `admin_shared_widgets.dart` with `aStatusLabel` cases (+9) + new `aPriorityLabel(l, p)` helper
-- TODO — Fase 3 (analytics + community)
+- DONE (Fase 3 — 2026-04-17) — analytics + community:
+  - `admin_analytics_view.dart`, `admin_community_view.dart`
+  - 36 nuove chiavi (33 semplici + 2 ICU `{count}` + 1 ICU `{premium}/{total}`)
+  - build bump 1.0.0+4 → 1.0.0+5, branch `phase3-admin-i18n`
 - TODO — Fase 4 (detail profili: business_detail, candidate_detail)
 - TODO — Fase 5 (detail rimanenti: job, verification, support, interview, moderation, subscription, application, audit detail)
 
@@ -43,6 +46,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 → totale cumulativo 177 chiavi × 9 locali)
 
 ## Decisioni tecniche
 

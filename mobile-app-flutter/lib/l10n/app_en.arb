@@ -2945,5 +2945,167 @@
         "type": "int"
       }
     }
+  },
+  "adminPeriodWeek": "Week",
+  "@adminPeriodWeek": {
+    "description": "adminPeriodWeek"
+  },
+  "adminPeriodMonth": "Month",
+  "@adminPeriodMonth": {
+    "description": "adminPeriodMonth"
+  },
+  "adminPeriodYear": "Year",
+  "@adminPeriodYear": {
+    "description": "adminPeriodYear"
+  },
+  "adminKpiNewCandidates": "New Candidates",
+  "@adminKpiNewCandidates": {
+    "description": "adminKpiNewCandidates"
+  },
+  "adminKpiNewBusinesses": "New Businesses",
+  "@adminKpiNewBusinesses": {
+    "description": "adminKpiNewBusinesses"
+  },
+  "adminKpiJobsPosted": "Jobs Posted",
+  "@adminKpiJobsPosted": {
+    "description": "adminKpiJobsPosted"
+  },
+  "adminSectionApplicationFunnel": "Application Funnel",
+  "@adminSectionApplicationFunnel": {
+    "description": "adminSectionApplicationFunnel"
+  },
+  "adminSectionPlatformGrowth": "Platform Growth",
+  "@adminSectionPlatformGrowth": {
+    "description": "adminSectionPlatformGrowth"
+  },
+  "adminSectionPremiumConversion": "Premium Conversion",
+  "@adminSectionPremiumConversion": {
+    "description": "adminSectionPremiumConversion"
+  },
+  "adminSectionTopLocations": "Top Locations",
+  "@adminSectionTopLocations": {
+    "description": "adminSectionTopLocations"
+  },
+  "adminStatusViewed": "Viewed",
+  "@adminStatusViewed": {
+    "description": "adminStatusViewed"
+  },
+  "adminWeekdayMon": "Mon",
+  "@adminWeekdayMon": {
+    "description": "adminWeekdayMon"
+  },
+  "adminWeekdayTue": "Tue",
+  "@adminWeekdayTue": {
+    "description": "adminWeekdayTue"
+  },
+  "adminWeekdayWed": "Wed",
+  "@adminWeekdayWed": {
+    "description": "adminWeekdayWed"
+  },
+  "adminWeekdayThu": "Thu",
+  "@adminWeekdayThu": {
+    "description": "adminWeekdayThu"
+  },
+  "adminWeekdayFri": "Fri",
+  "@adminWeekdayFri": {
+    "description": "adminWeekdayFri"
+  },
+  "adminWeekdaySat": "Sat",
+  "@adminWeekdaySat": {
+    "description": "adminWeekdaySat"
+  },
+  "adminWeekdaySun": "Sun",
+  "@adminWeekdaySun": {
+    "description": "adminWeekdaySun"
+  },
+  "adminFilterReported": "Reported",
+  "@adminFilterReported": {
+    "description": "adminFilterReported"
+  },
+  "adminFilterHidden": "Hidden",
+  "@adminFilterHidden": {
+    "description": "adminFilterHidden"
+  },
+  "adminEmptyPostsTitle": "No posts",
+  "@adminEmptyPostsTitle": {
+    "description": "adminEmptyPostsTitle"
+  },
+  "adminEmptyContentFilter": "No content matches this filter.",
+  "@adminEmptyContentFilter": {
+    "description": "adminEmptyContentFilter"
+  },
+  "adminBannerReportedReview": "REPORTED — REVIEW REQUIRED",
+  "@adminBannerReportedReview": {
+    "description": "adminBannerReportedReview"
+  },
+  "adminBannerHiddenFromFeed": "HIDDEN FROM FEED",
+  "@adminBannerHiddenFromFeed": {
+    "description": "adminBannerHiddenFromFeed"
+  },
+  "adminActionInsights": "Insights",
+  "@adminActionInsights": {
+    "description": "adminActionInsights"
+  },
+  "adminActionHide": "Hide",
+  "@adminActionHide": {
+    "description": "adminActionHide"
+  },
+  "adminActionRemove": "Remove",
+  "@adminActionRemove": {
+    "description": "adminActionRemove"
+  },
+  "adminActionCancel": "Cancel",
+  "@adminActionCancel": {
+    "description": "adminActionCancel"
+  },
+  "adminDialogRemovePostTitle": "Remove Post?",
+  "@adminDialogRemovePostTitle": {
+    "description": "adminDialogRemovePostTitle"
+  },
+  "adminDialogRemovePostBody": "This permanently deletes the post and its comments. This action cannot be undone.",
+  "@adminDialogRemovePostBody": {
+    "description": "adminDialogRemovePostBody"
+  },
+  "adminSnackbarReportCleared": "Report cleared",
+  "@adminSnackbarReportCleared": {
+    "description": "adminSnackbarReportCleared"
+  },
+  "adminSnackbarPostHidden": "Post hidden from feed",
+  "@adminSnackbarPostHidden": {
+    "description": "adminSnackbarPostHidden"
+  },
+  "adminSnackbarPostRemoved": "Post removed",
+  "@adminSnackbarPostRemoved": {
+    "description": "adminSnackbarPostRemoved"
+  },
+  "adminCountReported": "{count} reported",
+  "@adminCountReported": {
+    "description": "adminCountReported",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminCountHidden": "{count} hidden",
+  "@adminCountHidden": {
+    "description": "adminCountHidden",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminMiscPremiumOutOfTotal": "{premium} premium out of {total} total",
+  "@adminMiscPremiumOutOfTotal": {
+    "description": "adminMiscPremiumOutOfTotal",
+    "placeholders": {
+      "premium": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
   }
 }

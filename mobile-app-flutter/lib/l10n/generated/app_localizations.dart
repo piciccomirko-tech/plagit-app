@@ -8665,6 +8665,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} days waiting'**
   String adminBadgeNDaysWaiting(int count);
+
+  /// adminPeriodWeek
+  ///
+  /// In en, this message translates to:
+  /// **'Week'**
+  String get adminPeriodWeek;
+
+  /// adminPeriodMonth
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get adminPeriodMonth;
+
+  /// adminPeriodYear
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get adminPeriodYear;
+
+  /// adminKpiNewCandidates
+  ///
+  /// In en, this message translates to:
+  /// **'New Candidates'**
+  String get adminKpiNewCandidates;
+
+  /// adminKpiNewBusinesses
+  ///
+  /// In en, this message translates to:
+  /// **'New Businesses'**
+  String get adminKpiNewBusinesses;
+
+  /// adminKpiJobsPosted
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs Posted'**
+  String get adminKpiJobsPosted;
+
+  /// adminSectionApplicationFunnel
+  ///
+  /// In en, this message translates to:
+  /// **'Application Funnel'**
+  String get adminSectionApplicationFunnel;
+
+  /// adminSectionPlatformGrowth
+  ///
+  /// In en, this message translates to:
+  /// **'Platform Growth'**
+  String get adminSectionPlatformGrowth;
+
+  /// adminSectionPremiumConversion
+  ///
+  /// In en, this message translates to:
+  /// **'Premium Conversion'**
+  String get adminSectionPremiumConversion;
+
+  /// adminSectionTopLocations
+  ///
+  /// In en, this message translates to:
+  /// **'Top Locations'**
+  String get adminSectionTopLocations;
+
+  /// adminStatusViewed
+  ///
+  /// In en, this message translates to:
+  /// **'Viewed'**
+  String get adminStatusViewed;
+
+  /// adminWeekdayMon
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get adminWeekdayMon;
+
+  /// adminWeekdayTue
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get adminWeekdayTue;
+
+  /// adminWeekdayWed
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get adminWeekdayWed;
+
+  /// adminWeekdayThu
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get adminWeekdayThu;
+
+  /// adminWeekdayFri
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get adminWeekdayFri;
+
+  /// adminWeekdaySat
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get adminWeekdaySat;
+
+  /// adminWeekdaySun
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get adminWeekdaySun;
+
+  /// adminFilterReported
+  ///
+  /// In en, this message translates to:
+  /// **'Reported'**
+  String get adminFilterReported;
+
+  /// adminFilterHidden
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get adminFilterHidden;
+
+  /// adminEmptyPostsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No posts'**
+  String get adminEmptyPostsTitle;
+
+  /// adminEmptyContentFilter
+  ///
+  /// In en, this message translates to:
+  /// **'No content matches this filter.'**
+  String get adminEmptyContentFilter;
+
+  /// adminBannerReportedReview
+  ///
+  /// In en, this message translates to:
+  /// **'REPORTED — REVIEW REQUIRED'**
+  String get adminBannerReportedReview;
+
+  /// adminBannerHiddenFromFeed
+  ///
+  /// In en, this message translates to:
+  /// **'HIDDEN FROM FEED'**
+  String get adminBannerHiddenFromFeed;
+
+  /// adminActionInsights
+  ///
+  /// In en, this message translates to:
+  /// **'Insights'**
+  String get adminActionInsights;
+
+  /// adminActionHide
+  ///
+  /// In en, this message translates to:
+  /// **'Hide'**
+  String get adminActionHide;
+
+  /// adminActionRemove
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get adminActionRemove;
+
+  /// adminActionCancel
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get adminActionCancel;
+
+  /// adminDialogRemovePostTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Post?'**
+  String get adminDialogRemovePostTitle;
+
+  /// adminDialogRemovePostBody
+  ///
+  /// In en, this message translates to:
+  /// **'This permanently deletes the post and its comments. This action cannot be undone.'**
+  String get adminDialogRemovePostBody;
+
+  /// adminSnackbarReportCleared
+  ///
+  /// In en, this message translates to:
+  /// **'Report cleared'**
+  String get adminSnackbarReportCleared;
+
+  /// adminSnackbarPostHidden
+  ///
+  /// In en, this message translates to:
+  /// **'Post hidden from feed'**
+  String get adminSnackbarPostHidden;
+
+  /// adminSnackbarPostRemoved
+  ///
+  /// In en, this message translates to:
+  /// **'Post removed'**
+  String get adminSnackbarPostRemoved;
+
+  /// adminCountReported
+  ///
+  /// In en, this message translates to:
+  /// **'{count} reported'**
+  String adminCountReported(int count);
+
+  /// adminCountHidden
+  ///
+  /// In en, this message translates to:
+  /// **'{count} hidden'**
+  String adminCountHidden(int count);
+
+  /// adminMiscPremiumOutOfTotal
+  ///
+  /// In en, this message translates to:
+  /// **'{premium} premium out of {total} total'**
+  String adminMiscPremiumOutOfTotal(int premium, int total);
 }
 
 class _AppLocalizationsDelegate

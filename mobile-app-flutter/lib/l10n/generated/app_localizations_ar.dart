@@ -4875,4 +4875,119 @@ class AppLocalizationsAr extends AppLocalizations {
   String adminBadgeNDaysWaiting(int count) {
     return '$count أيام في الانتظار';
   }
+
+  @override
+  String get adminPeriodWeek => 'أسبوع';
+
+  @override
+  String get adminPeriodMonth => 'شهر';
+
+  @override
+  String get adminPeriodYear => 'سنة';
+
+  @override
+  String get adminKpiNewCandidates => 'مرشحون جدد';
+
+  @override
+  String get adminKpiNewBusinesses => 'شركات جديدة';
+
+  @override
+  String get adminKpiJobsPosted => 'الوظائف المنشورة';
+
+  @override
+  String get adminSectionApplicationFunnel => 'مسار الطلبات';
+
+  @override
+  String get adminSectionPlatformGrowth => 'نمو المنصة';
+
+  @override
+  String get adminSectionPremiumConversion => 'تحويل Premium';
+
+  @override
+  String get adminSectionTopLocations => 'أهم المواقع';
+
+  @override
+  String get adminStatusViewed => 'تمت المشاهدة';
+
+  @override
+  String get adminWeekdayMon => 'اثن';
+
+  @override
+  String get adminWeekdayTue => 'ثلا';
+
+  @override
+  String get adminWeekdayWed => 'أرب';
+
+  @override
+  String get adminWeekdayThu => 'خمي';
+
+  @override
+  String get adminWeekdayFri => 'جمع';
+
+  @override
+  String get adminWeekdaySat => 'سبت';
+
+  @override
+  String get adminWeekdaySun => 'أحد';
+
+  @override
+  String get adminFilterReported => 'مبلَّغ عنها';
+
+  @override
+  String get adminFilterHidden => 'مخفية';
+
+  @override
+  String get adminEmptyPostsTitle => 'لا توجد منشورات';
+
+  @override
+  String get adminEmptyContentFilter => 'لا يوجد محتوى مطابق لهذا الفلتر.';
+
+  @override
+  String get adminBannerReportedReview => 'تم الإبلاغ — مطلوبة مراجعة';
+
+  @override
+  String get adminBannerHiddenFromFeed => 'مخفي من الخلاصة';
+
+  @override
+  String get adminActionInsights => 'إحصاءات';
+
+  @override
+  String get adminActionHide => 'إخفاء';
+
+  @override
+  String get adminActionRemove => 'إزالة';
+
+  @override
+  String get adminActionCancel => 'إلغاء';
+
+  @override
+  String get adminDialogRemovePostTitle => 'إزالة المنشور؟';
+
+  @override
+  String get adminDialogRemovePostBody =>
+      'سيؤدي هذا إلى حذف المنشور وتعليقاته بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get adminSnackbarReportCleared => 'تم مسح البلاغ';
+
+  @override
+  String get adminSnackbarPostHidden => 'تم إخفاء المنشور من الخلاصة';
+
+  @override
+  String get adminSnackbarPostRemoved => 'تمت إزالة المنشور';
+
+  @override
+  String adminCountReported(int count) {
+    return '$count تم الإبلاغ عنها';
+  }
+
+  @override
+  String adminCountHidden(int count) {
+    return '$count مخفي';
+  }
+
+  @override
+  String adminMiscPremiumOutOfTotal(int premium, int total) {
+    return '$premium Premium من أصل $total';
+  }
 }
