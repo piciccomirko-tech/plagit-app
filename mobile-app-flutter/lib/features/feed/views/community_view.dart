@@ -1,372 +1,154 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/widgets/profile_avatar.dart';
+import 'package:provider/provider.dart';
+import 'package:plagit/core/widgets/app_back_title_bar.dart';
+import 'package:plagit/core/widgets/header_action_icon.dart';
+import 'package:plagit/core/widgets/post_insights_sheet.dart';
+import 'package:plagit/core/widgets/profile_photo.dart';
+import 'package:plagit/core/widgets/search_screen.dart';
+import 'package:plagit/models/community_post.dart';
+import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/providers/community_provider.dart';
+import 'package:plagit/providers/recent_searches_provider.dart';
 
-/// Social feed for the hospitality community.
-/// Mirrors CandidateCommunityView.swift.
+// ═══════════════════════════════════════════════════════════════
+// Theme
+// ═══════════════════════════════════════════════════════════════
+const _tealMain = Color(0xFF00B5B0);
+const _tealLight = Color(0x1A00B5B0);
+const _bgMain = Color(0xFFF6F7F8);
+const _cardBg = Color(0xFFFFFFFF);
+const _surface = Color(0xFFF9FAFB);
+const _charcoal = Color(0xFF1A1C24);
+const _secondary = Color(0xFF707580);
+const _tertiary = Color(0xFF9EA3AD);
+const _border = Color(0xFFE6E8ED);
+const _urgent = Color(0xFFFF3B30);
+
+BoxShadow get _cardShadow => BoxShadow(
+  color: Colors.black.withValues(alpha: 0.05),
+  blurRadius: 14,
+  offset: const Offset(0, 5),
+);
+
 class CommunityView extends StatefulWidget {
   const CommunityView({super.key});
-
   @override
   State<CommunityView> createState() => _CommunityViewState();
 }
 
-class _MockPost {
-  final String id;
-  final String authorName;
-  final String authorInitials;
-  final double authorHue;
-  final bool authorVerified;
-  final String? authorSubtitle;
-  final String? authorLocation;
-  final String? authorType;
-  final String body;
-  final String? tag;
-  final String? roleCategory;
-  final String? location;
-  final int likeCount;
-  final int commentCount;
-  final int viewCount;
-  final String timeAgo;
-
-  const _MockPost({
-    required this.id,
-    required this.authorName,
-    required this.authorInitials,
-    this.authorHue = 0.5,
-    this.authorVerified = false,
-    this.authorSubtitle,
-    this.authorLocation,
-    this.authorType,
-    required this.body,
-    this.tag,
-    this.roleCategory,
-    this.location,
-    this.likeCount = 0,
-    this.commentCount = 0,
-    this.viewCount = 0,
-    required this.timeAgo,
-  });
-}
-
 class _CommunityViewState extends State<CommunityView> {
-  bool _isLoading = true;
-  String _selectedTab = 'For You';
-  String _selectedRole = 'All';
-  int _unreadCount = 3;
-  final Set<String> _likedPosts = {};
-  final Set<String> _savedPosts = {};
-  final Set<String> _followedUsers = {};
-
-  List<_MockPost> get _filteredPosts {
-    var posts = List<_MockPost>.from(_posts);
-    // Tab filter
-    if (_selectedTab == 'Following') {
-      posts = posts.where((p) => _followedUsers.contains(p.authorName)).toList();
-    } else if (_selectedTab == 'Nearby') {
-      posts = posts.where((p) => p.location == 'London' || p.location == 'Milan').toList();
-    } else if (_selectedTab == 'Saved') {
-      posts = posts.where((p) => _savedPosts.contains(p.id)).toList();
-    }
-    // Role filter
-    if (_selectedRole != 'All') {
-      posts = posts.where((p) => p.roleCategory?.toLowerCase() == _selectedRole.toLowerCase()).toList();
-    }
-    return posts;
-  }
+  int _tabIndex = 0;
+  int _roleIndex = 0;
 
   static const _tabs = ['For You', 'Following', 'Nearby', 'Saved'];
-  static const _roles = ['All', 'Chef', 'Waiter', 'Bartender', 'Manager', 'Reception', 'Kitchen Porter'];
-
-  final List<_MockPost> _posts = const [
-    _MockPost(
-      id: '1', authorName: 'Marco Rossi', authorInitials: 'MR', authorHue: 0.55,
-      authorVerified: true, authorSubtitle: 'Head Chef', authorLocation: 'Milan, Italy',
-      body: 'Just finished a 14-hour shift preparing for the gala dinner. The team pulled off an incredible tasting menu with 8 courses. Hospitality is tough but moments like these make it worthwhile!',
-      tag: 'open_to_work', roleCategory: 'Chef', location: 'Milan', likeCount: 42, commentCount: 8, viewCount: 156, timeAgo: '15m',
-    ),
-    _MockPost(
-      id: '2', authorName: 'Sophie Laurent', authorInitials: 'SL', authorHue: 0.3,
-      authorSubtitle: 'Bartender', authorLocation: 'Paris, France',
-      body: 'Looking for a new challenge in London! 5 years experience in cocktail bars and fine dining. Open to relocation. DM me!',
-      tag: 'available_immediately', roleCategory: 'Bartender', location: 'Paris', likeCount: 28, commentCount: 5, viewCount: 89, timeAgo: '1h',
-    ),
-    _MockPost(
-      id: '3', authorName: 'The Grand Hotel', authorInitials: 'GH', authorHue: 0.7,
-      authorVerified: true, authorType: 'business', authorSubtitle: '5-star luxury hotel',
-      authorLocation: 'London, UK',
-      body: 'We are hiring! Multiple positions available including Head Chef, Sous Chef, and Restaurant Manager. Competitive salary and excellent benefits package.',
-      tag: 'hiring', roleCategory: 'Manager', location: 'London', likeCount: 65, commentCount: 12, viewCount: 342, timeAgo: '3h',
-    ),
-    _MockPost(
-      id: '4', authorName: 'Carlos Mendez', authorInitials: 'CM', authorHue: 0.15,
-      authorSubtitle: 'Waiter / Sommelier', authorLocation: 'Barcelona, Spain',
-      body: 'Wine pairing tip: Don\'t be afraid to pair a light red with fish! A chilled Beaujolais works beautifully with grilled salmon.',
-      roleCategory: 'Waiter', location: 'Barcelona', likeCount: 18, commentCount: 3, viewCount: 67, timeAgo: '5h',
-    ),
-    _MockPost(
-      id: '5', authorName: 'Anna Schmidt', authorInitials: 'AS', authorHue: 0.85,
-      authorSubtitle: 'Reception Manager', authorLocation: 'Berlin, Germany',
-      body: 'First day at my new hotel! Excited to join the team at Adlon Kempinski. Thanks to Plagit for connecting us!',
-      tag: 'available_full_time', roleCategory: 'Reception', location: 'Berlin', likeCount: 91, commentCount: 15, viewCount: 445, timeAgo: '1d',
-    ),
+  static const _roles = [
+    'All',
+    'Chef',
+    'Waiter',
+    'Bartender',
+    'Manager',
+    'Sommelier',
+    'Reception',
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) setState(() => _isLoading = false);
-    });
-  }
-
-  Color _tagColor(String? tag) {
-    switch (tag) {
-      case 'open_to_work':
-      case 'available_immediately':
-        return AppColors.online;
-      case 'available_for_shifts':
-      case 'open_to_relocation':
-        return AppColors.indigo;
-      case 'available_full_time':
-        return AppColors.teal;
-      case 'available_part_time':
-        return AppColors.amber;
-      case 'hiring':
-      case 'open_positions':
-        return AppColors.teal;
-      case 'looking_for_staff':
-        return AppColors.amber;
-      case 'urgent_hiring':
-        return AppColors.urgent;
-      default:
-        return AppColors.secondary;
-    }
-  }
-
-  String _tagLabel(String? tag) {
-    switch (tag) {
-      case 'open_to_work':
-        return 'Open to Work';
-      case 'available_immediately':
-        return 'Available Immediately';
-      case 'available_for_shifts':
-        return 'Available for Shifts';
-      case 'open_to_relocation':
-        return 'Open to Relocation';
-      case 'available_full_time':
-        return 'Full Time';
-      case 'available_part_time':
-        return 'Part Time';
-      case 'hiring':
-        return 'Hiring';
-      case 'open_positions':
-        return 'Open Positions';
-      case 'looking_for_staff':
-        return 'Looking for Staff';
-      case 'urgent_hiring':
-        return 'Urgent Hiring';
-      default:
-        return tag ?? '';
-    }
-  }
-
-  IconData _roleIcon(String? role) {
-    switch (role?.toLowerCase()) {
-      case 'chef':
-        return Icons.local_fire_department;
-      case 'waiter':
-        return Icons.person;
-      case 'bartender':
-        return Icons.wine_bar;
-      case 'manager':
-        return Icons.star;
-      case 'reception':
-        return Icons.notifications;
-      case 'kitchen porter':
-      case 'kitchen_porter':
-        return Icons.restaurant;
-      default:
-        return Icons.person;
-    }
-  }
-
-  String _formatCount(int count) {
-    if (count >= 1000000) return '${(count / 1000000).toStringAsFixed(1)}M';
-    if (count >= 1000) return '${(count / 1000).toStringAsFixed(1)}K';
-    return '$count';
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                _topBar(),
-                _tabRow(),
-                if (_selectedTab != 'Saved') _roleChips(),
-                if (_selectedTab == 'Saved')
-                  const Expanded(
-                    child: Center(
-                      child: Text('Saved posts view', style: TextStyle(color: AppColors.secondary)),
-                    ),
-                  )
-                else if (_isLoading)
-                  const Expanded(child: Center(child: CircularProgressIndicator(color: AppColors.teal)))
-                else if (_filteredPosts.isEmpty)
-                  Expanded(child: _emptyState())
-                else
-                  Expanded(
-                    child: RefreshIndicator(
-                      color: AppColors.teal,
-                      onRefresh: () async {
-                        await Future.delayed(const Duration(milliseconds: 500));
-                      },
-                      child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.xxxl),
-                        itemCount: _filteredPosts.length,
-                        itemBuilder: (_, i) => Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                          child: _postCard(_filteredPosts[i]),
-                        ),
+  void _openSearchScreen(BuildContext context) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SearchScreen(
+          scope: RecentSearchScope.candidateCommunity,
+          title: 'Search Community',
+          hintText: 'Search people, posts, venues…',
+          resultsBuilder: (ctx, query) {
+            final all = ctx.watch<CommunityProvider>().visible;
+            final q = query.toLowerCase();
+            final results = all
+                .where(
+                  (p) =>
+                      p.body.toLowerCase().contains(q) ||
+                      p.authorName.toLowerCase().contains(q) ||
+                      p.authorRole.toLowerCase().contains(q) ||
+                      (p.authorLocation ?? '').toLowerCase().contains(q),
+                )
+                .toList();
+            if (results.isEmpty) return SearchNoResults(query: query);
+            return ListView.separated(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
+              itemCount: results.length,
+              separatorBuilder: (_, _) => const SizedBox(height: 10),
+              itemBuilder: (_, i) {
+                final p = results[i];
+                return GestureDetector(
+                  onTap: () => ctx.push('/feed/post/${p.id}'),
+                  behavior: HitTestBehavior.opaque,
+                  child: Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: _cardBg,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: const Color(0xFFEFEFF4),
+                        width: 0.5,
                       ),
+                      boxShadow: [_cardShadow],
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ProfilePhoto(
+                          photoUrl: p.authorPhotoUrl,
+                          initials: p.authorInitials,
+                          size: 44,
+                          square: p.authorKind == AuthorKind.business,
+                          verified: p.authorVerified,
+                          hueSeed: p.authorName,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                p.authorName,
+                                style: const TextStyle(
+                                  fontSize: 14.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: _charcoal,
+                                  letterSpacing: -0.2,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              Text(
+                                '${p.authorRole}${p.authorLocation != null ? ' · ${p.authorLocation}' : ''}',
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: _tertiary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                p.body,
+                                style: const TextStyle(
+                                  fontSize: 12.5,
+                                  color: _secondary,
+                                  height: 1.4,
+                                ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // ── Top bar ──
-  Widget _topBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.lg, AppSpacing.xl, AppSpacing.sm),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
-          ),
-          const Spacer(),
-          const Text('Community', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
-          const Spacer(),
-          // Bell icon with badge
-          GestureDetector(
-            onTap: () => context.push('/candidate/notifications'),
-            child: SizedBox(
-              width: 36,
-              height: 36,
-              child: Stack(
-                children: [
-                  Icon(
-                    _unreadCount > 0 ? Icons.notifications_active : Icons.notifications,
-                    size: 22,
-                    color: _unreadCount > 0 ? AppColors.teal : AppColors.charcoal,
-                  ),
-                  if (_unreadCount > 0)
-                    Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
-                        decoration: const BoxDecoration(color: AppColors.urgent, shape: BoxShape.circle),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${_unreadCount > 99 ? 99 : _unreadCount}',
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.white),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          GestureDetector(
-            onTap: _showCreatePost,
-            child: const Icon(Icons.add_circle, size: 26, color: AppColors.teal),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ── Tab row ──
-  Widget _tabRow() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xs, AppSpacing.xl, 0),
-      child: Row(
-        children: _tabs.map((tab) {
-          final isActive = _selectedTab == tab;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => setState(() => _selectedTab = tab),
-              child: Column(
-                children: [
-                  const SizedBox(height: AppSpacing.sm),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (tab == 'Saved')
-                        Icon(Icons.bookmark, size: 12, color: isActive ? AppColors.charcoal : AppColors.tertiary),
-                      if (tab == 'Saved') const SizedBox(width: 3),
-                      Text(
-                        tab,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: isActive ? AppColors.charcoal : AppColors.tertiary,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Container(height: 2, color: isActive ? AppColors.teal : Colors.transparent),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  // ── Role chips ──
-  Widget _roleChips() {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xs),
-      child: SizedBox(
-        height: 36,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-          separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
-          itemCount: _roles.length,
-          itemBuilder: (_, i) {
-            final role = _roles[i];
-            final isActive = _selectedRole == role;
-            return GestureDetector(
-              onTap: () => setState(() => _selectedRole = role),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.sm),
-                decoration: BoxDecoration(
-                  color: isActive ? AppColors.teal : AppColors.surface,
-                  borderRadius: BorderRadius.circular(AppRadius.full),
-                  border: isActive ? null : Border.all(color: AppColors.border, width: 0.5),
-                ),
-                child: Text(
-                  role,
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: isActive ? Colors.white : AppColors.secondary),
-                ),
-              ),
+                );
+              },
             );
           },
         ),
@@ -374,388 +156,504 @@ class _CommunityViewState extends State<CommunityView> {
     );
   }
 
-  // ── Post card ──
-  Widget _postCard(_MockPost post) {
-    final liked = _likedPosts.contains(post.id);
-    final saved = _savedPosts.contains(post.id);
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<CommunityProvider>();
+    final roleFilter = _roles[_roleIndex];
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: BoxDecoration(
-        color: AppColors.cardBackground,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5))],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Author header
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ProfileAvatar(initials: post.authorInitials, hue: post.authorHue, size: 44, verified: post.authorVerified),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(child: Text(post.authorName, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal))),
-                        if (post.authorType == 'business') ...[
-                          const SizedBox(width: AppSpacing.xs),
-                          const Icon(Icons.apartment, size: 11, color: AppColors.teal),
-                        ],
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        if (post.authorSubtitle != null)
-                          Text(post.authorSubtitle!, style: const TextStyle(fontSize: 11, color: AppColors.secondary)),
-                        if (post.authorLocation != null) ...[
-                          const Text(' \u{00B7} ', style: TextStyle(fontSize: 11, color: AppColors.tertiary)),
-                          Flexible(child: Text(post.authorLocation!, style: const TextStyle(fontSize: 11, color: AppColors.tertiary), overflow: TextOverflow.ellipsis)),
-                        ],
-                      ],
-                    ),
-                  ],
-                ),
+    final List<CommunityPost> posts = switch (_tabIndex) {
+      1 => provider.followingFeed(roleFilter: roleFilter),
+      2 => provider.nearbyFeed(roleFilter: roleFilter),
+      3 => provider.saved,
+      _ => provider.forYouFeed(roleFilter: roleFilter),
+    };
+
+    return Scaffold(
+      backgroundColor: _bgMain,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // ── TOP BAR ──
+            AppBackTitleBar(
+              title: 'Community',
+              onBack: () => context.canPop() ? context.pop() : null,
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 12),
+              backBackgroundColor: _surface,
+              titleStyle: const TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+                color: _charcoal,
+                letterSpacing: -0.2,
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+              trailingMinWidth: 82,
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Row(
-                    children: [
-                      Text(post.timeAgo, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
-                      const SizedBox(width: AppSpacing.sm),
-                      GestureDetector(
-                        onTap: () => _showActionMenu(post),
-                        child: const Icon(Icons.more_horiz, size: 16, color: AppColors.tertiary),
-                      ),
-                    ],
+                  HeaderActionIcon(
+                    onTap: () => _openSearchScreen(context),
+                    icon: const Icon(
+                      CupertinoIcons.search,
+                      size: 20,
+                      color: _charcoal,
+                    ),
                   ),
-                  const SizedBox(height: 4),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        if (_followedUsers.contains(post.authorName)) {
-                          _followedUsers.remove(post.authorName);
-                        } else {
-                          _followedUsers.add(post.authorName);
-                        }
-                      });
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: _followedUsers.contains(post.authorName) ? AppColors.teal : AppColors.tealLight,
-                        borderRadius: BorderRadius.circular(AppRadius.full),
-                      ),
-                      child: Text(
-                        _followedUsers.contains(post.authorName) ? 'Following' : 'Follow',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: _followedUsers.contains(post.authorName) ? Colors.white : AppColors.teal),
+                  const SizedBox(width: 16),
+                  HeaderActionIcon(
+                    onTap: () => context.push('/feed/activity'),
+                    icon: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          const Center(
+                            child: Icon(
+                              CupertinoIcons.bell,
+                              size: 20,
+                              color: _charcoal,
+                            ),
+                          ),
+                          if (provider.unreadNotifications > 0)
+                            Positioned(
+                              top: -2,
+                              right: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(3),
+                                constraints: const BoxConstraints(
+                                  minWidth: 14,
+                                  minHeight: 14,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: _urgent,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: _bgMain,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${provider.unreadNotifications}',
+                                    style: const TextStyle(
+                                      fontSize: 8,
+                                      fontWeight: FontWeight.w800,
+                                      color: Colors.white,
+                                      height: 1.0,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-
-          // Tag badge
-          if (post.tag != null && post.tag!.isNotEmpty) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2, vertical: AppSpacing.xs),
-              decoration: BoxDecoration(
-                color: _tagColor(post.tag).withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(AppRadius.full),
-              ),
-              child: Text(_tagLabel(post.tag), style: TextStyle(fontSize: 11, color: _tagColor(post.tag))),
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-
-          // Body text
-          Text(post.body, style: const TextStyle(fontSize: 15, color: AppColors.charcoal, height: 1.4), maxLines: 8, overflow: TextOverflow.ellipsis),
-          const SizedBox(height: AppSpacing.md),
-
-          // Role + location pills
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.xs,
-            children: [
-              if (post.roleCategory != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm + 2, vertical: AppSpacing.xs),
-                  decoration: BoxDecoration(color: AppColors.tealLight, borderRadius: BorderRadius.circular(AppRadius.full)),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(_roleIcon(post.roleCategory), size: 11, color: AppColors.teal),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(post.roleCategory!, style: const TextStyle(fontSize: 11, color: AppColors.teal)),
-                    ],
-                  ),
-                ),
-              if (post.location != null)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.location_on, size: 11, color: AppColors.secondary),
-                    const SizedBox(width: AppSpacing.xs),
-                    Text(post.location!, style: const TextStyle(fontSize: 11, color: AppColors.secondary)),
-                  ],
-                ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-
-          // Action bar
-          Row(
-            children: [
-              _actionBtn(
-                icon: liked ? Icons.favorite : Icons.favorite_border,
-                label: post.likeCount > 0 ? '${post.likeCount}' : 'Like',
-                color: liked ? AppColors.urgent : AppColors.tertiary,
-                onTap: () {
-                  setState(() {
-                    if (liked) {
-                      _likedPosts.remove(post.id);
-                    } else {
-                      _likedPosts.add(post.id);
-                    }
-                  });
-                },
-              ),
-              const SizedBox(width: AppSpacing.xl),
-              _actionBtn(icon: Icons.chat_bubble_outline, label: post.commentCount > 0 ? '${post.commentCount}' : 'Comment', color: AppColors.tertiary, onTap: () => _showComments(post)),
-              const SizedBox(width: AppSpacing.xl),
-              _actionBtn(icon: Icons.ios_share, label: 'Share', color: AppColors.tertiary, onTap: () => _showShare(post)),
-              const SizedBox(width: AppSpacing.xl),
-              _actionBtn(
-                icon: saved ? Icons.bookmark : Icons.bookmark_border,
-                label: 'Save',
-                color: saved ? AppColors.teal : AppColors.tertiary,
-                onTap: () {
-                  setState(() {
-                    if (saved) {
-                      _savedPosts.remove(post.id);
-                    } else {
-                      _savedPosts.add(post.id);
-                    }
-                  });
-                },
-              ),
-              const Spacer(),
-              if (post.viewCount > 0)
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.visibility_outlined, size: 14, color: AppColors.tertiary),
-                    const SizedBox(width: 5),
-                    Text(_formatCount(post.viewCount), style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
-                  ],
-                ),
-            ],
-          ),
-
-          // View comments link
-          if (post.commentCount > 0) ...[
-            const SizedBox(height: AppSpacing.sm),
-            GestureDetector(
-              onTap: () => _showComments(post),
-              child: Row(
-                children: [
-                  const Icon(Icons.chat_bubble, size: 12, color: AppColors.teal),
-                  const SizedBox(width: AppSpacing.xs),
-                  Text(
-                    post.commentCount == 1 ? 'View 1 comment' : 'View all ${post.commentCount} comments',
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal),
+                  const SizedBox(width: 16),
+                  HeaderActionIcon(
+                    onTap: () => context.push('/feed/post/create'),
+                    icon: const Icon(
+                      CupertinoIcons.square_pencil,
+                      size: 22,
+                      color: _tealMain,
+                    ),
                   ),
                 ],
               ),
             ),
-          ],
-        ],
-      ),
-    );
-  }
 
-  // ── Action handlers ──
+            // (Search now lives on a dedicated full-screen route.)
 
-  void _showComments(_MockPost post) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.4,
-        expand: false,
-        builder: (ctx, scroll) => Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            children: [
-              Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2))),
-              const SizedBox(height: 16),
-              Text('Comments (${post.commentCount})', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-              const SizedBox(height: 16),
-              Expanded(
-                child: post.commentCount > 0
-                    ? ListView(controller: scroll, children: [
-                        _mockComment('Great post!', 'Alex C.', '2h ago'),
-                        _mockComment('Very helpful, thanks for sharing.', 'Maria S.', '1h ago'),
-                        if (post.commentCount > 2) _mockComment('Agreed, hospitality is tough but rewarding!', 'James W.', '30m ago'),
-                      ])
-                    : const Center(child: Text('No comments yet. Be the first!', style: TextStyle(fontSize: 14, color: AppColors.secondary))),
+            // ── TAB ROW ──
+            SizedBox(
+              height: 36,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                itemCount: _tabs.length,
+                separatorBuilder: (_, i) => const SizedBox(width: 22),
+                itemBuilder: (context, i) {
+                  final active = _tabIndex == i;
+                  return GestureDetector(
+                    onTap: () => setState(() => _tabIndex = i),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _tabs[i],
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: active
+                                ? FontWeight.w700
+                                : FontWeight.w400,
+                            color: active ? _charcoal : _tertiary,
+                            letterSpacing: -0.2,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: active ? 28 : 0,
+                          height: 2,
+                          decoration: BoxDecoration(
+                            color: _tealMain,
+                            borderRadius: BorderRadius.circular(1),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14),
-                      decoration: BoxDecoration(color: const Color(0xFFF5F5F7), borderRadius: BorderRadius.circular(12)),
-                      child: const TextField(
-                        decoration: InputDecoration(hintText: 'Add a comment...', hintStyle: TextStyle(fontSize: 14, color: AppColors.tertiary), border: InputBorder.none),
+            ),
+
+            // ── ROLE FILTER CHIPS (hidden on Saved tab) ──
+            if (_tabIndex != 3)
+              SizedBox(
+                height: 44,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 8),
+                  itemCount: _roles.length,
+                  separatorBuilder: (_, i) => const SizedBox(width: 8),
+                  itemBuilder: (context, i) {
+                    final active = _roleIndex == i;
+                    return GestureDetector(
+                      onTap: () => setState(() => _roleIndex = i),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: active ? _tealMain : Colors.white,
+                          borderRadius: BorderRadius.circular(100),
+                          border: active
+                              ? null
+                              : Border.all(color: _border, width: 0.5),
+                        ),
+                        child: Center(
+                          child: Text(
+                            _roles[i],
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: active
+                                  ? Colors.white
+                                  : const Color(0xFF3C3C43),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+            // ── POSTS ──
+            Expanded(
+              child: posts.isEmpty
+                  ? _EmptyState(tab: _tabs[_tabIndex])
+                  : RefreshIndicator(
+                      color: _tealMain,
+                      onRefresh: () async => await Future.delayed(
+                        const Duration(milliseconds: 600),
+                      ),
+                      child: ListView.separated(
+                        padding: const EdgeInsets.fromLTRB(20, 12, 20, 48),
+                        itemCount: posts.length,
+                        separatorBuilder: (_, i) => const SizedBox(height: 14),
+                        itemBuilder: (context, i) => _PostCard(post: posts[i]),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Container(
-                    width: 36, height: 36,
-                    decoration: const BoxDecoration(color: AppColors.teal, shape: BoxShape.circle),
-                    child: const Icon(Icons.send, size: 16, color: Colors.white),
-                  ),
-                ],
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+}
 
-  Widget _mockComment(String text, String author, String time) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 32, height: 32,
-            decoration: BoxDecoration(color: AppColors.teal.withValues(alpha: 0.1), shape: BoxShape.circle),
-            child: Center(child: Text(author[0], style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.teal))),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(children: [
-                  Text(author, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
-                  const SizedBox(width: 8),
-                  Text(time, style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
-                ]),
-                const SizedBox(height: 2),
-                Text(text, style: const TextStyle(fontSize: 14, color: AppColors.charcoal, height: 1.3)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+// ═══════════════════════════════════════════════════════════════
+// EMPTY STATE
+// ═══════════════════════════════════════════════════════════════
 
-  void _showShare(_MockPost post) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Shared: "${post.body.substring(0, post.body.length > 40 ? 40 : post.body.length)}..."'), behavior: SnackBarBehavior.floating),
-    );
-  }
+class _EmptyState extends StatelessWidget {
+  final String tab;
+  const _EmptyState({required this.tab});
 
-  void _showActionMenu(_MockPost post) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(width: 40, height: 4, margin: const EdgeInsets.only(bottom: 12), decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2))),
-              _menuItem(Icons.bookmark_outline, _savedPosts.contains(post.id) ? 'Unsave' : 'Save Post', () {
-                setState(() { _savedPosts.contains(post.id) ? _savedPosts.remove(post.id) : _savedPosts.add(post.id); });
-                Navigator.pop(context);
-              }),
-              _menuItem(Icons.share_outlined, 'Share', () { Navigator.pop(context); _showShare(post); }),
-              _menuItem(Icons.link, 'Copy Link', () { Navigator.pop(context); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Link copied'), behavior: SnackBarBehavior.floating)); }),
-              _menuItem(Icons.visibility_off_outlined, 'Not Interested', () { Navigator.pop(context); setState(() {}); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post hidden'), behavior: SnackBarBehavior.floating)); }),
-              _menuItem(Icons.flag_outlined, 'Report', () { Navigator.pop(context); ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Report submitted'), behavior: SnackBarBehavior.floating)); }),
-              const SizedBox(height: 8),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _menuItem(IconData icon, String label, VoidCallback onTap) {
-    return ListTile(
-      dense: true,
-      leading: Icon(icon, size: 20, color: AppColors.charcoal),
-      title: Text(label, style: const TextStyle(fontSize: 14, color: AppColors.charcoal)),
-      onTap: onTap,
-    );
-  }
-
-  void _showCreatePost() {
-    final controller = TextEditingController();
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      builder: (_) => Padding(
-        padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+  @override
+  Widget build(BuildContext context) {
+    final isSaved = tab == 'Saved';
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2))),
-            const SizedBox(height: 16),
-            const Text('Create Post', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              maxLines: 5,
-              autofocus: true,
-              decoration: InputDecoration(
-                hintText: 'Share something with the community...',
-                hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
-                filled: true,
-                fillColor: const Color(0xFFF5F5F7),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+            Container(
+              width: 56,
+              height: 56,
+              decoration: const BoxDecoration(
+                color: _tealLight,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                isSaved
+                    ? CupertinoIcons.bookmark
+                    : CupertinoIcons.bubble_left_bubble_right,
+                size: 22,
+                color: _tealMain,
               ),
             ),
             const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  if (controller.text.trim().isNotEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post shared!'), behavior: SnackBarBehavior.floating, backgroundColor: AppColors.teal));
-                  }
-                },
+            Text(
+              isSaved ? 'No saved posts yet' : 'Nothing here yet',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: _charcoal,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              isSaved
+                  ? 'Tap the bookmark on any post to keep it for later.'
+                  : 'Be the first to share something with the community.',
+              style: const TextStyle(fontSize: 13, color: _secondary),
+              textAlign: TextAlign.center,
+            ),
+            if (!isSaved) ...[
+              const SizedBox(height: 18),
+              GestureDetector(
+                onTap: () => context.push('/feed/post/create'),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(gradient: const LinearGradient(colors: [AppColors.teal, AppColors.tealDark]), borderRadius: BorderRadius.circular(12)),
-                  child: const Center(child: Text('Post', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Colors.white))),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 22,
+                    vertical: 11,
+                  ),
+                  decoration: BoxDecoration(
+                    color: _tealMain,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: const Text(
+                    'Create Post',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// POST CARD — fully wired interactions
+// ═══════════════════════════════════════════════════════════════
+
+class _PostCard extends StatelessWidget {
+  final CommunityPost post;
+  const _PostCard({required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<CommunityProvider>();
+    final isBusiness = post.authorKind == AuthorKind.business;
+
+    return GestureDetector(
+      onTap: () {
+        provider.incrementViews(post.id);
+        context.push('/feed/post/${post.id}');
+      },
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        decoration: BoxDecoration(
+          color: _cardBg,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: const Color(0xFFEFEFF4), width: 0.5),
+          boxShadow: [_cardShadow],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // ── HEADER ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
+              child: Row(
+                children: [
+                  // ── Real headshot — slightly larger (52 px), square for
+                  //    businesses (brand), circle for candidates (personal).
+                  //    Face-centered cropping for trust. ──
+                  GestureDetector(
+                    onTap: () => _openProfile(context),
+                    child: ProfilePhoto(
+                      photoUrl: post.authorPhotoUrl,
+                      initials: post.authorInitials,
+                      size: 52,
+                      square: isBusiness,
+                      verified: post.authorVerified,
+                      hueSeed: post.authorName,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: () => _openProfile(context),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  post.authorName,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: _charcoal,
+                                    letterSpacing: -0.2,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (isBusiness) ...[
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 6,
+                                    vertical: 1,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: _tealLight,
+                                    borderRadius: BorderRadius.circular(100),
+                                  ),
+                                  child: const Text(
+                                    'Business',
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w800,
+                                      color: _tealMain,
+                                      letterSpacing: 0.2,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 1),
+                          Text(
+                            '${post.authorRole}${post.authorLocation != null ? ' · ${post.authorLocation}' : ''} · ${post.timeAgo}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: _tertiary,
+                              letterSpacing: -0.1,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  // Three-dot menu
+                  GestureDetector(
+                    onTap: () => _showPostMenu(context, post),
+                    behavior: HitTestBehavior.opaque,
+                    child: const Padding(
+                      padding: EdgeInsets.all(8),
+                      child: Icon(
+                        CupertinoIcons.ellipsis,
+                        size: 18,
+                        color: _tertiary,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // ── BODY (text) ──
+            if (post.body.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Text(
+                  post.body,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    color: _charcoal,
+                    height: 1.4,
+                    letterSpacing: -0.1,
+                  ),
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+
+            // ── MEDIA ──
+            if (post.images.isNotEmpty) _MediaBlock(post: post),
+
+            // ── ENGAGEMENT ROW ──
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
+              child: Row(
+                children: [
+                  _ActionPill(
+                    icon: post.isLiked
+                        ? CupertinoIcons.heart_fill
+                        : CupertinoIcons.heart,
+                    label: '${post.likes}',
+                    color: post.isLiked ? _urgent : _secondary,
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      provider.toggleLike(post.id);
+                    },
+                  ),
+                  _ActionPill(
+                    icon: CupertinoIcons.chat_bubble,
+                    label: '${post.commentsCount}',
+                    color: _secondary,
+                    onTap: () {
+                      provider.incrementViews(post.id);
+                      context.push('/feed/post/${post.id}?focus=comment');
+                    },
+                  ),
+                  _ActionPill(
+                    icon: CupertinoIcons.eye,
+                    label: '${post.views}',
+                    color: _secondary,
+                    // Tapping the eye opens Post Insights when the viewer is
+                    // the post's author. For everyone else it's a no-op so
+                    // we don't expose someone else's analytics.
+                    onTap: post.authorId == provider.viewerId
+                        ? () => _openInsights(context, provider, post)
+                        : null,
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      provider.toggleSave(post.id);
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: Icon(
+                        post.isSaved
+                            ? CupertinoIcons.bookmark_fill
+                            : CupertinoIcons.bookmark,
+                        size: 18,
+                        color: post.isSaved ? _tealMain : _secondary,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -764,61 +662,308 @@ class _CommunityViewState extends State<CommunityView> {
     );
   }
 
-  Widget _actionBtn({required IconData icon, required String label, required Color color, required VoidCallback onTap}) {
+  void _openProfile(BuildContext context) {
+    if (post.authorKind == AuthorKind.business) {
+      context.push('/business/profile');
+    } else {
+      // Candidate profile route — fall back to candidate profile view
+      context.push('/candidate/profile');
+    }
+  }
+
+  /// Opens the Post Insights bottom sheet for the current post.
+  ///
+  /// Premium status is read from whichever side the viewer is on:
+  ///   • Candidate viewer → `CandidateAuthProvider.profile.isPremium`
+  ///   • Business viewer  → assumed business has its own check (we default
+  ///     to false here; business community surfaces pass premium explicitly).
+  void _openInsights(
+    BuildContext context,
+    CommunityProvider provider,
+    CommunityPost post,
+  ) {
+    HapticFeedback.lightImpact();
+    final insights = provider.insightsFor(post.id);
+    final candidateAuth = context.read<CandidateAuthProvider>();
+    final isPremium = candidateAuth.profile?.isPremium ?? false;
+    PostInsightsSheet.show(
+      context,
+      insights: insights,
+      post: post,
+      isPremium: isPremium,
+    );
+  }
+
+  void _showPostMenu(BuildContext context, CommunityPost post) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => _PostActionSheet(post: post),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MEDIA BLOCK — image / multi-image / video
+// ═══════════════════════════════════════════════════════════════
+
+class _MediaBlock extends StatelessWidget {
+  final CommunityPost post;
+  const _MediaBlock({required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: post.images.length == 1
+            ? AspectRatio(
+                aspectRatio: 16 / 10,
+                child: _imageWidget(post.images.first),
+              )
+            : SizedBox(
+                height: 180,
+                child: Row(
+                  children: post.images.take(3).toList().asMap().entries.map((
+                    e,
+                  ) {
+                    final isFirst = e.key == 0;
+                    return Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: isFirst ? 0 : 4),
+                        child: _imageWidget(e.value),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _imageWidget(String src) {
+    final provider = src.startsWith('http')
+        ? NetworkImage(src) as ImageProvider
+        : AssetImage(src);
+    return Image(
+      image: provider,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => Container(
+        color: const Color(0xFFEFEFF4),
+        child: const Center(
+          child: Icon(CupertinoIcons.photo, color: _tertiary, size: 28),
+        ),
+      ),
+    );
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ACTION PILL (like / comment / view counter)
+// ═══════════════════════════════════════════════════════════════
+
+class _ActionPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onTap;
+  const _ActionPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         child: Row(
-          mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 16, color: color),
             const SizedBox(width: 5),
-            Text(label, style: TextStyle(fontSize: 11, color: color)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w600,
+                color: color,
+                letterSpacing: -0.1,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
+}
 
-  // ── Empty state ──
-  Widget _emptyState() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+// ═══════════════════════════════════════════════════════════════
+// POST ACTION SHEET (three-dot menu)
+// ═══════════════════════════════════════════════════════════════
+
+class _PostActionSheet extends StatelessWidget {
+  final CommunityPost post;
+  const _PostActionSheet({required this.post});
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.read<CommunityProvider>();
+    final isOwn = post.authorId == provider.viewerId;
+
+    return Container(
+      decoration: const BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: SafeArea(
+        top: false,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            const SizedBox(height: 12),
             Container(
-              width: 56, height: 56,
-              decoration: BoxDecoration(color: AppColors.tealLight, shape: BoxShape.circle),
-              child: const Icon(Icons.forum, size: 24, color: AppColors.teal),
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: const Color(0xFFE5E5EA),
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-            const SizedBox(height: AppSpacing.lg),
-            Text(
-              _selectedTab == 'Nearby' ? 'No posts nearby' : _selectedTab == 'Following' ? 'No posts from people you follow' : 'No posts yet',
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal),
+            const SizedBox(height: 8),
+            _SheetItem(
+              icon: CupertinoIcons.person_circle,
+              label: 'View profile',
+              onTap: () {
+                Navigator.pop(context);
+                if (post.authorKind == AuthorKind.business) {
+                  context.push('/business/profile');
+                } else {
+                  context.push('/candidate/profile');
+                }
+              },
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              _selectedTab == 'Following' ? 'Follow people to see their posts here.' : 'Be the first to share with the community!',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 13, color: AppColors.secondary),
+            _SheetItem(
+              icon: CupertinoIcons.link,
+              label: 'Copy link',
+              onTap: () {
+                Clipboard.setData(
+                  ClipboardData(text: 'https://plagit.app/post/${post.id}'),
+                );
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Link copied'),
+                    duration: Duration(seconds: 1),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: AppSpacing.lg),
-            GestureDetector(
-              onTap: _showCreatePost,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl, vertical: AppSpacing.md),
-                decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(AppRadius.full)),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.add, size: 14, color: Colors.white),
-                    SizedBox(width: AppSpacing.sm),
-                    Text('Create Post', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white)),
-                  ],
+            _SheetItem(
+              icon: post.isSaved
+                  ? CupertinoIcons.bookmark_fill
+                  : CupertinoIcons.bookmark,
+              label: post.isSaved ? 'Unsave post' : 'Save post',
+              onTap: () {
+                provider.toggleSave(post.id);
+                Navigator.pop(context);
+              },
+            ),
+            if (!isOwn) ...[
+              _SheetItem(
+                icon: CupertinoIcons.eye_slash,
+                label: 'Hide this post',
+                onTap: () {
+                  provider.hide(post.id);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Post hidden'),
+                      duration: Duration(seconds: 1),
+                    ),
+                  );
+                },
+              ),
+              _SheetItem(
+                icon: CupertinoIcons.flag,
+                label: 'Report post',
+                color: _urgent,
+                onTap: () {
+                  provider.report(post.id);
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Post reported — admin will review'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                },
+              ),
+            ],
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    color: _surface,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  alignment: Alignment.center,
+                  child: const Text(
+                    'Cancel',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: _charcoal,
+                    ),
+                  ),
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  const _SheetItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.color = _charcoal,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, size: 19, color: color),
+            const SizedBox(width: 14),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: color,
+                letterSpacing: -0.2,
               ),
             ),
           ],

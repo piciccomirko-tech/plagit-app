@@ -1,7 +1,7 @@
 name: plagit
 description: "Plagit — Premium Hospitality Recruitment"
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.0+3
 
 environment:
   sdk: ^3.11.1
@@ -20,6 +20,12 @@ dependencies:
   # State management
   provider: ^6.1.0
 
+  # Fonts
+  google_fonts: ^6.1.0
+
+  # Icons (iOS-like Phosphor icons)
+  phosphor_flutter: ^2.1.0
+
   # Secure storage (JWT tokens)
   flutter_secure_storage: '>=9.2.0 <10.0.0'
 
@@ -31,10 +37,20 @@ dependencies:
   # cached_network_image: ^3.4.0
   # image_picker: ^1.1.0
 
+  # Localization / i18n
+  flutter_localizations:
+    sdk: flutter
+
   # Utilities
   intl: ^0.20.0
   url_launcher: ^6.3.0
   shared_preferences: ^2.3.0
+
+  # Native share sheet (iOS UIActivityViewController / Android Intent)
+  share_plus: ^10.1.0
+
+  # In-app purchases — StoreKit (iOS) / Google Play Billing (Android)
+  in_app_purchase: ^3.2.0
 
 dev_dependencies:
   flutter_test:
@@ -43,6 +59,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/
     - assets/branding/
+    - assets/business/
