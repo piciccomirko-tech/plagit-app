@@ -4814,4 +4814,107 @@ class AppLocalizationsZh extends AppLocalizations {
   String adminMiscPremiumOutOfTotal(int premium, int total) {
     return '$total 中有 $premium 个高级版';
   }
+
+  @override
+  String get adminActionUnverify => '取消验证';
+
+  @override
+  String get adminActionReactivate => '重新激活';
+
+  @override
+  String get adminActionFeature => '推荐';
+
+  @override
+  String get adminActionUnfeature => '取消推荐';
+
+  @override
+  String get adminActionFlagAccount => '标记账户';
+
+  @override
+  String get adminActionUnflagAccount => '取消标记';
+
+  @override
+  String get adminActionConfirm => '确认';
+
+  @override
+  String get adminDialogVerifyBusinessTitle => '验证企业';
+
+  @override
+  String get adminDialogUnverifyBusinessTitle => '取消企业验证';
+
+  @override
+  String get adminDialogSuspendBusinessTitle => '暂停企业';
+
+  @override
+  String get adminDialogReactivateBusinessTitle => '重新激活企业';
+
+  @override
+  String get adminDialogVerifyCandidateTitle => '验证候选人';
+
+  @override
+  String get adminDialogSuspendCandidateTitle => '暂停候选人';
+
+  @override
+  String get adminDialogReactivateCandidateTitle => '重新激活候选人';
+
+  @override
+  String get adminSnackbarBusinessVerified => '企业已验证';
+
+  @override
+  String get adminSnackbarVerificationRemoved => '验证已取消';
+
+  @override
+  String get adminSnackbarBusinessSuspended => '企业已暂停';
+
+  @override
+  String get adminSnackbarBusinessReactivated => '企业已重新激活';
+
+  @override
+  String get adminSnackbarBusinessFeatured => '企业已推荐';
+
+  @override
+  String get adminSnackbarBusinessUnfeatured => '已取消企业推荐';
+
+  @override
+  String get adminSnackbarUserVerified => '用户已验证';
+
+  @override
+  String get adminSnackbarUserSuspended => '用户已暂停';
+
+  @override
+  String get adminSnackbarUserReactivated => '用户已重新激活';
+
+  @override
+  String get adminTabProfile => '资料';
+
+  @override
+  String get adminTabActivity => '活动';
+
+  @override
+  String get adminTabNotes => '备注';
+
+  @override
+  String adminDialogVerifyBody(String name) {
+    return '将 $name 标记为已验证？';
+  }
+
+  @override
+  String adminDialogUnverifyBody(String name) {
+    return '取消对 $name 的验证？';
+  }
+
+  @override
+  String adminDialogReactivateBody(String name) {
+    return '重新激活 $name？';
+  }
+
+  @override
+  String adminDialogSuspendBusinessBody(String name) {
+    return '暂停 $name？所有职位将被暂停。';
+  }
+
+  @override
+  String adminDialogSuspendCandidateBody(String name) {
+    return '暂停 $name？其访问权限将被取消。';
+  }
 }

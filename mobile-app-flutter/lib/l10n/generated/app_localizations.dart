@@ -8881,6 +8881,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{premium} premium out of {total} total'**
   String adminMiscPremiumOutOfTotal(int premium, int total);
+
+  /// adminActionUnverify
+  ///
+  /// In en, this message translates to:
+  /// **'Unverify'**
+  String get adminActionUnverify;
+
+  /// adminActionReactivate
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get adminActionReactivate;
+
+  /// adminActionFeature
+  ///
+  /// In en, this message translates to:
+  /// **'Feature'**
+  String get adminActionFeature;
+
+  /// adminActionUnfeature
+  ///
+  /// In en, this message translates to:
+  /// **'Unfeature'**
+  String get adminActionUnfeature;
+
+  /// adminActionFlagAccount
+  ///
+  /// In en, this message translates to:
+  /// **'Flag Account'**
+  String get adminActionFlagAccount;
+
+  /// adminActionUnflagAccount
+  ///
+  /// In en, this message translates to:
+  /// **'Unflag Account'**
+  String get adminActionUnflagAccount;
+
+  /// adminActionConfirm
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get adminActionConfirm;
+
+  /// adminDialogVerifyBusinessTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Business'**
+  String get adminDialogVerifyBusinessTitle;
+
+  /// adminDialogUnverifyBusinessTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Unverify Business'**
+  String get adminDialogUnverifyBusinessTitle;
+
+  /// adminDialogSuspendBusinessTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend Business'**
+  String get adminDialogSuspendBusinessTitle;
+
+  /// adminDialogReactivateBusinessTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate Business'**
+  String get adminDialogReactivateBusinessTitle;
+
+  /// adminDialogVerifyCandidateTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Candidate'**
+  String get adminDialogVerifyCandidateTitle;
+
+  /// adminDialogSuspendCandidateTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend Candidate'**
+  String get adminDialogSuspendCandidateTitle;
+
+  /// adminDialogReactivateCandidateTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate Candidate'**
+  String get adminDialogReactivateCandidateTitle;
+
+  /// adminSnackbarBusinessVerified
+  ///
+  /// In en, this message translates to:
+  /// **'Business verified'**
+  String get adminSnackbarBusinessVerified;
+
+  /// adminSnackbarVerificationRemoved
+  ///
+  /// In en, this message translates to:
+  /// **'Verification removed'**
+  String get adminSnackbarVerificationRemoved;
+
+  /// adminSnackbarBusinessSuspended
+  ///
+  /// In en, this message translates to:
+  /// **'Business suspended'**
+  String get adminSnackbarBusinessSuspended;
+
+  /// adminSnackbarBusinessReactivated
+  ///
+  /// In en, this message translates to:
+  /// **'Business reactivated'**
+  String get adminSnackbarBusinessReactivated;
+
+  /// adminSnackbarBusinessFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Business featured'**
+  String get adminSnackbarBusinessFeatured;
+
+  /// adminSnackbarBusinessUnfeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Business unfeatured'**
+  String get adminSnackbarBusinessUnfeatured;
+
+  /// adminSnackbarUserVerified
+  ///
+  /// In en, this message translates to:
+  /// **'User verified'**
+  String get adminSnackbarUserVerified;
+
+  /// adminSnackbarUserSuspended
+  ///
+  /// In en, this message translates to:
+  /// **'User suspended'**
+  String get adminSnackbarUserSuspended;
+
+  /// adminSnackbarUserReactivated
+  ///
+  /// In en, this message translates to:
+  /// **'User reactivated'**
+  String get adminSnackbarUserReactivated;
+
+  /// adminTabProfile
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get adminTabProfile;
+
+  /// adminTabActivity
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get adminTabActivity;
+
+  /// adminTabNotes
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get adminTabNotes;
+
+  /// adminDialogVerifyBody
+  ///
+  /// In en, this message translates to:
+  /// **'Mark {name} as verified?'**
+  String adminDialogVerifyBody(String name);
+
+  /// adminDialogUnverifyBody
+  ///
+  /// In en, this message translates to:
+  /// **'Remove verification from {name}?'**
+  String adminDialogUnverifyBody(String name);
+
+  /// adminDialogReactivateBody
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate {name}?'**
+  String adminDialogReactivateBody(String name);
+
+  /// adminDialogSuspendBusinessBody
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend {name}? All jobs will be paused.'**
+  String adminDialogSuspendBusinessBody(String name);
+
+  /// adminDialogSuspendCandidateBody
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend {name}? They will lose access.'**
+  String adminDialogSuspendCandidateBody(String name);
 }
 
 class _AppLocalizationsDelegate

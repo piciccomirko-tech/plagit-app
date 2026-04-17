@@ -3107,5 +3107,154 @@
         "type": "int"
       }
     }
+  },
+  "adminActionUnverify": "Unverify",
+  "@adminActionUnverify": {
+    "description": "adminActionUnverify"
+  },
+  "adminActionReactivate": "Reactivate",
+  "@adminActionReactivate": {
+    "description": "adminActionReactivate"
+  },
+  "adminActionFeature": "Feature",
+  "@adminActionFeature": {
+    "description": "adminActionFeature"
+  },
+  "adminActionUnfeature": "Unfeature",
+  "@adminActionUnfeature": {
+    "description": "adminActionUnfeature"
+  },
+  "adminActionFlagAccount": "Flag Account",
+  "@adminActionFlagAccount": {
+    "description": "adminActionFlagAccount"
+  },
+  "adminActionUnflagAccount": "Unflag Account",
+  "@adminActionUnflagAccount": {
+    "description": "adminActionUnflagAccount"
+  },
+  "adminActionConfirm": "Confirm",
+  "@adminActionConfirm": {
+    "description": "adminActionConfirm"
+  },
+  "adminDialogVerifyBusinessTitle": "Verify Business",
+  "@adminDialogVerifyBusinessTitle": {
+    "description": "adminDialogVerifyBusinessTitle"
+  },
+  "adminDialogUnverifyBusinessTitle": "Unverify Business",
+  "@adminDialogUnverifyBusinessTitle": {
+    "description": "adminDialogUnverifyBusinessTitle"
+  },
+  "adminDialogSuspendBusinessTitle": "Suspend Business",
+  "@adminDialogSuspendBusinessTitle": {
+    "description": "adminDialogSuspendBusinessTitle"
+  },
+  "adminDialogReactivateBusinessTitle": "Reactivate Business",
+  "@adminDialogReactivateBusinessTitle": {
+    "description": "adminDialogReactivateBusinessTitle"
+  },
+  "adminDialogVerifyCandidateTitle": "Verify Candidate",
+  "@adminDialogVerifyCandidateTitle": {
+    "description": "adminDialogVerifyCandidateTitle"
+  },
+  "adminDialogSuspendCandidateTitle": "Suspend Candidate",
+  "@adminDialogSuspendCandidateTitle": {
+    "description": "adminDialogSuspendCandidateTitle"
+  },
+  "adminDialogReactivateCandidateTitle": "Reactivate Candidate",
+  "@adminDialogReactivateCandidateTitle": {
+    "description": "adminDialogReactivateCandidateTitle"
+  },
+  "adminSnackbarBusinessVerified": "Business verified",
+  "@adminSnackbarBusinessVerified": {
+    "description": "adminSnackbarBusinessVerified"
+  },
+  "adminSnackbarVerificationRemoved": "Verification removed",
+  "@adminSnackbarVerificationRemoved": {
+    "description": "adminSnackbarVerificationRemoved"
+  },
+  "adminSnackbarBusinessSuspended": "Business suspended",
+  "@adminSnackbarBusinessSuspended": {
+    "description": "adminSnackbarBusinessSuspended"
+  },
+  "adminSnackbarBusinessReactivated": "Business reactivated",
+  "@adminSnackbarBusinessReactivated": {
+    "description": "adminSnackbarBusinessReactivated"
+  },
+  "adminSnackbarBusinessFeatured": "Business featured",
+  "@adminSnackbarBusinessFeatured": {
+    "description": "adminSnackbarBusinessFeatured"
+  },
+  "adminSnackbarBusinessUnfeatured": "Business unfeatured",
+  "@adminSnackbarBusinessUnfeatured": {
+    "description": "adminSnackbarBusinessUnfeatured"
+  },
+  "adminSnackbarUserVerified": "User verified",
+  "@adminSnackbarUserVerified": {
+    "description": "adminSnackbarUserVerified"
+  },
+  "adminSnackbarUserSuspended": "User suspended",
+  "@adminSnackbarUserSuspended": {
+    "description": "adminSnackbarUserSuspended"
+  },
+  "adminSnackbarUserReactivated": "User reactivated",
+  "@adminSnackbarUserReactivated": {
+    "description": "adminSnackbarUserReactivated"
+  },
+  "adminTabProfile": "Profile",
+  "@adminTabProfile": {
+    "description": "adminTabProfile"
+  },
+  "adminTabActivity": "Activity",
+  "@adminTabActivity": {
+    "description": "adminTabActivity"
+  },
+  "adminTabNotes": "Notes",
+  "@adminTabNotes": {
+    "description": "adminTabNotes"
+  },
+  "adminDialogVerifyBody": "Mark {name} as verified?",
+  "@adminDialogVerifyBody": {
+    "description": "adminDialogVerifyBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogUnverifyBody": "Remove verification from {name}?",
+  "@adminDialogUnverifyBody": {
+    "description": "adminDialogUnverifyBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogReactivateBody": "Reactivate {name}?",
+  "@adminDialogReactivateBody": {
+    "description": "adminDialogReactivateBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogSuspendBusinessBody": "Suspend {name}? All jobs will be paused.",
+  "@adminDialogSuspendBusinessBody": {
+    "description": "adminDialogSuspendBusinessBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogSuspendCandidateBody": "Suspend {name}? They will lose access.",
+  "@adminDialogSuspendCandidateBody": {
+    "description": "adminDialogSuspendCandidateBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
   }
 }

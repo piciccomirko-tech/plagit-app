@@ -4990,4 +4990,107 @@ class AppLocalizationsAr extends AppLocalizations {
   String adminMiscPremiumOutOfTotal(int premium, int total) {
     return '$premium Premium من أصل $total';
   }
+
+  @override
+  String get adminActionUnverify => 'إلغاء التحقق';
+
+  @override
+  String get adminActionReactivate => 'إعادة التفعيل';
+
+  @override
+  String get adminActionFeature => 'إبراز';
+
+  @override
+  String get adminActionUnfeature => 'إلغاء الإبراز';
+
+  @override
+  String get adminActionFlagAccount => 'الإبلاغ عن الحساب';
+
+  @override
+  String get adminActionUnflagAccount => 'إلغاء الإبلاغ عن الحساب';
+
+  @override
+  String get adminActionConfirm => 'تأكيد';
+
+  @override
+  String get adminDialogVerifyBusinessTitle => 'التحقق من الشركة';
+
+  @override
+  String get adminDialogUnverifyBusinessTitle => 'إلغاء التحقق من الشركة';
+
+  @override
+  String get adminDialogSuspendBusinessTitle => 'تعليق الشركة';
+
+  @override
+  String get adminDialogReactivateBusinessTitle => 'إعادة تفعيل الشركة';
+
+  @override
+  String get adminDialogVerifyCandidateTitle => 'التحقق من المرشح';
+
+  @override
+  String get adminDialogSuspendCandidateTitle => 'تعليق المرشح';
+
+  @override
+  String get adminDialogReactivateCandidateTitle => 'إعادة تفعيل المرشح';
+
+  @override
+  String get adminSnackbarBusinessVerified => 'تم التحقق من الشركة';
+
+  @override
+  String get adminSnackbarVerificationRemoved => 'تمت إزالة التحقق';
+
+  @override
+  String get adminSnackbarBusinessSuspended => 'تم تعليق الشركة';
+
+  @override
+  String get adminSnackbarBusinessReactivated => 'تمت إعادة تفعيل الشركة';
+
+  @override
+  String get adminSnackbarBusinessFeatured => 'تم إبراز الشركة';
+
+  @override
+  String get adminSnackbarBusinessUnfeatured => 'تمت إزالة إبراز الشركة';
+
+  @override
+  String get adminSnackbarUserVerified => 'تم التحقق من المستخدم';
+
+  @override
+  String get adminSnackbarUserSuspended => 'تم تعليق المستخدم';
+
+  @override
+  String get adminSnackbarUserReactivated => 'تمت إعادة تفعيل المستخدم';
+
+  @override
+  String get adminTabProfile => 'الملف الشخصي';
+
+  @override
+  String get adminTabActivity => 'النشاط';
+
+  @override
+  String get adminTabNotes => 'ملاحظات';
+
+  @override
+  String adminDialogVerifyBody(String name) {
+    return 'هل تريد تمييز $name كمُحقَّق منه؟';
+  }
+
+  @override
+  String adminDialogUnverifyBody(String name) {
+    return 'هل تريد إزالة التحقق من $name؟';
+  }
+
+  @override
+  String adminDialogReactivateBody(String name) {
+    return 'هل تريد إعادة تفعيل $name؟';
+  }
+
+  @override
+  String adminDialogSuspendBusinessBody(String name) {
+    return 'تعليق $name؟ سيتم إيقاف جميع الوظائف مؤقتًا.';
+  }
+
+  @override
+  String adminDialogSuspendCandidateBody(String name) {
+    return 'تعليق $name؟ سيفقد الوصول.';
+  }
 }
