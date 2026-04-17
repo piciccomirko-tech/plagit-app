@@ -2133,5 +2133,7 @@
   "adminStatNew": "Nuovi",
   "adminStatReviewed": "Revisionati",
   "adminStatShortlisted": "In shortlist",
-  "adminStatRejected": "Respinti"
+  "adminStatRejected": "Respinti",
+  "businessFieldMeetingLink": "Link riunione",
+  "businessFieldLocation": "Posizione"
 }

@@ -5707,4 +5707,10 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Отклонены';
+
+  @override
+  String get businessFieldMeetingLink => 'Ссылка на встречу';
+
+  @override
+  String get businessFieldLocation => 'Место';
 }

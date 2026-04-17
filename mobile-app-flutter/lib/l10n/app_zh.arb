@@ -2381,5 +2381,7 @@
   "adminStatNew": "新的",
   "adminStatReviewed": "已审核",
   "adminStatShortlisted": "入围",
-  "adminStatRejected": "已拒绝"
+  "adminStatRejected": "已拒绝",
+  "businessFieldMeetingLink": "会议链接",
+  "businessFieldLocation": "地点"
 }

@@ -4005,5 +4005,13 @@
   "adminStatRejected": "Rejected",
   "@adminStatRejected": {
     "description": "Admin job detail: adminStatRejected"
+  },
+  "businessFieldMeetingLink": "Meeting Link",
+  "businessFieldLocation": "Location",
+  "@businessFieldMeetingLink": {
+    "description": "Field label for meeting link in business schedule interview form"
+  },
+  "@businessFieldLocation": {
+    "description": "Field label for location in business schedule interview form"
   }
 }

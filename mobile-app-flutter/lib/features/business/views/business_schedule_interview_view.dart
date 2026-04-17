@@ -1,399 +1,163 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/core/theme/app_colors.dart';
+import 'package:provider/provider.dart';
+import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
-/// Schedule interview form — all mock, no API calls.
+const _tealMain = Color(0xFF00B5B0);
+const _tealDark = Color(0xFF009490);
+const _bgMain = Color(0xFFF6F7F8);
+const _cardBg = Color(0xFFFFFFFF);
+const _surface = Color(0xFFF9FAFB);
+const _charcoal = Color(0xFF1A1C24);
+const _secondary = Color(0xFF707580);
+const _tertiary = Color(0xFF9EA3AD);
+const _border = Color(0xFFE6E8ED);
+const _urgent = Color(0xFFF55748);
+
+BoxShadow get _cardShadow => BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 14, offset: const Offset(0, 5));
+BoxShadow get _subtleShadow => BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3));
+
+const _types = ['Video Call', 'Phone', 'In Person'];
+const _timezones = ['UTC', 'GST', 'GMT', 'CET', 'EST', 'PST'];
+
 class BusinessScheduleInterviewView extends StatefulWidget {
   const BusinessScheduleInterviewView({super.key});
-
   @override
-  State<BusinessScheduleInterviewView> createState() =>
-      _BusinessScheduleInterviewViewState();
+  State<BusinessScheduleInterviewView> createState() => _BusinessScheduleInterviewViewState();
 }
 
-class _BusinessScheduleInterviewViewState
-    extends State<BusinessScheduleInterviewView> {
-  final _locationCtrl = TextEditingController();
+class _BusinessScheduleInterviewViewState extends State<BusinessScheduleInterviewView> {
+  DateTime _selectedDate = DateTime.now().add(const Duration(days: 1));
+  TimeOfDay _selectedTime = const TimeOfDay(hour: 10, minute: 0);
+  int _selectedType = 0;
+  int _selectedTz = 2; // GMT
   final _linkCtrl = TextEditingController();
-  final _notesCtrl = TextEditingController();
-
-  final String _candidateName = 'Yuki Tanaka';
-  final String _jobTitle = 'Waiter';
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
-  String _format = 'In Person';
-
-  bool get _canSubmit => _selectedDate != null && _selectedTime != null;
-
-  Future<void> _pickDate() async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().add(const Duration(days: 1)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 90)),
-    );
-    if (picked != null) setState(() => _selectedDate = picked);
-  }
-
-  Future<void> _pickTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: const TimeOfDay(hour: 10, minute: 0),
-    );
-    if (picked != null) setState(() => _selectedTime = picked);
-  }
-
-  void _submit() {
-    if (!_canSubmit) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Interview invite sent!'),
-        backgroundColor: AppColors.teal,
-      ),
-    );
-    context.pop();
-  }
-
-  String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return '${days[d.weekday - 1]}, ${months[d.month - 1]} ${d.day}, ${d.year}';
-  }
-
-  String _formatTime(TimeOfDay t) {
-    final hour = t.hourOfPeriod == 0 ? 12 : t.hourOfPeriod;
-    final min = t.minute.toString().padLeft(2, '0');
-    final period = t.period == DayPeriod.am ? 'AM' : 'PM';
-    return '$hour:$min $period';
-  }
+  final _locationCtrl = TextEditingController();
+  bool _loading = false;
+  String? _error;
 
   @override
-  void dispose() {
-    _locationCtrl.dispose();
-    _linkCtrl.dispose();
-    _notesCtrl.dispose();
-    super.dispose();
+  void dispose() { _linkCtrl.dispose(); _locationCtrl.dispose(); super.dispose(); }
+
+  Future<void> _submit() async {
+    setState(() { _loading = true; _error = null; });
+    try {
+      await context.read<BusinessInterviewsProvider>().scheduleInterview({
+        'date': '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
+        'time': '${_selectedTime.hour.toString().padLeft(2, '0')}:${_selectedTime.minute.toString().padLeft(2, '0')}',
+        'format': _types[_selectedType],
+        'timezone': _timezones[_selectedTz],
+        'link': _linkCtrl.text.trim(),
+        'location': _locationCtrl.text.trim(),
+      });
+      if (mounted) {
+        showDialog(context: context, builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(AppLocalizations.of(context).interviewSentTitle, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+          content: Text(AppLocalizations.of(context).interviewSentSubtitle, style: const TextStyle(fontSize: 15, color: _secondary)),
+          actions: [TextButton(onPressed: () { Navigator.pop(ctx); context.pop(); }, child: Text(AppLocalizations.of(context).okAction, style: TextStyle(color: _tealMain, fontWeight: FontWeight.w600)))],
+        ));
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString().replaceFirst('Exception: ', ''));
+    }
+    if (mounted) setState(() => _loading = false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
-        ),
-        title: const Text(
-          'Schedule Interview',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w600,
-            color: AppColors.charcoal,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Candidate
-            const Text(
-              'Candidate',
-              style: TextStyle(fontSize: 12, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 6),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Text(
-                _candidateName.isNotEmpty ? _candidateName : 'Select candidate',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: _candidateName.isNotEmpty
-                      ? AppColors.charcoal
-                      : AppColors.tertiary,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+    return Scaffold(backgroundColor: _bgMain, body: SafeArea(child: Column(children: [
+      // Header
+      Padding(padding: const EdgeInsets.fromLTRB(20, 16, 20, 0), child: Row(children: [
+        GestureDetector(onTap: () => context.pop(), child: Container(width: 36, height: 36, decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(18)), child: const Icon(Icons.chevron_left, size: 28, color: _charcoal))),
+        const SizedBox(width: 12),
+        Text(AppLocalizations.of(context).scheduleInterviewTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: _charcoal)),
+      ])),
 
-            // Job
-            const Text(
-              'Job',
-              style: TextStyle(fontSize: 12, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 6),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
-              ),
-              child: Text(
-                _jobTitle,
-                style: const TextStyle(fontSize: 15, color: AppColors.charcoal),
-              ),
-            ),
-            const SizedBox(height: 16),
+      Expanded(child: SingleChildScrollView(padding: const EdgeInsets.only(top: 20), child: Column(children: [
+        // CANDIDATE CARD
+        Container(margin: const EdgeInsets.symmetric(horizontal: 20), padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: Border.all(color: _border.withValues(alpha: 0.5)), boxShadow: [_subtleShadow]),
+          child: Row(children: [
+            Container(width: 44, height: 44, decoration: BoxDecoration(color: _tealMain.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(12)),
+              child: const Icon(Icons.person, size: 20, color: _tealMain)),
+            const SizedBox(width: 14),
+            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(AppLocalizations.of(context).candidate, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: _charcoal)),
+              const SizedBox(height: 2),
+              Text(AppLocalizations.of(context).forOpenPosition, style: const TextStyle(fontSize: 13, color: _secondary)),
+            ])),
+            const Icon(Icons.chevron_right, size: 28, color: _tertiary),
+          ])),
+        const SizedBox(height: 16),
 
-            // Date
-            const Text(
-              'Date',
-              style: TextStyle(fontSize: 12, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 6),
-            GestureDetector(
-              onTap: _pickDate,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.calendar_today, size: 16, color: AppColors.secondary),
-                    const SizedBox(width: 10),
-                    Text(
-                      _selectedDate != null
-                          ? _formatDate(_selectedDate!)
-                          : 'Select date',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: _selectedDate != null
-                            ? AppColors.charcoal
-                            : AppColors.tertiary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+        // FORM CARD
+        Container(margin: const EdgeInsets.symmetric(horizontal: 20), padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: Border.all(color: _border.withValues(alpha: 0.5)), boxShadow: [_cardShadow]),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            // Date & Time
+            Text(AppLocalizations.of(context).dateAndTimeUpper, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _tertiary, letterSpacing: 0.8)), const SizedBox(height: 10),
+            GestureDetector(onTap: () async {
+              final d = await showDatePicker(context: context, initialDate: _selectedDate, firstDate: DateTime.now(), lastDate: DateTime.now().add(const Duration(days: 90)));
+              if (!context.mounted) return;
+              if (d != null) setState(() => _selectedDate = d);
+              final t = await showTimePicker(context: context, initialTime: _selectedTime);
+              if (!context.mounted) return;
+              if (t != null) setState(() => _selectedTime = t);
+            }, child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13), decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(12), border: Border.all(color: _border.withValues(alpha: 0.5))),
+              child: Row(children: [
+                Icon(Icons.calendar_today, size: 15, color: _tealMain),
+                const SizedBox(width: 10),
+                Text('${_selectedDate.day}/${_selectedDate.month}/${_selectedDate.year} at ${_selectedTime.format(context)}', style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _charcoal)),
+                const Spacer(),
+                const Icon(Icons.chevron_right, size: 28, color: _tertiary),
+              ]))),
+            const SizedBox(height: 20),
 
-            // Time
-            const Text(
-              'Time',
-              style: TextStyle(fontSize: 12, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 6),
-            GestureDetector(
-              onTap: _pickTime,
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.access_time, size: 16, color: AppColors.secondary),
-                    const SizedBox(width: 10),
-                    Text(
-                      _selectedTime != null
-                          ? _formatTime(_selectedTime!)
-                          : 'Select time',
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: _selectedTime != null
-                            ? AppColors.charcoal
-                            : AppColors.tertiary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
+            // Type chips
+            Text(AppLocalizations.of(context).interviewTypeUpper, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _tertiary, letterSpacing: 0.8)), const SizedBox(height: 10),
+            Wrap(spacing: 8, runSpacing: 8, children: List.generate(_types.length, (i) {
+              final active = _selectedType == i;
+              return GestureDetector(onTap: () => setState(() => _selectedType = i),
+                child: Container(padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9), decoration: BoxDecoration(color: active ? _tealMain : Colors.white, borderRadius: BorderRadius.circular(100), border: active ? null : Border.all(color: _border, width: 0.5)),
+                  child: Text(_types[i], style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: active ? Colors.white : _secondary))));
+            })),
+            const SizedBox(height: 20),
 
-            // Interview Format
-            const Text(
-              'Interview Format',
-              style: TextStyle(fontSize: 12, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: ['In Person', 'Video', 'Phone'].map((label) {
-                final selected = _format == label;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: GestureDetector(
-                    onTap: () => setState(() => _format = label),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: selected ? AppColors.teal : Colors.white,
-                        borderRadius: BorderRadius.circular(100),
-                        border: selected
-                            ? null
-                            : Border.all(color: AppColors.border),
-                      ),
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: selected ? Colors.white : AppColors.secondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
+            // Timezone chips
+            Text(AppLocalizations.of(context).timezoneUpper, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _tertiary, letterSpacing: 0.8)), const SizedBox(height: 10),
+            Wrap(spacing: 8, runSpacing: 8, children: List.generate(_timezones.length, (i) {
+              final active = _selectedTz == i;
+              return GestureDetector(onTap: () => setState(() => _selectedTz = i),
+                child: Container(padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7), decoration: BoxDecoration(color: active ? _tealMain : Colors.white, borderRadius: BorderRadius.circular(100), border: active ? null : Border.all(color: _border, width: 0.5)),
+                  child: Text(_timezones[i], style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: active ? Colors.white : _secondary))));
+            })),
+            const SizedBox(height: 20),
 
-            // Conditional: Location or Meeting Link
-            if (_format == 'In Person') ...[
-              const Text(
-                'Location',
-                style: TextStyle(fontSize: 12, color: AppColors.secondary),
-              ),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _locationCtrl,
-                decoration: InputDecoration(
-                  hintText: 'Enter interview location',
-                  hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.teal),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 14,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+            // Conditional fields
+            if (_selectedType == 0) _field(AppLocalizations.of(context).businessFieldMeetingLink, Icons.link, _linkCtrl),
+            if (_selectedType == 2) _field(AppLocalizations.of(context).businessFieldLocation, Icons.location_on_outlined, _locationCtrl),
+          ])),
 
-            if (_format == 'Video') ...[
-              const Text(
-                'Meeting Link',
-                style: TextStyle(fontSize: 12, color: AppColors.secondary),
-              ),
-              const SizedBox(height: 6),
-              TextField(
-                controller: _linkCtrl,
-                decoration: InputDecoration(
-                  hintText: 'Paste meeting link',
-                  hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.border),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.teal),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 14,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+        if (_error != null) Padding(padding: const EdgeInsets.fromLTRB(20, 12, 20, 0), child: Text(_error!, style: const TextStyle(fontSize: 13, color: _urgent))),
 
-            // Notes
-            const Text(
-              'Notes / Instructions',
-              style: TextStyle(fontSize: 12, color: AppColors.secondary),
-            ),
-            const SizedBox(height: 6),
-            TextField(
-              controller: _notesCtrl,
-              maxLines: 4,
-              decoration: InputDecoration(
-                hintText: 'Add any notes for the candidate...',
-                hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
-                filled: true,
-                fillColor: Colors.white,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.border),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.teal),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 14,
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
+        // SUBMIT
+        Padding(padding: const EdgeInsets.fromLTRB(20, 16, 20, 32), child: GestureDetector(onTap: _loading ? null : _submit,
+          child: Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 16), decoration: BoxDecoration(gradient: const LinearGradient(colors: [_tealMain, _tealDark]), borderRadius: BorderRadius.circular(100)),
+            child: Center(child: _loading ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : Text(AppLocalizations.of(context).sendInterviewInvite, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.white)))))),
+      ]))),
+    ])));
+  }
 
-            // Submit button
-            SizedBox(
-              width: double.infinity,
-              height: 50,
-              child: ElevatedButton(
-                onPressed: _canSubmit ? _submit : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.teal,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: AppColors.teal.withValues(alpha: 0.4),
-                  disabledForegroundColor: Colors.white.withValues(alpha: 0.7),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Send Interview Invite',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
-              ),
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
-    );
+  Widget _field(String label, IconData icon, TextEditingController ctrl) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label, style: const TextStyle(fontSize: 11, color: _tertiary)), const SizedBox(height: 6),
+      Container(decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(8)),
+        child: Padding(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12), child: Row(children: [
+          Icon(icon, size: 13, color: _tealMain), const SizedBox(width: 8),
+          Expanded(child: TextField(controller: ctrl, style: const TextStyle(fontSize: 15, color: _charcoal),
+            decoration: InputDecoration(hintText: label, hintStyle: const TextStyle(fontSize: 15, color: _tertiary), border: InputBorder.none, isDense: true, contentPadding: EdgeInsets.zero))),
+        ]))),
+      const SizedBox(height: 16),
+    ]);
   }
 }

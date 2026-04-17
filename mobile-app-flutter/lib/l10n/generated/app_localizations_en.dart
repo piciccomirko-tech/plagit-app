@@ -5591,4 +5591,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejected';
+
+  @override
+  String get businessFieldMeetingLink => 'Meeting Link';
+
+  @override
+  String get businessFieldLocation => 'Location';
 }

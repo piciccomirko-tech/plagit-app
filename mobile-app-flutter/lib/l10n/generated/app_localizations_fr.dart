@@ -5650,4 +5650,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejetés';
+
+  @override
+  String get businessFieldMeetingLink => 'Lien de la réunion';
+
+  @override
+  String get businessFieldLocation => 'Lieu';
 }
