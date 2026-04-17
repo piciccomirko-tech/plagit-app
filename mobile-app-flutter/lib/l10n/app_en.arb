@@ -3601,5 +3601,237 @@
   "adminEmptyNoNotes": "No notes yet.",
   "@adminEmptyNoNotes": {
     "description": "adminEmptyNoNotes"
+  },
+  "adminSectionVerificationReview": "Verification Review",
+  "@adminSectionVerificationReview": {
+    "description": "adminSectionVerificationReview"
+  },
+  "adminSectionProfileSummary": "Profile Summary",
+  "@adminSectionProfileSummary": {
+    "description": "adminSectionProfileSummary"
+  },
+  "adminSectionDocuments": "Documents",
+  "@adminSectionDocuments": {
+    "description": "adminSectionDocuments"
+  },
+  "adminSectionReportDetail": "Report Detail",
+  "@adminSectionReportDetail": {
+    "description": "adminSectionReportDetail"
+  },
+  "adminSectionReportInformation": "Report Information",
+  "@adminSectionReportInformation": {
+    "description": "adminSectionReportInformation"
+  },
+  "adminSectionEvidence": "Evidence",
+  "@adminSectionEvidence": {
+    "description": "adminSectionEvidence"
+  },
+  "adminSectionAdminDecision": "Admin Decision",
+  "@adminSectionAdminDecision": {
+    "description": "adminSectionAdminDecision"
+  },
+  "adminSectionAuditTrail": "Audit Trail",
+  "@adminSectionAuditTrail": {
+    "description": "adminSectionAuditTrail"
+  },
+  "adminSectionSupportIssue": "Support Issue",
+  "@adminSectionSupportIssue": {
+    "description": "adminSectionSupportIssue"
+  },
+  "adminSectionDescription": "Description",
+  "@adminSectionDescription": {
+    "description": "adminSectionDescription"
+  },
+  "adminSectionUpdateStatus": "Update Status",
+  "@adminSectionUpdateStatus": {
+    "description": "adminSectionUpdateStatus"
+  },
+  "adminSectionResolution": "Resolution",
+  "@adminSectionResolution": {
+    "description": "adminSectionResolution"
+  },
+  "adminFieldSubmitted": "Submitted",
+  "@adminFieldSubmitted": {
+    "description": "adminFieldSubmitted"
+  },
+  "adminFieldReporter": "Reporter",
+  "@adminFieldReporter": {
+    "description": "adminFieldReporter"
+  },
+  "adminFieldEntity": "Entity",
+  "@adminFieldEntity": {
+    "description": "adminFieldEntity"
+  },
+  "adminFieldUser": "User",
+  "@adminFieldUser": {
+    "description": "adminFieldUser"
+  },
+  "adminFieldNote": "Note",
+  "@adminFieldNote": {
+    "description": "adminFieldNote"
+  },
+  "adminFieldCreated": "Created",
+  "@adminFieldCreated": {
+    "description": "adminFieldCreated"
+  },
+  "adminFieldUpdated": "Updated",
+  "@adminFieldUpdated": {
+    "description": "adminFieldUpdated"
+  },
+  "adminFieldPriority": "Priority",
+  "@adminFieldPriority": {
+    "description": "adminFieldPriority"
+  },
+  "adminDocTitleIdDocument": "ID Document",
+  "@adminDocTitleIdDocument": {
+    "description": "adminDocTitleIdDocument"
+  },
+  "adminDocSubtitleIdDocument": "Passport / National ID",
+  "@adminDocSubtitleIdDocument": {
+    "description": "adminDocSubtitleIdDocument"
+  },
+  "adminDocTitleCv": "CV",
+  "@adminDocTitleCv": {
+    "description": "adminDocTitleCv"
+  },
+  "adminDocSubtitleCv": "Curriculum Vitae",
+  "@adminDocSubtitleCv": {
+    "description": "adminDocSubtitleCv"
+  },
+  "adminDocTitleRegistration": "Registration",
+  "@adminDocTitleRegistration": {
+    "description": "adminDocTitleRegistration"
+  },
+  "adminDocSubtitleRegistration": "Business Registration Document",
+  "@adminDocSubtitleRegistration": {
+    "description": "adminDocSubtitleRegistration"
+  },
+  "adminActionViewDocument": "View Document",
+  "@adminActionViewDocument": {
+    "description": "adminActionViewDocument"
+  },
+  "adminActionSaveDecision": "Save Decision",
+  "@adminActionSaveDecision": {
+    "description": "adminActionSaveDecision"
+  },
+  "adminActionUpdate": "Update",
+  "@adminActionUpdate": {
+    "description": "adminActionUpdate"
+  },
+  "adminActionMarkResolved": "Mark Resolved",
+  "@adminActionMarkResolved": {
+    "description": "adminActionMarkResolved"
+  },
+  "adminActionOptionNone": "None",
+  "@adminActionOptionNone": {
+    "description": "adminActionOptionNone"
+  },
+  "adminActionOptionWarning": "Warning",
+  "@adminActionOptionWarning": {
+    "description": "adminActionOptionWarning"
+  },
+  "adminActionOptionContentRemoved": "Content Removed",
+  "@adminActionOptionContentRemoved": {
+    "description": "adminActionOptionContentRemoved"
+  },
+  "adminActionOptionAccountSuspended": "Account Suspended",
+  "@adminActionOptionAccountSuspended": {
+    "description": "adminActionOptionAccountSuspended"
+  },
+  "adminPlaceholderRejectionReason": "Reason for rejection...",
+  "@adminPlaceholderRejectionReason": {
+    "description": "adminPlaceholderRejectionReason"
+  },
+  "adminPlaceholderDecisionNotes": "Add decision notes...",
+  "@adminPlaceholderDecisionNotes": {
+    "description": "adminPlaceholderDecisionNotes"
+  },
+  "adminPlaceholderResolutionSummary": "Resolution summary...",
+  "@adminPlaceholderResolutionSummary": {
+    "description": "adminPlaceholderResolutionSummary"
+  },
+  "adminSnackbarVerificationApproved": "Verification approved",
+  "@adminSnackbarVerificationApproved": {
+    "description": "adminSnackbarVerificationApproved"
+  },
+  "adminSnackbarVerificationRejected": "Verification rejected",
+  "@adminSnackbarVerificationRejected": {
+    "description": "adminSnackbarVerificationRejected"
+  },
+  "adminSnackbarIssueResolved": "Issue resolved",
+  "@adminSnackbarIssueResolved": {
+    "description": "adminSnackbarIssueResolved"
+  },
+  "adminSnackbarViewingDocument": "Viewing {title} (placeholder)",
+  "@adminSnackbarViewingDocument": {
+    "description": "adminSnackbarViewingDocument",
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "adminSnackbarStatusUpdatedTo": "Status updated to {status}",
+  "@adminSnackbarStatusUpdatedTo": {
+    "description": "adminSnackbarStatusUpdatedTo",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "adminSnackbarDecisionSaved": "Decision saved: {status} / {action}",
+  "@adminSnackbarDecisionSaved": {
+    "description": "adminSnackbarDecisionSaved",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      },
+      "action": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogApproveVerificationTitle": "Approve Verification",
+  "@adminDialogApproveVerificationTitle": {
+    "description": "adminDialogApproveVerificationTitle"
+  },
+  "adminDialogApproveVerificationBody": "Approve verification for {name}?",
+  "@adminDialogApproveVerificationBody": {
+    "description": "adminDialogApproveVerificationBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogRejectVerificationTitle": "Reject Verification",
+  "@adminDialogRejectVerificationTitle": {
+    "description": "adminDialogRejectVerificationTitle"
+  },
+  "adminDialogRejectVerificationBody": "Reject verification for {name}?",
+  "@adminDialogRejectVerificationBody": {
+    "description": "adminDialogRejectVerificationBody",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "adminEmptyIssueNotFound": "Issue not found",
+  "@adminEmptyIssueNotFound": {
+    "description": "adminEmptyIssueNotFound"
+  },
+  "adminValuePlatform": "Platform",
+  "@adminValuePlatform": {
+    "description": "adminValuePlatform"
+  },
+  "adminValueSupport": "Support",
+  "@adminValueSupport": {
+    "description": "adminValueSupport"
+  },
+  "adminMiscReportCreatedByPlatform": "Report created by Platform auto-detection",
+  "@adminMiscReportCreatedByPlatform": {
+    "description": "adminMiscReportCreatedByPlatform"
   }
 }

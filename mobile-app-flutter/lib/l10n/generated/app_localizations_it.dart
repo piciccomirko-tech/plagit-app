@@ -5323,4 +5323,170 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get adminEmptyNoNotes => 'Nessuna nota ancora.';
+
+  @override
+  String get adminSectionVerificationReview => 'Revisione verifica';
+
+  @override
+  String get adminSectionProfileSummary => 'Riepilogo profilo';
+
+  @override
+  String get adminSectionDocuments => 'Documenti';
+
+  @override
+  String get adminSectionReportDetail => 'Dettaglio segnalazione';
+
+  @override
+  String get adminSectionReportInformation => 'Informazioni segnalazione';
+
+  @override
+  String get adminSectionEvidence => 'Prove';
+
+  @override
+  String get adminSectionAdminDecision => 'Decisione admin';
+
+  @override
+  String get adminSectionAuditTrail => 'Traccia audit';
+
+  @override
+  String get adminSectionSupportIssue => 'Ticket assistenza';
+
+  @override
+  String get adminSectionDescription => 'Descrizione';
+
+  @override
+  String get adminSectionUpdateStatus => 'Aggiorna stato';
+
+  @override
+  String get adminSectionResolution => 'Risoluzione';
+
+  @override
+  String get adminFieldSubmitted => 'Inviato';
+
+  @override
+  String get adminFieldReporter => 'Segnalante';
+
+  @override
+  String get adminFieldEntity => 'Entità';
+
+  @override
+  String get adminFieldUser => 'Utente';
+
+  @override
+  String get adminFieldNote => 'Nota';
+
+  @override
+  String get adminFieldCreated => 'Creato';
+
+  @override
+  String get adminFieldUpdated => 'Aggiornato';
+
+  @override
+  String get adminFieldPriority => 'Priorità';
+
+  @override
+  String get adminDocTitleIdDocument => 'Documento identità';
+
+  @override
+  String get adminDocSubtitleIdDocument => 'Passaporto / Carta d\'identità';
+
+  @override
+  String get adminDocTitleCv => 'CV';
+
+  @override
+  String get adminDocSubtitleCv => 'Curriculum vitae';
+
+  @override
+  String get adminDocTitleRegistration => 'Registrazione';
+
+  @override
+  String get adminDocSubtitleRegistration =>
+      'Documento di registrazione attività';
+
+  @override
+  String get adminActionViewDocument => 'Visualizza documento';
+
+  @override
+  String get adminActionSaveDecision => 'Salva decisione';
+
+  @override
+  String get adminActionUpdate => 'Aggiorna';
+
+  @override
+  String get adminActionMarkResolved => 'Segna come risolto';
+
+  @override
+  String get adminActionOptionNone => 'Nessuna';
+
+  @override
+  String get adminActionOptionWarning => 'Avviso';
+
+  @override
+  String get adminActionOptionContentRemoved => 'Contenuto rimosso';
+
+  @override
+  String get adminActionOptionAccountSuspended => 'Account sospeso';
+
+  @override
+  String get adminPlaceholderRejectionReason => 'Motivo del rifiuto...';
+
+  @override
+  String get adminPlaceholderDecisionNotes =>
+      'Aggiungi note della decisione...';
+
+  @override
+  String get adminPlaceholderResolutionSummary => 'Sintesi risoluzione...';
+
+  @override
+  String get adminSnackbarVerificationApproved => 'Verifica approvata';
+
+  @override
+  String get adminSnackbarVerificationRejected => 'Verifica rifiutata';
+
+  @override
+  String get adminSnackbarIssueResolved => 'Ticket risolto';
+
+  @override
+  String adminSnackbarViewingDocument(String title) {
+    return 'Visualizzazione $title (placeholder)';
+  }
+
+  @override
+  String adminSnackbarStatusUpdatedTo(String status) {
+    return 'Stato aggiornato a $status';
+  }
+
+  @override
+  String adminSnackbarDecisionSaved(String status, String action) {
+    return 'Decisione salvata: $status / $action';
+  }
+
+  @override
+  String get adminDialogApproveVerificationTitle => 'Approva verifica';
+
+  @override
+  String adminDialogApproveVerificationBody(String name) {
+    return 'Approvare la verifica per $name?';
+  }
+
+  @override
+  String get adminDialogRejectVerificationTitle => 'Rifiuta verifica';
+
+  @override
+  String adminDialogRejectVerificationBody(String name) {
+    return 'Rifiutare la verifica per $name?';
+  }
+
+  @override
+  String get adminEmptyIssueNotFound => 'Ticket non trovato';
+
+  @override
+  String get adminValuePlatform => 'Piattaforma';
+
+  @override
+  String get adminValueSupport => 'Assistenza';
+
+  @override
+  String get adminMiscReportCreatedByPlatform =>
+      'Segnalazione creata dal rilevamento automatico piattaforma';
 }

@@ -5350,4 +5350,168 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminEmptyNoNotes => 'لا توجد ملاحظات بعد.';
+
+  @override
+  String get adminSectionVerificationReview => 'مراجعة التحقق';
+
+  @override
+  String get adminSectionProfileSummary => 'ملخص الملف الشخصي';
+
+  @override
+  String get adminSectionDocuments => 'المستندات';
+
+  @override
+  String get adminSectionReportDetail => 'تفاصيل البلاغ';
+
+  @override
+  String get adminSectionReportInformation => 'معلومات البلاغ';
+
+  @override
+  String get adminSectionEvidence => 'الأدلة';
+
+  @override
+  String get adminSectionAdminDecision => 'قرار المسؤول';
+
+  @override
+  String get adminSectionAuditTrail => 'سجل التدقيق';
+
+  @override
+  String get adminSectionSupportIssue => 'تذكرة دعم';
+
+  @override
+  String get adminSectionDescription => 'الوصف';
+
+  @override
+  String get adminSectionUpdateStatus => 'تحديث الحالة';
+
+  @override
+  String get adminSectionResolution => 'الحل';
+
+  @override
+  String get adminFieldSubmitted => 'تم الإرسال';
+
+  @override
+  String get adminFieldReporter => 'المُبلِّغ';
+
+  @override
+  String get adminFieldEntity => 'الكيان';
+
+  @override
+  String get adminFieldUser => 'المستخدم';
+
+  @override
+  String get adminFieldNote => 'ملاحظة';
+
+  @override
+  String get adminFieldCreated => 'تم الإنشاء';
+
+  @override
+  String get adminFieldUpdated => 'تم التحديث';
+
+  @override
+  String get adminFieldPriority => 'الأولوية';
+
+  @override
+  String get adminDocTitleIdDocument => 'وثيقة هوية';
+
+  @override
+  String get adminDocSubtitleIdDocument => 'جواز سفر / هوية وطنية';
+
+  @override
+  String get adminDocTitleCv => 'السيرة الذاتية';
+
+  @override
+  String get adminDocSubtitleCv => 'السيرة الذاتية';
+
+  @override
+  String get adminDocTitleRegistration => 'التسجيل';
+
+  @override
+  String get adminDocSubtitleRegistration => 'وثيقة تسجيل الشركة';
+
+  @override
+  String get adminActionViewDocument => 'عرض المستند';
+
+  @override
+  String get adminActionSaveDecision => 'حفظ القرار';
+
+  @override
+  String get adminActionUpdate => 'تحديث';
+
+  @override
+  String get adminActionMarkResolved => 'وضع علامة كمحلول';
+
+  @override
+  String get adminActionOptionNone => 'لا شيء';
+
+  @override
+  String get adminActionOptionWarning => 'تحذير';
+
+  @override
+  String get adminActionOptionContentRemoved => 'تمت إزالة المحتوى';
+
+  @override
+  String get adminActionOptionAccountSuspended => 'الحساب موقوف';
+
+  @override
+  String get adminPlaceholderRejectionReason => 'سبب الرفض...';
+
+  @override
+  String get adminPlaceholderDecisionNotes => 'أضف ملاحظات القرار...';
+
+  @override
+  String get adminPlaceholderResolutionSummary => 'ملخص الحل...';
+
+  @override
+  String get adminSnackbarVerificationApproved => 'تمت الموافقة على التحقق';
+
+  @override
+  String get adminSnackbarVerificationRejected => 'تم رفض التحقق';
+
+  @override
+  String get adminSnackbarIssueResolved => 'تم حل المشكلة';
+
+  @override
+  String adminSnackbarViewingDocument(String title) {
+    return 'عرض $title (مؤقت)';
+  }
+
+  @override
+  String adminSnackbarStatusUpdatedTo(String status) {
+    return 'تم تحديث الحالة إلى $status';
+  }
+
+  @override
+  String adminSnackbarDecisionSaved(String status, String action) {
+    return 'تم حفظ القرار: $status / $action';
+  }
+
+  @override
+  String get adminDialogApproveVerificationTitle => 'الموافقة على التحقق';
+
+  @override
+  String adminDialogApproveVerificationBody(String name) {
+    return 'الموافقة على التحقق لـ $name؟';
+  }
+
+  @override
+  String get adminDialogRejectVerificationTitle => 'رفض التحقق';
+
+  @override
+  String adminDialogRejectVerificationBody(String name) {
+    return 'رفض التحقق لـ $name؟';
+  }
+
+  @override
+  String get adminEmptyIssueNotFound => 'التذكرة غير موجودة';
+
+  @override
+  String get adminValuePlatform => 'المنصة';
+
+  @override
+  String get adminValueSupport => 'الدعم';
+
+  @override
+  String get adminMiscReportCreatedByPlatform =>
+      'تم إنشاء البلاغ تلقائيًا من قبل المنصة';
 }

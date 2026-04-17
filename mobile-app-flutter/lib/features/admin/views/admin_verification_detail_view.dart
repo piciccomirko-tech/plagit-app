@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminVerificationDetailView extends StatefulWidget {
   final String verificationId;
@@ -29,6 +32,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final v = _verification;
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -42,7 +46,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal),
+                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   Column(
@@ -51,9 +55,9 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                         v['name'] as String,
                         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                       ),
-                      const Text(
-                        'Verification Review',
-                        style: TextStyle(fontSize: 11, color: AppColors.secondary),
+                      Text(
+                        l.adminSectionVerificationReview,
+                        style: const TextStyle(fontSize: 11, color: AppColors.secondary),
                       ),
                     ],
                   ),
@@ -75,9 +79,9 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Profile Summary',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminSectionProfileSummary,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 16),
                           Row(
@@ -120,7 +124,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                           const SizedBox(height: 12),
                           const Divider(color: AppColors.divider),
                           const SizedBox(height: 8),
-                          _detailRow('Submitted', v['submitted'] as String),
+                          _detailRow(l.adminFieldSubmitted, v['submitted'] as String),
                         ],
                       ),
                     ),
@@ -132,23 +136,25 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Documents',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminSectionDocuments,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 16),
                           _documentCard(
+                            l: l,
                             icon: Icons.badge,
-                            title: 'ID Document',
-                            subtitle: 'Passport / National ID',
+                            title: l.adminDocTitleIdDocument,
+                            subtitle: l.adminDocSubtitleIdDocument,
                           ),
                           const SizedBox(height: 12),
                           _documentCard(
+                            l: l,
                             icon: Icons.description,
-                            title: (v['type'] as String) == 'Candidate' ? 'CV' : 'Registration',
+                            title: (v['type'] as String) == 'Candidate' ? l.adminDocTitleCv : l.adminDocTitleRegistration,
                             subtitle: (v['type'] as String) == 'Candidate'
-                                ? 'Curriculum Vitae'
-                                : 'Business Registration Document',
+                                ? l.adminDocSubtitleCv
+                                : l.adminDocSubtitleRegistration,
                           ),
                         ],
                       ),
@@ -161,18 +167,18 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Decision',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminStatusDecision,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 16),
                           Row(
                             children: [
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _showApproveDialog(),
+                                  onPressed: () => _showApproveDialog(l),
                                   icon: const Icon(Icons.check_circle, size: 18),
-                                  label: const Text('Approve', style: TextStyle(fontWeight: FontWeight.w600)),
+                                  label: Text(l.adminActionApprove, style: const TextStyle(fontWeight: FontWeight.w600)),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.teal,
                                     foregroundColor: Colors.white,
@@ -184,9 +190,9 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                               const SizedBox(width: 12),
                               Expanded(
                                 child: ElevatedButton.icon(
-                                  onPressed: () => _showRejectDialog(),
+                                  onPressed: () => _showRejectDialog(l),
                                   icon: const Icon(Icons.cancel, size: 18),
-                                  label: const Text('Reject', style: TextStyle(fontWeight: FontWeight.w600)),
+                                  label: Text(l.adminActionReject, style: const TextStyle(fontWeight: FontWeight.w600)),
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.red,
                                     foregroundColor: Colors.white,
@@ -208,15 +214,15 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Notes',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminTabNotes,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 12),
                           TextField(
                             controller: _noteController,
                             decoration: InputDecoration(
-                              hintText: 'Add a note...',
+                              hintText: l.adminPlaceholderAddNote,
                               hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -238,7 +244,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                               onPressed: () {
                                 if (_noteController.text.isNotEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Note saved')),
+                                    SnackBar(content: Text(l.adminSnackbarNoteSaved)),
                                   );
                                   _noteController.clear();
                                 }
@@ -248,7 +254,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                                 foregroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
-                              child: const Text('Save Note'),
+                              child: Text(l.adminActionSaveNote),
                             ),
                           ),
                         ],
@@ -278,6 +284,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
   }
 
   Widget _documentCard({
+    required AppLocalizations l,
     required IconData icon,
     required String title,
     required String subtitle,
@@ -313,7 +320,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
           GestureDetector(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Viewing $title (placeholder)')),
+                SnackBar(content: Text(l.adminSnackbarViewingDocument(title))),
               );
             },
             child: Container(
@@ -322,9 +329,9 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                 color: AppColors.teal.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'View Document',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.teal),
+              child: Text(
+                l.adminActionViewDocument,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: AppColors.teal),
               ),
             ),
           ),
@@ -333,47 +340,50 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
     );
   }
 
-  void _showApproveDialog() {
+  void _showApproveDialog(AppLocalizations l) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Approve Verification'),
-        content: Text('Approve verification for ${_verification['name']}?'),
+        title: Text(l.adminDialogApproveVerificationTitle),
+        content: Text(l.adminDialogApproveVerificationBody(_verification['name'] as String)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l.adminActionCancel),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Verification approved')),
-              );
-              context.pop();
+              final ok = await context.read<AdminActionsProvider>().approveVerification(_verification['id'] as String);
+              if (ok && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l.adminSnackbarVerificationApproved), backgroundColor: AppColors.green),
+                );
+                context.pop();
+              }
             },
-            child: const Text('Approve'),
+            child: Text(l.adminActionApprove),
           ),
         ],
       ),
     );
   }
 
-  void _showRejectDialog() {
+  void _showRejectDialog(AppLocalizations l) {
     final reasonController = TextEditingController();
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Reject Verification'),
+        title: Text(l.adminDialogRejectVerificationTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Reject verification for ${_verification['name']}?'),
+            Text(l.adminDialogRejectVerificationBody(_verification['name'] as String)),
             const SizedBox(height: 12),
             TextField(
               controller: reasonController,
               decoration: InputDecoration(
-                hintText: 'Reason for rejection...',
+                hintText: l.adminPlaceholderRejectionReason,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 contentPadding: const EdgeInsets.all(12),
               ),
@@ -384,17 +394,20 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l.adminActionCancel),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Verification rejected')),
-              );
-              context.pop();
+              final ok = await context.read<AdminActionsProvider>().rejectVerification(_verification['id'] as String);
+              if (ok && mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l.adminSnackbarVerificationRejected), backgroundColor: AppColors.red),
+                );
+                context.pop();
+              }
             },
-            child: const Text('Reject', style: TextStyle(color: AppColors.red)),
+            child: Text(l.adminActionReject, style: const TextStyle(color: AppColors.red)),
           ),
         ],
       ),
