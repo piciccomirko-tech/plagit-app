@@ -16,7 +16,11 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - `admin_matches_view.dart`, `admin_reports_view.dart`, `admin_businesses_view.dart`
   - `admin_notifications_view.dart`, `admin_subscriptions_view.dart`, `admin_settings_view.dart`
   - `admin_logs_view.dart`, `admin_content_featured_view.dart`, `admin_interviews_view.dart`
-- TODO — Fase 2 (index medi): candidates, applications, verifications, moderation, support, audit
+- DONE (Fase 2 — 2026-04-17) — index medi:
+  - `admin_candidates_view.dart`, `admin_applications_view.dart`
+  - `admin_verifications_view.dart`, `admin_moderation_view.dart`
+  - `admin_support_view.dart`, `admin_audit_view.dart`
+  - extended `admin_shared_widgets.dart` with `aStatusLabel` cases (+9) + new `aPriorityLabel(l, p)` helper
 - TODO — Fase 3 (analytics + community)
 - TODO — Fase 4 (detail profili: business_detail, candidate_detail)
 - TODO — Fase 5 (detail rimanenti: job, verification, support, interview, moderation, subscription, application, audit detail)

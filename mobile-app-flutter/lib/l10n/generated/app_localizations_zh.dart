@@ -4610,4 +4610,94 @@ class AppLocalizationsZh extends AppLocalizations {
   String adminBadgeNRetried(int count) {
     return '已重试 x$count';
   }
+
+  @override
+  String get adminStatusApplied => '已申请';
+
+  @override
+  String get adminStatusUnderReview => '审核中';
+
+  @override
+  String get adminStatusShortlisted => '入围';
+
+  @override
+  String get adminStatusInterview => '面试';
+
+  @override
+  String get adminStatusHired => '已录用';
+
+  @override
+  String get adminStatusRejected => '已拒绝';
+
+  @override
+  String get adminStatusOpen => '开放';
+
+  @override
+  String get adminStatusInReview => '审核中';
+
+  @override
+  String get adminStatusWaiting => '等待中';
+
+  @override
+  String get adminPriorityHigh => '高';
+
+  @override
+  String get adminPriorityMedium => '中';
+
+  @override
+  String get adminPriorityLow => '低';
+
+  @override
+  String get adminActionViewProfile => '查看资料';
+
+  @override
+  String get adminActionVerify => '验证';
+
+  @override
+  String get adminActionReview => '审核';
+
+  @override
+  String get adminActionOverride => '覆盖';
+
+  @override
+  String get adminEmptyCandidatesTitle => '暂无候选人';
+
+  @override
+  String get adminEmptyApplicationsTitle => '暂无申请';
+
+  @override
+  String get adminEmptyVerificationsTitle => '暂无待审核';
+
+  @override
+  String get adminEmptyIssuesTitle => '暂无问题';
+
+  @override
+  String get adminEmptyAuditTitle => '暂无审计记录';
+
+  @override
+  String get adminSearchCandidatesTitle => '搜索候选人';
+
+  @override
+  String get adminSearchCandidatesHint => '按姓名、邮箱或角色搜索…';
+
+  @override
+  String get adminSearchAuditHint => '搜索审计日志…';
+
+  @override
+  String get adminMiscUnknown => '未知';
+
+  @override
+  String adminCountTotal(int count) {
+    return '共 $count';
+  }
+
+  @override
+  String adminBadgeNFlagged(int count) {
+    return '$count 已标记';
+  }
+
+  @override
+  String adminBadgeNDaysWaiting(int count) {
+    return '等待 $count 天';
+  }
 }

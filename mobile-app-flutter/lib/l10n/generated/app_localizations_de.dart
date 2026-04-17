@@ -4774,4 +4774,96 @@ class AppLocalizationsDe extends AppLocalizations {
   String adminBadgeNRetried(int count) {
     return 'Wiederholt x$count';
   }
+
+  @override
+  String get adminStatusApplied => 'Beworben';
+
+  @override
+  String get adminStatusUnderReview => 'In Prüfung';
+
+  @override
+  String get adminStatusShortlisted => 'Engere Auswahl';
+
+  @override
+  String get adminStatusInterview => 'Gespräch';
+
+  @override
+  String get adminStatusHired => 'Eingestellt';
+
+  @override
+  String get adminStatusRejected => 'Abgelehnt';
+
+  @override
+  String get adminStatusOpen => 'Offen';
+
+  @override
+  String get adminStatusInReview => 'In Bearbeitung';
+
+  @override
+  String get adminStatusWaiting => 'Wartend';
+
+  @override
+  String get adminPriorityHigh => 'Hoch';
+
+  @override
+  String get adminPriorityMedium => 'Mittel';
+
+  @override
+  String get adminPriorityLow => 'Niedrig';
+
+  @override
+  String get adminActionViewProfile => 'Profil ansehen';
+
+  @override
+  String get adminActionVerify => 'Verifizieren';
+
+  @override
+  String get adminActionReview => 'Prüfen';
+
+  @override
+  String get adminActionOverride => 'Überschreiben';
+
+  @override
+  String get adminEmptyCandidatesTitle => 'Keine Kandidaten';
+
+  @override
+  String get adminEmptyApplicationsTitle => 'Keine Bewerbungen';
+
+  @override
+  String get adminEmptyVerificationsTitle =>
+      'Keine ausstehenden Verifizierungen';
+
+  @override
+  String get adminEmptyIssuesTitle => 'Keine Vorgänge';
+
+  @override
+  String get adminEmptyAuditTitle => 'Keine Audit-Einträge';
+
+  @override
+  String get adminSearchCandidatesTitle => 'Kandidaten suchen';
+
+  @override
+  String get adminSearchCandidatesHint =>
+      'Nach Name, E-Mail oder Rolle suchen…';
+
+  @override
+  String get adminSearchAuditHint => 'Audit-Log durchsuchen…';
+
+  @override
+  String get adminMiscUnknown => 'Unbekannt';
+
+  @override
+  String adminCountTotal(int count) {
+    return '$count insgesamt';
+  }
+
+  @override
+  String adminBadgeNFlagged(int count) {
+    return '$count markiert';
+  }
+
+  @override
+  String adminBadgeNDaysWaiting(int count) {
+    return '$count Tage Wartezeit';
+  }
 }

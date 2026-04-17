@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminVerificationsView extends StatefulWidget {
   const AdminVerificationsView({super.key});
@@ -18,6 +21,9 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
     _tabController.addListener(() => setState(() {}));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AdminVerificationsListProvider>().load();
+    });
   }
 
   @override
@@ -26,11 +32,10 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
     super.dispose();
   }
 
-  List<Map<String, dynamic>> get _filteredQueue {
-    final queue = MockData.adminVerificationQueue;
+  List<Map<String, dynamic>> _filteredQueue(List<Map<String, dynamic>> allItems) {
     final type = _tabController.index == 0 ? 'Candidate' : 'Business';
     return List<Map<String, dynamic>>.from(
-      queue.where((v) => v['type'] == type),
+      allItems.where((v) => v['type'] == type),
     );
   }
 
@@ -43,48 +48,39 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _filteredQueue;
+    final l = AppLocalizations.of(context);
+    final provider = context.watch<AdminVerificationsListProvider>();
+
+    if (provider.loading) {
+      return Scaffold(backgroundColor: AppColors.background, body: SafeArea(child: Column(children: [
+        aTopBar(context, l.adminMenuVerifications),
+        const Expanded(child: Center(child: CircularProgressIndicator(color: AppColors.teal))),
+      ])));
+    }
+
+    if (provider.error != null) {
+      return Scaffold(backgroundColor: AppColors.background, body: SafeArea(child: Column(children: [
+        aTopBar(context, l.adminMenuVerifications),
+        Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(provider.error!, style: const TextStyle(fontSize: 14, color: AppColors.secondary), textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          GestureDetector(onTap: () => provider.load(), child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(100)),
+            child: Text(l.adminActionRetry, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+          )),
+        ]))),
+      ])));
+    }
+
+    final allItems = provider.items;
+    final filtered = _filteredQueue(allItems);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal),
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Verification Queue',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.amber.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: const Text(
-                          '7',
-                          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.amber),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 24),
-                ],
-              ),
-            ),
+            aTopBar(context, l.adminMenuVerifications, trailing: aPill('${allItems.length}', AppColors.amber)),
             // Tabs
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -104,9 +100,9 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
                 unselectedLabelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                 dividerHeight: 0,
                 indicatorSize: TabBarIndicatorSize.tab,
-                tabs: const [
-                  Tab(text: 'Candidates'),
-                  Tab(text: 'Businesses'),
+                tabs: [
+                  Tab(text: l.adminMenuCandidates),
+                  Tab(text: l.adminMenuBusinesses),
                 ],
               ),
             ),
@@ -114,13 +110,13 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
             // Queue list
             Expanded(
               child: filtered.isEmpty
-                  ? const Center(
-                      child: Text('No pending verifications', style: TextStyle(color: AppColors.secondary)),
+                  ? Center(
+                      child: Text(l.adminEmptyVerificationsTitle, style: const TextStyle(color: AppColors.secondary)),
                     )
                   : ListView.separated(
                       padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
                       itemCount: filtered.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
                       itemBuilder: (context, index) {
                         final v = filtered[index];
                         final days = _daysWaiting(v['submitted'] as String);
@@ -173,7 +169,7 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
                                           ),
                                           const SizedBox(width: 8),
                                           Text(
-                                            '$days days waiting',
+                                            l.adminBadgeNDaysWaiting(days),
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w500,
@@ -194,9 +190,9 @@ class _AdminVerificationsViewState extends State<AdminVerificationsView> with Si
                                       color: AppColors.amber,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const Text(
-                                      'Review',
-                                      style: TextStyle(
+                                    child: Text(
+                                      l.adminActionReview,
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.white,

@@ -4732,4 +4732,94 @@ class AppLocalizationsTr extends AppLocalizations {
   String adminBadgeNRetried(int count) {
     return 'Retried x$count';
   }
+
+  @override
+  String get adminStatusApplied => 'Applied';
+
+  @override
+  String get adminStatusUnderReview => 'Under Review';
+
+  @override
+  String get adminStatusShortlisted => 'Shortlisted';
+
+  @override
+  String get adminStatusInterview => 'Interview';
+
+  @override
+  String get adminStatusHired => 'Hired';
+
+  @override
+  String get adminStatusRejected => 'Rejected';
+
+  @override
+  String get adminStatusOpen => 'Open';
+
+  @override
+  String get adminStatusInReview => 'In Review';
+
+  @override
+  String get adminStatusWaiting => 'Waiting';
+
+  @override
+  String get adminPriorityHigh => 'High';
+
+  @override
+  String get adminPriorityMedium => 'Medium';
+
+  @override
+  String get adminPriorityLow => 'Low';
+
+  @override
+  String get adminActionViewProfile => 'View Profile';
+
+  @override
+  String get adminActionVerify => 'Verify';
+
+  @override
+  String get adminActionReview => 'Review';
+
+  @override
+  String get adminActionOverride => 'Override';
+
+  @override
+  String get adminEmptyCandidatesTitle => 'No candidates';
+
+  @override
+  String get adminEmptyApplicationsTitle => 'No applications';
+
+  @override
+  String get adminEmptyVerificationsTitle => 'No pending verifications';
+
+  @override
+  String get adminEmptyIssuesTitle => 'No issues found';
+
+  @override
+  String get adminEmptyAuditTitle => 'No audit entries found';
+
+  @override
+  String get adminSearchCandidatesTitle => 'Search candidates';
+
+  @override
+  String get adminSearchCandidatesHint => 'Search by name, email or role…';
+
+  @override
+  String get adminSearchAuditHint => 'Search audit log…';
+
+  @override
+  String get adminMiscUnknown => 'Unknown';
+
+  @override
+  String adminCountTotal(int count) {
+    return '$count total';
+  }
+
+  @override
+  String adminBadgeNFlagged(int count) {
+    return '$count flagged';
+  }
+
+  @override
+  String adminBadgeNDaysWaiting(int count) {
+    return '$count days waiting';
+  }
 }

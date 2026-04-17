@@ -2818,5 +2818,132 @@
         "type": "int"
       }
     }
+  },
+  "adminStatusApplied": "Applied",
+  "@adminStatusApplied": {
+    "description": "Phase 2 admin key: adminStatusApplied"
+  },
+  "adminStatusUnderReview": "Under Review",
+  "@adminStatusUnderReview": {
+    "description": "Phase 2 admin key: adminStatusUnderReview"
+  },
+  "adminStatusShortlisted": "Shortlisted",
+  "@adminStatusShortlisted": {
+    "description": "Phase 2 admin key: adminStatusShortlisted"
+  },
+  "adminStatusInterview": "Interview",
+  "@adminStatusInterview": {
+    "description": "Phase 2 admin key: adminStatusInterview"
+  },
+  "adminStatusHired": "Hired",
+  "@adminStatusHired": {
+    "description": "Phase 2 admin key: adminStatusHired"
+  },
+  "adminStatusRejected": "Rejected",
+  "@adminStatusRejected": {
+    "description": "Phase 2 admin key: adminStatusRejected"
+  },
+  "adminStatusOpen": "Open",
+  "@adminStatusOpen": {
+    "description": "Phase 2 admin key: adminStatusOpen"
+  },
+  "adminStatusInReview": "In Review",
+  "@adminStatusInReview": {
+    "description": "Phase 2 admin key: adminStatusInReview"
+  },
+  "adminStatusWaiting": "Waiting",
+  "@adminStatusWaiting": {
+    "description": "Phase 2 admin key: adminStatusWaiting"
+  },
+  "adminPriorityHigh": "High",
+  "@adminPriorityHigh": {
+    "description": "Phase 2 admin key: adminPriorityHigh"
+  },
+  "adminPriorityMedium": "Medium",
+  "@adminPriorityMedium": {
+    "description": "Phase 2 admin key: adminPriorityMedium"
+  },
+  "adminPriorityLow": "Low",
+  "@adminPriorityLow": {
+    "description": "Phase 2 admin key: adminPriorityLow"
+  },
+  "adminActionViewProfile": "View Profile",
+  "@adminActionViewProfile": {
+    "description": "Phase 2 admin key: adminActionViewProfile"
+  },
+  "adminActionVerify": "Verify",
+  "@adminActionVerify": {
+    "description": "Phase 2 admin key: adminActionVerify"
+  },
+  "adminActionReview": "Review",
+  "@adminActionReview": {
+    "description": "Phase 2 admin key: adminActionReview"
+  },
+  "adminActionOverride": "Override",
+  "@adminActionOverride": {
+    "description": "Phase 2 admin key: adminActionOverride"
+  },
+  "adminEmptyCandidatesTitle": "No candidates",
+  "@adminEmptyCandidatesTitle": {
+    "description": "Phase 2 admin key: adminEmptyCandidatesTitle"
+  },
+  "adminEmptyApplicationsTitle": "No applications",
+  "@adminEmptyApplicationsTitle": {
+    "description": "Phase 2 admin key: adminEmptyApplicationsTitle"
+  },
+  "adminEmptyVerificationsTitle": "No pending verifications",
+  "@adminEmptyVerificationsTitle": {
+    "description": "Phase 2 admin key: adminEmptyVerificationsTitle"
+  },
+  "adminEmptyIssuesTitle": "No issues found",
+  "@adminEmptyIssuesTitle": {
+    "description": "Phase 2 admin key: adminEmptyIssuesTitle"
+  },
+  "adminEmptyAuditTitle": "No audit entries found",
+  "@adminEmptyAuditTitle": {
+    "description": "Phase 2 admin key: adminEmptyAuditTitle"
+  },
+  "adminSearchCandidatesTitle": "Search candidates",
+  "@adminSearchCandidatesTitle": {
+    "description": "Phase 2 admin key: adminSearchCandidatesTitle"
+  },
+  "adminSearchCandidatesHint": "Search by name, email or role…",
+  "@adminSearchCandidatesHint": {
+    "description": "Phase 2 admin key: adminSearchCandidatesHint"
+  },
+  "adminSearchAuditHint": "Search audit log…",
+  "@adminSearchAuditHint": {
+    "description": "Phase 2 admin key: adminSearchAuditHint"
+  },
+  "adminMiscUnknown": "Unknown",
+  "@adminMiscUnknown": {
+    "description": "Phase 2 admin key: adminMiscUnknown"
+  },
+  "adminCountTotal": "{count} total",
+  "@adminCountTotal": {
+    "description": "Phase 2 admin ICU: adminCountTotal",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNFlagged": "{count} flagged",
+  "@adminBadgeNFlagged": {
+    "description": "Phase 2 admin ICU: adminBadgeNFlagged",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNDaysWaiting": "{count} days waiting",
+  "@adminBadgeNDaysWaiting": {
+    "description": "Phase 2 admin ICU: adminBadgeNDaysWaiting",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }
