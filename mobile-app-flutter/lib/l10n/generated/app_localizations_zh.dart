@@ -5073,4 +5073,105 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminAuditUpdated => '已更新';
+
+  @override
+  String get adminStatusWithdrawn => '已撤回';
+
+  @override
+  String get adminStatusNoShow => '未出席';
+
+  @override
+  String get adminStatusInProgress => '进行中';
+
+  @override
+  String get adminStatusReviewed => '已审核';
+
+  @override
+  String get adminStatusDecision => '决定';
+
+  @override
+  String get adminSectionApplicationDetail => '申请详情';
+
+  @override
+  String get adminSectionInterviewDetail => '面试详情';
+
+  @override
+  String get adminSectionTimeline => '时间线';
+
+  @override
+  String get adminSectionAdminNotes => '管理员备注';
+
+  @override
+  String get adminSectionActions => '操作';
+
+  @override
+  String get adminFieldCandidate => '候选人';
+
+  @override
+  String get adminFieldJob => '职位';
+
+  @override
+  String get adminFieldBusiness => '商家';
+
+  @override
+  String get adminFieldDate => '日期';
+
+  @override
+  String get adminFieldTime => '时间';
+
+  @override
+  String get adminFieldFormat => '形式';
+
+  @override
+  String get adminBadgeFlaggedForReview => '已标记供审核员审查';
+
+  @override
+  String get adminPlaceholderSelectStatus => '选择状态';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => '确认覆盖';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return '将状态更改为\"$status\"？';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => '原因：';
+
+  @override
+  String get adminMiscNoneProvided => '未提供';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied => '已应用状态覆盖';
+
+  @override
+  String get adminSnackbarNoteSaved => '备注已保存';
+
+  @override
+  String get adminSnackbarNoteAdded => '已添加备注';
+
+  @override
+  String get adminSnackbarMarkedNoShow => '已标记为未出席';
+
+  @override
+  String get adminSnackbarInterviewCancelled => '面试已取消';
+
+  @override
+  String get adminSnackbarInterviewCompleted => '面试已完成';
+
+  @override
+  String get adminActionSaveNote => '保存备注';
+
+  @override
+  String get adminActionAddNote => '添加备注';
+
+  @override
+  String get adminActionComplete => '完成';
+
+  @override
+  String get adminActionMarkNoShow => '标记未出席';
+
+  @override
+  String get adminEmptyNoNotes => '暂无备注。';
 }

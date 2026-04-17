@@ -5233,4 +5233,107 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminAuditUpdated => 'Atualizado';
+
+  @override
+  String get adminStatusWithdrawn => 'Retirada';
+
+  @override
+  String get adminStatusNoShow => 'Ausente';
+
+  @override
+  String get adminStatusInProgress => 'Em andamento';
+
+  @override
+  String get adminStatusReviewed => 'Analisada';
+
+  @override
+  String get adminStatusDecision => 'Decisão';
+
+  @override
+  String get adminSectionApplicationDetail => 'Detalhe da candidatura';
+
+  @override
+  String get adminSectionInterviewDetail => 'Detalhe da entrevista';
+
+  @override
+  String get adminSectionTimeline => 'Linha do tempo';
+
+  @override
+  String get adminSectionAdminNotes => 'Notas do admin';
+
+  @override
+  String get adminSectionActions => 'Ações';
+
+  @override
+  String get adminFieldCandidate => 'Candidato';
+
+  @override
+  String get adminFieldJob => 'Vaga';
+
+  @override
+  String get adminFieldBusiness => 'Empresa';
+
+  @override
+  String get adminFieldDate => 'Data';
+
+  @override
+  String get adminFieldTime => 'Hora';
+
+  @override
+  String get adminFieldFormat => 'Formato';
+
+  @override
+  String get adminBadgeFlaggedForReview =>
+      'Sinalizado para revisão do moderador';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Selecionar estado';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Confirmar substituição';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'Alterar o estado para \"$status\"?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Motivo:';
+
+  @override
+  String get adminMiscNoneProvided => 'Não informado';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied =>
+      'Substituição de estado aplicada';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Nota salva';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Nota adicionada';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Marcado como ausente';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Entrevista cancelada';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Entrevista concluída';
+
+  @override
+  String get adminActionSaveNote => 'Salvar nota';
+
+  @override
+  String get adminActionAddNote => 'Adicionar nota';
+
+  @override
+  String get adminActionComplete => 'Concluir';
+
+  @override
+  String get adminActionMarkNoShow => 'Marcar ausente';
+
+  @override
+  String get adminEmptyNoNotes => 'Ainda não há notas.';
 }

@@ -5249,4 +5249,105 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminAuditUpdated => 'تم التحديث';
+
+  @override
+  String get adminStatusWithdrawn => 'مسحوب';
+
+  @override
+  String get adminStatusNoShow => 'لم يحضر';
+
+  @override
+  String get adminStatusInProgress => 'قيد التقدم';
+
+  @override
+  String get adminStatusReviewed => 'تمت المراجعة';
+
+  @override
+  String get adminStatusDecision => 'قرار';
+
+  @override
+  String get adminSectionApplicationDetail => 'تفاصيل الطلب';
+
+  @override
+  String get adminSectionInterviewDetail => 'تفاصيل المقابلة';
+
+  @override
+  String get adminSectionTimeline => 'المخطط الزمني';
+
+  @override
+  String get adminSectionAdminNotes => 'ملاحظات المسؤول';
+
+  @override
+  String get adminSectionActions => 'الإجراءات';
+
+  @override
+  String get adminFieldCandidate => 'المرشح';
+
+  @override
+  String get adminFieldJob => 'الوظيفة';
+
+  @override
+  String get adminFieldBusiness => 'النشاط';
+
+  @override
+  String get adminFieldDate => 'التاريخ';
+
+  @override
+  String get adminFieldTime => 'الوقت';
+
+  @override
+  String get adminFieldFormat => 'الصيغة';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'تم الإبلاغ للمراجعة من قبل المشرف';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'اختر الحالة';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'تأكيد التجاوز';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'تغيير الحالة إلى \"$status\"؟';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'السبب:';
+
+  @override
+  String get adminMiscNoneProvided => 'لم يُحدَّد';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied => 'تم تطبيق تجاوز الحالة';
+
+  @override
+  String get adminSnackbarNoteSaved => 'تم حفظ الملاحظة';
+
+  @override
+  String get adminSnackbarNoteAdded => 'تمت إضافة الملاحظة';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'تم وضع علامة كـلم يحضر';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'تم إلغاء المقابلة';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'تم إكمال المقابلة';
+
+  @override
+  String get adminActionSaveNote => 'حفظ الملاحظة';
+
+  @override
+  String get adminActionAddNote => 'إضافة ملاحظة';
+
+  @override
+  String get adminActionComplete => 'إكمال';
+
+  @override
+  String get adminActionMarkNoShow => 'تعليم كـلم يحضر';
+
+  @override
+  String get adminEmptyNoNotes => 'لا توجد ملاحظات بعد.';
 }

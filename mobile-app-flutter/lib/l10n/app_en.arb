@@ -3464,5 +3464,142 @@
   "adminAuditUpdated": "Updated",
   "@adminAuditUpdated": {
     "description": "adminAuditUpdated"
+  },
+  "adminStatusWithdrawn": "Withdrawn",
+  "@adminStatusWithdrawn": {
+    "description": "adminStatusWithdrawn"
+  },
+  "adminStatusNoShow": "No-Show",
+  "@adminStatusNoShow": {
+    "description": "adminStatusNoShow"
+  },
+  "adminStatusInProgress": "In Progress",
+  "@adminStatusInProgress": {
+    "description": "adminStatusInProgress"
+  },
+  "adminStatusReviewed": "Reviewed",
+  "@adminStatusReviewed": {
+    "description": "adminStatusReviewed"
+  },
+  "adminStatusDecision": "Decision",
+  "@adminStatusDecision": {
+    "description": "adminStatusDecision"
+  },
+  "adminSectionApplicationDetail": "Application Detail",
+  "@adminSectionApplicationDetail": {
+    "description": "adminSectionApplicationDetail"
+  },
+  "adminSectionInterviewDetail": "Interview Detail",
+  "@adminSectionInterviewDetail": {
+    "description": "adminSectionInterviewDetail"
+  },
+  "adminSectionTimeline": "Timeline",
+  "@adminSectionTimeline": {
+    "description": "adminSectionTimeline"
+  },
+  "adminSectionAdminNotes": "Admin Notes",
+  "@adminSectionAdminNotes": {
+    "description": "adminSectionAdminNotes"
+  },
+  "adminSectionActions": "Actions",
+  "@adminSectionActions": {
+    "description": "adminSectionActions"
+  },
+  "adminFieldCandidate": "Candidate",
+  "@adminFieldCandidate": {
+    "description": "adminFieldCandidate"
+  },
+  "adminFieldJob": "Job",
+  "@adminFieldJob": {
+    "description": "adminFieldJob"
+  },
+  "adminFieldBusiness": "Business",
+  "@adminFieldBusiness": {
+    "description": "adminFieldBusiness"
+  },
+  "adminFieldDate": "Date",
+  "@adminFieldDate": {
+    "description": "adminFieldDate"
+  },
+  "adminFieldTime": "Time",
+  "@adminFieldTime": {
+    "description": "adminFieldTime"
+  },
+  "adminFieldFormat": "Format",
+  "@adminFieldFormat": {
+    "description": "adminFieldFormat"
+  },
+  "adminBadgeFlaggedForReview": "Flagged for moderator review",
+  "@adminBadgeFlaggedForReview": {
+    "description": "adminBadgeFlaggedForReview"
+  },
+  "adminPlaceholderSelectStatus": "Select status",
+  "@adminPlaceholderSelectStatus": {
+    "description": "adminPlaceholderSelectStatus"
+  },
+  "adminDialogConfirmOverrideTitle": "Confirm Override",
+  "@adminDialogConfirmOverrideTitle": {
+    "description": "adminDialogConfirmOverrideTitle"
+  },
+  "adminDialogConfirmOverrideQuestion": "Change status to \"{status}\"?",
+  "@adminDialogConfirmOverrideQuestion": {
+    "description": "adminDialogConfirmOverrideQuestion",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogReasonPrefix": "Reason:",
+  "@adminDialogReasonPrefix": {
+    "description": "adminDialogReasonPrefix"
+  },
+  "adminMiscNoneProvided": "None provided",
+  "@adminMiscNoneProvided": {
+    "description": "adminMiscNoneProvided"
+  },
+  "adminSnackbarStatusOverrideApplied": "Status override applied",
+  "@adminSnackbarStatusOverrideApplied": {
+    "description": "adminSnackbarStatusOverrideApplied"
+  },
+  "adminSnackbarNoteSaved": "Note saved",
+  "@adminSnackbarNoteSaved": {
+    "description": "adminSnackbarNoteSaved"
+  },
+  "adminSnackbarNoteAdded": "Note added",
+  "@adminSnackbarNoteAdded": {
+    "description": "adminSnackbarNoteAdded"
+  },
+  "adminSnackbarMarkedNoShow": "Marked as No-Show",
+  "@adminSnackbarMarkedNoShow": {
+    "description": "adminSnackbarMarkedNoShow"
+  },
+  "adminSnackbarInterviewCancelled": "Interview cancelled",
+  "@adminSnackbarInterviewCancelled": {
+    "description": "adminSnackbarInterviewCancelled"
+  },
+  "adminSnackbarInterviewCompleted": "Interview completed",
+  "@adminSnackbarInterviewCompleted": {
+    "description": "adminSnackbarInterviewCompleted"
+  },
+  "adminActionSaveNote": "Save Note",
+  "@adminActionSaveNote": {
+    "description": "adminActionSaveNote"
+  },
+  "adminActionAddNote": "Add Note",
+  "@adminActionAddNote": {
+    "description": "adminActionAddNote"
+  },
+  "adminActionComplete": "Complete",
+  "@adminActionComplete": {
+    "description": "adminActionComplete"
+  },
+  "adminActionMarkNoShow": "Mark No-Show",
+  "@adminActionMarkNoShow": {
+    "description": "adminActionMarkNoShow"
+  },
+  "adminEmptyNoNotes": "No notes yet.",
+  "@adminEmptyNoNotes": {
+    "description": "adminEmptyNoNotes"
   }
 }

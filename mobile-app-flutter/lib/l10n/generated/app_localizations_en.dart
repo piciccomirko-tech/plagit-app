@@ -5196,4 +5196,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminAuditUpdated => 'Updated';
+
+  @override
+  String get adminStatusWithdrawn => 'Withdrawn';
+
+  @override
+  String get adminStatusNoShow => 'No-Show';
+
+  @override
+  String get adminStatusInProgress => 'In Progress';
+
+  @override
+  String get adminStatusReviewed => 'Reviewed';
+
+  @override
+  String get adminStatusDecision => 'Decision';
+
+  @override
+  String get adminSectionApplicationDetail => 'Application Detail';
+
+  @override
+  String get adminSectionInterviewDetail => 'Interview Detail';
+
+  @override
+  String get adminSectionTimeline => 'Timeline';
+
+  @override
+  String get adminSectionAdminNotes => 'Admin Notes';
+
+  @override
+  String get adminSectionActions => 'Actions';
+
+  @override
+  String get adminFieldCandidate => 'Candidate';
+
+  @override
+  String get adminFieldJob => 'Job';
+
+  @override
+  String get adminFieldBusiness => 'Business';
+
+  @override
+  String get adminFieldDate => 'Date';
+
+  @override
+  String get adminFieldTime => 'Time';
+
+  @override
+  String get adminFieldFormat => 'Format';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'Flagged for moderator review';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Select status';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Confirm Override';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'Change status to \"$status\"?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Reason:';
+
+  @override
+  String get adminMiscNoneProvided => 'None provided';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied => 'Status override applied';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Note saved';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Note added';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Marked as No-Show';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Interview cancelled';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Interview completed';
+
+  @override
+  String get adminActionSaveNote => 'Save Note';
+
+  @override
+  String get adminActionAddNote => 'Add Note';
+
+  @override
+  String get adminActionComplete => 'Complete';
+
+  @override
+  String get adminActionMarkNoShow => 'Mark No-Show';
+
+  @override
+  String get adminEmptyNoNotes => 'No notes yet.';
 }

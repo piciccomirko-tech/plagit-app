@@ -46,7 +46,14 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - Refactor: `_changeText` ora riceve `AppLocalizations`, nuovo helper `_actionLabel`
   - build bump 1.0.0+7 → 1.0.0+8, branch `phase5c-admin-i18n`
   - analyze: **0 issues** (no pre-esistenti)
-- TODO — Fase 5A (application + interview detail)
+- DONE (Fase 5A — 2026-04-17) — application + interview detail:
+  - `admin_application_detail_view.dart`, `admin_interview_detail_view.dart`
+  - Coperti: header title, link-card labels (Candidate/Job/Business), flagged badge, timeline section + steps (Applied/Reviewed/Shortlisted/Interview/Decision + Scheduled/Confirmed/In Progress/Completed), dropdown `Select status` + tutti i valori via `aStatusLabel`, textfield reason, confirm dialog (title + ICU body `{status}` + reason prefix + none-provided), snackbars (override/note-saved/note-added/no-show/cancelled/completed), buttons (Save Note/Add Note/Complete/Mark No-Show/Cancel), empty state `No notes yet.`, info-row labels (Date/Time/Format), notes section (Admin Notes), actions section
+  - 33 nuove chiavi (status×5, section×5, field×6, badge×1, placeholder×1, dialog×3, misc×1, snackbar×6, action×4, empty×1) + 1 ICU `{status}`
+  - Helper `aStatusLabel` esteso: +5 case (withdrawn/no-show/in progress/reviewed/decision)
+  - Riusati: `adminActionCancel`, `adminActionConfirm`, `adminActionApplyOverride`, `adminPlaceholderReasonOverride`, `adminPlaceholderAddNote`, `adminTabNotes`, `adminSectionAdminOverride`
+  - build bump 1.0.0+8 → 1.0.0+9, branch `phase5a-admin-i18n`
+  - analyze: **0 issues**
 - TODO — Fase 5B (verification + moderation + support detail)
 
 ### Candidate / Business
@@ -67,7 +74,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
-(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C → totale cumulativo 260 chiavi × 9 locali)
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A → totale cumulativo 293 chiavi × 9 locali)
 
 ## Decisioni tecniche
 

@@ -5311,4 +5311,106 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminAuditUpdated => 'Обновлено';
+
+  @override
+  String get adminStatusWithdrawn => 'Отозвано';
+
+  @override
+  String get adminStatusNoShow => 'Не явился';
+
+  @override
+  String get adminStatusInProgress => 'В процессе';
+
+  @override
+  String get adminStatusReviewed => 'Рассмотрено';
+
+  @override
+  String get adminStatusDecision => 'Решение';
+
+  @override
+  String get adminSectionApplicationDetail => 'Детали заявки';
+
+  @override
+  String get adminSectionInterviewDetail => 'Детали интервью';
+
+  @override
+  String get adminSectionTimeline => 'Хронология';
+
+  @override
+  String get adminSectionAdminNotes => 'Заметки администратора';
+
+  @override
+  String get adminSectionActions => 'Действия';
+
+  @override
+  String get adminFieldCandidate => 'Кандидат';
+
+  @override
+  String get adminFieldJob => 'Вакансия';
+
+  @override
+  String get adminFieldBusiness => 'Бизнес';
+
+  @override
+  String get adminFieldDate => 'Дата';
+
+  @override
+  String get adminFieldTime => 'Время';
+
+  @override
+  String get adminFieldFormat => 'Формат';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'Отмечено для проверки модератором';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Выберите статус';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Подтвердить переопределение';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'Изменить статус на «$status»?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Причина:';
+
+  @override
+  String get adminMiscNoneProvided => 'Не указано';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied =>
+      'Переопределение статуса применено';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Заметка сохранена';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Заметка добавлена';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Отмечено как не явился';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Интервью отменено';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Интервью завершено';
+
+  @override
+  String get adminActionSaveNote => 'Сохранить заметку';
+
+  @override
+  String get adminActionAddNote => 'Добавить заметку';
+
+  @override
+  String get adminActionComplete => 'Завершить';
+
+  @override
+  String get adminActionMarkNoShow => 'Отметить не явился';
+
+  @override
+  String get adminEmptyNoNotes => 'Заметок пока нет.';
 }

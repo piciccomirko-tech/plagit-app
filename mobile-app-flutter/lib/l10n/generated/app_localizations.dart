@@ -9379,6 +9379,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Updated'**
   String get adminAuditUpdated;
+
+  /// adminStatusWithdrawn
+  ///
+  /// In en, this message translates to:
+  /// **'Withdrawn'**
+  String get adminStatusWithdrawn;
+
+  /// adminStatusNoShow
+  ///
+  /// In en, this message translates to:
+  /// **'No-Show'**
+  String get adminStatusNoShow;
+
+  /// adminStatusInProgress
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get adminStatusInProgress;
+
+  /// adminStatusReviewed
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed'**
+  String get adminStatusReviewed;
+
+  /// adminStatusDecision
+  ///
+  /// In en, this message translates to:
+  /// **'Decision'**
+  String get adminStatusDecision;
+
+  /// adminSectionApplicationDetail
+  ///
+  /// In en, this message translates to:
+  /// **'Application Detail'**
+  String get adminSectionApplicationDetail;
+
+  /// adminSectionInterviewDetail
+  ///
+  /// In en, this message translates to:
+  /// **'Interview Detail'**
+  String get adminSectionInterviewDetail;
+
+  /// adminSectionTimeline
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get adminSectionTimeline;
+
+  /// adminSectionAdminNotes
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Notes'**
+  String get adminSectionAdminNotes;
+
+  /// adminSectionActions
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get adminSectionActions;
+
+  /// adminFieldCandidate
+  ///
+  /// In en, this message translates to:
+  /// **'Candidate'**
+  String get adminFieldCandidate;
+
+  /// adminFieldJob
+  ///
+  /// In en, this message translates to:
+  /// **'Job'**
+  String get adminFieldJob;
+
+  /// adminFieldBusiness
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get adminFieldBusiness;
+
+  /// adminFieldDate
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get adminFieldDate;
+
+  /// adminFieldTime
+  ///
+  /// In en, this message translates to:
+  /// **'Time'**
+  String get adminFieldTime;
+
+  /// adminFieldFormat
+  ///
+  /// In en, this message translates to:
+  /// **'Format'**
+  String get adminFieldFormat;
+
+  /// adminBadgeFlaggedForReview
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged for moderator review'**
+  String get adminBadgeFlaggedForReview;
+
+  /// adminPlaceholderSelectStatus
+  ///
+  /// In en, this message translates to:
+  /// **'Select status'**
+  String get adminPlaceholderSelectStatus;
+
+  /// adminDialogConfirmOverrideTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Override'**
+  String get adminDialogConfirmOverrideTitle;
+
+  /// adminDialogConfirmOverrideQuestion
+  ///
+  /// In en, this message translates to:
+  /// **'Change status to \"{status}\"?'**
+  String adminDialogConfirmOverrideQuestion(String status);
+
+  /// adminDialogReasonPrefix
+  ///
+  /// In en, this message translates to:
+  /// **'Reason:'**
+  String get adminDialogReasonPrefix;
+
+  /// adminMiscNoneProvided
+  ///
+  /// In en, this message translates to:
+  /// **'None provided'**
+  String get adminMiscNoneProvided;
+
+  /// adminSnackbarStatusOverrideApplied
+  ///
+  /// In en, this message translates to:
+  /// **'Status override applied'**
+  String get adminSnackbarStatusOverrideApplied;
+
+  /// adminSnackbarNoteSaved
+  ///
+  /// In en, this message translates to:
+  /// **'Note saved'**
+  String get adminSnackbarNoteSaved;
+
+  /// adminSnackbarNoteAdded
+  ///
+  /// In en, this message translates to:
+  /// **'Note added'**
+  String get adminSnackbarNoteAdded;
+
+  /// adminSnackbarMarkedNoShow
+  ///
+  /// In en, this message translates to:
+  /// **'Marked as No-Show'**
+  String get adminSnackbarMarkedNoShow;
+
+  /// adminSnackbarInterviewCancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Interview cancelled'**
+  String get adminSnackbarInterviewCancelled;
+
+  /// adminSnackbarInterviewCompleted
+  ///
+  /// In en, this message translates to:
+  /// **'Interview completed'**
+  String get adminSnackbarInterviewCompleted;
+
+  /// adminActionSaveNote
+  ///
+  /// In en, this message translates to:
+  /// **'Save Note'**
+  String get adminActionSaveNote;
+
+  /// adminActionAddNote
+  ///
+  /// In en, this message translates to:
+  /// **'Add Note'**
+  String get adminActionAddNote;
+
+  /// adminActionComplete
+  ///
+  /// In en, this message translates to:
+  /// **'Complete'**
+  String get adminActionComplete;
+
+  /// adminActionMarkNoShow
+  ///
+  /// In en, this message translates to:
+  /// **'Mark No-Show'**
+  String get adminActionMarkNoShow;
+
+  /// adminEmptyNoNotes
+  ///
+  /// In en, this message translates to:
+  /// **'No notes yet.'**
+  String get adminEmptyNoNotes;
 }
 
 class _AppLocalizationsDelegate

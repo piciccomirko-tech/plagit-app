@@ -5242,4 +5242,106 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adminAuditUpdated => 'Aktualisiert';
+
+  @override
+  String get adminStatusWithdrawn => 'Zurückgezogen';
+
+  @override
+  String get adminStatusNoShow => 'Nicht erschienen';
+
+  @override
+  String get adminStatusInProgress => 'Läuft';
+
+  @override
+  String get adminStatusReviewed => 'Überprüft';
+
+  @override
+  String get adminStatusDecision => 'Entscheidung';
+
+  @override
+  String get adminSectionApplicationDetail => 'Bewerbungsdetails';
+
+  @override
+  String get adminSectionInterviewDetail => 'Interviewdetails';
+
+  @override
+  String get adminSectionTimeline => 'Zeitachse';
+
+  @override
+  String get adminSectionAdminNotes => 'Admin-Notizen';
+
+  @override
+  String get adminSectionActions => 'Aktionen';
+
+  @override
+  String get adminFieldCandidate => 'Kandidat';
+
+  @override
+  String get adminFieldJob => 'Stelle';
+
+  @override
+  String get adminFieldBusiness => 'Unternehmen';
+
+  @override
+  String get adminFieldDate => 'Datum';
+
+  @override
+  String get adminFieldTime => 'Uhrzeit';
+
+  @override
+  String get adminFieldFormat => 'Format';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'Zur Moderation gemeldet';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Status auswählen';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Überschreibung bestätigen';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'Status auf „$status\" ändern?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Grund:';
+
+  @override
+  String get adminMiscNoneProvided => 'Keine Angabe';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied =>
+      'Statusüberschreibung angewendet';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Notiz gespeichert';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Notiz hinzugefügt';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Als nicht erschienen markiert';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Interview abgesagt';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Interview abgeschlossen';
+
+  @override
+  String get adminActionSaveNote => 'Notiz speichern';
+
+  @override
+  String get adminActionAddNote => 'Notiz hinzufügen';
+
+  @override
+  String get adminActionComplete => 'Abschließen';
+
+  @override
+  String get adminActionMarkNoShow => 'Als nicht erschienen markieren';
+
+  @override
+  String get adminEmptyNoNotes => 'Noch keine Notizen.';
 }
