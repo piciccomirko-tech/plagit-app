@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 class AdminModerationDetailView extends StatefulWidget {
   final String reportId;
   const AdminModerationDetailView({super.key, required this.reportId});
@@ -52,8 +56,24 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
     }
   }
 
+  String _actionOptionLabel(AppLocalizations l, String option) {
+    switch (option) {
+      case 'None':
+        return l.adminActionOptionNone;
+      case 'Warning':
+        return l.adminActionOptionWarning;
+      case 'Content Removed':
+        return l.adminActionOptionContentRemoved;
+      case 'Account Suspended':
+        return l.adminActionOptionAccountSuspended;
+      default:
+        return option;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final r = _report;
     final priorityColor = _priorityColor(r['priority'] as String);
     return Scaffold(
@@ -68,12 +88,12 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal),
+                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Report Detail',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                  Text(
+                    l.adminSectionReportDetail,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   const SizedBox(width: 24),
@@ -93,9 +113,9 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Report Information',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminSectionReportInformation,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -103,11 +123,11 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 12),
-                          _infoRow('Type', r['entityType'] as String),
+                          _infoRow(l.adminFieldType, r['entityType'] as String),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Text('Priority', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+                              Text(l.adminFieldPriority, style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
                               const Spacer(),
                               Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -116,20 +136,20 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                                   borderRadius: BorderRadius.circular(100),
                                 ),
                                 child: Text(
-                                  r['priority'] as String,
+                                  aPriorityLabel(l, r['priority'] as String),
                                   style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Colors.white),
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 8),
-                          _infoRow('Date', r['date'] as String),
+                          _infoRow(l.adminFieldDate, r['date'] as String),
                           const SizedBox(height: 8),
-                          _infoRow('Reporter', 'Platform'),
+                          _infoRow(l.adminFieldReporter, l.adminValuePlatform),
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Text('Entity', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+                              Text(l.adminFieldEntity, style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
                               const Spacer(),
                               GestureDetector(
                                 onTap: () {
@@ -171,9 +191,9 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Evidence',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminSectionEvidence,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 12),
                           Container(
@@ -200,13 +220,13 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Admin Decision',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminSectionAdminDecision,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 16),
                           // Status dropdown
-                          const Text('Status', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+                          Text(l.adminFieldStatus, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -219,7 +239,7 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                                 value: _statusValue,
                                 isExpanded: true,
                                 items: _statusOptions.map((s) {
-                                  return DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 14)));
+                                  return DropdownMenuItem(value: s, child: Text(aStatusLabel(l, s), style: const TextStyle(fontSize: 14)));
                                 }).toList(),
                                 onChanged: (v) => setState(() => _statusValue = v!),
                               ),
@@ -227,7 +247,7 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                           ),
                           const SizedBox(height: 16),
                           // Action dropdown
-                          const Text('Action', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+                          Text(l.adminFieldAction, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
                           const SizedBox(height: 6),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -240,7 +260,7 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                                 value: _actionValue,
                                 isExpanded: true,
                                 items: _actionOptions.map((a) {
-                                  return DropdownMenuItem(value: a, child: Text(a, style: const TextStyle(fontSize: 14)));
+                                  return DropdownMenuItem(value: a, child: Text(_actionOptionLabel(l, a), style: const TextStyle(fontSize: 14)));
                                 }).toList(),
                                 onChanged: (v) => setState(() => _actionValue = v!),
                               ),
@@ -248,12 +268,12 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                           ),
                           const SizedBox(height: 16),
                           // Note
-                          const Text('Note', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+                          Text(l.adminFieldNote, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
                           const SizedBox(height: 6),
                           TextField(
                             controller: _noteController,
                             decoration: InputDecoration(
-                              hintText: 'Add decision notes...',
+                              hintText: l.adminPlaceholderDecisionNotes,
                               hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
@@ -272,10 +292,24 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Decision saved: $_statusValue / $_actionValue')),
-                                );
+                              onPressed: () async {
+                                final id = r['id'] as String;
+                                final bool ok;
+                                if (_statusValue == 'Resolved') {
+                                  ok = await context.read<AdminActionsProvider>().resolveReport(id, resolution: _noteController.text.isNotEmpty ? _noteController.text : null);
+                                } else if (_actionValue == 'None' && _statusValue != 'In Review') {
+                                  ok = await context.read<AdminActionsProvider>().dismissReport(id);
+                                } else {
+                                  ok = await context.read<AdminActionsProvider>().resolveReport(id, resolution: '$_statusValue / $_actionValue');
+                                }
+                                if (ok && mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(l.adminSnackbarDecisionSaved(aStatusLabel(l, _statusValue), _actionOptionLabel(l, _actionValue))),
+                                      backgroundColor: _statusValue == 'Resolved' ? AppColors.green : AppColors.teal,
+                                    ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.teal,
@@ -283,7 +317,7 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
-                              child: const Text('Save Decision', style: TextStyle(fontWeight: FontWeight.w600)),
+                              child: Text(l.adminActionSaveDecision, style: const TextStyle(fontWeight: FontWeight.w600)),
                             ),
                           ),
                         ],
@@ -297,9 +331,9 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Audit Trail',
-                            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                          Text(
+                            l.adminSectionAuditTrail,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                           ),
                           const SizedBox(height: 12),
                           Row(
@@ -319,9 +353,9 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
-                                      'Report created by Platform auto-detection',
-                                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.charcoal),
+                                    Text(
+                                      l.adminMiscReportCreatedByPlatform,
+                                      style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.charcoal),
                                     ),
                                     const SizedBox(height: 2),
                                     Text(

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:plagit/core/theme/app_colors.dart';
+import 'package:provider/provider.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/core/mock/mock_data.dart';
-import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminSupportDetailView extends StatefulWidget {
   final String issueId;
@@ -14,9 +16,8 @@ class AdminSupportDetailView extends StatefulWidget {
 
 class _AdminSupportDetailViewState extends State<AdminSupportDetailView> {
   String _selectedStatus = 'Open';
-  String _noteText = '';
-  String _resolutionSummary = '';
-
+  final _noteCtrl = TextEditingController();
+  final _resolutionCtrl = TextEditingController();
   Map<String, dynamic>? get _issue {
     try {
       return MockData.adminSupportIssues
@@ -37,306 +38,306 @@ class _AdminSupportDetailViewState extends State<AdminSupportDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final s = _issue;
     if (s == null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
-            onPressed: () => context.pop(),
-          ),
-          title: const Text('Support Issue'),
-        ),
-        body: const Center(child: Text('Issue not found')),
+        backgroundColor: aBg,
+        body: SafeArea(child: Column(children: [
+          aTopBar(context, l.adminSectionSupportIssue),
+          Expanded(child: Center(child: Text(l.adminEmptyIssueNotFound))),
+        ])),
       );
     }
 
     final priority = s['priority'] as String;
-    final priorityColor =
-        priority == 'High' ? AppColors.red : AppColors.amber;
+    final priorityColor = priority == 'High' ? aUrgent : aAmber;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(s['title'] as String,
-            style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.charcoal),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Info card
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _detailRow('Category', 'Support'),
-                  _detailRow('Priority', priority,
-                      valueColor: priorityColor),
-                  _detailRow('Created', s['created'] as String),
-                  _detailRow('Updated', s['updated'] as String),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Text('User: ',
-                          style: TextStyle(
-                              fontSize: 13, color: AppColors.secondary)),
-                      GestureDetector(
-                        onTap: () {},
-                        child: Text(s['userName'] as String,
+      backgroundColor: aBg,
+      body: SafeArea(child: Column(children: [
+        aTopBar(context, s['title'] as String),
+        Expanded(child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Info card
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _detailRow(l.adminFieldCategory, l.adminValueSupport),
+                    _detailRow(l.adminFieldPriority, aPriorityLabel(l, priority),
+                        valueColor: priorityColor),
+                    _detailRow(l.adminFieldCreated, s['created'] as String),
+                    _detailRow(l.adminFieldUpdated, s['updated'] as String),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Text('${l.adminFieldUser}: ',
                             style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.teal,
-                                decoration: TextDecoration.underline)),
-                      ),
-                      const SizedBox(width: 8),
-                      _typeBadge(s['userType'] as String),
-                    ],
-                  ),
-                ],
+                                fontSize: 13, color: aSecondary)),
+                        GestureDetector(
+                          onTap: () {},
+                          child: Text(s['userName'] as String,
+                              style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: aTeal,
+                                  decoration: TextDecoration.underline)),
+                        ),
+                        const SizedBox(width: 8),
+                        _typeBadge(s['userType'] as String),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
 
-            // Description
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Description',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 8),
-                  Text(s['description'] as String,
-                      style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.secondary,
-                          height: 1.5)),
-                ],
+              // Description
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminSectionDescription,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 8),
+                    Text(s['description'] as String,
+                        style: const TextStyle(
+                            fontSize: 13,
+                            color: aSecondary,
+                            height: 1.5)),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
 
-            // Status update row
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Update Status',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: DropdownButtonFormField<String>(
-                          value: _selectedStatus,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: AppColors.background,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10),
-                                borderSide: BorderSide.none),
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 14, vertical: 10),
+              // Status update row
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminSectionUpdateStatus,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: DropdownButtonFormField<String>(
+                            initialValue: _selectedStatus,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: aBg,
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none),
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 10),
+                            ),
+                            items: [
+                              DropdownMenuItem(
+                                  value: 'Open', child: Text(aStatusLabel(l, 'Open'))),
+                              DropdownMenuItem(
+                                  value: 'In Review',
+                                  child: Text(aStatusLabel(l, 'In Review'))),
+                              DropdownMenuItem(
+                                  value: 'Waiting',
+                                  child: Text(aStatusLabel(l, 'Waiting'))),
+                              DropdownMenuItem(
+                                  value: 'Resolved',
+                                  child: Text(aStatusLabel(l, 'Resolved'))),
+                            ],
+                            onChanged: (v) {
+                              if (v != null) {
+                                setState(() => _selectedStatus = v);
+                              }
+                            },
                           ),
-                          items: const [
-                            DropdownMenuItem(
-                                value: 'Open', child: Text('Open')),
-                            DropdownMenuItem(
-                                value: 'In Review',
-                                child: Text('In Review')),
-                            DropdownMenuItem(
-                                value: 'Waiting',
-                                child: Text('Waiting')),
-                            DropdownMenuItem(
-                                value: 'Resolved',
-                                child: Text('Resolved')),
-                          ],
-                          onChanged: (v) {
-                            if (v != null) {
-                              setState(() => _selectedStatus = v);
+                        ),
+                        const SizedBox(width: 12),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final ok = await context.read<AdminActionsProvider>().updateSupportStatus(s['id'] as String, _selectedStatus);
+                            if (ok && mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(l.adminSnackbarStatusUpdatedTo(aStatusLabel(l, _selectedStatus))),
+                                backgroundColor: AppColors.teal,
+                              ));
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: aTeal,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 12),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                          ),
+                          child: Text(l.adminActionUpdate,
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600)),
                         ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Notes thread
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminTabNotes,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: aBg,
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                      const SizedBox(width: 12),
-                      ElevatedButton(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Text('Admin User',
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: aCharcoal)),
+                              const Spacer(),
+                              Text(s['updated'] as String,
+                                  style: const TextStyle(
+                                      fontSize: 11,
+                                      color: aTertiary)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                              'Looking into this issue. Checking server logs for upload errors.',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  color: aSecondary)),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _noteCtrl,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: l.adminPlaceholderAddNote,
+                        hintStyle: const TextStyle(
+                            fontSize: 13, color: aTertiary),
+                        filled: true,
+                        fillColor: aBg,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none),
+                        contentPadding: const EdgeInsets.all(14),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.teal,
+                          backgroundColor: aTeal,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
+                              horizontal: 20, vertical: 10),
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                         ),
-                        child: const Text('Update',
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600)),
+                        child: Text(l.adminActionAddNote,
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600)),
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            // Notes thread
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Notes',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  // Mock note
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(10),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Text('Admin User',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.charcoal)),
-                            const Spacer(),
-                            Text(s['updated'] as String,
-                                style: const TextStyle(
-                                    fontSize: 11,
-                                    color: AppColors.tertiary)),
-                          ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Mark resolved
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminSectionResolution,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _resolutionCtrl,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        hintText: l.adminPlaceholderResolutionSummary,
+                        hintStyle: const TextStyle(
+                            fontSize: 13, color: aTertiary),
+                        filled: true,
+                        fillColor: aBg,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none),
+                        contentPadding: const EdgeInsets.all(14),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final ok = await context.read<AdminActionsProvider>().resolveSupportIssue(
+                            s['id'] as String,
+                            resolution: _resolutionCtrl.text.isNotEmpty ? _resolutionCtrl.text : null,
+                          );
+                          if (ok && mounted) {
+                            setState(() => _selectedStatus = 'Resolved');
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(l.adminSnackbarIssueResolved),
+                              backgroundColor: AppColors.green,
+                            ));
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: aTeal,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                         ),
-                        const SizedBox(height: 4),
-                        const Text(
-                            'Looking into this issue. Checking server logs for upload errors.',
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.secondary)),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  // Add note
-                  TextField(
-                    onChanged: (v) => _noteText = v,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: 'Add a note...',
-                      hintStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.tertiary),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.all(14),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.teal,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(l.adminActionMarkResolved,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600)),
                       ),
-                      child: const Text('Add Note',
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w600)),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
-
-            // Mark resolved
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Resolution',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  TextField(
-                    onChanged: (v) => _resolutionSummary = v,
-                    maxLines: 3,
-                    decoration: InputDecoration(
-                      hintText: 'Resolution summary...',
-                      hintStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.tertiary),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.all(14),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.teal,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                      ),
-                      child: const Text('Mark Resolved',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        )),
+      ])),
     );
   }
 
@@ -345,9 +346,9 @@ class _AdminSupportDetailViewState extends State<AdminSupportDetailView> {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: aCard,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [AppColors.cardShadow],
+        boxShadow: [aCardShadow],
       ),
       child: child,
     );
@@ -361,12 +362,12 @@ class _AdminSupportDetailViewState extends State<AdminSupportDetailView> {
         children: [
           Text(label,
               style: const TextStyle(
-                  fontSize: 13, color: AppColors.secondary)),
+                  fontSize: 13, color: aSecondary)),
           Text(value,
               style: TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: valueColor ?? AppColors.charcoal)),
+                  color: valueColor ?? aCharcoal)),
         ],
       ),
     );
@@ -378,15 +379,15 @@ class _AdminSupportDetailViewState extends State<AdminSupportDetailView> {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: isBusiness
-            ? AppColors.purple.withValues(alpha: 0.10)
-            : AppColors.teal.withValues(alpha: 0.10),
+            ? aPurple.withValues(alpha: 0.10)
+            : aTeal.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(100),
       ),
       child: Text(type,
           style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: isBusiness ? AppColors.purple : AppColors.teal)),
+              color: isBusiness ? aPurple : aTeal)),
     );
   }
 }

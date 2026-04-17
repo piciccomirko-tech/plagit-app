@@ -9577,6 +9577,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No notes yet.'**
   String get adminEmptyNoNotes;
+
+  /// adminSectionVerificationReview
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Review'**
+  String get adminSectionVerificationReview;
+
+  /// adminSectionProfileSummary
+  ///
+  /// In en, this message translates to:
+  /// **'Profile Summary'**
+  String get adminSectionProfileSummary;
+
+  /// adminSectionDocuments
+  ///
+  /// In en, this message translates to:
+  /// **'Documents'**
+  String get adminSectionDocuments;
+
+  /// adminSectionReportDetail
+  ///
+  /// In en, this message translates to:
+  /// **'Report Detail'**
+  String get adminSectionReportDetail;
+
+  /// adminSectionReportInformation
+  ///
+  /// In en, this message translates to:
+  /// **'Report Information'**
+  String get adminSectionReportInformation;
+
+  /// adminSectionEvidence
+  ///
+  /// In en, this message translates to:
+  /// **'Evidence'**
+  String get adminSectionEvidence;
+
+  /// adminSectionAdminDecision
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Decision'**
+  String get adminSectionAdminDecision;
+
+  /// adminSectionAuditTrail
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Trail'**
+  String get adminSectionAuditTrail;
+
+  /// adminSectionSupportIssue
+  ///
+  /// In en, this message translates to:
+  /// **'Support Issue'**
+  String get adminSectionSupportIssue;
+
+  /// adminSectionDescription
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get adminSectionDescription;
+
+  /// adminSectionUpdateStatus
+  ///
+  /// In en, this message translates to:
+  /// **'Update Status'**
+  String get adminSectionUpdateStatus;
+
+  /// adminSectionResolution
+  ///
+  /// In en, this message translates to:
+  /// **'Resolution'**
+  String get adminSectionResolution;
+
+  /// adminFieldSubmitted
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted'**
+  String get adminFieldSubmitted;
+
+  /// adminFieldReporter
+  ///
+  /// In en, this message translates to:
+  /// **'Reporter'**
+  String get adminFieldReporter;
+
+  /// adminFieldEntity
+  ///
+  /// In en, this message translates to:
+  /// **'Entity'**
+  String get adminFieldEntity;
+
+  /// adminFieldUser
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get adminFieldUser;
+
+  /// adminFieldNote
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get adminFieldNote;
+
+  /// adminFieldCreated
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get adminFieldCreated;
+
+  /// adminFieldUpdated
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get adminFieldUpdated;
+
+  /// adminFieldPriority
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get adminFieldPriority;
+
+  /// adminDocTitleIdDocument
+  ///
+  /// In en, this message translates to:
+  /// **'ID Document'**
+  String get adminDocTitleIdDocument;
+
+  /// adminDocSubtitleIdDocument
+  ///
+  /// In en, this message translates to:
+  /// **'Passport / National ID'**
+  String get adminDocSubtitleIdDocument;
+
+  /// adminDocTitleCv
+  ///
+  /// In en, this message translates to:
+  /// **'CV'**
+  String get adminDocTitleCv;
+
+  /// adminDocSubtitleCv
+  ///
+  /// In en, this message translates to:
+  /// **'Curriculum Vitae'**
+  String get adminDocSubtitleCv;
+
+  /// adminDocTitleRegistration
+  ///
+  /// In en, this message translates to:
+  /// **'Registration'**
+  String get adminDocTitleRegistration;
+
+  /// adminDocSubtitleRegistration
+  ///
+  /// In en, this message translates to:
+  /// **'Business Registration Document'**
+  String get adminDocSubtitleRegistration;
+
+  /// adminActionViewDocument
+  ///
+  /// In en, this message translates to:
+  /// **'View Document'**
+  String get adminActionViewDocument;
+
+  /// adminActionSaveDecision
+  ///
+  /// In en, this message translates to:
+  /// **'Save Decision'**
+  String get adminActionSaveDecision;
+
+  /// adminActionUpdate
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get adminActionUpdate;
+
+  /// adminActionMarkResolved
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Resolved'**
+  String get adminActionMarkResolved;
+
+  /// adminActionOptionNone
+  ///
+  /// In en, this message translates to:
+  /// **'None'**
+  String get adminActionOptionNone;
+
+  /// adminActionOptionWarning
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get adminActionOptionWarning;
+
+  /// adminActionOptionContentRemoved
+  ///
+  /// In en, this message translates to:
+  /// **'Content Removed'**
+  String get adminActionOptionContentRemoved;
+
+  /// adminActionOptionAccountSuspended
+  ///
+  /// In en, this message translates to:
+  /// **'Account Suspended'**
+  String get adminActionOptionAccountSuspended;
+
+  /// adminPlaceholderRejectionReason
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for rejection...'**
+  String get adminPlaceholderRejectionReason;
+
+  /// adminPlaceholderDecisionNotes
+  ///
+  /// In en, this message translates to:
+  /// **'Add decision notes...'**
+  String get adminPlaceholderDecisionNotes;
+
+  /// adminPlaceholderResolutionSummary
+  ///
+  /// In en, this message translates to:
+  /// **'Resolution summary...'**
+  String get adminPlaceholderResolutionSummary;
+
+  /// adminSnackbarVerificationApproved
+  ///
+  /// In en, this message translates to:
+  /// **'Verification approved'**
+  String get adminSnackbarVerificationApproved;
+
+  /// adminSnackbarVerificationRejected
+  ///
+  /// In en, this message translates to:
+  /// **'Verification rejected'**
+  String get adminSnackbarVerificationRejected;
+
+  /// adminSnackbarIssueResolved
+  ///
+  /// In en, this message translates to:
+  /// **'Issue resolved'**
+  String get adminSnackbarIssueResolved;
+
+  /// adminSnackbarViewingDocument
+  ///
+  /// In en, this message translates to:
+  /// **'Viewing {title} (placeholder)'**
+  String adminSnackbarViewingDocument(String title);
+
+  /// adminSnackbarStatusUpdatedTo
+  ///
+  /// In en, this message translates to:
+  /// **'Status updated to {status}'**
+  String adminSnackbarStatusUpdatedTo(String status);
+
+  /// adminSnackbarDecisionSaved
+  ///
+  /// In en, this message translates to:
+  /// **'Decision saved: {status} / {action}'**
+  String adminSnackbarDecisionSaved(String status, String action);
+
+  /// adminDialogApproveVerificationTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Approve Verification'**
+  String get adminDialogApproveVerificationTitle;
+
+  /// adminDialogApproveVerificationBody
+  ///
+  /// In en, this message translates to:
+  /// **'Approve verification for {name}?'**
+  String adminDialogApproveVerificationBody(String name);
+
+  /// adminDialogRejectVerificationTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Reject Verification'**
+  String get adminDialogRejectVerificationTitle;
+
+  /// adminDialogRejectVerificationBody
+  ///
+  /// In en, this message translates to:
+  /// **'Reject verification for {name}?'**
+  String adminDialogRejectVerificationBody(String name);
+
+  /// adminEmptyIssueNotFound
+  ///
+  /// In en, this message translates to:
+  /// **'Issue not found'**
+  String get adminEmptyIssueNotFound;
+
+  /// adminValuePlatform
+  ///
+  /// In en, this message translates to:
+  /// **'Platform'**
+  String get adminValuePlatform;
+
+  /// adminValueSupport
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get adminValueSupport;
+
+  /// adminMiscReportCreatedByPlatform
+  ///
+  /// In en, this message translates to:
+  /// **'Report created by Platform auto-detection'**
+  String get adminMiscReportCreatedByPlatform;
 }
 
 class _AppLocalizationsDelegate

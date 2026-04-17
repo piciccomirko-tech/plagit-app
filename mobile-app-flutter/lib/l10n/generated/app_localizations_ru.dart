@@ -5413,4 +5413,168 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminEmptyNoNotes => 'Заметок пока нет.';
+
+  @override
+  String get adminSectionVerificationReview => 'Проверка верификации';
+
+  @override
+  String get adminSectionProfileSummary => 'Сводка профиля';
+
+  @override
+  String get adminSectionDocuments => 'Документы';
+
+  @override
+  String get adminSectionReportDetail => 'Детали отчёта';
+
+  @override
+  String get adminSectionReportInformation => 'Информация об отчёте';
+
+  @override
+  String get adminSectionEvidence => 'Доказательства';
+
+  @override
+  String get adminSectionAdminDecision => 'Решение администратора';
+
+  @override
+  String get adminSectionAuditTrail => 'Журнал аудита';
+
+  @override
+  String get adminSectionSupportIssue => 'Запрос поддержки';
+
+  @override
+  String get adminSectionDescription => 'Описание';
+
+  @override
+  String get adminSectionUpdateStatus => 'Обновить статус';
+
+  @override
+  String get adminSectionResolution => 'Решение';
+
+  @override
+  String get adminFieldSubmitted => 'Отправлено';
+
+  @override
+  String get adminFieldReporter => 'Заявитель';
+
+  @override
+  String get adminFieldEntity => 'Объект';
+
+  @override
+  String get adminFieldUser => 'Пользователь';
+
+  @override
+  String get adminFieldNote => 'Заметка';
+
+  @override
+  String get adminFieldCreated => 'Создано';
+
+  @override
+  String get adminFieldUpdated => 'Обновлено';
+
+  @override
+  String get adminFieldPriority => 'Приоритет';
+
+  @override
+  String get adminDocTitleIdDocument => 'Удостоверение личности';
+
+  @override
+  String get adminDocSubtitleIdDocument => 'Паспорт / удостоверение личности';
+
+  @override
+  String get adminDocTitleCv => 'Резюме';
+
+  @override
+  String get adminDocSubtitleCv => 'Резюме';
+
+  @override
+  String get adminDocTitleRegistration => 'Регистрация';
+
+  @override
+  String get adminDocSubtitleRegistration => 'Документ о регистрации компании';
+
+  @override
+  String get adminActionViewDocument => 'Просмотреть документ';
+
+  @override
+  String get adminActionSaveDecision => 'Сохранить решение';
+
+  @override
+  String get adminActionUpdate => 'Обновить';
+
+  @override
+  String get adminActionMarkResolved => 'Отметить как решено';
+
+  @override
+  String get adminActionOptionNone => 'Нет';
+
+  @override
+  String get adminActionOptionWarning => 'Предупреждение';
+
+  @override
+  String get adminActionOptionContentRemoved => 'Контент удалён';
+
+  @override
+  String get adminActionOptionAccountSuspended => 'Аккаунт заблокирован';
+
+  @override
+  String get adminPlaceholderRejectionReason => 'Причина отказа...';
+
+  @override
+  String get adminPlaceholderDecisionNotes => 'Добавить заметки о решении...';
+
+  @override
+  String get adminPlaceholderResolutionSummary => 'Описание решения...';
+
+  @override
+  String get adminSnackbarVerificationApproved => 'Верификация одобрена';
+
+  @override
+  String get adminSnackbarVerificationRejected => 'Верификация отклонена';
+
+  @override
+  String get adminSnackbarIssueResolved => 'Проблема решена';
+
+  @override
+  String adminSnackbarViewingDocument(String title) {
+    return 'Просмотр $title (заглушка)';
+  }
+
+  @override
+  String adminSnackbarStatusUpdatedTo(String status) {
+    return 'Статус обновлён на $status';
+  }
+
+  @override
+  String adminSnackbarDecisionSaved(String status, String action) {
+    return 'Решение сохранено: $status / $action';
+  }
+
+  @override
+  String get adminDialogApproveVerificationTitle => 'Одобрить верификацию';
+
+  @override
+  String adminDialogApproveVerificationBody(String name) {
+    return 'Одобрить верификацию для $name?';
+  }
+
+  @override
+  String get adminDialogRejectVerificationTitle => 'Отклонить верификацию';
+
+  @override
+  String adminDialogRejectVerificationBody(String name) {
+    return 'Отклонить верификацию для $name?';
+  }
+
+  @override
+  String get adminEmptyIssueNotFound => 'Запрос не найден';
+
+  @override
+  String get adminValuePlatform => 'Платформа';
+
+  @override
+  String get adminValueSupport => 'Поддержка';
+
+  @override
+  String get adminMiscReportCreatedByPlatform =>
+      'Отчёт создан автоматическим обнаружением платформы';
 }

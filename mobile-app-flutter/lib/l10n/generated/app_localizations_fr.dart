@@ -5353,4 +5353,171 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adminEmptyNoNotes => 'Aucune note pour le moment.';
+
+  @override
+  String get adminSectionVerificationReview => 'Revue de vérification';
+
+  @override
+  String get adminSectionProfileSummary => 'Résumé du profil';
+
+  @override
+  String get adminSectionDocuments => 'Documents';
+
+  @override
+  String get adminSectionReportDetail => 'Détail du signalement';
+
+  @override
+  String get adminSectionReportInformation => 'Informations du signalement';
+
+  @override
+  String get adminSectionEvidence => 'Preuves';
+
+  @override
+  String get adminSectionAdminDecision => 'Décision admin';
+
+  @override
+  String get adminSectionAuditTrail => 'Piste d\'audit';
+
+  @override
+  String get adminSectionSupportIssue => 'Ticket de support';
+
+  @override
+  String get adminSectionDescription => 'Description';
+
+  @override
+  String get adminSectionUpdateStatus => 'Mettre à jour le statut';
+
+  @override
+  String get adminSectionResolution => 'Résolution';
+
+  @override
+  String get adminFieldSubmitted => 'Envoyé';
+
+  @override
+  String get adminFieldReporter => 'Signaleur';
+
+  @override
+  String get adminFieldEntity => 'Entité';
+
+  @override
+  String get adminFieldUser => 'Utilisateur';
+
+  @override
+  String get adminFieldNote => 'Note';
+
+  @override
+  String get adminFieldCreated => 'Créé';
+
+  @override
+  String get adminFieldUpdated => 'Mis à jour';
+
+  @override
+  String get adminFieldPriority => 'Priorité';
+
+  @override
+  String get adminDocTitleIdDocument => 'Pièce d\'identité';
+
+  @override
+  String get adminDocSubtitleIdDocument =>
+      'Passeport / Carte nationale d\'identité';
+
+  @override
+  String get adminDocTitleCv => 'CV';
+
+  @override
+  String get adminDocSubtitleCv => 'Curriculum vitae';
+
+  @override
+  String get adminDocTitleRegistration => 'Immatriculation';
+
+  @override
+  String get adminDocSubtitleRegistration =>
+      'Document d\'immatriculation de l\'entreprise';
+
+  @override
+  String get adminActionViewDocument => 'Voir le document';
+
+  @override
+  String get adminActionSaveDecision => 'Enregistrer la décision';
+
+  @override
+  String get adminActionUpdate => 'Mettre à jour';
+
+  @override
+  String get adminActionMarkResolved => 'Marquer comme résolu';
+
+  @override
+  String get adminActionOptionNone => 'Aucune';
+
+  @override
+  String get adminActionOptionWarning => 'Avertissement';
+
+  @override
+  String get adminActionOptionContentRemoved => 'Contenu supprimé';
+
+  @override
+  String get adminActionOptionAccountSuspended => 'Compte suspendu';
+
+  @override
+  String get adminPlaceholderRejectionReason => 'Motif du refus...';
+
+  @override
+  String get adminPlaceholderDecisionNotes =>
+      'Ajouter des notes de décision...';
+
+  @override
+  String get adminPlaceholderResolutionSummary => 'Résumé de la résolution...';
+
+  @override
+  String get adminSnackbarVerificationApproved => 'Vérification approuvée';
+
+  @override
+  String get adminSnackbarVerificationRejected => 'Vérification refusée';
+
+  @override
+  String get adminSnackbarIssueResolved => 'Problème résolu';
+
+  @override
+  String adminSnackbarViewingDocument(String title) {
+    return 'Affichage de $title (placeholder)';
+  }
+
+  @override
+  String adminSnackbarStatusUpdatedTo(String status) {
+    return 'Statut mis à jour vers $status';
+  }
+
+  @override
+  String adminSnackbarDecisionSaved(String status, String action) {
+    return 'Décision enregistrée : $status / $action';
+  }
+
+  @override
+  String get adminDialogApproveVerificationTitle => 'Approuver la vérification';
+
+  @override
+  String adminDialogApproveVerificationBody(String name) {
+    return 'Approuver la vérification de $name ?';
+  }
+
+  @override
+  String get adminDialogRejectVerificationTitle => 'Refuser la vérification';
+
+  @override
+  String adminDialogRejectVerificationBody(String name) {
+    return 'Refuser la vérification de $name ?';
+  }
+
+  @override
+  String get adminEmptyIssueNotFound => 'Ticket introuvable';
+
+  @override
+  String get adminValuePlatform => 'Plateforme';
+
+  @override
+  String get adminValueSupport => 'Support';
+
+  @override
+  String get adminMiscReportCreatedByPlatform =>
+      'Signalement créé par la détection automatique de la plateforme';
 }
