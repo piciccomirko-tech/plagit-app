@@ -727,6 +727,5 @@
   "businessMessages": "BUSINESS MESSAGES",
   "serviceInquiries": "SERVICE INQUIRIES",
   "acceptInterview": "Accept Interview",
-  "quickPlugNewBadge": "{count, plural, =1{1 new} other{{count} new}}",
-  "orLabel": "or"
+  "codeSentToEmail": "A code has been sent to {email}"
 }

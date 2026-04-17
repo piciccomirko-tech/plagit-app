@@ -5652,16 +5652,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get adminStatRejected => 'Rejetés';
 
   @override
-  String quickPlugNewBadge(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count nouveaux',
-      one: '1 nouveau',
-    );
-    return '$_temp0';
+  String codeSentToEmail(String email) {
+    return 'Un code a été envoyé à $email';
   }
-
-  @override
-  String get orLabel => 'ou';
 }

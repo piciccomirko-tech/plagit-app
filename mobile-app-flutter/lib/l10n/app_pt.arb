@@ -2382,6 +2382,5 @@
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Pré-selecionados",
   "adminStatRejected": "Rejeitados",
-  "quickPlugNewBadge": "{count, plural, =1{1 novo} other{{count} novos}}",
-  "orLabel": "ou"
+  "codeSentToEmail": "Um código foi enviado para {email}"
 }

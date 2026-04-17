@@ -5709,18 +5709,7 @@ class AppLocalizationsRu extends AppLocalizations {
   String get adminStatRejected => 'Отклонены';
 
   @override
-  String quickPlugNewBadge(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count новых',
-      many: '$count новых',
-      few: '$count новых',
-      one: '1 новый',
-    );
-    return '$_temp0';
+  String codeSentToEmail(String email) {
+    return 'Код отправлен на $email';
   }
-
-  @override
-  String get orLabel => 'или';
 }

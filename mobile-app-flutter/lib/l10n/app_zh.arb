@@ -2382,6 +2382,5 @@
   "adminStatReviewed": "已审核",
   "adminStatShortlisted": "入围",
   "adminStatRejected": "已拒绝",
-  "quickPlugNewBadge": "{count} 个新",
-  "orLabel": "或"
+  "codeSentToEmail": "验证码已发送至 {email}"
 }
