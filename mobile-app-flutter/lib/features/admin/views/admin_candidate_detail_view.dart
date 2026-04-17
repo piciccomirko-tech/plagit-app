@@ -328,8 +328,8 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
           const SizedBox(height: 10),
           Row(
             children: [
-              const Text('Profile',
-                  style: TextStyle(fontSize: 11, color: AppColors.secondary)),
+              Text(AppLocalizations.of(context).adminTabProfile,
+                  style: const TextStyle(fontSize: 11, color: AppColors.secondary)),
               const SizedBox(width: 8),
               Expanded(
                 child: ClipRRect(
@@ -371,13 +371,14 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
   }
 
   Widget _statsRow() {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
-        _statCard('Applications', '5', AppColors.teal),
+        _statCard(l.adminMenuApplications, '5', AppColors.teal),
         const SizedBox(width: 10),
-        _statCard('Interviews', '2', AppColors.purple),
+        _statCard(l.adminMenuInterviews, '2', AppColors.purple),
         const SizedBox(width: 10),
-        _statCard('Saved', '3', AppColors.amber),
+        _statCard(l.adminStatSaved, '3', AppColors.amber),
       ],
     );
   }
@@ -407,19 +408,20 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
   }
 
   Widget _profileTab(Map<String, dynamic> c) {
+    final l = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _infoRow('Name', c['name'] as String),
-        _infoRow('Role', c['role'] as String),
-        _infoRow('Email', c['email'] as String),
-        _infoRow('Phone', c['phone'] as String),
-        _infoRow('Location', c['location'] as String),
-        _infoRow('Plan', c['plan'] as String),
-        _infoRow('Verified', c['verified'] as String),
-        _infoRow('Status', c['status'] as String),
-        _infoRow('Joined', c['joined'] as String),
-        _infoRow('Profile Completion', '${c['completion']}%'),
+        _infoRow(l.adminFieldName, c['name'] as String),
+        _infoRow(l.adminFieldRole, c['role'] as String),
+        _infoRow(l.adminFieldEmail, c['email'] as String),
+        _infoRow(l.adminFieldPhone, c['phone'] as String),
+        _infoRow(l.adminFieldLocation, c['location'] as String),
+        _infoRow(l.adminFieldPlan, c['plan'] as String),
+        _infoRow(l.adminFieldVerified, c['verified'] as String),
+        _infoRow(l.adminFieldStatus, c['status'] as String),
+        _infoRow(l.adminFieldJoined, c['joined'] as String),
+        _infoRow(l.adminFieldProfileCompletion, '${c['completion']}%'),
       ],
     );
   }
@@ -576,7 +578,7 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
                 child: TextField(
                   controller: _noteController,
                   decoration: InputDecoration(
-                    hintText: 'Add a note...',
+                    hintText: AppLocalizations.of(context).adminPlaceholderAddNote,
                     hintStyle: const TextStyle(
                         fontSize: 13, color: AppColors.tertiary),
                     filled: true,

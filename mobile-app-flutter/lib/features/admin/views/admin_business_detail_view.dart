@@ -343,8 +343,8 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
           // Completion bar (mock 75%)
           Row(
             children: [
-              const Text('Profile',
-                  style: TextStyle(fontSize: 11, color: AppColors.secondary)),
+              Text(AppLocalizations.of(context).adminTabProfile,
+                  style: const TextStyle(fontSize: 11, color: AppColors.secondary)),
               const SizedBox(width: 8),
               Expanded(
                 child: ClipRRect(
@@ -386,13 +386,14 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
   }
 
   Widget _statsRow(Map<String, dynamic> b) {
+    final l = AppLocalizations.of(context);
     return Row(
       children: [
-        _statCard('Active Jobs', '${b['activeJobs']}', AppColors.teal),
+        _statCard(l.adminStatActiveJobs, '${b['activeJobs']}', AppColors.teal),
         const SizedBox(width: 10),
-        _statCard('Applicants', '12', AppColors.purple),
+        _statCard(l.adminStatApplicants, '12', AppColors.purple),
         const SizedBox(width: 10),
-        _statCard('Interviews', '4', AppColors.amber),
+        _statCard(l.adminMenuInterviews, '4', AppColors.amber),
       ],
     );
   }
@@ -422,20 +423,21 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
   }
 
   Widget _profileTab(Map<String, dynamic> b) {
+    final l = AppLocalizations.of(context);
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        _infoRow('Name', b['name'] as String),
-        _infoRow('Category', b['category'] as String),
-        _infoRow('Email', b['email'] as String),
-        _infoRow('Phone', '+44 20 7946 0958'),
-        _infoRow('Location', b['location'] as String),
-        _infoRow('Size', '${b['size']} employees'),
-        _infoRow('Plan', b['plan'] as String),
-        _infoRow('Verified', b['verified'] as String),
-        _infoRow('Status', b['status'] as String),
-        _infoRow('Active Jobs', '${b['activeJobs']}'),
-        _infoRow('Joined', b['joined'] as String),
+        _infoRow(l.adminFieldName, b['name'] as String),
+        _infoRow(l.adminFieldCategory, b['category'] as String),
+        _infoRow(l.adminFieldEmail, b['email'] as String),
+        _infoRow(l.adminFieldPhone, '+44 20 7946 0958'),
+        _infoRow(l.adminFieldLocation, b['location'] as String),
+        _infoRow(l.adminFieldSize, '${b['size']} employees'),
+        _infoRow(l.adminFieldPlan, b['plan'] as String),
+        _infoRow(l.adminFieldVerified, b['verified'] as String),
+        _infoRow(l.adminFieldStatus, b['status'] as String),
+        _infoRow(l.adminStatActiveJobs, '${b['activeJobs']}'),
+        _infoRow(l.adminFieldJoined, b['joined'] as String),
       ],
     );
   }
@@ -446,9 +448,9 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
         .where((j) => j['businessId'] == businessId)
         .toList();
     if (jobs.isEmpty) {
-      return const Center(
-        child: Text('No jobs posted',
-            style: TextStyle(fontSize: 14, color: AppColors.secondary)),
+      return Center(
+        child: Text(AppLocalizations.of(context).adminEmptyNoJobsPosted,
+            style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
       );
     }
     return ListView.separated(
@@ -583,7 +585,7 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
                 child: TextField(
                   controller: _noteController,
                   decoration: InputDecoration(
-                    hintText: 'Add a note...',
+                    hintText: AppLocalizations.of(context).adminPlaceholderAddNote,
                     hintStyle: const TextStyle(
                         fontSize: 13, color: AppColors.tertiary),
                     filled: true,

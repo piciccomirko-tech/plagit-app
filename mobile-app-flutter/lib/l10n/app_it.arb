@@ -1954,5 +1954,21 @@
   "adminDialogUnverifyBody": "Rimuovere la verifica da {name}?",
   "adminDialogReactivateBody": "Riattivare {name}?",
   "adminDialogSuspendBusinessBody": "Sospendere {name}? Tutte le offerte verranno messe in pausa.",
-  "adminDialogSuspendCandidateBody": "Sospendere {name}? Perderà l'accesso."
+  "adminDialogSuspendCandidateBody": "Sospendere {name}? Perderà l'accesso.",
+  "adminFieldName": "Nome",
+  "adminFieldEmail": "Email",
+  "adminFieldPhone": "Telefono",
+  "adminFieldLocation": "Posizione",
+  "adminFieldPlan": "Piano",
+  "adminFieldVerified": "Verificato",
+  "adminFieldStatus": "Stato",
+  "adminFieldJoined": "Iscritto",
+  "adminFieldCategory": "Categoria",
+  "adminFieldSize": "Dimensione",
+  "adminFieldRole": "Ruolo",
+  "adminFieldProfileCompletion": "Completamento profilo",
+  "adminStatApplicants": "Candidati",
+  "adminStatSaved": "Salvati",
+  "adminPlaceholderAddNote": "Aggiungi una nota...",
+  "adminEmptyNoJobsPosted": "Nessun annuncio pubblicato"
 }

@@ -1954,5 +1954,21 @@
   "adminDialogUnverifyBody": "هل تريد إزالة التحقق من {name}؟",
   "adminDialogReactivateBody": "هل تريد إعادة تفعيل {name}؟",
   "adminDialogSuspendBusinessBody": "تعليق {name}؟ سيتم إيقاف جميع الوظائف مؤقتًا.",
-  "adminDialogSuspendCandidateBody": "تعليق {name}؟ سيفقد الوصول."
+  "adminDialogSuspendCandidateBody": "تعليق {name}؟ سيفقد الوصول.",
+  "adminFieldName": "الاسم",
+  "adminFieldEmail": "البريد الإلكتروني",
+  "adminFieldPhone": "الهاتف",
+  "adminFieldLocation": "الموقع",
+  "adminFieldPlan": "الخطة",
+  "adminFieldVerified": "موثّق",
+  "adminFieldStatus": "الحالة",
+  "adminFieldJoined": "انضم",
+  "adminFieldCategory": "الفئة",
+  "adminFieldSize": "الحجم",
+  "adminFieldRole": "الدور",
+  "adminFieldProfileCompletion": "اكتمال الملف الشخصي",
+  "adminStatApplicants": "المتقدّمون",
+  "adminStatSaved": "المحفوظ",
+  "adminPlaceholderAddNote": "أضف ملاحظة...",
+  "adminEmptyNoJobsPosted": "لا توجد وظائف منشورة"
 }

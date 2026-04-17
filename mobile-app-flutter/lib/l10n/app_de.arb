@@ -2202,5 +2202,21 @@
   "adminDialogUnverifyBody": "Verifizierung von {name} entfernen?",
   "adminDialogReactivateBody": "{name} reaktivieren?",
   "adminDialogSuspendBusinessBody": "{name} sperren? Alle Jobs werden pausiert.",
-  "adminDialogSuspendCandidateBody": "{name} sperren? Der Zugriff wird entzogen."
+  "adminDialogSuspendCandidateBody": "{name} sperren? Der Zugriff wird entzogen.",
+  "adminFieldName": "Name",
+  "adminFieldEmail": "E-Mail",
+  "adminFieldPhone": "Telefon",
+  "adminFieldLocation": "Standort",
+  "adminFieldPlan": "Plan",
+  "adminFieldVerified": "Verifiziert",
+  "adminFieldStatus": "Status",
+  "adminFieldJoined": "Beigetreten",
+  "adminFieldCategory": "Kategorie",
+  "adminFieldSize": "Größe",
+  "adminFieldRole": "Rolle",
+  "adminFieldProfileCompletion": "Profilvollständigkeit",
+  "adminStatApplicants": "Bewerber",
+  "adminStatSaved": "Gespeichert",
+  "adminPlaceholderAddNote": "Notiz hinzufügen...",
+  "adminEmptyNoJobsPosted": "Keine Jobs veröffentlicht"
 }

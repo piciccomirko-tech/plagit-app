@@ -5077,4 +5077,52 @@ class AppLocalizationsPt extends AppLocalizations {
   String adminDialogSuspendCandidateBody(String name) {
     return 'Suspender $name? Perderá o acesso.';
   }
+
+  @override
+  String get adminFieldName => 'Nome';
+
+  @override
+  String get adminFieldEmail => 'E-mail';
+
+  @override
+  String get adminFieldPhone => 'Telefone';
+
+  @override
+  String get adminFieldLocation => 'Localização';
+
+  @override
+  String get adminFieldPlan => 'Plano';
+
+  @override
+  String get adminFieldVerified => 'Verificado';
+
+  @override
+  String get adminFieldStatus => 'Estado';
+
+  @override
+  String get adminFieldJoined => 'Inscrito';
+
+  @override
+  String get adminFieldCategory => 'Categoria';
+
+  @override
+  String get adminFieldSize => 'Tamanho';
+
+  @override
+  String get adminFieldRole => 'Função';
+
+  @override
+  String get adminFieldProfileCompletion => 'Perfil completo';
+
+  @override
+  String get adminStatApplicants => 'Candidatos';
+
+  @override
+  String get adminStatSaved => 'Salvos';
+
+  @override
+  String get adminPlaceholderAddNote => 'Adicionar uma nota...';
+
+  @override
+  String get adminEmptyNoJobsPosted => 'Nenhuma vaga publicada';
 }

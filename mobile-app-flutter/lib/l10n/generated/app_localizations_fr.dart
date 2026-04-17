@@ -5096,4 +5096,52 @@ class AppLocalizationsFr extends AppLocalizations {
   String adminDialogSuspendCandidateBody(String name) {
     return 'Suspendre $name ? L\'accès sera révoqué.';
   }
+
+  @override
+  String get adminFieldName => 'Nom';
+
+  @override
+  String get adminFieldEmail => 'E-mail';
+
+  @override
+  String get adminFieldPhone => 'Téléphone';
+
+  @override
+  String get adminFieldLocation => 'Emplacement';
+
+  @override
+  String get adminFieldPlan => 'Plan';
+
+  @override
+  String get adminFieldVerified => 'Vérifié';
+
+  @override
+  String get adminFieldStatus => 'Statut';
+
+  @override
+  String get adminFieldJoined => 'Inscrit';
+
+  @override
+  String get adminFieldCategory => 'Catégorie';
+
+  @override
+  String get adminFieldSize => 'Taille';
+
+  @override
+  String get adminFieldRole => 'Rôle';
+
+  @override
+  String get adminFieldProfileCompletion => 'Profil complété';
+
+  @override
+  String get adminStatApplicants => 'Candidats';
+
+  @override
+  String get adminStatSaved => 'Enregistrés';
+
+  @override
+  String get adminPlaceholderAddNote => 'Ajouter une note...';
+
+  @override
+  String get adminEmptyNoJobsPosted => 'Aucune offre publiée';
 }

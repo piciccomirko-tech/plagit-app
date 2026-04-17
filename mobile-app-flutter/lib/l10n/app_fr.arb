@@ -2202,5 +2202,21 @@
   "adminDialogUnverifyBody": "Retirer la vérification de {name} ?",
   "adminDialogReactivateBody": "Réactiver {name} ?",
   "adminDialogSuspendBusinessBody": "Suspendre {name} ? Toutes les offres seront mises en pause.",
-  "adminDialogSuspendCandidateBody": "Suspendre {name} ? L'accès sera révoqué."
+  "adminDialogSuspendCandidateBody": "Suspendre {name} ? L'accès sera révoqué.",
+  "adminFieldName": "Nom",
+  "adminFieldEmail": "E-mail",
+  "adminFieldPhone": "Téléphone",
+  "adminFieldLocation": "Emplacement",
+  "adminFieldPlan": "Plan",
+  "adminFieldVerified": "Vérifié",
+  "adminFieldStatus": "Statut",
+  "adminFieldJoined": "Inscrit",
+  "adminFieldCategory": "Catégorie",
+  "adminFieldSize": "Taille",
+  "adminFieldRole": "Rôle",
+  "adminFieldProfileCompletion": "Profil complété",
+  "adminStatApplicants": "Candidats",
+  "adminStatSaved": "Enregistrés",
+  "adminPlaceholderAddNote": "Ajouter une note...",
+  "adminEmptyNoJobsPosted": "Aucune offre publiée"
 }
