@@ -2381,5 +2381,7 @@
   "adminStatNew": "Nouveaux",
   "adminStatReviewed": "Examinés",
   "adminStatShortlisted": "Présélectionnés",
-  "adminStatRejected": "Rejetés"
+  "adminStatRejected": "Rejetés",
+  "quickPlugNewBadge": "{count, plural, =1{1 nouveau} other{{count} nouveaux}}",
+  "orLabel": "ou"
 }

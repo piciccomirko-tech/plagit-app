@@ -5640,4 +5640,18 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Abgelehnt';
+
+  @override
+  String quickPlugNewBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count neu',
+      one: '1 neu',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orLabel => 'oder';
 }

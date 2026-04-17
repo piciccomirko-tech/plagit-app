@@ -5620,4 +5620,18 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Respinti';
+
+  @override
+  String quickPlugNewBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nuovi',
+      one: '1 nuovo',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orLabel => 'oppure';
 }

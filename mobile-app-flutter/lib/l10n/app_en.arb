@@ -4005,5 +4005,19 @@
   "adminStatRejected": "Rejected",
   "@adminStatRejected": {
     "description": "Admin job detail: adminStatRejected"
+  },
+  "quickPlugNewBadge": "{count, plural, =1{1 new} other{{count} new}}",
+  "orLabel": "or",
+  "@quickPlugNewBadge": {
+    "description": "Plural badge for new quick plug items (pendingCount)",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "@orLabel": {
+    "description": "Simple 'or' divider between upload and manual fill options"
   }
 }

@@ -2381,5 +2381,7 @@
   "adminStatNew": "Новые",
   "adminStatReviewed": "Проверено",
   "adminStatShortlisted": "В шортлисте",
-  "adminStatRejected": "Отклонены"
+  "adminStatRejected": "Отклонены",
+  "quickPlugNewBadge": "{count, plural, =1{1 новый} few{{count} новых} many{{count} новых} other{{count} новых}}",
+  "orLabel": "или"
 }

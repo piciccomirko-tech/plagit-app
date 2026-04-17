@@ -5466,4 +5466,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminStatRejected => '已拒绝';
+
+  @override
+  String quickPlugNewBadge(int count) {
+    return '$count 个新';
+  }
+
+  @override
+  String get orLabel => '或';
 }

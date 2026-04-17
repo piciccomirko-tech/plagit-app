@@ -10141,6 +10141,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rejected'**
   String get adminStatRejected;
+
+  /// Plural badge for new quick plug items (pendingCount)
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 new} other{{count} new}}'**
+  String quickPlugNewBadge(int count);
+
+  /// Simple 'or' divider between upload and manual fill options
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get orLabel;
 }
 
 class _AppLocalizationsDelegate

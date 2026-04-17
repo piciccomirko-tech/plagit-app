@@ -726,5 +726,7 @@
   "candidateMessages": "CANDIDATE MESSAGES",
   "businessMessages": "BUSINESS MESSAGES",
   "serviceInquiries": "SERVICE INQUIRIES",
-  "acceptInterview": "Accept Interview"
+  "acceptInterview": "Accept Interview",
+  "quickPlugNewBadge": "{count, plural, =1{1 new} other{{count} new}}",
+  "orLabel": "or"
 }

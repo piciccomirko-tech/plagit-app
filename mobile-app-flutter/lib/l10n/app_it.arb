@@ -2133,5 +2133,7 @@
   "adminStatNew": "Nuovi",
   "adminStatReviewed": "Revisionati",
   "adminStatShortlisted": "In shortlist",
-  "adminStatRejected": "Respinti"
+  "adminStatRejected": "Respinti",
+  "quickPlugNewBadge": "{count, plural, =1{1 nuovo} other{{count} nuovi}}",
+  "orLabel": "oppure"
 }

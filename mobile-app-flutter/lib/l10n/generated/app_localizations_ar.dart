@@ -5644,4 +5644,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'مرفوضون';
+
+  @override
+  String quickPlugNewBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count جديد',
+      many: '$count جديد',
+      few: '$count جدد',
+      two: 'اثنان جديدان',
+      one: 'جديد واحد',
+      zero: 'لا جديد',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orLabel => 'أو';
 }
