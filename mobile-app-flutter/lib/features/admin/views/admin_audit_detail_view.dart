@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class AdminAuditDetailView extends StatelessWidget {
   final String auditId;
@@ -18,6 +20,7 @@ class AdminAuditDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final a = _entry;
     if (a == null) {
       return Scaffold(
@@ -29,15 +32,15 @@ class AdminAuditDetailView extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text('Audit Detail'),
+          title: Text(l.adminSectionAuditDetail),
         ),
-        body: const Center(child: Text('Entry not found')),
+        body: Center(child: Text(l.adminEmptyEntryNotFound)),
       );
     }
 
     final action = a['action'] as String;
     final (IconData icon, Color color) = _actionStyle(action);
-    final (String prev, String next) = _changeText(action);
+    final (String prev, String next) = _changeText(l, action);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -48,8 +51,8 @@ class AdminAuditDetailView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
-        title: const Text('Audit Detail',
-            style: TextStyle(
+        title: Text(l.adminSectionAuditDetail,
+            style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: AppColors.charcoal)),
@@ -64,13 +67,13 @@ class AdminAuditDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _detailRow('Admin', a['admin'] as String),
+                  _detailRow(l.adminFieldAdmin, a['admin'] as String),
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Action',
-                          style: TextStyle(
+                      Text(l.adminFieldAction,
+                          style: const TextStyle(
                               fontSize: 13, color: AppColors.secondary)),
                       Container(
                         padding: const EdgeInsets.symmetric(
@@ -84,7 +87,7 @@ class AdminAuditDetailView extends StatelessWidget {
                           children: [
                             Icon(icon, size: 12, color: color),
                             const SizedBox(width: 4),
-                            Text(action,
+                            Text(_actionLabel(l, action),
                                 style: TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
@@ -96,12 +99,12 @@ class AdminAuditDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   _detailRow(
-                      'Timestamp', a['timestamp'] as String),
+                      l.adminFieldTimestamp, a['timestamp'] as String),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      const Text('Target: ',
-                          style: TextStyle(
+                      Text('${l.adminFieldTarget}: ',
+                          style: const TextStyle(
                               fontSize: 13, color: AppColors.secondary)),
                       GestureDetector(
                         onTap: () {
@@ -123,7 +126,7 @@ class AdminAuditDetailView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  Text('Type: ${a['targetType']}',
+                  Text('${l.adminFieldType}: ${a['targetType']}',
                       style: const TextStyle(
                           fontSize: 12, color: AppColors.tertiary)),
                 ],
@@ -136,8 +139,8 @@ class AdminAuditDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Changes',
-                      style: TextStyle(
+                  Text(l.adminSectionChanges,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.charcoal)),
@@ -181,8 +184,8 @@ class AdminAuditDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Reason',
-                      style: TextStyle(
+                  Text(l.adminFieldReason,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.charcoal)),
@@ -199,8 +202,8 @@ class AdminAuditDetailView extends StatelessWidget {
 
             // IP Address
             _card(
-              child: const Text('IP Address: 192.168.1.xxx',
-                  style: TextStyle(
+              child: Text('${l.adminFieldIpAddress}: 192.168.1.xxx',
+                  style: const TextStyle(
                       fontSize: 13, color: AppColors.tertiary)),
             ),
             const SizedBox(height: 32),
@@ -256,20 +259,37 @@ class AdminAuditDetailView extends StatelessWidget {
     }
   }
 
-  (String, String) _changeText(String action) {
+  (String, String) _changeText(AppLocalizations l, String action) {
     switch (action) {
       case 'Verified':
-        return ('Unverified', 'Verified');
+        return (l.adminAuditUnverified, aStatusLabel(l, 'Verified'));
       case 'Suspended':
-        return ('Active', 'Suspended');
+        return (aStatusLabel(l, 'Active'), aStatusLabel(l, 'Suspended'));
       case 'Featured':
-        return ('Standard', 'Featured');
+        return (l.adminAuditStandard, l.adminAuditFeatured);
       case 'Override':
-        return ('Previous Status', 'Overridden');
+        return (l.adminAuditPreviousStatus, l.adminAuditOverridden);
       case 'Resolved':
-        return ('Open', 'Resolved');
+        return (aStatusLabel(l, 'Open'), aStatusLabel(l, 'Resolved'));
       default:
-        return ('Previous', 'Updated');
+        return (l.adminAuditPrevious, l.adminAuditUpdated);
+    }
+  }
+
+  String _actionLabel(AppLocalizations l, String action) {
+    switch (action) {
+      case 'Verified':
+        return aStatusLabel(l, 'Verified');
+      case 'Suspended':
+        return aStatusLabel(l, 'Suspended');
+      case 'Featured':
+        return l.adminAuditFeatured;
+      case 'Override':
+        return l.adminAuditOverridden;
+      case 'Resolved':
+        return aStatusLabel(l, 'Resolved');
+      default:
+        return action;
     }
   }
 }

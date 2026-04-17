@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminInterviewDetailView extends StatefulWidget {
   final String interviewId;
@@ -36,6 +40,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final iv = _interview;
     final status = iv['status'] as String;
     return Scaffold(
@@ -50,12 +55,12 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal),
+                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Interview Detail',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                  Text(
+                    l.adminSectionInterviewDetail,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   const SizedBox(width: 24),
@@ -71,7 +76,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                     // Candidate link
                     _linkTile(
                       icon: Icons.person,
-                      label: 'Candidate',
+                      label: l.adminFieldCandidate,
                       value: iv['candidateName'] as String,
                       onTap: () => context.push('/admin/candidates/${iv['candidateId']}'),
                     ),
@@ -79,7 +84,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                     // Business link
                     _linkTile(
                       icon: Icons.business,
-                      label: 'Business',
+                      label: l.adminFieldBusiness,
                       value: iv['business'] as String,
                       onTap: () => context.push('/admin/businesses/ab1'),
                     ),
@@ -87,7 +92,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                     // Job link
                     _linkTile(
                       icon: Icons.work,
-                      label: 'Job',
+                      label: l.adminFieldJob,
                       value: iv['jobTitle'] as String,
                       onTap: () => context.push('/admin/jobs/aj1'),
                     ),
@@ -103,23 +108,23 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                       decoration: AppColors.cardDecoration,
                       child: Column(
                         children: [
-                          _infoRow(Icons.calendar_today, 'Date', iv['date'] as String),
+                          _infoRow(Icons.calendar_today, l.adminFieldDate, iv['date'] as String),
                           const Divider(height: 20, color: AppColors.divider),
-                          _infoRow(Icons.access_time, 'Time', iv['time'] as String),
+                          _infoRow(Icons.access_time, l.adminFieldTime, iv['time'] as String),
                           const Divider(height: 20, color: AppColors.divider),
-                          _infoRow(Icons.videocam, 'Format', iv['format'] as String),
+                          _infoRow(Icons.videocam, l.adminFieldFormat, iv['format'] as String),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
                     // Timeline
-                    _buildTimeline(status),
+                    _buildTimeline(l, status),
                     const SizedBox(height: 20),
                     // Notes
-                    _buildNotesSection(),
+                    _buildNotesSection(l),
                     const SizedBox(height: 20),
                     // Actions
-                    _buildActions(status),
+                    _buildActions(l, status),
                   ],
                 ),
               ),
@@ -153,7 +158,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
               ],
             ),
             const Spacer(),
-            const Icon(Icons.chevron_right, size: 18, color: AppColors.teal),
+            const Icon(Icons.chevron_right, size: 28, color: AppColors.teal),
           ],
         ),
       ),
@@ -172,7 +177,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
     );
   }
 
-  Widget _buildTimeline(String currentStatus) {
+  Widget _buildTimeline(AppLocalizations l, String currentStatus) {
     final statusIndex = {
       'Upcoming': 0,
       'Confirmed': 1,
@@ -187,7 +192,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Timeline', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(l.adminSectionTimeline, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 16),
           ..._timelineSteps.asMap().entries.map((entry) {
             final i = entry.key;
@@ -218,7 +223,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
-                    step,
+                    aStatusLabel(l, step),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: i == ci ? FontWeight.w600 : FontWeight.w400,
@@ -234,19 +239,19 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
     );
   }
 
-  Widget _buildNotesSection() {
+  Widget _buildNotesSection(AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: AppColors.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Admin Notes', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(l.adminSectionAdminNotes, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 12),
           TextField(
             controller: _noteController,
             decoration: InputDecoration(
-              hintText: 'Add a note...',
+              hintText: l.adminPlaceholderAddNote,
               hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -268,7 +273,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
               onPressed: () {
                 if (_noteController.text.isNotEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Note added')),
+                    SnackBar(content: Text(l.adminSnackbarNoteAdded)),
                   );
                   _noteController.clear();
                 }
@@ -278,7 +283,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Add Note'),
+              child: Text(l.adminActionAddNote),
             ),
           ),
         ],
@@ -286,24 +291,28 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
     );
   }
 
-  Widget _buildActions(String status) {
+  Widget _buildActions(AppLocalizations l, String status) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: AppColors.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Actions', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(l.adminSectionActions, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 16),
           Row(
             children: [
               if (status != 'No-Show' && status != 'Cancelled' && status != 'Completed')
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Marked as No-Show')),
-                      );
+                    onPressed: () async {
+                      final ok = await context.read<AdminActionsProvider>().markInterviewNoShow(_interview['id'] as String);
+                      if (ok && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l.adminSnackbarMarkedNoShow), backgroundColor: AppColors.amber),
+                        );
+                        setState(() {});
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.amber,
@@ -311,7 +320,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('Mark No-Show', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    child: Text(l.adminActionMarkNoShow, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                   ),
                 ),
               if (status != 'No-Show' && status != 'Cancelled' && status != 'Completed')
@@ -319,10 +328,14 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
               if (status != 'Cancelled' && status != 'Completed')
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Interview cancelled')),
-                      );
+                    onPressed: () async {
+                      final ok = await context.read<AdminActionsProvider>().cancelInterview(_interview['id'] as String);
+                      if (ok && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l.adminSnackbarInterviewCancelled), backgroundColor: AppColors.red),
+                        );
+                        setState(() {});
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.red,
@@ -330,7 +343,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('Cancel', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    child: Text(l.adminActionCancel, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                   ),
                 ),
               if (status != 'Completed' && status != 'Cancelled')
@@ -338,10 +351,14 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
               if (status != 'Completed' && status != 'Cancelled' && status != 'No-Show')
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Interview completed')),
-                      );
+                    onPressed: () async {
+                      final ok = await context.read<AdminActionsProvider>().markInterviewComplete(_interview['id'] as String);
+                      if (ok && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(l.adminSnackbarInterviewCompleted), backgroundColor: AppColors.green),
+                        );
+                        setState(() {});
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.green,
@@ -349,7 +366,7 @@ class _AdminInterviewDetailViewState extends State<AdminInterviewDetailView> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text('Complete', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    child: Text(l.adminActionComplete, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                   ),
                 ),
             ],

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
-import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/core/widgets/application_status_pill.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminApplicationDetailView extends StatefulWidget {
   final String applicationId;
@@ -23,18 +27,21 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
     );
   }
 
+  // Unified status taxonomy — same labels candidate / business sides see.
   final _allStatuses = [
     'Applied',
     'Under Review',
-    'Interview',
     'Shortlisted',
-    'Rejected',
+    'Interview Invited',
+    'Interview Scheduled',
     'Hired',
+    'Rejected',
+    'Withdrawn',
   ];
 
   final _timelineSteps = [
     'Applied',
-    'Viewed',
+    'Reviewed',
     'Shortlisted',
     'Interview',
     'Decision',
@@ -49,6 +56,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final app = _app;
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -62,12 +70,12 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal),
+                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Application Detail',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+                  Text(
+                    l.adminSectionApplicationDetail,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   const SizedBox(width: 24),
@@ -83,7 +91,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                     // Candidate card
                     _linkCard(
                       icon: Icons.person,
-                      label: 'Candidate',
+                      label: l.adminFieldCandidate,
                       value: app['candidateName'] as String,
                       subtitle: app['candidateId'] as String,
                       onTap: () => context.push('/admin/candidates/${app['candidateId']}'),
@@ -92,32 +100,60 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                     // Job card
                     _linkCard(
                       icon: Icons.work,
-                      label: 'Job',
+                      label: l.adminFieldJob,
                       value: app['jobTitle'] as String,
-                      onTap: () => context.push('/admin/jobs/aj1'),
+                      onTap: () => context.push('/admin/jobs/${app['jobId'] ?? 'aj1'}'),
                     ),
                     const SizedBox(height: 12),
                     // Business card
                     _linkCard(
                       icon: Icons.business,
-                      label: 'Business',
+                      label: l.adminFieldBusiness,
                       value: app['business'] as String,
                       onTap: () => context.push('/admin/businesses/${app['businessId']}'),
                     ),
                     const SizedBox(height: 20),
-                    // Status badge centered
+                    // Unified status pill — same widget candidate/business use
                     Center(
-                      child: StatusBadge(status: app['status'] as String, large: true),
+                      child: ApplicationStatusPill(status: app['status'] as String),
                     ),
+                    if (app['flagged'] == true) ...[
+                      const SizedBox(height: 10),
+                      Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppColors.red.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.flag, size: 12, color: AppColors.red),
+                              const SizedBox(width: 5),
+                              Text(
+                                l.adminBadgeFlaggedForReview,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.red,
+                                  letterSpacing: -0.1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     // Timeline
-                    _buildTimeline(app['status'] as String),
+                    _buildTimeline(l, app['status'] as String),
                     const SizedBox(height: 24),
                     // Admin Override
-                    _buildOverrideSection(),
+                    _buildOverrideSection(l),
                     const SizedBox(height: 24),
                     // Notes
-                    _buildNotesSection(),
+                    _buildNotesSection(l),
                   ],
                 ),
               ),
@@ -167,21 +203,25 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, size: 18, color: AppColors.teal),
+            const Icon(Icons.chevron_right, size: 28, color: AppColors.teal),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildTimeline(String currentStatus) {
+  Widget _buildTimeline(AppLocalizations l, String currentStatus) {
+    // Map every unified status into its timeline position so the lifecycle
+    // step is visible regardless of which terminal state was reached.
     final statusMap = {
       'Applied': 0,
       'Under Review': 1,
       'Shortlisted': 2,
-      'Interview': 3,
+      'Interview Invited': 3,
+      'Interview Scheduled': 3,
       'Hired': 4,
       'Rejected': 4,
+      'Withdrawn': 4,
     };
     final currentIndex = statusMap[currentStatus] ?? 0;
 
@@ -191,9 +231,9 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Timeline',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          Text(
+            l.adminSectionTimeline,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
           const SizedBox(height: 16),
           ..._timelineSteps.asMap().entries.map((entry) {
@@ -232,7 +272,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 Padding(
                   padding: const EdgeInsets.only(top: 2),
                   child: Text(
-                    step,
+                    aStatusLabel(l, step),
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: isCurrent ? FontWeight.w600 : FontWeight.w400,
@@ -248,16 +288,16 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
     );
   }
 
-  Widget _buildOverrideSection() {
+  Widget _buildOverrideSection(AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: AppColors.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Admin Override',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          Text(
+            l.adminSectionAdminOverride,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
           const SizedBox(height: 16),
           Container(
@@ -269,10 +309,14 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
                 value: _overrideStatus,
-                hint: const Text('Select status', style: TextStyle(fontSize: 14, color: AppColors.tertiary)),
+                hint: Text(l.adminPlaceholderSelectStatus,
+                    style: const TextStyle(fontSize: 14, color: AppColors.tertiary)),
                 isExpanded: true,
                 items: _allStatuses.map((s) {
-                  return DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 14)));
+                  return DropdownMenuItem(
+                      value: s,
+                      child: Text(aStatusLabel(l, s),
+                          style: const TextStyle(fontSize: 14)));
                 }).toList(),
                 onChanged: (v) => setState(() => _overrideStatus = v),
               ),
@@ -282,7 +326,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
           TextField(
             controller: _reasonController,
             decoration: InputDecoration(
-              hintText: 'Reason for override...',
+              hintText: l.adminPlaceholderReasonOverride,
               hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -304,26 +348,35 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
               onPressed: _overrideStatus == null
                   ? null
                   : () {
+                      final reason = _reasonController.text.isEmpty
+                          ? l.adminMiscNoneProvided
+                          : _reasonController.text;
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text('Confirm Override'),
+                          title: Text(l.adminDialogConfirmOverrideTitle),
                           content: Text(
-                            'Change status to "$_overrideStatus"?\n\nReason: ${_reasonController.text.isEmpty ? "None provided" : _reasonController.text}',
+                            '${l.adminDialogConfirmOverrideQuestion(aStatusLabel(l, _overrideStatus!))}\n\n${l.adminDialogReasonPrefix} $reason',
                           ),
                           actions: [
                             TextButton(
                               onPressed: () => Navigator.pop(ctx),
-                              child: const Text('Cancel'),
+                              child: Text(l.adminActionCancel),
                             ),
                             TextButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 Navigator.pop(ctx);
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('Status override applied')),
+                                final ok = await context.read<AdminActionsProvider>().overrideApplicationStatus(
+                                  _app['id'] as String,
+                                  _overrideStatus!,
                                 );
+                                if (ok && mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text(l.adminSnackbarStatusOverrideApplied), backgroundColor: AppColors.amber),
+                                  );
+                                }
                               },
-                              child: const Text('Confirm'),
+                              child: Text(l.adminActionConfirm),
                             ),
                           ],
                         ),
@@ -335,7 +388,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Apply Override', style: TextStyle(fontWeight: FontWeight.w600)),
+              child: Text(l.adminActionApplyOverride, style: const TextStyle(fontWeight: FontWeight.w600)),
             ),
           ),
         ],
@@ -343,22 +396,22 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
     );
   }
 
-  Widget _buildNotesSection() {
+  Widget _buildNotesSection(AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: AppColors.cardDecoration,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Notes',
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          Text(
+            l.adminTabNotes,
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _noteController,
             decoration: InputDecoration(
-              hintText: 'Add a note...',
+              hintText: l.adminPlaceholderAddNote,
               hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -380,7 +433,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
               onPressed: () {
                 if (_noteController.text.isNotEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Note saved')),
+                    SnackBar(content: Text(l.adminSnackbarNoteSaved)),
                   );
                   _noteController.clear();
                 }
@@ -390,13 +443,13 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Save Note'),
+              child: Text(l.adminActionSaveNote),
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'No notes yet.',
-            style: TextStyle(fontSize: 13, color: AppColors.tertiary),
+          Text(
+            l.adminEmptyNoNotes,
+            style: const TextStyle(fontSize: 13, color: AppColors.tertiary),
           ),
         ],
       ),

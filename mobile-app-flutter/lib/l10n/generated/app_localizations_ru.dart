@@ -5203,4 +5203,214 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'Нет опубликованных вакансий';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'Сведения о подписке';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'Подписка не найдена';
+
+  @override
+  String get adminSectionPlanDetails => 'Детали тарифа';
+
+  @override
+  String get adminFieldPrice => 'Цена';
+
+  @override
+  String get adminFieldStartDate => 'Дата начала';
+
+  @override
+  String get adminFieldRenewalDate => 'Дата продления';
+
+  @override
+  String get adminSectionAdminOverride => 'Переопределение админом';
+
+  @override
+  String get adminPlanCandidatePremium => 'Кандидат Premium';
+
+  @override
+  String get adminPlanBusinessPro => 'Business Pro';
+
+  @override
+  String get adminPlanBusinessPremium => 'Business Premium';
+
+  @override
+  String get adminPlanFree => 'Бесплатно';
+
+  @override
+  String get adminFieldNewRenewalDate => 'Новая дата продления';
+
+  @override
+  String get adminPlaceholderDateExample => 'напр. 15 июн 2026';
+
+  @override
+  String get adminFieldReason => 'Причина';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'Причина переопределения...';
+
+  @override
+  String get adminActionApplyOverride => 'Применить переопределение';
+
+  @override
+  String get adminSectionHistory => 'История';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'Подписка создана';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'Платёж обработан';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'Нет заметок админа.';
+
+  @override
+  String get adminSectionAuditDetail => 'Сведения аудита';
+
+  @override
+  String get adminEmptyEntryNotFound => 'Запись не найдена';
+
+  @override
+  String get adminFieldAdmin => 'Админ';
+
+  @override
+  String get adminFieldAction => 'Действие';
+
+  @override
+  String get adminFieldTimestamp => 'Метка времени';
+
+  @override
+  String get adminFieldTarget => 'Цель';
+
+  @override
+  String get adminFieldType => 'Тип';
+
+  @override
+  String get adminSectionChanges => 'Изменения';
+
+  @override
+  String get adminFieldIpAddress => 'IP-адрес';
+
+  @override
+  String get adminAuditUnverified => 'Не подтверждён';
+
+  @override
+  String get adminAuditStandard => 'Обычный';
+
+  @override
+  String get adminAuditFeatured => 'Рекомендуемый';
+
+  @override
+  String get adminAuditPreviousStatus => 'Прежний статус';
+
+  @override
+  String get adminAuditOverridden => 'Переопределено';
+
+  @override
+  String get adminAuditPrevious => 'Ранее';
+
+  @override
+  String get adminAuditUpdated => 'Обновлено';
+
+  @override
+  String get adminStatusWithdrawn => 'Отозвано';
+
+  @override
+  String get adminStatusNoShow => 'Не явился';
+
+  @override
+  String get adminStatusInProgress => 'В процессе';
+
+  @override
+  String get adminStatusReviewed => 'Рассмотрено';
+
+  @override
+  String get adminStatusDecision => 'Решение';
+
+  @override
+  String get adminSectionApplicationDetail => 'Детали заявки';
+
+  @override
+  String get adminSectionInterviewDetail => 'Детали интервью';
+
+  @override
+  String get adminSectionTimeline => 'Хронология';
+
+  @override
+  String get adminSectionAdminNotes => 'Заметки администратора';
+
+  @override
+  String get adminSectionActions => 'Действия';
+
+  @override
+  String get adminFieldCandidate => 'Кандидат';
+
+  @override
+  String get adminFieldJob => 'Вакансия';
+
+  @override
+  String get adminFieldBusiness => 'Бизнес';
+
+  @override
+  String get adminFieldDate => 'Дата';
+
+  @override
+  String get adminFieldTime => 'Время';
+
+  @override
+  String get adminFieldFormat => 'Формат';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'Отмечено для проверки модератором';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Выберите статус';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Подтвердить переопределение';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'Изменить статус на «$status»?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Причина:';
+
+  @override
+  String get adminMiscNoneProvided => 'Не указано';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied =>
+      'Переопределение статуса применено';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Заметка сохранена';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Заметка добавлена';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Отмечено как не явился';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Интервью отменено';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Интервью завершено';
+
+  @override
+  String get adminActionSaveNote => 'Сохранить заметку';
+
+  @override
+  String get adminActionAddNote => 'Добавить заметку';
+
+  @override
+  String get adminActionComplete => 'Завершить';
+
+  @override
+  String get adminActionMarkNoShow => 'Отметить не явился';
+
+  @override
+  String get adminEmptyNoNotes => 'Заметок пока нет.';
 }

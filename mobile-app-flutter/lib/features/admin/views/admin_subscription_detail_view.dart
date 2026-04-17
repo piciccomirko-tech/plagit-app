@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/core/mock/mock_data.dart';
-import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class AdminSubscriptionDetailView extends StatefulWidget {
   final String subscriptionId;
@@ -16,9 +15,8 @@ class AdminSubscriptionDetailView extends StatefulWidget {
 class _AdminSubscriptionDetailViewState
     extends State<AdminSubscriptionDetailView> {
   String _selectedPlan = 'Candidate Premium';
-  String _overrideDate = '';
-  String _reason = '';
-
+  final _overrideDateCtrl = TextEditingController();
+  final _reasonCtrl = TextEditingController();
   Map<String, dynamic>? get _sub {
     try {
       return MockData.adminSubscriptions
@@ -39,280 +37,254 @@ class _AdminSubscriptionDetailViewState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final s = _sub;
     if (s == null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
-            onPressed: () => context.pop(),
-          ),
-          title: const Text('Subscription Detail'),
-        ),
-        body: const Center(child: Text('Subscription not found')),
+        backgroundColor: aBg,
+        body: SafeArea(child: Column(children: [
+          aTopBar(context, l.adminSectionSubscriptionDetail),
+          Expanded(child: Center(child: Text(l.adminEmptySubscriptionNotFound))),
+        ])),
       );
     }
 
+    final status = s['status'] as String;
+    final statusColor = status == 'Active' ? aGreen : status == 'Expired' ? aUrgent : aAmber;
+
     return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
-        ),
-        title: const Text('Subscription Detail',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.charcoal)),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User info card
-            _card(
-              child: Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.teal.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
+      backgroundColor: aBg,
+      body: SafeArea(child: Column(children: [
+        aTopBar(context, l.adminSectionSubscriptionDetail),
+        Expanded(child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // User info card
+              _card(
+                child: Row(
+                  children: [
+                    aAvatar(
                       (s['userName'] as String)
                           .split(' ')
                           .map((w) => w.isNotEmpty ? w[0] : '')
                           .take(2)
                           .join()
                           .toUpperCase(),
-                      style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.teal),
+                      48,
+                      fs: 16,
                     ),
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(s['userName'] as String,
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.charcoal)),
-                        const SizedBox(height: 2),
-                        Text(s['userType'] as String,
-                            style: const TextStyle(
-                                fontSize: 13, color: AppColors.secondary)),
-                        const SizedBox(height: 2),
-                        Text(s['plan'] as String,
-                            style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.teal)),
-                      ],
-                    ),
-                  ),
-                  StatusBadge(status: s['status'] as String),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            // Plan details
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Plan Details',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  _detailRow('Plan', s['plan'] as String),
-                  _detailRow('Price', s['price'] as String),
-                  _detailRow('Start Date', s['startDate'] as String),
-                  _detailRow('Renewal Date', s['renewalDate'] as String),
-                  _detailRow('Status', s['status'] as String),
-                ],
-              ),
-            ),
-            const SizedBox(height: 14),
-
-            // Admin override
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Admin Override',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  // Plan selector
-                  DropdownButtonFormField<String>(
-                    value: _selectedPlan,
-                    decoration: InputDecoration(
-                      labelText: 'Plan',
-                      labelStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.secondary),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
-                    ),
-                    items: const [
-                      DropdownMenuItem(
-                          value: 'Candidate Premium',
-                          child: Text('Candidate Premium')),
-                      DropdownMenuItem(
-                          value: 'Business Pro',
-                          child: Text('Business Pro')),
-                      DropdownMenuItem(
-                          value: 'Business Premium',
-                          child: Text('Business Premium')),
-                      DropdownMenuItem(
-                          value: 'Free', child: Text('Free')),
-                    ],
-                    onChanged: (v) {
-                      if (v != null) setState(() => _selectedPlan = v);
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  // Override date
-                  TextField(
-                    onChanged: (v) => _overrideDate = v,
-                    decoration: InputDecoration(
-                      labelText: 'New Renewal Date',
-                      hintText: 'e.g. Jun 15, 2026',
-                      labelStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.secondary),
-                      hintStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.tertiary),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  // Reason
-                  TextField(
-                    onChanged: (v) => _reason = v,
-                    maxLines: 2,
-                    decoration: InputDecoration(
-                      labelText: 'Reason',
-                      hintText: 'Reason for override...',
-                      labelStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.secondary),
-                      hintStyle: const TextStyle(
-                          fontSize: 13, color: AppColors.tertiary),
-                      filled: true,
-                      fillColor: AppColors.background,
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide.none),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.teal,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(s['userName'] as String,
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: aCharcoal)),
+                          const SizedBox(height: 2),
+                          Text(s['userType'] as String,
+                              style: const TextStyle(
+                                  fontSize: 13, color: aSecondary)),
+                          const SizedBox(height: 2),
+                          Text(s['plan'] as String,
+                              style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: aTeal)),
+                        ],
                       ),
-                      child: const Text('Apply Override',
-                          style: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.w600)),
                     ),
-                  ),
-                ],
+                    aPill(aStatusLabel(l, status), statusColor),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
 
-            // History timeline
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('History',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  _timelineEntry(
-                    'Subscription created',
-                    s['startDate'] as String,
-                    AppColors.green,
-                  ),
-                  _timelineEntry(
-                    'Payment processed - ${s['price']}',
-                    s['startDate'] as String,
-                    AppColors.teal,
-                  ),
-                ],
+              // Plan details
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminSectionPlanDetails,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    _detailRow(l.adminFieldPlan, s['plan'] as String),
+                    _detailRow(l.adminFieldPrice, s['price'] as String),
+                    _detailRow(l.adminFieldStartDate, s['startDate'] as String),
+                    _detailRow(l.adminFieldRenewalDate, s['renewalDate'] as String),
+                    _detailRow(l.adminFieldStatus, aStatusLabel(l, s['status'] as String)),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 14),
+              const SizedBox(height: 14),
 
-            // Notes section
-            _card(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Notes',
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.charcoal)),
-                  const SizedBox(height: 12),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.background,
-                      borderRadius: BorderRadius.circular(10),
+              // Admin override
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminSectionAdminOverride,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      initialValue: _selectedPlan,
+                      decoration: InputDecoration(
+                        labelText: l.adminFieldPlan,
+                        labelStyle: const TextStyle(
+                            fontSize: 13, color: aSecondary),
+                        filled: true,
+                        fillColor: aBg,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                            value: 'Candidate Premium',
+                            child: Text(l.adminPlanCandidatePremium)),
+                        DropdownMenuItem(
+                            value: 'Business Pro',
+                            child: Text(l.adminPlanBusinessPro)),
+                        DropdownMenuItem(
+                            value: 'Business Premium',
+                            child: Text(l.adminPlanBusinessPremium)),
+                        DropdownMenuItem(
+                            value: 'Free', child: Text(l.adminPlanFree)),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) setState(() => _selectedPlan = v);
+                      },
                     ),
-                    child: const Text(
-                      'No admin notes yet.',
-                      style: TextStyle(
-                          fontSize: 13, color: AppColors.tertiary),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _overrideDateCtrl,
+                      decoration: InputDecoration(
+                        labelText: l.adminFieldNewRenewalDate,
+                        hintText: l.adminPlaceholderDateExample,
+                        labelStyle: const TextStyle(
+                            fontSize: 13, color: aSecondary),
+                        hintStyle: const TextStyle(
+                            fontSize: 13, color: aTertiary),
+                        filled: true,
+                        fillColor: aBg,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
+                      ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: _reasonCtrl,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        labelText: l.adminFieldReason,
+                        hintText: l.adminPlaceholderReasonOverride,
+                        labelStyle: const TextStyle(
+                            fontSize: 13, color: aSecondary),
+                        hintStyle: const TextStyle(
+                            fontSize: 13, color: aTertiary),
+                        filled: true,
+                        fillColor: aBg,
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide.none),
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 10),
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: aTeal,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                        ),
+                        child: Text(l.adminActionApplyOverride,
+                            style: const TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600)),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-          ],
-        ),
-      ),
+              const SizedBox(height: 14),
+
+              // History timeline
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminSectionHistory,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    _timelineEntry(
+                      l.adminTimelineSubscriptionCreated,
+                      s['startDate'] as String,
+                      aGreen,
+                    ),
+                    _timelineEntry(
+                      '${l.adminTimelinePaymentProcessed} - ${s['price']}',
+                      s['startDate'] as String,
+                      aTeal,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 14),
+
+              // Notes section
+              _card(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l.adminTabNotes,
+                        style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: aCharcoal)),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: aBg,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        l.adminEmptyNoAdminNotes,
+                        style: const TextStyle(
+                            fontSize: 13, color: aTertiary),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
+        )),
+      ])),
     );
   }
 
@@ -321,9 +293,9 @@ class _AdminSubscriptionDetailViewState
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: aCard,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [AppColors.cardShadow],
+        boxShadow: [aCardShadow],
       ),
       child: child,
     );
@@ -337,12 +309,12 @@ class _AdminSubscriptionDetailViewState
         children: [
           Text(label,
               style: const TextStyle(
-                  fontSize: 13, color: AppColors.secondary)),
+                  fontSize: 13, color: aSecondary)),
           Text(value,
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.charcoal)),
+                  color: aCharcoal)),
         ],
       ),
     );
@@ -367,7 +339,7 @@ class _AdminSubscriptionDetailViewState
               Container(
                 width: 2,
                 height: 20,
-                color: AppColors.divider,
+                color: aDivider,
               ),
             ],
           ),
@@ -380,10 +352,10 @@ class _AdminSubscriptionDetailViewState
                     style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.charcoal)),
+                        color: aCharcoal)),
                 Text(date,
                     style: const TextStyle(
-                        fontSize: 11, color: AppColors.tertiary)),
+                        fontSize: 11, color: aTertiary)),
               ],
             ),
           ),

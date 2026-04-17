@@ -5141,4 +5141,213 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'لا توجد وظائف منشورة';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'تفاصيل الاشتراك';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'الاشتراك غير موجود';
+
+  @override
+  String get adminSectionPlanDetails => 'تفاصيل الخطة';
+
+  @override
+  String get adminFieldPrice => 'السعر';
+
+  @override
+  String get adminFieldStartDate => 'تاريخ البدء';
+
+  @override
+  String get adminFieldRenewalDate => 'تاريخ التجديد';
+
+  @override
+  String get adminSectionAdminOverride => 'تجاوز المسؤول';
+
+  @override
+  String get adminPlanCandidatePremium => 'مرشح بريميوم';
+
+  @override
+  String get adminPlanBusinessPro => 'بزنس برو';
+
+  @override
+  String get adminPlanBusinessPremium => 'بزنس بريميوم';
+
+  @override
+  String get adminPlanFree => 'مجاني';
+
+  @override
+  String get adminFieldNewRenewalDate => 'تاريخ التجديد الجديد';
+
+  @override
+  String get adminPlaceholderDateExample => 'مثال: 15 يونيو 2026';
+
+  @override
+  String get adminFieldReason => 'السبب';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'سبب التجاوز...';
+
+  @override
+  String get adminActionApplyOverride => 'تطبيق التجاوز';
+
+  @override
+  String get adminSectionHistory => 'السجل';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'تم إنشاء الاشتراك';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'تمت معالجة الدفع';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'لا توجد ملاحظات للمسؤول.';
+
+  @override
+  String get adminSectionAuditDetail => 'تفاصيل التدقيق';
+
+  @override
+  String get adminEmptyEntryNotFound => 'السجل غير موجود';
+
+  @override
+  String get adminFieldAdmin => 'المسؤول';
+
+  @override
+  String get adminFieldAction => 'الإجراء';
+
+  @override
+  String get adminFieldTimestamp => 'الطابع الزمني';
+
+  @override
+  String get adminFieldTarget => 'الهدف';
+
+  @override
+  String get adminFieldType => 'النوع';
+
+  @override
+  String get adminSectionChanges => 'التغييرات';
+
+  @override
+  String get adminFieldIpAddress => 'عنوان IP';
+
+  @override
+  String get adminAuditUnverified => 'غير موثّق';
+
+  @override
+  String get adminAuditStandard => 'قياسي';
+
+  @override
+  String get adminAuditFeatured => 'مميّز';
+
+  @override
+  String get adminAuditPreviousStatus => 'الحالة السابقة';
+
+  @override
+  String get adminAuditOverridden => 'تم التجاوز';
+
+  @override
+  String get adminAuditPrevious => 'السابق';
+
+  @override
+  String get adminAuditUpdated => 'تم التحديث';
+
+  @override
+  String get adminStatusWithdrawn => 'مسحوب';
+
+  @override
+  String get adminStatusNoShow => 'لم يحضر';
+
+  @override
+  String get adminStatusInProgress => 'قيد التقدم';
+
+  @override
+  String get adminStatusReviewed => 'تمت المراجعة';
+
+  @override
+  String get adminStatusDecision => 'قرار';
+
+  @override
+  String get adminSectionApplicationDetail => 'تفاصيل الطلب';
+
+  @override
+  String get adminSectionInterviewDetail => 'تفاصيل المقابلة';
+
+  @override
+  String get adminSectionTimeline => 'المخطط الزمني';
+
+  @override
+  String get adminSectionAdminNotes => 'ملاحظات المسؤول';
+
+  @override
+  String get adminSectionActions => 'الإجراءات';
+
+  @override
+  String get adminFieldCandidate => 'المرشح';
+
+  @override
+  String get adminFieldJob => 'الوظيفة';
+
+  @override
+  String get adminFieldBusiness => 'النشاط';
+
+  @override
+  String get adminFieldDate => 'التاريخ';
+
+  @override
+  String get adminFieldTime => 'الوقت';
+
+  @override
+  String get adminFieldFormat => 'الصيغة';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'تم الإبلاغ للمراجعة من قبل المشرف';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'اختر الحالة';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'تأكيد التجاوز';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'تغيير الحالة إلى \"$status\"؟';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'السبب:';
+
+  @override
+  String get adminMiscNoneProvided => 'لم يُحدَّد';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied => 'تم تطبيق تجاوز الحالة';
+
+  @override
+  String get adminSnackbarNoteSaved => 'تم حفظ الملاحظة';
+
+  @override
+  String get adminSnackbarNoteAdded => 'تمت إضافة الملاحظة';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'تم وضع علامة كـلم يحضر';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'تم إلغاء المقابلة';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'تم إكمال المقابلة';
+
+  @override
+  String get adminActionSaveNote => 'حفظ الملاحظة';
+
+  @override
+  String get adminActionAddNote => 'إضافة ملاحظة';
+
+  @override
+  String get adminActionComplete => 'إكمال';
+
+  @override
+  String get adminActionMarkNoShow => 'تعليم كـلم يحضر';
+
+  @override
+  String get adminEmptyNoNotes => 'لا توجد ملاحظات بعد.';
 }
