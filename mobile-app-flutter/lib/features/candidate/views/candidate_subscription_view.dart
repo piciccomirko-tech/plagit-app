@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Go Premium — rebuilt in Community-screen design language.
 class CandidateSubscriptionView extends StatefulWidget {
@@ -32,7 +33,7 @@ class _State extends State<CandidateSubscriptionView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
+                    child: const SizedBox(width: 36, height: 36, child: BackChevron(size: 22, color: AppColors.charcoal)),
                   ),
                   const Spacer(),
                   const Text('Go Premium', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),

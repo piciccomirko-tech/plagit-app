@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Schedule interview form — all mock, no API calls.
 class BusinessScheduleInterviewView extends StatefulWidget {
@@ -87,7 +88,7 @@ class _BusinessScheduleInterviewViewState
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
         title: const Text(

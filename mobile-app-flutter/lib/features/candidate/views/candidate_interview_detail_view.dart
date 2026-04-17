@@ -8,6 +8,7 @@ import 'package:plagit/core/widgets/app_back_title_bar.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/interview.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 // ═══════════════════════════════════════════════════════════════
 // Theme tokens — match Phase 1 premium screens
@@ -441,8 +442,7 @@ class _CandidateInterviewDetailViewState
                   ),
                 ),
                 const SizedBox(width: 3),
-                const Icon(CupertinoIcons.chevron_right,
-                    size: 28, color: _tealMain),
+                const ForwardChevron(size: 28, color: _tealMain),
               ],
             ),
           ],

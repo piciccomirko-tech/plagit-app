@@ -17,6 +17,7 @@ import 'package:plagit/features/admin/views/admin_subscriptions_view.dart';
 import 'package:plagit/features/admin/views/admin_reports_view.dart';
 import 'package:plagit/features/admin/views/admin_logs_view.dart';
 import 'package:plagit/features/admin/views/admin_settings_view.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class SuperAdminHomeView extends StatelessWidget {
   final VoidCallback onLogout;
@@ -223,7 +224,7 @@ class SuperAdminHomeView extends StatelessWidget {
                         Expanded(child: Text(i.$3, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 1, overflow: TextOverflow.ellipsis)),
                         StatusPill(text: i.$4, color: i.$4 == 'Urgent' ? AppColors.urgent : AppColors.amber),
                         const SizedBox(width: AppSpacing.sm),
-                        const Icon(Icons.chevron_right, size: 12, color: AppColors.tertiary),
+                        const ForwardChevron(size: 12, color: AppColors.tertiary),
                       ],
                     ),
                   ),
@@ -300,7 +301,7 @@ class SuperAdminHomeView extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(Icons.chevron_right, size: 16, color: AppColors.teal),
+                const ForwardChevron(size: 16, color: AppColors.teal),
               ],
             ),
           ),
@@ -383,7 +384,7 @@ class SuperAdminHomeView extends StatelessWidget {
                             StatusPill(text: e.value.badge, color: e.value.badgeColor),
                             const SizedBox(width: AppSpacing.sm),
                           ],
-                          const Icon(Icons.chevron_right, size: 14, color: AppColors.tertiary),
+                          const ForwardChevron(size: 14, color: AppColors.tertiary),
                         ],
                       ),
                     ),

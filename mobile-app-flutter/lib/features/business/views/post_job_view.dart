@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class PostJobView extends StatefulWidget {
   const PostJobView({super.key});
@@ -90,7 +91,7 @@ class _PostJobViewState extends State<PostJobView> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () {
             if (_published) {
               context.pop();

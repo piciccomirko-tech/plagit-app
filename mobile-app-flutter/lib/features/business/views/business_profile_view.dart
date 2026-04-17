@@ -9,6 +9,7 @@ import 'package:plagit/core/widgets/venue_gallery.dart';
 import 'package:plagit/models/business_profile.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/repositories/business_repository.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 const _tealMain = Color(0xFF00B5B0);
 const _bgMain = Color(0xFFF6F7F8);
@@ -169,11 +170,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
               onBack: () => context.canPop() ? context.pop() : null,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               backBackgroundColor: _surface,
-              backIcon: const Icon(
-                Icons.chevron_left,
-                size: 18,
-                color: _charcoal,
-              ),
+              backIcon: const BackChevron(size: 18, color: _charcoal,),
               titleStyle: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w500,

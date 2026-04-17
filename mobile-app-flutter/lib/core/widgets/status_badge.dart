@@ -10,7 +10,7 @@ class StatusBadge extends StatelessWidget {
     final (color, bg) = _colors(status);
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: large ? 16 : 10,
+        horizontal: large ? 16 : 12,
         vertical: large ? 6 : 3,
       ),
       decoration: BoxDecoration(
@@ -19,6 +19,8 @@ class StatusBadge extends StatelessWidget {
       ),
       child: Text(
         status,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: large ? 14 : 11,
           fontWeight: FontWeight.w600,

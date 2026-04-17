@@ -7,6 +7,7 @@ import 'package:plagit/core/widgets/application_status_pill.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class AdminApplicationDetailView extends StatefulWidget {
   final String applicationId;
@@ -70,7 +71,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   Text(
@@ -203,7 +204,7 @@ class _AdminApplicationDetailViewState extends State<AdminApplicationDetailView>
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, size: 28, color: AppColors.teal),
+            const ForwardChevron(size: 28, color: AppColors.teal),
           ],
         ),
       ),

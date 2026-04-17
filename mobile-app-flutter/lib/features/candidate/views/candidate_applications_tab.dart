@@ -5,6 +5,7 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/application.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class CandidateApplicationsTab extends StatefulWidget {
   const CandidateApplicationsTab({super.key});
@@ -304,11 +305,7 @@ class _ApplicationCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                const Icon(
-                  Icons.chevron_right,
-                  size: 20,
-                  color: AppColors.tertiary,
-                ),
+                const ForwardChevron(size: 20, color: AppColors.tertiary,),
               ],
             ),
           ],

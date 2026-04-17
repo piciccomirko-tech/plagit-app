@@ -10,6 +10,7 @@ import 'package:plagit/core/widgets/search_screen.dart';
 import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 const _tealMain = Color(0xFF00B5B0);
 const _bgMain = Color(0xFFF6F7F8);
@@ -649,10 +650,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                 const SizedBox(width: 4),
                 Padding(
                   padding: const EdgeInsets.only(top: 4),
-                  child: Icon(
-                    CupertinoIcons.chevron_right,
-                    size: 12,
-                    color: isUnread
+                  child: ForwardChevron(size: 12, color: isUnread
                         ? _tealMain.withValues(alpha: 0.5)
                         : const Color(0xFFC7C7CC),
                   ),

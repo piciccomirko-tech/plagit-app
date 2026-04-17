@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class AdminInterviewsView extends StatefulWidget {
   const AdminInterviewsView({super.key});
@@ -75,7 +76,7 @@ class _AdminInterviewsViewState extends State<AdminInterviewsView> {
                   Text(iv['job'] as String, style: const TextStyle(fontSize: 13, color: aSecondary)),
                   const SizedBox(height: 2), Text('${iv['date']} · ${iv['time']} · ${iv['type']}', style: const TextStyle(fontSize: 11, color: aTertiary)),
                 ])),
-                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [aPill(aStatusLabel(l, iv['status'] as String), color), const SizedBox(height: 8), const Icon(Icons.chevron_right, size: 28, color: aTertiary)]),
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [aPill(aStatusLabel(l, iv['status'] as String), color), const SizedBox(height: 8), const ForwardChevron(size: 28, color: aTertiary)]),
               ])));
         },
       )),

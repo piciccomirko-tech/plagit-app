@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/models/notification_item.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Business Notifications screen.
 /// Mirrors BusinessRealNotificationsView.swift with typed models.
@@ -78,8 +79,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
             child: const SizedBox(
                 width: 36,
                 height: 36,
-                child: Icon(Icons.chevron_left,
-                    size: 22, color: AppColors.charcoal)),
+                child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
           const Text('Notifications',

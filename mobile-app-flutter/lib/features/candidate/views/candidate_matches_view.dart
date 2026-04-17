@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate matches — mirrors CandidateMatchesView.swift.
 class CandidateMatchesView extends StatefulWidget {
@@ -98,7 +99,7 @@ class _CandidateMatchesViewState extends State<CandidateMatchesView> {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
-            child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
+            child: const SizedBox(width: 36, height: 36, child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
           const Text('Your Matches', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),

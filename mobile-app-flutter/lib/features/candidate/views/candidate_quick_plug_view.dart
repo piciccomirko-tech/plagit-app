@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate Quick Plug — rebuilt in Community-screen design language.
 class CandidateQuickPlugView extends StatelessWidget {
@@ -259,7 +260,7 @@ class CandidateQuickPlugView extends StatelessWidget {
                 children: [
                   Icon(Icons.lock_outline, size: 14, color: AppColors.tertiary),
                   const SizedBox(width: 4),
-                  const Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
+                  const ForwardChevron(size: 18, color: AppColors.tertiary),
                 ],
               ),
           ],

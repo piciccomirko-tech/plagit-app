@@ -5,6 +5,7 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/empty_state.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class CandidateDashboardTab extends StatefulWidget {
   const CandidateDashboardTab({super.key});
@@ -208,7 +209,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.tertiary),
+                    const ForwardChevron(color: AppColors.tertiary),
                   ],
                 ),
               ),
@@ -317,7 +318,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.tertiary),
+                    const ForwardChevron(color: AppColors.tertiary),
                   ],
                 ),
               ),
@@ -354,7 +355,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                         ],
                       ),
                     ),
-                    const Icon(Icons.chevron_right, color: AppColors.amber),
+                    const ForwardChevron(color: AppColors.amber),
                   ],
                 ),
               ),
@@ -599,7 +600,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                               ],
                             ),
                           ),
-                          const Icon(Icons.chevron_right, color: AppColors.tertiary),
+                          const ForwardChevron(color: AppColors.tertiary),
                         ],
                       ),
                     ],
@@ -723,7 +724,7 @@ class _CandidateDashboardTabState extends State<CandidateDashboardTab> {
                           ],
                         ),
                       ),
-                      const Icon(Icons.chevron_right, color: AppColors.tertiary),
+                      const ForwardChevron(color: AppColors.tertiary),
                     ],
                   ),
                 ),

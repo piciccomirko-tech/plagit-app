@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class RoleSelectView extends StatelessWidget {
   const RoleSelectView({super.key});
@@ -166,7 +167,7 @@ class _RoleCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.teal, size: 28),
+            const ForwardChevron(size: 28, color: AppColors.teal),
           ],
         ),
       ),

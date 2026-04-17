@@ -211,6 +211,8 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
                       children: [
                         TabBar(
                           controller: _tabCtrl,
+                          isScrollable: true,
+                          tabAlignment: TabAlignment.start,
                           labelColor: AppColors.teal,
                           unselectedLabelColor: AppColors.secondary,
                           indicatorColor: AppColors.teal,

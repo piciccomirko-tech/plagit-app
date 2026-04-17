@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Service module notifications view.
 class ServiceNotificationsView extends StatefulWidget {
@@ -93,8 +94,7 @@ class _ServiceNotificationsViewState extends State<ServiceNotificationsView> {
             child: const SizedBox(
                 width: 36,
                 height: 36,
-                child: Icon(Icons.chevron_left,
-                    size: 28, color: AppColors.charcoal)),
+                child: BackChevron(size: 28, color: AppColors.charcoal)),
           ),
           const Spacer(),
           Text(AppLocalizations.of(context).notifications,

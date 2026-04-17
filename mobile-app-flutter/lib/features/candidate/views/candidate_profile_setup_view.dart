@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate profile setup / onboarding — mirrors CandidateProfileSetupView.swift.
 class CandidateProfileSetupView extends StatefulWidget {
@@ -74,7 +75,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
-            child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 22, color: AppColors.charcoal)),
+            child: const SizedBox(width: 36, height: 36, child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
           const Text('Complete Your Profile', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
@@ -127,7 +128,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                       ],
                     ),
                   ),
-                  const Icon(Icons.chevron_right, size: 12, color: AppColors.tertiary),
+                  const ForwardChevron(size: 12, color: AppColors.tertiary),
                 ],
               ),
             ),
@@ -204,7 +205,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                   SizedBox(width: AppSpacing.md),
                   Text('Select category & role', style: TextStyle(fontSize: 15, color: AppColors.tertiary)),
                   Spacer(),
-                  Icon(Icons.chevron_right, size: 11, color: AppColors.tertiary),
+                  ForwardChevron(size: 11, color: AppColors.tertiary),
                 ],
               ),
             ),
@@ -258,7 +259,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                             maxLines: 1, overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Icon(Icons.chevron_right, size: 11, color: AppColors.tertiary),
+                        const ForwardChevron(size: 11, color: AppColors.tertiary),
                       ],
                     ),
                   ),
@@ -341,7 +342,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                   if (_cvFileName != null)
                     const Icon(Icons.check_circle, size: 14, color: AppColors.online)
                   else
-                    const Icon(Icons.chevron_right, size: 12, color: AppColors.tertiary),
+                    const ForwardChevron(size: 12, color: AppColors.tertiary),
                 ],
               ),
             ),

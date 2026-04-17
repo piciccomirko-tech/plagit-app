@@ -5,6 +5,7 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Standalone business interviews screen (pushed from dashboard).
 class BusinessInterviewsView extends StatefulWidget {
@@ -70,7 +71,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
           title: const Text(
@@ -94,7 +95,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
           elevation: 0,
           scrolledUnderElevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
           title: const Text(
@@ -129,7 +130,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
         title: const Text(

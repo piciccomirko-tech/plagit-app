@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/features/admin/views/admin_dashboard_view.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class AdminShellView extends StatefulWidget {
   const AdminShellView({super.key});
@@ -349,8 +350,7 @@ Widget _navCard(
               ],
             ),
           ),
-          const Icon(Icons.chevron_right,
-              size: 20, color: AppColors.tertiary),
+          const ForwardChevron(size: 20, color: AppColors.tertiary),
         ],
       ),
     ),
