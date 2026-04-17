@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class AdminAuditView extends StatefulWidget {
   const AdminAuditView({super.key});
@@ -40,7 +41,16 @@ class _AdminAuditViewState extends State<AdminAuditView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final results = _filtered;
+    final filterLabel = {
+      'All': l.adminFilterAll,
+      'Verified': l.adminStatusVerified,
+      'Suspended': l.adminStatusSuspended,
+      'Featured': l.adminActionFeatured,
+      'Override': l.adminActionOverride,
+      'Resolved': l.adminStatusResolved,
+    };
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -50,8 +60,8 @@ class _AdminAuditViewState extends State<AdminAuditView> {
           icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
-        title: const Text('Audit Log',
-            style: TextStyle(
+        title: Text(l.adminMenuAuditLog,
+            style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: AppColors.charcoal)),
@@ -64,7 +74,7 @@ class _AdminAuditViewState extends State<AdminAuditView> {
             child: TextField(
               onChanged: (v) => setState(() => _search = v),
               decoration: InputDecoration(
-                hintText: 'Search audit log...',
+                hintText: l.adminSearchAuditHint,
                 hintStyle:
                     const TextStyle(fontSize: 14, color: AppColors.tertiary),
                 prefixIcon: const Icon(Icons.search,
@@ -99,7 +109,7 @@ class _AdminAuditViewState extends State<AdminAuditView> {
                             : AppColors.teal.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: Text(f,
+                      child: Text(filterLabel[f] ?? f,
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
@@ -117,11 +127,11 @@ class _AdminAuditViewState extends State<AdminAuditView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.history,
+                        const Icon(Icons.history,
                             size: 48, color: AppColors.tertiary),
                         const SizedBox(height: 12),
-                        const Text('No audit entries found',
-                            style: TextStyle(
+                        Text(l.adminEmptyAuditTitle,
+                            style: const TextStyle(
                                 fontSize: 15, color: AppColors.secondary)),
                       ],
                     ),
@@ -129,8 +139,8 @@ class _AdminAuditViewState extends State<AdminAuditView> {
                 : ListView.separated(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
                     itemCount: results.length,
-                    separatorBuilder: (_, __) => const SizedBox(height: 8),
-                    itemBuilder: (_, i) => _auditRow(results[i]),
+                    separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    itemBuilder: (_, i) => _auditRow(results[i], l),
                   ),
           ),
         ],
@@ -138,9 +148,16 @@ class _AdminAuditViewState extends State<AdminAuditView> {
     );
   }
 
-  Widget _auditRow(Map<String, dynamic> a) {
+  Widget _auditRow(Map<String, dynamic> a, AppLocalizations l) {
     final action = a['action'] as String;
     final (IconData icon, Color color) = _actionStyle(action);
+    final actionLabel = {
+      'Verified': l.adminStatusVerified,
+      'Suspended': l.adminStatusSuspended,
+      'Featured': l.adminActionFeatured,
+      'Override': l.adminActionOverride,
+      'Resolved': l.adminStatusResolved,
+    }[action] ?? action;
 
     return GestureDetector(
       onTap: () => context.push('/admin/audit/${a['id']}'),
@@ -185,7 +202,7 @@ class _AdminAuditViewState extends State<AdminAuditView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('$action ${a['target']}',
+                  Text('$actionLabel ${a['target']}',
                       style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
