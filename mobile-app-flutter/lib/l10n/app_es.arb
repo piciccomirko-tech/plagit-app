@@ -2381,5 +2381,6 @@
   "adminStatNew": "Nuevos",
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Preseleccionados",
-  "adminStatRejected": "Rechazados"
+  "adminStatRejected": "Rechazados",
+  "codeSentToEmail": "Se ha enviado un código a {email}"
 }

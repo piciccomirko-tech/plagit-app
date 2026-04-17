@@ -5650,4 +5650,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejetés';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'Un code a été envoyé à $email';
+  }
 }

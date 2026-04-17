@@ -726,5 +726,6 @@
   "candidateMessages": "CANDIDATE MESSAGES",
   "businessMessages": "BUSINESS MESSAGES",
   "serviceInquiries": "SERVICE INQUIRIES",
-  "acceptInterview": "Accept Interview"
+  "acceptInterview": "Accept Interview",
+  "codeSentToEmail": "A code has been sent to {email}"
 }

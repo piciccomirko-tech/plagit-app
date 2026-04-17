@@ -5620,4 +5620,9 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Respinti';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'Un codice è stato inviato a $email';
+  }
 }

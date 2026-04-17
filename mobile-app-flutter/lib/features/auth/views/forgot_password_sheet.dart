@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/api_client.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 /// 3-step forgot password flow — mirrors ForgotPasswordSheet.swift.
 /// Step 1: Enter email → Step 2: Enter code + new password → Step 3: Success.
@@ -122,15 +123,15 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
         const SizedBox(height: 8),
         _iconCircle(Icons.lock_open, AppColors.amber),
         const SizedBox(height: 16),
-        const Text('Reset your password', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+        Text(AppLocalizations.of(context).resetYourPasswordTitle, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
         const SizedBox(height: 6),
-        const Text('Enter your email to receive a reset code', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
+        Text(AppLocalizations.of(context).enterEmailForResetCode, style: TextStyle(fontSize: 14, color: AppColors.secondary)),
         const SizedBox(height: 24),
         TextField(
           controller: _emailCtrl,
           keyboardType: TextInputType.emailAddress,
-          decoration: const InputDecoration(
-            hintText: 'Email Address',
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context).email,
             prefixIcon: Icon(Icons.email_outlined, size: 18),
           ),
         ),
@@ -146,7 +147,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
             onPressed: (_canRequestCode && !_loading) ? _requestCode : null,
             child: _loading
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('Send Reset Code'),
+                : Text(AppLocalizations.of(context).sendResetCode),
           ),
         ),
       ],
@@ -160,9 +161,9 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
         const SizedBox(height: 8),
         _iconCircle(Icons.lock_open, AppColors.amber),
         const SizedBox(height: 16),
-        const Text('Enter reset code', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+        Text(AppLocalizations.of(context).enterResetCode, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
         const SizedBox(height: 6),
-        Text('A code has been sent to ${_emailCtrl.text}', style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
+        Text(AppLocalizations.of(context).codeSentToEmail(_emailCtrl.text), style: const TextStyle(fontSize: 14, color: AppColors.secondary)),
         const SizedBox(height: 24),
         TextField(
           controller: _codeCtrl,
@@ -177,7 +178,7 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
           controller: _newPasswordCtrl,
           obscureText: !_passwordVisible,
           decoration: InputDecoration(
-            hintText: 'New Password (min 8 characters)',
+            hintText: AppLocalizations.of(context).newPasswordHint,
             prefixIcon: const Icon(Icons.lock_outline, size: 18),
             suffixIcon: GestureDetector(
               onTap: () => setState(() => _passwordVisible = !_passwordVisible),
@@ -189,8 +190,8 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
         TextField(
           controller: _confirmPasswordCtrl,
           obscureText: true,
-          decoration: const InputDecoration(
-            hintText: 'Confirm Password',
+          decoration: InputDecoration(
+            hintText: AppLocalizations.of(context).confirmPasswordField,
             prefixIcon: Icon(Icons.lock_outline, size: 18),
           ),
         ),
@@ -206,13 +207,13 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
             onPressed: (_canReset && !_loading) ? _resetPassword : null,
             child: _loading
                 ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Text('Reset Password'),
+                : Text(AppLocalizations.of(context).resetPassword),
           ),
         ),
         const SizedBox(height: 12),
         GestureDetector(
           onTap: () => setState(() { _step = 1; _error = null; }),
-          child: const Text('Resend Code', style: TextStyle(fontSize: 14, color: AppColors.teal, fontWeight: FontWeight.w500)),
+          child: Text(AppLocalizations.of(context).resendCode, style: TextStyle(fontSize: 14, color: AppColors.teal, fontWeight: FontWeight.w500)),
         ),
       ],
     );
@@ -225,16 +226,16 @@ class _ForgotPasswordSheetState extends State<ForgotPasswordSheet> {
         const SizedBox(height: 8),
         _iconCircle(Icons.check, AppColors.online),
         const SizedBox(height: 16),
-        const Text('Password reset complete', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+        Text(AppLocalizations.of(context).passwordResetComplete, style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
         const SizedBox(height: 6),
-        const Text('Your password has been successfully updated.', style: TextStyle(fontSize: 14, color: AppColors.secondary)),
+        Text(AppLocalizations.of(context).passwordUpdatedShort, style: TextStyle(fontSize: 14, color: AppColors.secondary)),
         const SizedBox(height: 24),
         SizedBox(
           width: double.infinity,
           height: 48,
           child: ElevatedButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Back to Sign In'),
+            child: Text(AppLocalizations.of(context).backToSignIn),
           ),
         ),
       ],

@@ -5707,4 +5707,9 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Отклонены';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'Код отправлен на $email';
+  }
 }

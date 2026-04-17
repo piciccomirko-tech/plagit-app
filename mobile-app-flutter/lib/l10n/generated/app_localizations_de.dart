@@ -5640,4 +5640,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Abgelehnt';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'Ein Code wurde an $email gesendet';
+  }
 }

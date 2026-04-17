@@ -5631,4 +5631,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejeitados';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'Um código foi enviado para $email';
+  }
 }

@@ -2133,5 +2133,6 @@
   "adminStatNew": "جديد",
   "adminStatReviewed": "تمت المراجعة",
   "adminStatShortlisted": "القائمة القصيرة",
-  "adminStatRejected": "مرفوضون"
+  "adminStatRejected": "مرفوضون",
+  "codeSentToEmail": "تم إرسال رمز إلى {email}"
 }

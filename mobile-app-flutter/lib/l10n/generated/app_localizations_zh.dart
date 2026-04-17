@@ -5466,4 +5466,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminStatRejected => '已拒绝';
+
+  @override
+  String codeSentToEmail(String email) {
+    return '验证码已发送至 $email';
+  }
 }

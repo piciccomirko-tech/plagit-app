@@ -2381,5 +2381,6 @@
   "adminStatNew": "新的",
   "adminStatReviewed": "已审核",
   "adminStatShortlisted": "入围",
-  "adminStatRejected": "已拒绝"
+  "adminStatRejected": "已拒绝",
+  "codeSentToEmail": "验证码已发送至 {email}"
 }

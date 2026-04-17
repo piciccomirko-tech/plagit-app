@@ -10141,6 +10141,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rejected'**
   String get adminStatRejected;
+
+  /// Subtitle on forgot-password step 2 informing the user where the reset code was sent
+  ///
+  /// In en, this message translates to:
+  /// **'A code has been sent to {email}'**
+  String codeSentToEmail(String email);
 }
 
 class _AppLocalizationsDelegate

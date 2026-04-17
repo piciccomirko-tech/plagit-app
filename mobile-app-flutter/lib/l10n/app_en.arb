@@ -4005,5 +4005,15 @@
   "adminStatRejected": "Rejected",
   "@adminStatRejected": {
     "description": "Admin job detail: adminStatRejected"
+  },
+  "codeSentToEmail": "A code has been sent to {email}",
+  "@codeSentToEmail": {
+    "description": "Subtitle on forgot-password step 2 informing the user where the reset code was sent",
+    "placeholders": {
+      "email": {
+        "type": "String",
+        "example": "user@example.com"
+      }
+    }
   }
 }

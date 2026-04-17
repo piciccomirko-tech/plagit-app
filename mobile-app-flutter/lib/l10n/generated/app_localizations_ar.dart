@@ -5644,4 +5644,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'مرفوضون';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'تم إرسال رمز إلى $email';
+  }
 }
