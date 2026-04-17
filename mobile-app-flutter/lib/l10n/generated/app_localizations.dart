@@ -7243,6 +7243,1260 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Accept Interview'**
   String get acceptInterview;
+
+  /// adminMenuDashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get adminMenuDashboard;
+
+  /// adminMenuUsers
+  ///
+  /// In en, this message translates to:
+  /// **'Users'**
+  String get adminMenuUsers;
+
+  /// adminMenuCandidates
+  ///
+  /// In en, this message translates to:
+  /// **'Candidates'**
+  String get adminMenuCandidates;
+
+  /// adminMenuBusinesses
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses'**
+  String get adminMenuBusinesses;
+
+  /// adminMenuJobs
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs'**
+  String get adminMenuJobs;
+
+  /// adminMenuApplications
+  ///
+  /// In en, this message translates to:
+  /// **'Applications'**
+  String get adminMenuApplications;
+
+  /// adminMenuBookings
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings'**
+  String get adminMenuBookings;
+
+  /// adminMenuPayments
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get adminMenuPayments;
+
+  /// adminMenuMessages
+  ///
+  /// In en, this message translates to:
+  /// **'Messages'**
+  String get adminMenuMessages;
+
+  /// adminMenuNotifications
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get adminMenuNotifications;
+
+  /// adminMenuReports
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get adminMenuReports;
+
+  /// adminMenuAnalytics
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get adminMenuAnalytics;
+
+  /// adminMenuSettings
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get adminMenuSettings;
+
+  /// adminMenuSupport
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get adminMenuSupport;
+
+  /// adminMenuModeration
+  ///
+  /// In en, this message translates to:
+  /// **'Moderation'**
+  String get adminMenuModeration;
+
+  /// adminMenuRoles
+  ///
+  /// In en, this message translates to:
+  /// **'Roles'**
+  String get adminMenuRoles;
+
+  /// adminMenuInvoices
+  ///
+  /// In en, this message translates to:
+  /// **'Invoices'**
+  String get adminMenuInvoices;
+
+  /// adminMenuLogs
+  ///
+  /// In en, this message translates to:
+  /// **'Logs'**
+  String get adminMenuLogs;
+
+  /// adminMenuIntegrations
+  ///
+  /// In en, this message translates to:
+  /// **'Integrations'**
+  String get adminMenuIntegrations;
+
+  /// adminMenuLogout
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get adminMenuLogout;
+
+  /// adminActionApprove
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get adminActionApprove;
+
+  /// adminActionReject
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get adminActionReject;
+
+  /// adminActionSuspend
+  ///
+  /// In en, this message translates to:
+  /// **'Suspend'**
+  String get adminActionSuspend;
+
+  /// adminActionActivate
+  ///
+  /// In en, this message translates to:
+  /// **'Activate'**
+  String get adminActionActivate;
+
+  /// adminActionDelete
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get adminActionDelete;
+
+  /// adminActionExport
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get adminActionExport;
+
+  /// adminSectionOverview
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get adminSectionOverview;
+
+  /// adminSectionManagement
+  ///
+  /// In en, this message translates to:
+  /// **'Management'**
+  String get adminSectionManagement;
+
+  /// adminSectionFinance
+  ///
+  /// In en, this message translates to:
+  /// **'Finance'**
+  String get adminSectionFinance;
+
+  /// adminSectionOperations
+  ///
+  /// In en, this message translates to:
+  /// **'Operations'**
+  String get adminSectionOperations;
+
+  /// adminSectionSystem
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get adminSectionSystem;
+
+  /// adminStatTotalUsers
+  ///
+  /// In en, this message translates to:
+  /// **'Total Users'**
+  String get adminStatTotalUsers;
+
+  /// adminStatActiveJobs
+  ///
+  /// In en, this message translates to:
+  /// **'Active Jobs'**
+  String get adminStatActiveJobs;
+
+  /// adminStatPendingApprovals
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Approvals'**
+  String get adminStatPendingApprovals;
+
+  /// adminStatRevenue
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get adminStatRevenue;
+
+  /// adminStatBookingsToday
+  ///
+  /// In en, this message translates to:
+  /// **'Bookings Today'**
+  String get adminStatBookingsToday;
+
+  /// adminStatNewSignups
+  ///
+  /// In en, this message translates to:
+  /// **'New Signups'**
+  String get adminStatNewSignups;
+
+  /// adminStatConversionRate
+  ///
+  /// In en, this message translates to:
+  /// **'Conversion Rate'**
+  String get adminStatConversionRate;
+
+  /// adminMiscWelcome
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get adminMiscWelcome;
+
+  /// adminMiscLoading
+  ///
+  /// In en, this message translates to:
+  /// **'Loading…'**
+  String get adminMiscLoading;
+
+  /// adminMiscNoData
+  ///
+  /// In en, this message translates to:
+  /// **'No data available'**
+  String get adminMiscNoData;
+
+  /// adminMiscSearchPlaceholder
+  ///
+  /// In en, this message translates to:
+  /// **'Search…'**
+  String get adminMiscSearchPlaceholder;
+
+  /// adminMenuContent
+  ///
+  /// In en, this message translates to:
+  /// **'Content'**
+  String get adminMenuContent;
+
+  /// adminMenuMore
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get adminMenuMore;
+
+  /// adminMenuVerifications
+  ///
+  /// In en, this message translates to:
+  /// **'Verifications'**
+  String get adminMenuVerifications;
+
+  /// adminMenuSubscriptions
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions'**
+  String get adminMenuSubscriptions;
+
+  /// adminMenuCommunity
+  ///
+  /// In en, this message translates to:
+  /// **'Community'**
+  String get adminMenuCommunity;
+
+  /// adminMenuInterviews
+  ///
+  /// In en, this message translates to:
+  /// **'Interviews'**
+  String get adminMenuInterviews;
+
+  /// adminMenuMatches
+  ///
+  /// In en, this message translates to:
+  /// **'Matches'**
+  String get adminMenuMatches;
+
+  /// adminMenuFeaturedContent
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Content'**
+  String get adminMenuFeaturedContent;
+
+  /// adminMenuAuditLog
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Log'**
+  String get adminMenuAuditLog;
+
+  /// adminMenuChangePassword
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get adminMenuChangePassword;
+
+  /// adminSectionPeople
+  ///
+  /// In en, this message translates to:
+  /// **'People'**
+  String get adminSectionPeople;
+
+  /// adminSectionHiring
+  ///
+  /// In en, this message translates to:
+  /// **'Hiring Operations'**
+  String get adminSectionHiring;
+
+  /// adminSectionContentComm
+  ///
+  /// In en, this message translates to:
+  /// **'Content & Communication'**
+  String get adminSectionContentComm;
+
+  /// adminSectionRevenue
+  ///
+  /// In en, this message translates to:
+  /// **'Business & Revenue'**
+  String get adminSectionRevenue;
+
+  /// adminSectionToolsContent
+  ///
+  /// In en, this message translates to:
+  /// **'Tools & Content'**
+  String get adminSectionToolsContent;
+
+  /// adminSectionQuickActions
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get adminSectionQuickActions;
+
+  /// adminSectionNeedsAttention
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Attention'**
+  String get adminSectionNeedsAttention;
+
+  /// adminStatActiveBusinesses
+  ///
+  /// In en, this message translates to:
+  /// **'Active Businesses'**
+  String get adminStatActiveBusinesses;
+
+  /// adminStatApplicationsToday
+  ///
+  /// In en, this message translates to:
+  /// **'Applications Today'**
+  String get adminStatApplicationsToday;
+
+  /// adminStatInterviewsToday
+  ///
+  /// In en, this message translates to:
+  /// **'Interviews Today'**
+  String get adminStatInterviewsToday;
+
+  /// adminStatFlaggedContent
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged Content'**
+  String get adminStatFlaggedContent;
+
+  /// adminStatActiveSubs
+  ///
+  /// In en, this message translates to:
+  /// **'Active Subs'**
+  String get adminStatActiveSubs;
+
+  /// adminActionFlagged
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged'**
+  String get adminActionFlagged;
+
+  /// adminActionFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get adminActionFeatured;
+
+  /// adminActionReviewFlagged
+  ///
+  /// In en, this message translates to:
+  /// **'Review Flagged Content'**
+  String get adminActionReviewFlagged;
+
+  /// adminActionTodayInterviews
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Interviews'**
+  String get adminActionTodayInterviews;
+
+  /// adminActionOpenReports
+  ///
+  /// In en, this message translates to:
+  /// **'Open Reports'**
+  String get adminActionOpenReports;
+
+  /// adminActionManageSubscriptions
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Subscriptions'**
+  String get adminActionManageSubscriptions;
+
+  /// adminActionAnalyticsDashboard
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics Dashboard'**
+  String get adminActionAnalyticsDashboard;
+
+  /// adminActionSendNotification
+  ///
+  /// In en, this message translates to:
+  /// **'Send Notification'**
+  String get adminActionSendNotification;
+
+  /// adminActionCreateCommunityPost
+  ///
+  /// In en, this message translates to:
+  /// **'Create Community Post'**
+  String get adminActionCreateCommunityPost;
+
+  /// adminActionRetry
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get adminActionRetry;
+
+  /// adminMiscGreetingMorning
+  ///
+  /// In en, this message translates to:
+  /// **'Good morning'**
+  String get adminMiscGreetingMorning;
+
+  /// adminMiscGreetingAfternoon
+  ///
+  /// In en, this message translates to:
+  /// **'Good afternoon'**
+  String get adminMiscGreetingAfternoon;
+
+  /// adminMiscGreetingEvening
+  ///
+  /// In en, this message translates to:
+  /// **'Good evening'**
+  String get adminMiscGreetingEvening;
+
+  /// adminMiscAllClear
+  ///
+  /// In en, this message translates to:
+  /// **'All clear — nothing needs attention.'**
+  String get adminMiscAllClear;
+
+  /// adminSubtitleAllUsers
+  ///
+  /// In en, this message translates to:
+  /// **'All platform users'**
+  String get adminSubtitleAllUsers;
+
+  /// adminSubtitleCandidates
+  ///
+  /// In en, this message translates to:
+  /// **'Job seeker profiles'**
+  String get adminSubtitleCandidates;
+
+  /// adminSubtitleBusinesses
+  ///
+  /// In en, this message translates to:
+  /// **'Employer accounts'**
+  String get adminSubtitleBusinesses;
+
+  /// adminSubtitleJobs
+  ///
+  /// In en, this message translates to:
+  /// **'Active job listings'**
+  String get adminSubtitleJobs;
+
+  /// adminSubtitleApplications
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted applications'**
+  String get adminSubtitleApplications;
+
+  /// adminSubtitleInterviews
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled interviews'**
+  String get adminSubtitleInterviews;
+
+  /// adminSubtitleMatches
+  ///
+  /// In en, this message translates to:
+  /// **'Role and job type matches'**
+  String get adminSubtitleMatches;
+
+  /// adminSubtitleVerifications
+  ///
+  /// In en, this message translates to:
+  /// **'Review pending verifications'**
+  String get adminSubtitleVerifications;
+
+  /// adminSubtitleReports
+  ///
+  /// In en, this message translates to:
+  /// **'Flags and moderation'**
+  String get adminSubtitleReports;
+
+  /// adminSubtitleSupport
+  ///
+  /// In en, this message translates to:
+  /// **'Open support issues'**
+  String get adminSubtitleSupport;
+
+  /// adminSubtitleMessages
+  ///
+  /// In en, this message translates to:
+  /// **'User conversations'**
+  String get adminSubtitleMessages;
+
+  /// adminSubtitleNotifications
+  ///
+  /// In en, this message translates to:
+  /// **'Push & in-app alerts'**
+  String get adminSubtitleNotifications;
+
+  /// adminSubtitleCommunity
+  ///
+  /// In en, this message translates to:
+  /// **'Posts and discussions'**
+  String get adminSubtitleCommunity;
+
+  /// adminSubtitleFeaturedContent
+  ///
+  /// In en, this message translates to:
+  /// **'Highlighted content'**
+  String get adminSubtitleFeaturedContent;
+
+  /// adminSubtitleSubscriptions
+  ///
+  /// In en, this message translates to:
+  /// **'Plans and billing'**
+  String get adminSubtitleSubscriptions;
+
+  /// adminSubtitleAuditLog
+  ///
+  /// In en, this message translates to:
+  /// **'Admin activity logs'**
+  String get adminSubtitleAuditLog;
+
+  /// adminSubtitleAnalytics
+  ///
+  /// In en, this message translates to:
+  /// **'Platform metrics'**
+  String get adminSubtitleAnalytics;
+
+  /// adminSubtitleSettings
+  ///
+  /// In en, this message translates to:
+  /// **'Platform configuration'**
+  String get adminSubtitleSettings;
+
+  /// adminSubtitleUsersPage
+  ///
+  /// In en, this message translates to:
+  /// **'Manage platform accounts'**
+  String get adminSubtitleUsersPage;
+
+  /// adminSubtitleContentPage
+  ///
+  /// In en, this message translates to:
+  /// **'Jobs, applications, and interviews'**
+  String get adminSubtitleContentPage;
+
+  /// adminSubtitleModerationPage
+  ///
+  /// In en, this message translates to:
+  /// **'Verifications, reports, and support'**
+  String get adminSubtitleModerationPage;
+
+  /// adminSubtitleMorePage
+  ///
+  /// In en, this message translates to:
+  /// **'Settings, analytics, and account'**
+  String get adminSubtitleMorePage;
+
+  /// adminSubtitleAnalyticsHero
+  ///
+  /// In en, this message translates to:
+  /// **'KPIs, trends, and platform health'**
+  String get adminSubtitleAnalyticsHero;
+
+  /// adminBadgeUrgent
+  ///
+  /// In en, this message translates to:
+  /// **'Urgent'**
+  String get adminBadgeUrgent;
+
+  /// adminBadgeReview
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get adminBadgeReview;
+
+  /// adminBadgeAction
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get adminBadgeAction;
+
+  /// adminMenuAllUsers
+  ///
+  /// In en, this message translates to:
+  /// **'All Users'**
+  String get adminMenuAllUsers;
+
+  /// adminMiscSuperAdmin
+  ///
+  /// In en, this message translates to:
+  /// **'Super Admin'**
+  String get adminMiscSuperAdmin;
+
+  /// adminBadgeNToday
+  ///
+  /// In en, this message translates to:
+  /// **'{count} today'**
+  String adminBadgeNToday(int count);
+
+  /// adminBadgeNOpen
+  ///
+  /// In en, this message translates to:
+  /// **'{count} open'**
+  String adminBadgeNOpen(int count);
+
+  /// adminBadgeNActive
+  ///
+  /// In en, this message translates to:
+  /// **'{count} active'**
+  String adminBadgeNActive(int count);
+
+  /// adminBadgeNUnread
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unread'**
+  String adminBadgeNUnread(int count);
+
+  /// adminBadgeNPending
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pending'**
+  String adminBadgeNPending(int count);
+
+  /// adminBadgeNPosts
+  ///
+  /// In en, this message translates to:
+  /// **'{count} posts'**
+  String adminBadgeNPosts(int count);
+
+  /// adminBadgeNFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'{count} featured'**
+  String adminBadgeNFeatured(int count);
+
+  /// adminStatusActive
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get adminStatusActive;
+
+  /// adminStatusPaused
+  ///
+  /// In en, this message translates to:
+  /// **'Paused'**
+  String get adminStatusPaused;
+
+  /// adminStatusClosed
+  ///
+  /// In en, this message translates to:
+  /// **'Closed'**
+  String get adminStatusClosed;
+
+  /// adminStatusDraft
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get adminStatusDraft;
+
+  /// adminStatusFlagged
+  ///
+  /// In en, this message translates to:
+  /// **'Flagged'**
+  String get adminStatusFlagged;
+
+  /// adminStatusSuspended
+  ///
+  /// In en, this message translates to:
+  /// **'Suspended'**
+  String get adminStatusSuspended;
+
+  /// adminStatusPending
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get adminStatusPending;
+
+  /// adminStatusConfirmed
+  ///
+  /// In en, this message translates to:
+  /// **'Confirmed'**
+  String get adminStatusConfirmed;
+
+  /// adminStatusCompleted
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get adminStatusCompleted;
+
+  /// adminStatusCancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get adminStatusCancelled;
+
+  /// adminStatusAccepted
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get adminStatusAccepted;
+
+  /// adminStatusDenied
+  ///
+  /// In en, this message translates to:
+  /// **'Denied'**
+  String get adminStatusDenied;
+
+  /// adminStatusExpired
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get adminStatusExpired;
+
+  /// adminStatusResolved
+  ///
+  /// In en, this message translates to:
+  /// **'Resolved'**
+  String get adminStatusResolved;
+
+  /// adminStatusScheduled
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get adminStatusScheduled;
+
+  /// adminStatusBanned
+  ///
+  /// In en, this message translates to:
+  /// **'Banned'**
+  String get adminStatusBanned;
+
+  /// adminStatusVerified
+  ///
+  /// In en, this message translates to:
+  /// **'Verified'**
+  String get adminStatusVerified;
+
+  /// adminStatusFailed
+  ///
+  /// In en, this message translates to:
+  /// **'Failed'**
+  String get adminStatusFailed;
+
+  /// adminStatusSuccess
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get adminStatusSuccess;
+
+  /// adminStatusDelivered
+  ///
+  /// In en, this message translates to:
+  /// **'Delivered'**
+  String get adminStatusDelivered;
+
+  /// adminFilterAll
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get adminFilterAll;
+
+  /// adminFilterToday
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get adminFilterToday;
+
+  /// adminFilterUnread
+  ///
+  /// In en, this message translates to:
+  /// **'Unread'**
+  String get adminFilterUnread;
+
+  /// adminFilterRead
+  ///
+  /// In en, this message translates to:
+  /// **'Read'**
+  String get adminFilterRead;
+
+  /// adminFilterCandidates
+  ///
+  /// In en, this message translates to:
+  /// **'Candidates'**
+  String get adminFilterCandidates;
+
+  /// adminFilterBusinesses
+  ///
+  /// In en, this message translates to:
+  /// **'Businesses'**
+  String get adminFilterBusinesses;
+
+  /// adminFilterAdmins
+  ///
+  /// In en, this message translates to:
+  /// **'Admins'**
+  String get adminFilterAdmins;
+
+  /// adminFilterCandidate
+  ///
+  /// In en, this message translates to:
+  /// **'Candidate'**
+  String get adminFilterCandidate;
+
+  /// adminFilterBusiness
+  ///
+  /// In en, this message translates to:
+  /// **'Business'**
+  String get adminFilterBusiness;
+
+  /// adminFilterSystem
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get adminFilterSystem;
+
+  /// adminFilterPinned
+  ///
+  /// In en, this message translates to:
+  /// **'Pinned'**
+  String get adminFilterPinned;
+
+  /// adminFilterEmployers
+  ///
+  /// In en, this message translates to:
+  /// **'Employers'**
+  String get adminFilterEmployers;
+
+  /// adminFilterBanners
+  ///
+  /// In en, this message translates to:
+  /// **'Banners'**
+  String get adminFilterBanners;
+
+  /// adminFilterBilling
+  ///
+  /// In en, this message translates to:
+  /// **'Billing'**
+  String get adminFilterBilling;
+
+  /// adminFilterFeaturedEmployer
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Employer'**
+  String get adminFilterFeaturedEmployer;
+
+  /// adminFilterFeaturedJob
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Job'**
+  String get adminFilterFeaturedJob;
+
+  /// adminFilterHomeBanner
+  ///
+  /// In en, this message translates to:
+  /// **'Home Banner'**
+  String get adminFilterHomeBanner;
+
+  /// adminEmptyAdjustFilters
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting filters.'**
+  String get adminEmptyAdjustFilters;
+
+  /// adminEmptyJobsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No jobs'**
+  String get adminEmptyJobsTitle;
+
+  /// adminEmptyJobsSub
+  ///
+  /// In en, this message translates to:
+  /// **'No jobs match.'**
+  String get adminEmptyJobsSub;
+
+  /// adminEmptyUsersTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No users match'**
+  String get adminEmptyUsersTitle;
+
+  /// adminEmptyMessagesTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No messages'**
+  String get adminEmptyMessagesTitle;
+
+  /// adminEmptyMessagesSub
+  ///
+  /// In en, this message translates to:
+  /// **'No conversations to show.'**
+  String get adminEmptyMessagesSub;
+
+  /// adminEmptyReportsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No reports'**
+  String get adminEmptyReportsTitle;
+
+  /// adminEmptyReportsSub
+  ///
+  /// In en, this message translates to:
+  /// **'No user reports to review.'**
+  String get adminEmptyReportsSub;
+
+  /// adminEmptyBusinessesTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No businesses'**
+  String get adminEmptyBusinessesTitle;
+
+  /// adminEmptyBusinessesSub
+  ///
+  /// In en, this message translates to:
+  /// **'No businesses match.'**
+  String get adminEmptyBusinessesSub;
+
+  /// adminEmptyNotifsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications match'**
+  String get adminEmptyNotifsTitle;
+
+  /// adminEmptySubsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No subscriptions'**
+  String get adminEmptySubsTitle;
+
+  /// adminEmptySubsSub
+  ///
+  /// In en, this message translates to:
+  /// **'No subscriptions match.'**
+  String get adminEmptySubsSub;
+
+  /// adminEmptyLogsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No logs match'**
+  String get adminEmptyLogsTitle;
+
+  /// adminEmptyContentTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No content matches'**
+  String get adminEmptyContentTitle;
+
+  /// adminEmptyInterviewsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No interviews'**
+  String get adminEmptyInterviewsTitle;
+
+  /// adminEmptyInterviewsSub
+  ///
+  /// In en, this message translates to:
+  /// **'No interviews match.'**
+  String get adminEmptyInterviewsSub;
+
+  /// adminEmptyFeedback
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback data will appear here'**
+  String get adminEmptyFeedback;
+
+  /// adminEmptyMatchNotifs
+  ///
+  /// In en, this message translates to:
+  /// **'Match notifications will appear here'**
+  String get adminEmptyMatchNotifs;
+
+  /// adminTitleMatchManagement
+  ///
+  /// In en, this message translates to:
+  /// **'Match Management'**
+  String get adminTitleMatchManagement;
+
+  /// adminTitleAdminLogs
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Logs'**
+  String get adminTitleAdminLogs;
+
+  /// adminTitleContentFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Content / Featured'**
+  String get adminTitleContentFeatured;
+
+  /// adminTabFeedback
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get adminTabFeedback;
+
+  /// adminTabStats
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get adminTabStats;
+
+  /// adminSortNewest
+  ///
+  /// In en, this message translates to:
+  /// **'Newest'**
+  String get adminSortNewest;
+
+  /// adminSortPriority
+  ///
+  /// In en, this message translates to:
+  /// **'Priority'**
+  String get adminSortPriority;
+
+  /// adminStatTotalMatches
+  ///
+  /// In en, this message translates to:
+  /// **'Total Matches'**
+  String get adminStatTotalMatches;
+
+  /// adminStatAccepted
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get adminStatAccepted;
+
+  /// adminStatDenied
+  ///
+  /// In en, this message translates to:
+  /// **'Denied'**
+  String get adminStatDenied;
+
+  /// adminStatFeedbackCount
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get adminStatFeedbackCount;
+
+  /// adminStatMatchQuality
+  ///
+  /// In en, this message translates to:
+  /// **'Match Quality Score'**
+  String get adminStatMatchQuality;
+
+  /// adminStatTotal
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get adminStatTotal;
+
+  /// adminStatPendingCount
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get adminStatPendingCount;
+
+  /// adminStatNotificationsCount
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get adminStatNotificationsCount;
+
+  /// adminStatActiveCount
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get adminStatActiveCount;
+
+  /// adminSectionPlatformSettings
+  ///
+  /// In en, this message translates to:
+  /// **'Platform Settings'**
+  String get adminSectionPlatformSettings;
+
+  /// adminSectionNotificationSettings
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get adminSectionNotificationSettings;
+
+  /// adminSettingMaintenanceTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Maintenance Mode'**
+  String get adminSettingMaintenanceTitle;
+
+  /// adminSettingMaintenanceSub
+  ///
+  /// In en, this message translates to:
+  /// **'Disable access for all users'**
+  String get adminSettingMaintenanceSub;
+
+  /// adminSettingNewRegsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'New Registrations'**
+  String get adminSettingNewRegsTitle;
+
+  /// adminSettingNewRegsSub
+  ///
+  /// In en, this message translates to:
+  /// **'Allow new user sign-ups'**
+  String get adminSettingNewRegsSub;
+
+  /// adminSettingFeaturedJobsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Jobs'**
+  String get adminSettingFeaturedJobsTitle;
+
+  /// adminSettingFeaturedJobsSub
+  ///
+  /// In en, this message translates to:
+  /// **'Show featured jobs on home'**
+  String get adminSettingFeaturedJobsSub;
+
+  /// adminSettingEmailNotifsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Email Notifications'**
+  String get adminSettingEmailNotifsTitle;
+
+  /// adminSettingEmailNotifsSub
+  ///
+  /// In en, this message translates to:
+  /// **'Send email alerts'**
+  String get adminSettingEmailNotifsSub;
+
+  /// adminSettingPushNotifsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Push Notifications'**
+  String get adminSettingPushNotifsTitle;
+
+  /// adminSettingPushNotifsSub
+  ///
+  /// In en, this message translates to:
+  /// **'Send push notifications'**
+  String get adminSettingPushNotifsSub;
+
+  /// adminActionSaveChanges
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get adminActionSaveChanges;
+
+  /// adminToastSettingsSaved
+  ///
+  /// In en, this message translates to:
+  /// **'Settings saved'**
+  String get adminToastSettingsSaved;
+
+  /// adminActionResolve
+  ///
+  /// In en, this message translates to:
+  /// **'Resolve'**
+  String get adminActionResolve;
+
+  /// adminActionDismiss
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get adminActionDismiss;
+
+  /// adminActionBanUser
+  ///
+  /// In en, this message translates to:
+  /// **'Ban User'**
+  String get adminActionBanUser;
+
+  /// adminSearchUsersHint
+  ///
+  /// In en, this message translates to:
+  /// **'Search name, email, role, location...'**
+  String get adminSearchUsersHint;
+
+  /// adminMiscPositive
+  ///
+  /// In en, this message translates to:
+  /// **'positive'**
+  String get adminMiscPositive;
+
+  /// adminCountUsers
+  ///
+  /// In en, this message translates to:
+  /// **'{count} users'**
+  String adminCountUsers(int count);
+
+  /// adminCountNotifs
+  ///
+  /// In en, this message translates to:
+  /// **'{count} notifications'**
+  String adminCountNotifs(int count);
+
+  /// adminCountLogs
+  ///
+  /// In en, this message translates to:
+  /// **'{count} log entries'**
+  String adminCountLogs(int count);
+
+  /// adminCountItems
+  ///
+  /// In en, this message translates to:
+  /// **'{count} items'**
+  String adminCountItems(int count);
+
+  /// adminBadgeNRetried
+  ///
+  /// In en, this message translates to:
+  /// **'Retried x{count}'**
+  String adminBadgeNRetried(int count);
 }
 
 class _AppLocalizationsDelegate

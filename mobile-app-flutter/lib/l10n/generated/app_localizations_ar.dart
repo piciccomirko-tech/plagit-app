@@ -4131,4 +4131,657 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get acceptInterview => 'قبول المقابلة';
+
+  @override
+  String get adminMenuDashboard => 'لوحة التحكم';
+
+  @override
+  String get adminMenuUsers => 'المستخدمون';
+
+  @override
+  String get adminMenuCandidates => 'المرشحون';
+
+  @override
+  String get adminMenuBusinesses => 'الشركات';
+
+  @override
+  String get adminMenuJobs => 'الوظائف';
+
+  @override
+  String get adminMenuApplications => 'الطلبات';
+
+  @override
+  String get adminMenuBookings => 'الحجوزات';
+
+  @override
+  String get adminMenuPayments => 'المدفوعات';
+
+  @override
+  String get adminMenuMessages => 'الرسائل';
+
+  @override
+  String get adminMenuNotifications => 'الإشعارات';
+
+  @override
+  String get adminMenuReports => 'التقارير';
+
+  @override
+  String get adminMenuAnalytics => 'التحليلات';
+
+  @override
+  String get adminMenuSettings => 'الإعدادات';
+
+  @override
+  String get adminMenuSupport => 'الدعم';
+
+  @override
+  String get adminMenuModeration => 'الإشراف';
+
+  @override
+  String get adminMenuRoles => 'الأدوار';
+
+  @override
+  String get adminMenuInvoices => 'الفواتير';
+
+  @override
+  String get adminMenuLogs => 'السجلات';
+
+  @override
+  String get adminMenuIntegrations => 'التكاملات';
+
+  @override
+  String get adminMenuLogout => 'تسجيل الخروج';
+
+  @override
+  String get adminActionApprove => 'موافقة';
+
+  @override
+  String get adminActionReject => 'رفض';
+
+  @override
+  String get adminActionSuspend => 'تعليق';
+
+  @override
+  String get adminActionActivate => 'تفعيل';
+
+  @override
+  String get adminActionDelete => 'حذف';
+
+  @override
+  String get adminActionExport => 'تصدير';
+
+  @override
+  String get adminSectionOverview => 'نظرة عامة';
+
+  @override
+  String get adminSectionManagement => 'الإدارة';
+
+  @override
+  String get adminSectionFinance => 'المالية';
+
+  @override
+  String get adminSectionOperations => 'العمليات';
+
+  @override
+  String get adminSectionSystem => 'النظام';
+
+  @override
+  String get adminStatTotalUsers => 'إجمالي المستخدمين';
+
+  @override
+  String get adminStatActiveJobs => 'الوظائف النشطة';
+
+  @override
+  String get adminStatPendingApprovals => 'موافقات معلقة';
+
+  @override
+  String get adminStatRevenue => 'الإيرادات';
+
+  @override
+  String get adminStatBookingsToday => 'حجوزات اليوم';
+
+  @override
+  String get adminStatNewSignups => 'تسجيلات جديدة';
+
+  @override
+  String get adminStatConversionRate => 'معدل التحويل';
+
+  @override
+  String get adminMiscWelcome => 'مرحباً بعودتك';
+
+  @override
+  String get adminMiscLoading => 'جارٍ التحميل…';
+
+  @override
+  String get adminMiscNoData => 'لا توجد بيانات';
+
+  @override
+  String get adminMiscSearchPlaceholder => 'بحث…';
+
+  @override
+  String get adminMenuContent => 'المحتوى';
+
+  @override
+  String get adminMenuMore => 'المزيد';
+
+  @override
+  String get adminMenuVerifications => 'التحقق';
+
+  @override
+  String get adminMenuSubscriptions => 'الاشتراكات';
+
+  @override
+  String get adminMenuCommunity => 'المجتمع';
+
+  @override
+  String get adminMenuInterviews => 'المقابلات';
+
+  @override
+  String get adminMenuMatches => 'التطابقات';
+
+  @override
+  String get adminMenuFeaturedContent => 'محتوى مميز';
+
+  @override
+  String get adminMenuAuditLog => 'سجل التدقيق';
+
+  @override
+  String get adminMenuChangePassword => 'تغيير كلمة المرور';
+
+  @override
+  String get adminSectionPeople => 'الأشخاص';
+
+  @override
+  String get adminSectionHiring => 'عمليات التوظيف';
+
+  @override
+  String get adminSectionContentComm => 'المحتوى والتواصل';
+
+  @override
+  String get adminSectionRevenue => 'الأعمال والإيرادات';
+
+  @override
+  String get adminSectionToolsContent => 'الأدوات والمحتوى';
+
+  @override
+  String get adminSectionQuickActions => 'إجراءات سريعة';
+
+  @override
+  String get adminSectionNeedsAttention => 'يتطلب الانتباه';
+
+  @override
+  String get adminStatActiveBusinesses => 'الشركات النشطة';
+
+  @override
+  String get adminStatApplicationsToday => 'الطلبات اليوم';
+
+  @override
+  String get adminStatInterviewsToday => 'المقابلات اليوم';
+
+  @override
+  String get adminStatFlaggedContent => 'محتوى مُبلَّغ';
+
+  @override
+  String get adminStatActiveSubs => 'الاشتراكات النشطة';
+
+  @override
+  String get adminActionFlagged => 'مُبلَّغ';
+
+  @override
+  String get adminActionFeatured => 'مميز';
+
+  @override
+  String get adminActionReviewFlagged => 'مراجعة المحتوى المبلَّغ';
+
+  @override
+  String get adminActionTodayInterviews => 'مقابلات اليوم';
+
+  @override
+  String get adminActionOpenReports => 'بلاغات مفتوحة';
+
+  @override
+  String get adminActionManageSubscriptions => 'إدارة الاشتراكات';
+
+  @override
+  String get adminActionAnalyticsDashboard => 'لوحة التحليلات';
+
+  @override
+  String get adminActionSendNotification => 'إرسال إشعار';
+
+  @override
+  String get adminActionCreateCommunityPost => 'إنشاء منشور مجتمعي';
+
+  @override
+  String get adminActionRetry => 'إعادة المحاولة';
+
+  @override
+  String get adminMiscGreetingMorning => 'صباح الخير';
+
+  @override
+  String get adminMiscGreetingAfternoon => 'مساء الخير';
+
+  @override
+  String get adminMiscGreetingEvening => 'مساء الخير';
+
+  @override
+  String get adminMiscAllClear => 'كل شيء على ما يرام — لا شيء يتطلب الانتباه.';
+
+  @override
+  String get adminSubtitleAllUsers => 'جميع مستخدمي المنصة';
+
+  @override
+  String get adminSubtitleCandidates => 'ملفات الباحثين عن عمل';
+
+  @override
+  String get adminSubtitleBusinesses => 'حسابات أصحاب العمل';
+
+  @override
+  String get adminSubtitleJobs => 'إعلانات وظائف نشطة';
+
+  @override
+  String get adminSubtitleApplications => 'الطلبات المقدمة';
+
+  @override
+  String get adminSubtitleInterviews => 'المقابلات المجدولة';
+
+  @override
+  String get adminSubtitleMatches => 'تطابقات الدور ونوع الوظيفة';
+
+  @override
+  String get adminSubtitleVerifications => 'مراجعة التحقق المعلق';
+
+  @override
+  String get adminSubtitleReports => 'الإبلاغات والإشراف';
+
+  @override
+  String get adminSubtitleSupport => 'مشاكل دعم مفتوحة';
+
+  @override
+  String get adminSubtitleMessages => 'محادثات المستخدمين';
+
+  @override
+  String get adminSubtitleNotifications => 'تنبيهات الدفع والتطبيق';
+
+  @override
+  String get adminSubtitleCommunity => 'المنشورات والنقاشات';
+
+  @override
+  String get adminSubtitleFeaturedContent => 'المحتوى المميز';
+
+  @override
+  String get adminSubtitleSubscriptions => 'الخطط والفواتير';
+
+  @override
+  String get adminSubtitleAuditLog => 'سجلات نشاط المسؤول';
+
+  @override
+  String get adminSubtitleAnalytics => 'مقاييس المنصة';
+
+  @override
+  String get adminSubtitleSettings => 'إعدادات المنصة';
+
+  @override
+  String get adminSubtitleUsersPage => 'إدارة حسابات المنصة';
+
+  @override
+  String get adminSubtitleContentPage => 'الوظائف والطلبات والمقابلات';
+
+  @override
+  String get adminSubtitleModerationPage => 'التحقق والإبلاغات والدعم';
+
+  @override
+  String get adminSubtitleMorePage => 'الإعدادات والتحليلات والحساب';
+
+  @override
+  String get adminSubtitleAnalyticsHero =>
+      'مؤشرات الأداء والاتجاهات وصحة المنصة';
+
+  @override
+  String get adminBadgeUrgent => 'عاجل';
+
+  @override
+  String get adminBadgeReview => 'مراجعة';
+
+  @override
+  String get adminBadgeAction => 'إجراء';
+
+  @override
+  String get adminMenuAllUsers => 'جميع المستخدمين';
+
+  @override
+  String get adminMiscSuperAdmin => 'المسؤول الأعلى';
+
+  @override
+  String adminBadgeNToday(int count) {
+    return '$count اليوم';
+  }
+
+  @override
+  String adminBadgeNOpen(int count) {
+    return '$count مفتوحة';
+  }
+
+  @override
+  String adminBadgeNActive(int count) {
+    return '$count نشطة';
+  }
+
+  @override
+  String adminBadgeNUnread(int count) {
+    return '$count غير مقروءة';
+  }
+
+  @override
+  String adminBadgeNPending(int count) {
+    return '$count معلقة';
+  }
+
+  @override
+  String adminBadgeNPosts(int count) {
+    return '$count منشورات';
+  }
+
+  @override
+  String adminBadgeNFeatured(int count) {
+    return '$count مميزة';
+  }
+
+  @override
+  String get adminStatusActive => 'نشط';
+
+  @override
+  String get adminStatusPaused => 'متوقف';
+
+  @override
+  String get adminStatusClosed => 'مغلق';
+
+  @override
+  String get adminStatusDraft => 'مسودة';
+
+  @override
+  String get adminStatusFlagged => 'موسوم';
+
+  @override
+  String get adminStatusSuspended => 'موقوف';
+
+  @override
+  String get adminStatusPending => 'معلق';
+
+  @override
+  String get adminStatusConfirmed => 'مؤكد';
+
+  @override
+  String get adminStatusCompleted => 'مكتمل';
+
+  @override
+  String get adminStatusCancelled => 'ملغى';
+
+  @override
+  String get adminStatusAccepted => 'مقبول';
+
+  @override
+  String get adminStatusDenied => 'مرفوض';
+
+  @override
+  String get adminStatusExpired => 'منتهي';
+
+  @override
+  String get adminStatusResolved => 'محلول';
+
+  @override
+  String get adminStatusScheduled => 'مجدول';
+
+  @override
+  String get adminStatusBanned => 'محظور';
+
+  @override
+  String get adminStatusVerified => 'موثق';
+
+  @override
+  String get adminStatusFailed => 'فشل';
+
+  @override
+  String get adminStatusSuccess => 'نجاح';
+
+  @override
+  String get adminStatusDelivered => 'تم التسليم';
+
+  @override
+  String get adminFilterAll => 'الكل';
+
+  @override
+  String get adminFilterToday => 'اليوم';
+
+  @override
+  String get adminFilterUnread => 'غير مقروء';
+
+  @override
+  String get adminFilterRead => 'مقروء';
+
+  @override
+  String get adminFilterCandidates => 'المرشحون';
+
+  @override
+  String get adminFilterBusinesses => 'الأعمال';
+
+  @override
+  String get adminFilterAdmins => 'المسؤولون';
+
+  @override
+  String get adminFilterCandidate => 'مرشح';
+
+  @override
+  String get adminFilterBusiness => 'نشاط';
+
+  @override
+  String get adminFilterSystem => 'النظام';
+
+  @override
+  String get adminFilterPinned => 'مثبت';
+
+  @override
+  String get adminFilterEmployers => 'أصحاب العمل';
+
+  @override
+  String get adminFilterBanners => 'لافتات';
+
+  @override
+  String get adminFilterBilling => 'الفواتير';
+
+  @override
+  String get adminFilterFeaturedEmployer => 'صاحب عمل مميز';
+
+  @override
+  String get adminFilterFeaturedJob => 'وظيفة مميزة';
+
+  @override
+  String get adminFilterHomeBanner => 'لافتة الصفحة الرئيسية';
+
+  @override
+  String get adminEmptyAdjustFilters => 'حاول تعديل عوامل التصفية.';
+
+  @override
+  String get adminEmptyJobsTitle => 'لا توجد وظائف';
+
+  @override
+  String get adminEmptyJobsSub => 'لا توجد وظائف مطابقة.';
+
+  @override
+  String get adminEmptyUsersTitle => 'لا يوجد مستخدمون';
+
+  @override
+  String get adminEmptyMessagesTitle => 'لا توجد رسائل';
+
+  @override
+  String get adminEmptyMessagesSub => 'لا توجد محادثات لعرضها.';
+
+  @override
+  String get adminEmptyReportsTitle => 'لا توجد تقارير';
+
+  @override
+  String get adminEmptyReportsSub => 'لا توجد تقارير مستخدم للمراجعة.';
+
+  @override
+  String get adminEmptyBusinessesTitle => 'لا توجد أعمال';
+
+  @override
+  String get adminEmptyBusinessesSub => 'لا توجد أعمال مطابقة.';
+
+  @override
+  String get adminEmptyNotifsTitle => 'لا توجد إشعارات';
+
+  @override
+  String get adminEmptySubsTitle => 'لا توجد اشتراكات';
+
+  @override
+  String get adminEmptySubsSub => 'لا توجد اشتراكات مطابقة.';
+
+  @override
+  String get adminEmptyLogsTitle => 'لا توجد سجلات';
+
+  @override
+  String get adminEmptyContentTitle => 'لا يوجد محتوى';
+
+  @override
+  String get adminEmptyInterviewsTitle => 'لا توجد مقابلات';
+
+  @override
+  String get adminEmptyInterviewsSub => 'لا توجد مقابلات مطابقة.';
+
+  @override
+  String get adminEmptyFeedback => 'ستظهر بيانات التعليقات هنا';
+
+  @override
+  String get adminEmptyMatchNotifs => 'ستظهر إشعارات المطابقة هنا';
+
+  @override
+  String get adminTitleMatchManagement => 'إدارة المطابقات';
+
+  @override
+  String get adminTitleAdminLogs => 'سجلات المسؤول';
+
+  @override
+  String get adminTitleContentFeatured => 'المحتوى / المميز';
+
+  @override
+  String get adminTabFeedback => 'التعليقات';
+
+  @override
+  String get adminTabStats => 'الإحصائيات';
+
+  @override
+  String get adminSortNewest => 'الأحدث';
+
+  @override
+  String get adminSortPriority => 'الأولوية';
+
+  @override
+  String get adminStatTotalMatches => 'إجمالي المطابقات';
+
+  @override
+  String get adminStatAccepted => 'المقبولة';
+
+  @override
+  String get adminStatDenied => 'المرفوضة';
+
+  @override
+  String get adminStatFeedbackCount => 'التعليقات';
+
+  @override
+  String get adminStatMatchQuality => 'درجة جودة المطابقة';
+
+  @override
+  String get adminStatTotal => 'الإجمالي';
+
+  @override
+  String get adminStatPendingCount => 'معلق';
+
+  @override
+  String get adminStatNotificationsCount => 'الإشعارات';
+
+  @override
+  String get adminStatActiveCount => 'النشطة';
+
+  @override
+  String get adminSectionPlatformSettings => 'إعدادات المنصة';
+
+  @override
+  String get adminSectionNotificationSettings => 'إعدادات الإشعارات';
+
+  @override
+  String get adminSettingMaintenanceTitle => 'وضع الصيانة';
+
+  @override
+  String get adminSettingMaintenanceSub => 'تعطيل الوصول لجميع المستخدمين';
+
+  @override
+  String get adminSettingNewRegsTitle => 'التسجيلات الجديدة';
+
+  @override
+  String get adminSettingNewRegsSub => 'السماح بتسجيل مستخدمين جدد';
+
+  @override
+  String get adminSettingFeaturedJobsTitle => 'الوظائف المميزة';
+
+  @override
+  String get adminSettingFeaturedJobsSub => 'عرض الوظائف المميزة في الرئيسية';
+
+  @override
+  String get adminSettingEmailNotifsTitle => 'إشعارات البريد الإلكتروني';
+
+  @override
+  String get adminSettingEmailNotifsSub => 'إرسال تنبيهات بريدية';
+
+  @override
+  String get adminSettingPushNotifsTitle => 'إشعارات الدفع';
+
+  @override
+  String get adminSettingPushNotifsSub => 'إرسال إشعارات الدفع';
+
+  @override
+  String get adminActionSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get adminToastSettingsSaved => 'تم حفظ الإعدادات';
+
+  @override
+  String get adminActionResolve => 'حل';
+
+  @override
+  String get adminActionDismiss => 'تجاهل';
+
+  @override
+  String get adminActionBanUser => 'حظر المستخدم';
+
+  @override
+  String get adminSearchUsersHint =>
+      'ابحث بالاسم أو البريد أو الدور أو الموقع...';
+
+  @override
+  String get adminMiscPositive => 'إيجابي';
+
+  @override
+  String adminCountUsers(int count) {
+    return '$count مستخدم';
+  }
+
+  @override
+  String adminCountNotifs(int count) {
+    return '$count إشعار';
+  }
+
+  @override
+  String adminCountLogs(int count) {
+    return '$count سجل';
+  }
+
+  @override
+  String adminCountItems(int count) {
+    return '$count عنصر';
+  }
+
+  @override
+  String adminBadgeNRetried(int count) {
+    return 'أعيدت المحاولة x$count';
+  }
 }

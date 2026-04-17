@@ -3959,4 +3959,655 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get acceptInterview => '接受面试';
+
+  @override
+  String get adminMenuDashboard => '仪表盘';
+
+  @override
+  String get adminMenuUsers => '用户';
+
+  @override
+  String get adminMenuCandidates => '候选人';
+
+  @override
+  String get adminMenuBusinesses => '企业';
+
+  @override
+  String get adminMenuJobs => '职位';
+
+  @override
+  String get adminMenuApplications => '申请';
+
+  @override
+  String get adminMenuBookings => '预订';
+
+  @override
+  String get adminMenuPayments => '支付';
+
+  @override
+  String get adminMenuMessages => '消息';
+
+  @override
+  String get adminMenuNotifications => '通知';
+
+  @override
+  String get adminMenuReports => '报告';
+
+  @override
+  String get adminMenuAnalytics => '分析';
+
+  @override
+  String get adminMenuSettings => '设置';
+
+  @override
+  String get adminMenuSupport => '支持';
+
+  @override
+  String get adminMenuModeration => '审核';
+
+  @override
+  String get adminMenuRoles => '角色';
+
+  @override
+  String get adminMenuInvoices => '发票';
+
+  @override
+  String get adminMenuLogs => '日志';
+
+  @override
+  String get adminMenuIntegrations => '集成';
+
+  @override
+  String get adminMenuLogout => '退出登录';
+
+  @override
+  String get adminActionApprove => '批准';
+
+  @override
+  String get adminActionReject => '拒绝';
+
+  @override
+  String get adminActionSuspend => '暂停';
+
+  @override
+  String get adminActionActivate => '激活';
+
+  @override
+  String get adminActionDelete => '删除';
+
+  @override
+  String get adminActionExport => '导出';
+
+  @override
+  String get adminSectionOverview => '概览';
+
+  @override
+  String get adminSectionManagement => '管理';
+
+  @override
+  String get adminSectionFinance => '财务';
+
+  @override
+  String get adminSectionOperations => '运营';
+
+  @override
+  String get adminSectionSystem => '系统';
+
+  @override
+  String get adminStatTotalUsers => '用户总数';
+
+  @override
+  String get adminStatActiveJobs => '活跃职位';
+
+  @override
+  String get adminStatPendingApprovals => '待批准';
+
+  @override
+  String get adminStatRevenue => '收入';
+
+  @override
+  String get adminStatBookingsToday => '今日预订';
+
+  @override
+  String get adminStatNewSignups => '新注册';
+
+  @override
+  String get adminStatConversionRate => '转化率';
+
+  @override
+  String get adminMiscWelcome => '欢迎回来';
+
+  @override
+  String get adminMiscLoading => '加载中…';
+
+  @override
+  String get adminMiscNoData => '暂无数据';
+
+  @override
+  String get adminMiscSearchPlaceholder => '搜索…';
+
+  @override
+  String get adminMenuContent => '内容';
+
+  @override
+  String get adminMenuMore => '更多';
+
+  @override
+  String get adminMenuVerifications => '验证';
+
+  @override
+  String get adminMenuSubscriptions => '订阅';
+
+  @override
+  String get adminMenuCommunity => '社区';
+
+  @override
+  String get adminMenuInterviews => '面试';
+
+  @override
+  String get adminMenuMatches => '匹配';
+
+  @override
+  String get adminMenuFeaturedContent => '精选内容';
+
+  @override
+  String get adminMenuAuditLog => '审计日志';
+
+  @override
+  String get adminMenuChangePassword => '修改密码';
+
+  @override
+  String get adminSectionPeople => '人员';
+
+  @override
+  String get adminSectionHiring => '招聘运营';
+
+  @override
+  String get adminSectionContentComm => '内容与沟通';
+
+  @override
+  String get adminSectionRevenue => '业务与收入';
+
+  @override
+  String get adminSectionToolsContent => '工具与内容';
+
+  @override
+  String get adminSectionQuickActions => '快捷操作';
+
+  @override
+  String get adminSectionNeedsAttention => '需要关注';
+
+  @override
+  String get adminStatActiveBusinesses => '活跃企业';
+
+  @override
+  String get adminStatApplicationsToday => '今日申请';
+
+  @override
+  String get adminStatInterviewsToday => '今日面试';
+
+  @override
+  String get adminStatFlaggedContent => '举报内容';
+
+  @override
+  String get adminStatActiveSubs => '活跃订阅';
+
+  @override
+  String get adminActionFlagged => '已举报';
+
+  @override
+  String get adminActionFeatured => '精选';
+
+  @override
+  String get adminActionReviewFlagged => '审核举报内容';
+
+  @override
+  String get adminActionTodayInterviews => '今日面试';
+
+  @override
+  String get adminActionOpenReports => '待处理举报';
+
+  @override
+  String get adminActionManageSubscriptions => '管理订阅';
+
+  @override
+  String get adminActionAnalyticsDashboard => '分析面板';
+
+  @override
+  String get adminActionSendNotification => '发送通知';
+
+  @override
+  String get adminActionCreateCommunityPost => '创建社区帖子';
+
+  @override
+  String get adminActionRetry => '重试';
+
+  @override
+  String get adminMiscGreetingMorning => '早上好';
+
+  @override
+  String get adminMiscGreetingAfternoon => '下午好';
+
+  @override
+  String get adminMiscGreetingEvening => '晚上好';
+
+  @override
+  String get adminMiscAllClear => '一切正常 — 无需关注。';
+
+  @override
+  String get adminSubtitleAllUsers => '所有平台用户';
+
+  @override
+  String get adminSubtitleCandidates => '求职者档案';
+
+  @override
+  String get adminSubtitleBusinesses => '雇主账号';
+
+  @override
+  String get adminSubtitleJobs => '活跃职位';
+
+  @override
+  String get adminSubtitleApplications => '已提交申请';
+
+  @override
+  String get adminSubtitleInterviews => '已安排面试';
+
+  @override
+  String get adminSubtitleMatches => '角色和职位类型匹配';
+
+  @override
+  String get adminSubtitleVerifications => '审核待处理验证';
+
+  @override
+  String get adminSubtitleReports => '举报和审核';
+
+  @override
+  String get adminSubtitleSupport => '未解决的支持问题';
+
+  @override
+  String get adminSubtitleMessages => '用户对话';
+
+  @override
+  String get adminSubtitleNotifications => '推送和应用内提醒';
+
+  @override
+  String get adminSubtitleCommunity => '帖子和讨论';
+
+  @override
+  String get adminSubtitleFeaturedContent => '精选内容';
+
+  @override
+  String get adminSubtitleSubscriptions => '套餐和账单';
+
+  @override
+  String get adminSubtitleAuditLog => '管理员活动日志';
+
+  @override
+  String get adminSubtitleAnalytics => '平台指标';
+
+  @override
+  String get adminSubtitleSettings => '平台配置';
+
+  @override
+  String get adminSubtitleUsersPage => '管理平台账号';
+
+  @override
+  String get adminSubtitleContentPage => '职位、申请和面试';
+
+  @override
+  String get adminSubtitleModerationPage => '验证、举报和支持';
+
+  @override
+  String get adminSubtitleMorePage => '设置、分析和账号';
+
+  @override
+  String get adminSubtitleAnalyticsHero => '关键指标、趋势和平台健康';
+
+  @override
+  String get adminBadgeUrgent => '紧急';
+
+  @override
+  String get adminBadgeReview => '审核';
+
+  @override
+  String get adminBadgeAction => '操作';
+
+  @override
+  String get adminMenuAllUsers => '所有用户';
+
+  @override
+  String get adminMiscSuperAdmin => '超级管理员';
+
+  @override
+  String adminBadgeNToday(int count) {
+    return '今日 $count';
+  }
+
+  @override
+  String adminBadgeNOpen(int count) {
+    return '$count 个未处理';
+  }
+
+  @override
+  String adminBadgeNActive(int count) {
+    return '$count 个活跃';
+  }
+
+  @override
+  String adminBadgeNUnread(int count) {
+    return '$count 条未读';
+  }
+
+  @override
+  String adminBadgeNPending(int count) {
+    return '$count 待处理';
+  }
+
+  @override
+  String adminBadgeNPosts(int count) {
+    return '$count 条帖子';
+  }
+
+  @override
+  String adminBadgeNFeatured(int count) {
+    return '$count 个精选';
+  }
+
+  @override
+  String get adminStatusActive => '活跃';
+
+  @override
+  String get adminStatusPaused => '已暂停';
+
+  @override
+  String get adminStatusClosed => '已关闭';
+
+  @override
+  String get adminStatusDraft => '草稿';
+
+  @override
+  String get adminStatusFlagged => '已标记';
+
+  @override
+  String get adminStatusSuspended => '已暂停';
+
+  @override
+  String get adminStatusPending => '待处理';
+
+  @override
+  String get adminStatusConfirmed => '已确认';
+
+  @override
+  String get adminStatusCompleted => '已完成';
+
+  @override
+  String get adminStatusCancelled => '已取消';
+
+  @override
+  String get adminStatusAccepted => '已接受';
+
+  @override
+  String get adminStatusDenied => '已拒绝';
+
+  @override
+  String get adminStatusExpired => '已过期';
+
+  @override
+  String get adminStatusResolved => '已解决';
+
+  @override
+  String get adminStatusScheduled => '已排期';
+
+  @override
+  String get adminStatusBanned => '已封禁';
+
+  @override
+  String get adminStatusVerified => '已验证';
+
+  @override
+  String get adminStatusFailed => '失败';
+
+  @override
+  String get adminStatusSuccess => '成功';
+
+  @override
+  String get adminStatusDelivered => '已送达';
+
+  @override
+  String get adminFilterAll => '全部';
+
+  @override
+  String get adminFilterToday => '今天';
+
+  @override
+  String get adminFilterUnread => '未读';
+
+  @override
+  String get adminFilterRead => '已读';
+
+  @override
+  String get adminFilterCandidates => '候选人';
+
+  @override
+  String get adminFilterBusinesses => '企业';
+
+  @override
+  String get adminFilterAdmins => '管理员';
+
+  @override
+  String get adminFilterCandidate => '候选人';
+
+  @override
+  String get adminFilterBusiness => '企业';
+
+  @override
+  String get adminFilterSystem => '系统';
+
+  @override
+  String get adminFilterPinned => '已置顶';
+
+  @override
+  String get adminFilterEmployers => '雇主';
+
+  @override
+  String get adminFilterBanners => '横幅';
+
+  @override
+  String get adminFilterBilling => '账单';
+
+  @override
+  String get adminFilterFeaturedEmployer => '精选雇主';
+
+  @override
+  String get adminFilterFeaturedJob => '精选职位';
+
+  @override
+  String get adminFilterHomeBanner => '首页横幅';
+
+  @override
+  String get adminEmptyAdjustFilters => '请尝试调整筛选。';
+
+  @override
+  String get adminEmptyJobsTitle => '无职位';
+
+  @override
+  String get adminEmptyJobsSub => '无匹配职位。';
+
+  @override
+  String get adminEmptyUsersTitle => '无用户';
+
+  @override
+  String get adminEmptyMessagesTitle => '无消息';
+
+  @override
+  String get adminEmptyMessagesSub => '无对话可显示。';
+
+  @override
+  String get adminEmptyReportsTitle => '无举报';
+
+  @override
+  String get adminEmptyReportsSub => '无待审核举报。';
+
+  @override
+  String get adminEmptyBusinessesTitle => '无企业';
+
+  @override
+  String get adminEmptyBusinessesSub => '无匹配企业。';
+
+  @override
+  String get adminEmptyNotifsTitle => '无通知';
+
+  @override
+  String get adminEmptySubsTitle => '无订阅';
+
+  @override
+  String get adminEmptySubsSub => '无匹配订阅。';
+
+  @override
+  String get adminEmptyLogsTitle => '无日志';
+
+  @override
+  String get adminEmptyContentTitle => '无内容';
+
+  @override
+  String get adminEmptyInterviewsTitle => '无面试';
+
+  @override
+  String get adminEmptyInterviewsSub => '无匹配面试。';
+
+  @override
+  String get adminEmptyFeedback => '反馈数据将显示在此处';
+
+  @override
+  String get adminEmptyMatchNotifs => '匹配通知将显示在此处';
+
+  @override
+  String get adminTitleMatchManagement => '匹配管理';
+
+  @override
+  String get adminTitleAdminLogs => '管理日志';
+
+  @override
+  String get adminTitleContentFeatured => '内容 / 精选';
+
+  @override
+  String get adminTabFeedback => '反馈';
+
+  @override
+  String get adminTabStats => '统计';
+
+  @override
+  String get adminSortNewest => '最新';
+
+  @override
+  String get adminSortPriority => '优先级';
+
+  @override
+  String get adminStatTotalMatches => '总匹配';
+
+  @override
+  String get adminStatAccepted => '已接受';
+
+  @override
+  String get adminStatDenied => '已拒绝';
+
+  @override
+  String get adminStatFeedbackCount => '反馈';
+
+  @override
+  String get adminStatMatchQuality => '匹配质量分';
+
+  @override
+  String get adminStatTotal => '总计';
+
+  @override
+  String get adminStatPendingCount => '待处理';
+
+  @override
+  String get adminStatNotificationsCount => '通知';
+
+  @override
+  String get adminStatActiveCount => '活跃';
+
+  @override
+  String get adminSectionPlatformSettings => '平台设置';
+
+  @override
+  String get adminSectionNotificationSettings => '通知设置';
+
+  @override
+  String get adminSettingMaintenanceTitle => '维护模式';
+
+  @override
+  String get adminSettingMaintenanceSub => '对所有用户禁用访问';
+
+  @override
+  String get adminSettingNewRegsTitle => '新注册';
+
+  @override
+  String get adminSettingNewRegsSub => '允许新用户注册';
+
+  @override
+  String get adminSettingFeaturedJobsTitle => '精选职位';
+
+  @override
+  String get adminSettingFeaturedJobsSub => '在首页显示精选职位';
+
+  @override
+  String get adminSettingEmailNotifsTitle => '邮件通知';
+
+  @override
+  String get adminSettingEmailNotifsSub => '发送邮件提醒';
+
+  @override
+  String get adminSettingPushNotifsTitle => '推送通知';
+
+  @override
+  String get adminSettingPushNotifsSub => '发送推送通知';
+
+  @override
+  String get adminActionSaveChanges => '保存更改';
+
+  @override
+  String get adminToastSettingsSaved => '设置已保存';
+
+  @override
+  String get adminActionResolve => '解决';
+
+  @override
+  String get adminActionDismiss => '忽略';
+
+  @override
+  String get adminActionBanUser => '封禁用户';
+
+  @override
+  String get adminSearchUsersHint => '搜索姓名、邮箱、角色、地点...';
+
+  @override
+  String get adminMiscPositive => '正面';
+
+  @override
+  String adminCountUsers(int count) {
+    return '$count 个用户';
+  }
+
+  @override
+  String adminCountNotifs(int count) {
+    return '$count 条通知';
+  }
+
+  @override
+  String adminCountLogs(int count) {
+    return '$count 条日志';
+  }
+
+  @override
+  String adminCountItems(int count) {
+    return '$count 项';
+  }
+
+  @override
+  String adminBadgeNRetried(int count) {
+    return '已重试 x$count';
+  }
 }

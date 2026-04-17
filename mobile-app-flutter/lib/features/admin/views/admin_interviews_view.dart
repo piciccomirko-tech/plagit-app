@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/core/mock/mock_data.dart';
-import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:provider/provider.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminInterviewsView extends StatefulWidget {
   const AdminInterviewsView({super.key});
@@ -11,184 +12,73 @@ class AdminInterviewsView extends StatefulWidget {
 }
 
 class _AdminInterviewsViewState extends State<AdminInterviewsView> {
-  String _filter = 'All';
-  final _filters = ['All', 'Upcoming', 'Completed', 'Cancelled', 'No-Show'];
+  int _chip = 0;
+  static const _filters = ['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'];
 
-  List<Map<String, dynamic>> get _filtered {
-    final interviews = MockData.adminInterviews;
-    if (_filter == 'All') return List<Map<String, dynamic>>.from(interviews);
-    return List<Map<String, dynamic>>.from(
-      interviews.where((i) => i['status'] == _filter),
-    );
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AdminInterviewsListProvider>().load();
+    });
   }
+
+  Color _statusColor(String s) => switch (s) { 'confirmed' => aTeal, 'completed' => aGreen, 'cancelled' => aUrgent, _ => aAmber };
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _filtered;
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal),
-                  ),
-                  const Spacer(),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Text(
-                        'Interviews',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.teal.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Text(
-                          '${MockData.adminInterviews.length}',
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.teal),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 24),
-                ],
-              ),
-            ),
-            // Filter chips
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: _filters.map((f) {
-                  final isActive = _filter == f;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: GestureDetector(
-                      onTap: () => setState(() => _filter = f),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isActive ? AppColors.teal : Colors.white,
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(
-                            color: isActive ? Colors.transparent : AppColors.divider,
-                            width: 0.5,
-                          ),
-                        ),
-                        child: Text(
-                          f,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                            color: isActive ? Colors.white : AppColors.secondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
-            ),
-            const SizedBox(height: 12),
-            // List
-            Expanded(
-              child: filtered.isEmpty
-                  ? const Center(
-                      child: Text('No interviews match', style: TextStyle(color: AppColors.secondary)),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
-                      itemCount: filtered.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
-                      itemBuilder: (context, index) {
-                        final i = filtered[index];
-                        final formatColor = (i['format'] as String) == 'Video'
-                            ? AppColors.purple
-                            : (i['format'] as String) == 'Phone'
-                                ? AppColors.teal
-                                : AppColors.amber;
-                        return GestureDetector(
-                          onTap: () => context.push('/admin/interviews/${i['id']}'),
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: AppColors.cardDecoration,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        '${i['candidateName']} - ${i['business']}',
-                                        style: const TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.charcoal,
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    StatusBadge(status: i['status'] as String),
-                                  ],
-                                ),
-                                const SizedBox(height: 6),
-                                Text(
-                                  i['jobTitle'] as String,
-                                  style: const TextStyle(fontSize: 13, color: AppColors.secondary),
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.calendar_today, size: 12, color: AppColors.tertiary),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      '${i['date']} at ${i['time']}',
-                                      style: const TextStyle(fontSize: 12, color: AppColors.secondary),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                      decoration: BoxDecoration(
-                                        color: formatColor.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(100),
-                                      ),
-                                      child: Text(
-                                        i['format'] as String,
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          fontWeight: FontWeight.w500,
-                                          color: formatColor,
-                                        ),
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    const Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
-      ),
-    );
+    final l = AppLocalizations.of(context);
+    final labels = [l.adminFilterAll, l.adminStatusPending, l.adminStatusConfirmed, l.adminStatusCompleted, l.adminStatusCancelled];
+    final provider = context.watch<AdminInterviewsListProvider>();
+
+    if (provider.loading) {
+      return Scaffold(backgroundColor: aBg, body: SafeArea(child: Column(children: [
+        aTopBar(context, l.adminMenuInterviews),
+        const Expanded(child: Center(child: CircularProgressIndicator(color: aTeal))),
+      ])));
+    }
+
+    if (provider.error != null) {
+      return Scaffold(backgroundColor: aBg, body: SafeArea(child: Column(children: [
+        aTopBar(context, l.adminMenuInterviews),
+        Expanded(child: Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(provider.error!, style: const TextStyle(fontSize: 14, color: aSecondary), textAlign: TextAlign.center),
+          const SizedBox(height: 16),
+          GestureDetector(onTap: () => provider.load(), child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(color: aTeal, borderRadius: BorderRadius.circular(100)),
+            child: Text(l.adminActionRetry, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
+          )),
+        ]))),
+      ])));
+    }
+
+    final allItems = provider.items;
+    var items = allItems.toList();
+    if (_chip > 0) { items = items.where((iv) => iv['status'] == _filters[_chip].toLowerCase()).toList(); }
+
+    return Scaffold(backgroundColor: aBg, body: SafeArea(child: Column(children: [
+      aTopBar(context, l.adminMenuInterviews, trailing: aPill('${allItems.length}', aIndigo)),
+      aChips(labels: labels, selected: _chip, onTap: (i) => setState(() => _chip = i)),
+      if (items.isEmpty) Expanded(child: aEmpty(Icons.calendar_today, l.adminEmptyInterviewsTitle, l.adminEmptyInterviewsSub))
+      else Expanded(child: ListView.separated(padding: const EdgeInsets.fromLTRB(20, 8, 20, 48), itemCount: items.length, separatorBuilder: (_, i) => const SizedBox(height: 12),
+        itemBuilder: (context, i) {
+          final iv = items[i];
+          final color = _statusColor(iv['status'] as String);
+          return GestureDetector(onTap: () => context.push('/admin/interviews/${iv['candidate']}'),
+            child: Container(padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: aCard, borderRadius: BorderRadius.circular(20), boxShadow: [aCardShadow]),
+              child: Row(children: [
+                aAvatar(iv['initials'] as String, 44),
+                const SizedBox(width: 12),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(iv['candidate'] as String, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: aCharcoal)),
+                  Text(iv['job'] as String, style: const TextStyle(fontSize: 13, color: aSecondary)),
+                  const SizedBox(height: 2), Text('${iv['date']} · ${iv['time']} · ${iv['type']}', style: const TextStyle(fontSize: 11, color: aTertiary)),
+                ])),
+                Column(crossAxisAlignment: CrossAxisAlignment.end, children: [aPill(aStatusLabel(l, iv['status'] as String), color), const SizedBox(height: 8), const Icon(Icons.chevron_right, size: 28, color: aTertiary)]),
+              ])));
+        },
+      )),
+    ])));
   }
 }

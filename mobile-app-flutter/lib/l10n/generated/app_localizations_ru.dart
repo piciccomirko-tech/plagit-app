@@ -4192,4 +4192,657 @@ class AppLocalizationsRu extends AppLocalizations {
 
   @override
   String get acceptInterview => 'Принять интервью';
+
+  @override
+  String get adminMenuDashboard => 'Панель';
+
+  @override
+  String get adminMenuUsers => 'Пользователи';
+
+  @override
+  String get adminMenuCandidates => 'Кандидаты';
+
+  @override
+  String get adminMenuBusinesses => 'Компании';
+
+  @override
+  String get adminMenuJobs => 'Вакансии';
+
+  @override
+  String get adminMenuApplications => 'Заявки';
+
+  @override
+  String get adminMenuBookings => 'Бронирования';
+
+  @override
+  String get adminMenuPayments => 'Платежи';
+
+  @override
+  String get adminMenuMessages => 'Сообщения';
+
+  @override
+  String get adminMenuNotifications => 'Уведомления';
+
+  @override
+  String get adminMenuReports => 'Отчёты';
+
+  @override
+  String get adminMenuAnalytics => 'Аналитика';
+
+  @override
+  String get adminMenuSettings => 'Настройки';
+
+  @override
+  String get adminMenuSupport => 'Поддержка';
+
+  @override
+  String get adminMenuModeration => 'Модерация';
+
+  @override
+  String get adminMenuRoles => 'Роли';
+
+  @override
+  String get adminMenuInvoices => 'Счета';
+
+  @override
+  String get adminMenuLogs => 'Журналы';
+
+  @override
+  String get adminMenuIntegrations => 'Интеграции';
+
+  @override
+  String get adminMenuLogout => 'Выйти';
+
+  @override
+  String get adminActionApprove => 'Одобрить';
+
+  @override
+  String get adminActionReject => 'Отклонить';
+
+  @override
+  String get adminActionSuspend => 'Приостановить';
+
+  @override
+  String get adminActionActivate => 'Активировать';
+
+  @override
+  String get adminActionDelete => 'Удалить';
+
+  @override
+  String get adminActionExport => 'Экспорт';
+
+  @override
+  String get adminSectionOverview => 'Обзор';
+
+  @override
+  String get adminSectionManagement => 'Управление';
+
+  @override
+  String get adminSectionFinance => 'Финансы';
+
+  @override
+  String get adminSectionOperations => 'Операции';
+
+  @override
+  String get adminSectionSystem => 'Система';
+
+  @override
+  String get adminStatTotalUsers => 'Всего пользователей';
+
+  @override
+  String get adminStatActiveJobs => 'Активные вакансии';
+
+  @override
+  String get adminStatPendingApprovals => 'Ожидающие одобрения';
+
+  @override
+  String get adminStatRevenue => 'Доход';
+
+  @override
+  String get adminStatBookingsToday => 'Бронирования сегодня';
+
+  @override
+  String get adminStatNewSignups => 'Новые регистрации';
+
+  @override
+  String get adminStatConversionRate => 'Коэффициент конверсии';
+
+  @override
+  String get adminMiscWelcome => 'С возвращением';
+
+  @override
+  String get adminMiscLoading => 'Загрузка…';
+
+  @override
+  String get adminMiscNoData => 'Нет данных';
+
+  @override
+  String get adminMiscSearchPlaceholder => 'Поиск…';
+
+  @override
+  String get adminMenuContent => 'Контент';
+
+  @override
+  String get adminMenuMore => 'Ещё';
+
+  @override
+  String get adminMenuVerifications => 'Проверки';
+
+  @override
+  String get adminMenuSubscriptions => 'Подписки';
+
+  @override
+  String get adminMenuCommunity => 'Сообщество';
+
+  @override
+  String get adminMenuInterviews => 'Собеседования';
+
+  @override
+  String get adminMenuMatches => 'Совпадения';
+
+  @override
+  String get adminMenuFeaturedContent => 'Рекомендуемое';
+
+  @override
+  String get adminMenuAuditLog => 'Журнал аудита';
+
+  @override
+  String get adminMenuChangePassword => 'Изменить пароль';
+
+  @override
+  String get adminSectionPeople => 'Люди';
+
+  @override
+  String get adminSectionHiring => 'Операции найма';
+
+  @override
+  String get adminSectionContentComm => 'Контент и коммуникации';
+
+  @override
+  String get adminSectionRevenue => 'Бизнес и доход';
+
+  @override
+  String get adminSectionToolsContent => 'Инструменты и контент';
+
+  @override
+  String get adminSectionQuickActions => 'Быстрые действия';
+
+  @override
+  String get adminSectionNeedsAttention => 'Требует внимания';
+
+  @override
+  String get adminStatActiveBusinesses => 'Активные компании';
+
+  @override
+  String get adminStatApplicationsToday => 'Заявки сегодня';
+
+  @override
+  String get adminStatInterviewsToday => 'Собеседования сегодня';
+
+  @override
+  String get adminStatFlaggedContent => 'Помеченный контент';
+
+  @override
+  String get adminStatActiveSubs => 'Активные подписки';
+
+  @override
+  String get adminActionFlagged => 'Помечено';
+
+  @override
+  String get adminActionFeatured => 'Избранное';
+
+  @override
+  String get adminActionReviewFlagged => 'Проверить помеченное';
+
+  @override
+  String get adminActionTodayInterviews => 'Собеседования сегодня';
+
+  @override
+  String get adminActionOpenReports => 'Открытые отчёты';
+
+  @override
+  String get adminActionManageSubscriptions => 'Управление подписками';
+
+  @override
+  String get adminActionAnalyticsDashboard => 'Панель аналитики';
+
+  @override
+  String get adminActionSendNotification => 'Отправить уведомление';
+
+  @override
+  String get adminActionCreateCommunityPost => 'Создать пост сообщества';
+
+  @override
+  String get adminActionRetry => 'Повторить';
+
+  @override
+  String get adminMiscGreetingMorning => 'Доброе утро';
+
+  @override
+  String get adminMiscGreetingAfternoon => 'Добрый день';
+
+  @override
+  String get adminMiscGreetingEvening => 'Добрый вечер';
+
+  @override
+  String get adminMiscAllClear => 'Всё в порядке — ничего не требует внимания.';
+
+  @override
+  String get adminSubtitleAllUsers => 'Все пользователи';
+
+  @override
+  String get adminSubtitleCandidates => 'Профили соискателей';
+
+  @override
+  String get adminSubtitleBusinesses => 'Аккаунты работодателей';
+
+  @override
+  String get adminSubtitleJobs => 'Активные вакансии';
+
+  @override
+  String get adminSubtitleApplications => 'Поданные заявки';
+
+  @override
+  String get adminSubtitleInterviews => 'Назначенные собеседования';
+
+  @override
+  String get adminSubtitleMatches => 'Совпадения по роли и типу';
+
+  @override
+  String get adminSubtitleVerifications => 'Проверки в ожидании';
+
+  @override
+  String get adminSubtitleReports => 'Жалобы и модерация';
+
+  @override
+  String get adminSubtitleSupport => 'Открытые обращения';
+
+  @override
+  String get adminSubtitleMessages => 'Разговоры пользователей';
+
+  @override
+  String get adminSubtitleNotifications => 'Push- и in-app уведомления';
+
+  @override
+  String get adminSubtitleCommunity => 'Публикации и обсуждения';
+
+  @override
+  String get adminSubtitleFeaturedContent => 'Избранный контент';
+
+  @override
+  String get adminSubtitleSubscriptions => 'Планы и оплата';
+
+  @override
+  String get adminSubtitleAuditLog => 'Журналы действий администратора';
+
+  @override
+  String get adminSubtitleAnalytics => 'Метрики платформы';
+
+  @override
+  String get adminSubtitleSettings => 'Настройки платформы';
+
+  @override
+  String get adminSubtitleUsersPage => 'Управление аккаунтами';
+
+  @override
+  String get adminSubtitleContentPage => 'Вакансии, заявки и собеседования';
+
+  @override
+  String get adminSubtitleModerationPage => 'Проверки, жалобы и поддержка';
+
+  @override
+  String get adminSubtitleMorePage => 'Настройки, аналитика и аккаунт';
+
+  @override
+  String get adminSubtitleAnalyticsHero => 'KPI, тренды и здоровье платформы';
+
+  @override
+  String get adminBadgeUrgent => 'Срочно';
+
+  @override
+  String get adminBadgeReview => 'Проверить';
+
+  @override
+  String get adminBadgeAction => 'Действие';
+
+  @override
+  String get adminMenuAllUsers => 'Все пользователи';
+
+  @override
+  String get adminMiscSuperAdmin => 'Супер-админ';
+
+  @override
+  String adminBadgeNToday(int count) {
+    return '$count сегодня';
+  }
+
+  @override
+  String adminBadgeNOpen(int count) {
+    return '$count открытых';
+  }
+
+  @override
+  String adminBadgeNActive(int count) {
+    return '$count активных';
+  }
+
+  @override
+  String adminBadgeNUnread(int count) {
+    return '$count непрочит.';
+  }
+
+  @override
+  String adminBadgeNPending(int count) {
+    return '$count в ожидании';
+  }
+
+  @override
+  String adminBadgeNPosts(int count) {
+    return '$count публикаций';
+  }
+
+  @override
+  String adminBadgeNFeatured(int count) {
+    return '$count избранных';
+  }
+
+  @override
+  String get adminStatusActive => 'Активно';
+
+  @override
+  String get adminStatusPaused => 'Приостановлено';
+
+  @override
+  String get adminStatusClosed => 'Закрыто';
+
+  @override
+  String get adminStatusDraft => 'Черновик';
+
+  @override
+  String get adminStatusFlagged => 'Помечено';
+
+  @override
+  String get adminStatusSuspended => 'Приостановлен';
+
+  @override
+  String get adminStatusPending => 'В ожидании';
+
+  @override
+  String get adminStatusConfirmed => 'Подтверждено';
+
+  @override
+  String get adminStatusCompleted => 'Завершено';
+
+  @override
+  String get adminStatusCancelled => 'Отменено';
+
+  @override
+  String get adminStatusAccepted => 'Принято';
+
+  @override
+  String get adminStatusDenied => 'Отклонено';
+
+  @override
+  String get adminStatusExpired => 'Истёк';
+
+  @override
+  String get adminStatusResolved => 'Решено';
+
+  @override
+  String get adminStatusScheduled => 'Запланировано';
+
+  @override
+  String get adminStatusBanned => 'Заблокировано';
+
+  @override
+  String get adminStatusVerified => 'Проверено';
+
+  @override
+  String get adminStatusFailed => 'Ошибка';
+
+  @override
+  String get adminStatusSuccess => 'Успех';
+
+  @override
+  String get adminStatusDelivered => 'Доставлено';
+
+  @override
+  String get adminFilterAll => 'Все';
+
+  @override
+  String get adminFilterToday => 'Сегодня';
+
+  @override
+  String get adminFilterUnread => 'Непрочитанные';
+
+  @override
+  String get adminFilterRead => 'Прочитанные';
+
+  @override
+  String get adminFilterCandidates => 'Кандидаты';
+
+  @override
+  String get adminFilterBusinesses => 'Компании';
+
+  @override
+  String get adminFilterAdmins => 'Админы';
+
+  @override
+  String get adminFilterCandidate => 'Кандидат';
+
+  @override
+  String get adminFilterBusiness => 'Компания';
+
+  @override
+  String get adminFilterSystem => 'Система';
+
+  @override
+  String get adminFilterPinned => 'Закреплённые';
+
+  @override
+  String get adminFilterEmployers => 'Работодатели';
+
+  @override
+  String get adminFilterBanners => 'Баннеры';
+
+  @override
+  String get adminFilterBilling => 'Биллинг';
+
+  @override
+  String get adminFilterFeaturedEmployer => 'Избранный работодатель';
+
+  @override
+  String get adminFilterFeaturedJob => 'Избранная вакансия';
+
+  @override
+  String get adminFilterHomeBanner => 'Баннер главной';
+
+  @override
+  String get adminEmptyAdjustFilters => 'Попробуйте изменить фильтры.';
+
+  @override
+  String get adminEmptyJobsTitle => 'Нет вакансий';
+
+  @override
+  String get adminEmptyJobsSub => 'Нет совпадений.';
+
+  @override
+  String get adminEmptyUsersTitle => 'Нет пользователей';
+
+  @override
+  String get adminEmptyMessagesTitle => 'Нет сообщений';
+
+  @override
+  String get adminEmptyMessagesSub => 'Нет разговоров.';
+
+  @override
+  String get adminEmptyReportsTitle => 'Нет жалоб';
+
+  @override
+  String get adminEmptyReportsSub => 'Нет жалоб для проверки.';
+
+  @override
+  String get adminEmptyBusinessesTitle => 'Нет компаний';
+
+  @override
+  String get adminEmptyBusinessesSub => 'Нет совпадений.';
+
+  @override
+  String get adminEmptyNotifsTitle => 'Нет уведомлений';
+
+  @override
+  String get adminEmptySubsTitle => 'Нет подписок';
+
+  @override
+  String get adminEmptySubsSub => 'Нет совпадений.';
+
+  @override
+  String get adminEmptyLogsTitle => 'Нет записей';
+
+  @override
+  String get adminEmptyContentTitle => 'Нет контента';
+
+  @override
+  String get adminEmptyInterviewsTitle => 'Нет собеседований';
+
+  @override
+  String get adminEmptyInterviewsSub => 'Нет совпадений.';
+
+  @override
+  String get adminEmptyFeedback => 'Отзывы появятся здесь';
+
+  @override
+  String get adminEmptyMatchNotifs =>
+      'Уведомления о совпадениях появятся здесь';
+
+  @override
+  String get adminTitleMatchManagement => 'Управление совпадениями';
+
+  @override
+  String get adminTitleAdminLogs => 'Логи админа';
+
+  @override
+  String get adminTitleContentFeatured => 'Контент / Избранное';
+
+  @override
+  String get adminTabFeedback => 'Отзывы';
+
+  @override
+  String get adminTabStats => 'Статистика';
+
+  @override
+  String get adminSortNewest => 'Новые';
+
+  @override
+  String get adminSortPriority => 'Приоритет';
+
+  @override
+  String get adminStatTotalMatches => 'Всего совпадений';
+
+  @override
+  String get adminStatAccepted => 'Принято';
+
+  @override
+  String get adminStatDenied => 'Отклонено';
+
+  @override
+  String get adminStatFeedbackCount => 'Отзывы';
+
+  @override
+  String get adminStatMatchQuality => 'Оценка качества совпадений';
+
+  @override
+  String get adminStatTotal => 'Всего';
+
+  @override
+  String get adminStatPendingCount => 'В ожидании';
+
+  @override
+  String get adminStatNotificationsCount => 'Уведомления';
+
+  @override
+  String get adminStatActiveCount => 'Активные';
+
+  @override
+  String get adminSectionPlatformSettings => 'Настройки платформы';
+
+  @override
+  String get adminSectionNotificationSettings => 'Настройки уведомлений';
+
+  @override
+  String get adminSettingMaintenanceTitle => 'Режим обслуживания';
+
+  @override
+  String get adminSettingMaintenanceSub => 'Отключить доступ для всех';
+
+  @override
+  String get adminSettingNewRegsTitle => 'Новые регистрации';
+
+  @override
+  String get adminSettingNewRegsSub => 'Разрешить новые регистрации';
+
+  @override
+  String get adminSettingFeaturedJobsTitle => 'Избранные вакансии';
+
+  @override
+  String get adminSettingFeaturedJobsSub =>
+      'Показывать избранные вакансии на главной';
+
+  @override
+  String get adminSettingEmailNotifsTitle => 'Email-уведомления';
+
+  @override
+  String get adminSettingEmailNotifsSub => 'Отправлять email-оповещения';
+
+  @override
+  String get adminSettingPushNotifsTitle => 'Push-уведомления';
+
+  @override
+  String get adminSettingPushNotifsSub => 'Отправлять push-уведомления';
+
+  @override
+  String get adminActionSaveChanges => 'Сохранить изменения';
+
+  @override
+  String get adminToastSettingsSaved => 'Настройки сохранены';
+
+  @override
+  String get adminActionResolve => 'Решить';
+
+  @override
+  String get adminActionDismiss => 'Отклонить';
+
+  @override
+  String get adminActionBanUser => 'Забанить';
+
+  @override
+  String get adminSearchUsersHint => 'Поиск: имя, email, роль, место...';
+
+  @override
+  String get adminMiscPositive => 'положительно';
+
+  @override
+  String adminCountUsers(int count) {
+    return '$count пользователей';
+  }
+
+  @override
+  String adminCountNotifs(int count) {
+    return '$count уведомлений';
+  }
+
+  @override
+  String adminCountLogs(int count) {
+    return '$count записей';
+  }
+
+  @override
+  String adminCountItems(int count) {
+    return '$count элементов';
+  }
+
+  @override
+  String adminBadgeNRetried(int count) {
+    return 'Повторы x$count';
+  }
 }

@@ -1922,5 +1922,901 @@
   "acceptInterview": "Accept Interview",
   "@acceptInterview": {
     "description": "acceptInterview"
+  },
+  "adminMenuDashboard": "Dashboard",
+  "@adminMenuDashboard": {
+    "description": "adminMenuDashboard"
+  },
+  "adminMenuUsers": "Users",
+  "@adminMenuUsers": {
+    "description": "adminMenuUsers"
+  },
+  "adminMenuCandidates": "Candidates",
+  "@adminMenuCandidates": {
+    "description": "adminMenuCandidates"
+  },
+  "adminMenuBusinesses": "Businesses",
+  "@adminMenuBusinesses": {
+    "description": "adminMenuBusinesses"
+  },
+  "adminMenuJobs": "Jobs",
+  "@adminMenuJobs": {
+    "description": "adminMenuJobs"
+  },
+  "adminMenuApplications": "Applications",
+  "@adminMenuApplications": {
+    "description": "adminMenuApplications"
+  },
+  "adminMenuBookings": "Bookings",
+  "@adminMenuBookings": {
+    "description": "adminMenuBookings"
+  },
+  "adminMenuPayments": "Payments",
+  "@adminMenuPayments": {
+    "description": "adminMenuPayments"
+  },
+  "adminMenuMessages": "Messages",
+  "@adminMenuMessages": {
+    "description": "adminMenuMessages"
+  },
+  "adminMenuNotifications": "Notifications",
+  "@adminMenuNotifications": {
+    "description": "adminMenuNotifications"
+  },
+  "adminMenuReports": "Reports",
+  "@adminMenuReports": {
+    "description": "adminMenuReports"
+  },
+  "adminMenuAnalytics": "Analytics",
+  "@adminMenuAnalytics": {
+    "description": "adminMenuAnalytics"
+  },
+  "adminMenuSettings": "Settings",
+  "@adminMenuSettings": {
+    "description": "adminMenuSettings"
+  },
+  "adminMenuSupport": "Support",
+  "@adminMenuSupport": {
+    "description": "adminMenuSupport"
+  },
+  "adminMenuModeration": "Moderation",
+  "@adminMenuModeration": {
+    "description": "adminMenuModeration"
+  },
+  "adminMenuRoles": "Roles",
+  "@adminMenuRoles": {
+    "description": "adminMenuRoles"
+  },
+  "adminMenuInvoices": "Invoices",
+  "@adminMenuInvoices": {
+    "description": "adminMenuInvoices"
+  },
+  "adminMenuLogs": "Logs",
+  "@adminMenuLogs": {
+    "description": "adminMenuLogs"
+  },
+  "adminMenuIntegrations": "Integrations",
+  "@adminMenuIntegrations": {
+    "description": "adminMenuIntegrations"
+  },
+  "adminMenuLogout": "Logout",
+  "@adminMenuLogout": {
+    "description": "adminMenuLogout"
+  },
+  "adminActionApprove": "Approve",
+  "@adminActionApprove": {
+    "description": "adminActionApprove"
+  },
+  "adminActionReject": "Reject",
+  "@adminActionReject": {
+    "description": "adminActionReject"
+  },
+  "adminActionSuspend": "Suspend",
+  "@adminActionSuspend": {
+    "description": "adminActionSuspend"
+  },
+  "adminActionActivate": "Activate",
+  "@adminActionActivate": {
+    "description": "adminActionActivate"
+  },
+  "adminActionDelete": "Delete",
+  "@adminActionDelete": {
+    "description": "adminActionDelete"
+  },
+  "adminActionExport": "Export",
+  "@adminActionExport": {
+    "description": "adminActionExport"
+  },
+  "adminSectionOverview": "Overview",
+  "@adminSectionOverview": {
+    "description": "adminSectionOverview"
+  },
+  "adminSectionManagement": "Management",
+  "@adminSectionManagement": {
+    "description": "adminSectionManagement"
+  },
+  "adminSectionFinance": "Finance",
+  "@adminSectionFinance": {
+    "description": "adminSectionFinance"
+  },
+  "adminSectionOperations": "Operations",
+  "@adminSectionOperations": {
+    "description": "adminSectionOperations"
+  },
+  "adminSectionSystem": "System",
+  "@adminSectionSystem": {
+    "description": "adminSectionSystem"
+  },
+  "adminStatTotalUsers": "Total Users",
+  "@adminStatTotalUsers": {
+    "description": "adminStatTotalUsers"
+  },
+  "adminStatActiveJobs": "Active Jobs",
+  "@adminStatActiveJobs": {
+    "description": "adminStatActiveJobs"
+  },
+  "adminStatPendingApprovals": "Pending Approvals",
+  "@adminStatPendingApprovals": {
+    "description": "adminStatPendingApprovals"
+  },
+  "adminStatRevenue": "Revenue",
+  "@adminStatRevenue": {
+    "description": "adminStatRevenue"
+  },
+  "adminStatBookingsToday": "Bookings Today",
+  "@adminStatBookingsToday": {
+    "description": "adminStatBookingsToday"
+  },
+  "adminStatNewSignups": "New Signups",
+  "@adminStatNewSignups": {
+    "description": "adminStatNewSignups"
+  },
+  "adminStatConversionRate": "Conversion Rate",
+  "@adminStatConversionRate": {
+    "description": "adminStatConversionRate"
+  },
+  "adminMiscWelcome": "Welcome back",
+  "@adminMiscWelcome": {
+    "description": "adminMiscWelcome"
+  },
+  "adminMiscLoading": "Loading…",
+  "@adminMiscLoading": {
+    "description": "adminMiscLoading"
+  },
+  "adminMiscNoData": "No data available",
+  "@adminMiscNoData": {
+    "description": "adminMiscNoData"
+  },
+  "adminMiscSearchPlaceholder": "Search…",
+  "@adminMiscSearchPlaceholder": {
+    "description": "adminMiscSearchPlaceholder"
+  },
+  "adminMenuContent": "Content",
+  "@adminMenuContent": {
+    "description": "adminMenuContent"
+  },
+  "adminMenuMore": "More",
+  "@adminMenuMore": {
+    "description": "adminMenuMore"
+  },
+  "adminMenuVerifications": "Verifications",
+  "@adminMenuVerifications": {
+    "description": "adminMenuVerifications"
+  },
+  "adminMenuSubscriptions": "Subscriptions",
+  "@adminMenuSubscriptions": {
+    "description": "adminMenuSubscriptions"
+  },
+  "adminMenuCommunity": "Community",
+  "@adminMenuCommunity": {
+    "description": "adminMenuCommunity"
+  },
+  "adminMenuInterviews": "Interviews",
+  "@adminMenuInterviews": {
+    "description": "adminMenuInterviews"
+  },
+  "adminMenuMatches": "Matches",
+  "@adminMenuMatches": {
+    "description": "adminMenuMatches"
+  },
+  "adminMenuFeaturedContent": "Featured Content",
+  "@adminMenuFeaturedContent": {
+    "description": "adminMenuFeaturedContent"
+  },
+  "adminMenuAuditLog": "Audit Log",
+  "@adminMenuAuditLog": {
+    "description": "adminMenuAuditLog"
+  },
+  "adminMenuChangePassword": "Change Password",
+  "@adminMenuChangePassword": {
+    "description": "adminMenuChangePassword"
+  },
+  "adminSectionPeople": "People",
+  "@adminSectionPeople": {
+    "description": "adminSectionPeople"
+  },
+  "adminSectionHiring": "Hiring Operations",
+  "@adminSectionHiring": {
+    "description": "adminSectionHiring"
+  },
+  "adminSectionContentComm": "Content & Communication",
+  "@adminSectionContentComm": {
+    "description": "adminSectionContentComm"
+  },
+  "adminSectionRevenue": "Business & Revenue",
+  "@adminSectionRevenue": {
+    "description": "adminSectionRevenue"
+  },
+  "adminSectionToolsContent": "Tools & Content",
+  "@adminSectionToolsContent": {
+    "description": "adminSectionToolsContent"
+  },
+  "adminSectionQuickActions": "Quick Actions",
+  "@adminSectionQuickActions": {
+    "description": "adminSectionQuickActions"
+  },
+  "adminSectionNeedsAttention": "Needs Attention",
+  "@adminSectionNeedsAttention": {
+    "description": "adminSectionNeedsAttention"
+  },
+  "adminStatActiveBusinesses": "Active Businesses",
+  "@adminStatActiveBusinesses": {
+    "description": "adminStatActiveBusinesses"
+  },
+  "adminStatApplicationsToday": "Applications Today",
+  "@adminStatApplicationsToday": {
+    "description": "adminStatApplicationsToday"
+  },
+  "adminStatInterviewsToday": "Interviews Today",
+  "@adminStatInterviewsToday": {
+    "description": "adminStatInterviewsToday"
+  },
+  "adminStatFlaggedContent": "Flagged Content",
+  "@adminStatFlaggedContent": {
+    "description": "adminStatFlaggedContent"
+  },
+  "adminStatActiveSubs": "Active Subs",
+  "@adminStatActiveSubs": {
+    "description": "adminStatActiveSubs"
+  },
+  "adminActionFlagged": "Flagged",
+  "@adminActionFlagged": {
+    "description": "adminActionFlagged"
+  },
+  "adminActionFeatured": "Featured",
+  "@adminActionFeatured": {
+    "description": "adminActionFeatured"
+  },
+  "adminActionReviewFlagged": "Review Flagged Content",
+  "@adminActionReviewFlagged": {
+    "description": "adminActionReviewFlagged"
+  },
+  "adminActionTodayInterviews": "Today's Interviews",
+  "@adminActionTodayInterviews": {
+    "description": "adminActionTodayInterviews"
+  },
+  "adminActionOpenReports": "Open Reports",
+  "@adminActionOpenReports": {
+    "description": "adminActionOpenReports"
+  },
+  "adminActionManageSubscriptions": "Manage Subscriptions",
+  "@adminActionManageSubscriptions": {
+    "description": "adminActionManageSubscriptions"
+  },
+  "adminActionAnalyticsDashboard": "Analytics Dashboard",
+  "@adminActionAnalyticsDashboard": {
+    "description": "adminActionAnalyticsDashboard"
+  },
+  "adminActionSendNotification": "Send Notification",
+  "@adminActionSendNotification": {
+    "description": "adminActionSendNotification"
+  },
+  "adminActionCreateCommunityPost": "Create Community Post",
+  "@adminActionCreateCommunityPost": {
+    "description": "adminActionCreateCommunityPost"
+  },
+  "adminActionRetry": "Retry",
+  "@adminActionRetry": {
+    "description": "adminActionRetry"
+  },
+  "adminMiscGreetingMorning": "Good morning",
+  "@adminMiscGreetingMorning": {
+    "description": "adminMiscGreetingMorning"
+  },
+  "adminMiscGreetingAfternoon": "Good afternoon",
+  "@adminMiscGreetingAfternoon": {
+    "description": "adminMiscGreetingAfternoon"
+  },
+  "adminMiscGreetingEvening": "Good evening",
+  "@adminMiscGreetingEvening": {
+    "description": "adminMiscGreetingEvening"
+  },
+  "adminMiscAllClear": "All clear — nothing needs attention.",
+  "@adminMiscAllClear": {
+    "description": "adminMiscAllClear"
+  },
+  "adminSubtitleAllUsers": "All platform users",
+  "@adminSubtitleAllUsers": {
+    "description": "adminSubtitleAllUsers"
+  },
+  "adminSubtitleCandidates": "Job seeker profiles",
+  "@adminSubtitleCandidates": {
+    "description": "adminSubtitleCandidates"
+  },
+  "adminSubtitleBusinesses": "Employer accounts",
+  "@adminSubtitleBusinesses": {
+    "description": "adminSubtitleBusinesses"
+  },
+  "adminSubtitleJobs": "Active job listings",
+  "@adminSubtitleJobs": {
+    "description": "adminSubtitleJobs"
+  },
+  "adminSubtitleApplications": "Submitted applications",
+  "@adminSubtitleApplications": {
+    "description": "adminSubtitleApplications"
+  },
+  "adminSubtitleInterviews": "Scheduled interviews",
+  "@adminSubtitleInterviews": {
+    "description": "adminSubtitleInterviews"
+  },
+  "adminSubtitleMatches": "Role and job type matches",
+  "@adminSubtitleMatches": {
+    "description": "adminSubtitleMatches"
+  },
+  "adminSubtitleVerifications": "Review pending verifications",
+  "@adminSubtitleVerifications": {
+    "description": "adminSubtitleVerifications"
+  },
+  "adminSubtitleReports": "Flags and moderation",
+  "@adminSubtitleReports": {
+    "description": "adminSubtitleReports"
+  },
+  "adminSubtitleSupport": "Open support issues",
+  "@adminSubtitleSupport": {
+    "description": "adminSubtitleSupport"
+  },
+  "adminSubtitleMessages": "User conversations",
+  "@adminSubtitleMessages": {
+    "description": "adminSubtitleMessages"
+  },
+  "adminSubtitleNotifications": "Push & in-app alerts",
+  "@adminSubtitleNotifications": {
+    "description": "adminSubtitleNotifications"
+  },
+  "adminSubtitleCommunity": "Posts and discussions",
+  "@adminSubtitleCommunity": {
+    "description": "adminSubtitleCommunity"
+  },
+  "adminSubtitleFeaturedContent": "Highlighted content",
+  "@adminSubtitleFeaturedContent": {
+    "description": "adminSubtitleFeaturedContent"
+  },
+  "adminSubtitleSubscriptions": "Plans and billing",
+  "@adminSubtitleSubscriptions": {
+    "description": "adminSubtitleSubscriptions"
+  },
+  "adminSubtitleAuditLog": "Admin activity logs",
+  "@adminSubtitleAuditLog": {
+    "description": "adminSubtitleAuditLog"
+  },
+  "adminSubtitleAnalytics": "Platform metrics",
+  "@adminSubtitleAnalytics": {
+    "description": "adminSubtitleAnalytics"
+  },
+  "adminSubtitleSettings": "Platform configuration",
+  "@adminSubtitleSettings": {
+    "description": "adminSubtitleSettings"
+  },
+  "adminSubtitleUsersPage": "Manage platform accounts",
+  "@adminSubtitleUsersPage": {
+    "description": "adminSubtitleUsersPage"
+  },
+  "adminSubtitleContentPage": "Jobs, applications, and interviews",
+  "@adminSubtitleContentPage": {
+    "description": "adminSubtitleContentPage"
+  },
+  "adminSubtitleModerationPage": "Verifications, reports, and support",
+  "@adminSubtitleModerationPage": {
+    "description": "adminSubtitleModerationPage"
+  },
+  "adminSubtitleMorePage": "Settings, analytics, and account",
+  "@adminSubtitleMorePage": {
+    "description": "adminSubtitleMorePage"
+  },
+  "adminSubtitleAnalyticsHero": "KPIs, trends, and platform health",
+  "@adminSubtitleAnalyticsHero": {
+    "description": "adminSubtitleAnalyticsHero"
+  },
+  "adminBadgeUrgent": "Urgent",
+  "@adminBadgeUrgent": {
+    "description": "adminBadgeUrgent"
+  },
+  "adminBadgeReview": "Review",
+  "@adminBadgeReview": {
+    "description": "adminBadgeReview"
+  },
+  "adminBadgeAction": "Action",
+  "@adminBadgeAction": {
+    "description": "adminBadgeAction"
+  },
+  "adminMenuAllUsers": "All Users",
+  "@adminMenuAllUsers": {
+    "description": "adminMenuAllUsers"
+  },
+  "adminMiscSuperAdmin": "Super Admin",
+  "@adminMiscSuperAdmin": {
+    "description": "adminMiscSuperAdmin"
+  },
+  "adminBadgeNToday": "{count} today",
+  "@adminBadgeNToday": {
+    "description": "adminBadgeNToday",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNOpen": "{count} open",
+  "@adminBadgeNOpen": {
+    "description": "adminBadgeNOpen",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNActive": "{count} active",
+  "@adminBadgeNActive": {
+    "description": "adminBadgeNActive",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNUnread": "{count} unread",
+  "@adminBadgeNUnread": {
+    "description": "adminBadgeNUnread",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNPending": "{count} pending",
+  "@adminBadgeNPending": {
+    "description": "adminBadgeNPending",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNPosts": "{count} posts",
+  "@adminBadgeNPosts": {
+    "description": "adminBadgeNPosts",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNFeatured": "{count} featured",
+  "@adminBadgeNFeatured": {
+    "description": "adminBadgeNFeatured",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminStatusActive": "Active",
+  "@adminStatusActive": {
+    "description": "adminStatusActive"
+  },
+  "adminStatusPaused": "Paused",
+  "@adminStatusPaused": {
+    "description": "adminStatusPaused"
+  },
+  "adminStatusClosed": "Closed",
+  "@adminStatusClosed": {
+    "description": "adminStatusClosed"
+  },
+  "adminStatusDraft": "Draft",
+  "@adminStatusDraft": {
+    "description": "adminStatusDraft"
+  },
+  "adminStatusFlagged": "Flagged",
+  "@adminStatusFlagged": {
+    "description": "adminStatusFlagged"
+  },
+  "adminStatusSuspended": "Suspended",
+  "@adminStatusSuspended": {
+    "description": "adminStatusSuspended"
+  },
+  "adminStatusPending": "Pending",
+  "@adminStatusPending": {
+    "description": "adminStatusPending"
+  },
+  "adminStatusConfirmed": "Confirmed",
+  "@adminStatusConfirmed": {
+    "description": "adminStatusConfirmed"
+  },
+  "adminStatusCompleted": "Completed",
+  "@adminStatusCompleted": {
+    "description": "adminStatusCompleted"
+  },
+  "adminStatusCancelled": "Cancelled",
+  "@adminStatusCancelled": {
+    "description": "adminStatusCancelled"
+  },
+  "adminStatusAccepted": "Accepted",
+  "@adminStatusAccepted": {
+    "description": "adminStatusAccepted"
+  },
+  "adminStatusDenied": "Denied",
+  "@adminStatusDenied": {
+    "description": "adminStatusDenied"
+  },
+  "adminStatusExpired": "Expired",
+  "@adminStatusExpired": {
+    "description": "adminStatusExpired"
+  },
+  "adminStatusResolved": "Resolved",
+  "@adminStatusResolved": {
+    "description": "adminStatusResolved"
+  },
+  "adminStatusScheduled": "Scheduled",
+  "@adminStatusScheduled": {
+    "description": "adminStatusScheduled"
+  },
+  "adminStatusBanned": "Banned",
+  "@adminStatusBanned": {
+    "description": "adminStatusBanned"
+  },
+  "adminStatusVerified": "Verified",
+  "@adminStatusVerified": {
+    "description": "adminStatusVerified"
+  },
+  "adminStatusFailed": "Failed",
+  "@adminStatusFailed": {
+    "description": "adminStatusFailed"
+  },
+  "adminStatusSuccess": "Success",
+  "@adminStatusSuccess": {
+    "description": "adminStatusSuccess"
+  },
+  "adminStatusDelivered": "Delivered",
+  "@adminStatusDelivered": {
+    "description": "adminStatusDelivered"
+  },
+  "adminFilterAll": "All",
+  "@adminFilterAll": {
+    "description": "adminFilterAll"
+  },
+  "adminFilterToday": "Today",
+  "@adminFilterToday": {
+    "description": "adminFilterToday"
+  },
+  "adminFilterUnread": "Unread",
+  "@adminFilterUnread": {
+    "description": "adminFilterUnread"
+  },
+  "adminFilterRead": "Read",
+  "@adminFilterRead": {
+    "description": "adminFilterRead"
+  },
+  "adminFilterCandidates": "Candidates",
+  "@adminFilterCandidates": {
+    "description": "adminFilterCandidates"
+  },
+  "adminFilterBusinesses": "Businesses",
+  "@adminFilterBusinesses": {
+    "description": "adminFilterBusinesses"
+  },
+  "adminFilterAdmins": "Admins",
+  "@adminFilterAdmins": {
+    "description": "adminFilterAdmins"
+  },
+  "adminFilterCandidate": "Candidate",
+  "@adminFilterCandidate": {
+    "description": "adminFilterCandidate"
+  },
+  "adminFilterBusiness": "Business",
+  "@adminFilterBusiness": {
+    "description": "adminFilterBusiness"
+  },
+  "adminFilterSystem": "System",
+  "@adminFilterSystem": {
+    "description": "adminFilterSystem"
+  },
+  "adminFilterPinned": "Pinned",
+  "@adminFilterPinned": {
+    "description": "adminFilterPinned"
+  },
+  "adminFilterEmployers": "Employers",
+  "@adminFilterEmployers": {
+    "description": "adminFilterEmployers"
+  },
+  "adminFilterBanners": "Banners",
+  "@adminFilterBanners": {
+    "description": "adminFilterBanners"
+  },
+  "adminFilterBilling": "Billing",
+  "@adminFilterBilling": {
+    "description": "adminFilterBilling"
+  },
+  "adminFilterFeaturedEmployer": "Featured Employer",
+  "@adminFilterFeaturedEmployer": {
+    "description": "adminFilterFeaturedEmployer"
+  },
+  "adminFilterFeaturedJob": "Featured Job",
+  "@adminFilterFeaturedJob": {
+    "description": "adminFilterFeaturedJob"
+  },
+  "adminFilterHomeBanner": "Home Banner",
+  "@adminFilterHomeBanner": {
+    "description": "adminFilterHomeBanner"
+  },
+  "adminEmptyAdjustFilters": "Try adjusting filters.",
+  "@adminEmptyAdjustFilters": {
+    "description": "adminEmptyAdjustFilters"
+  },
+  "adminEmptyJobsTitle": "No jobs",
+  "@adminEmptyJobsTitle": {
+    "description": "adminEmptyJobsTitle"
+  },
+  "adminEmptyJobsSub": "No jobs match.",
+  "@adminEmptyJobsSub": {
+    "description": "adminEmptyJobsSub"
+  },
+  "adminEmptyUsersTitle": "No users match",
+  "@adminEmptyUsersTitle": {
+    "description": "adminEmptyUsersTitle"
+  },
+  "adminEmptyMessagesTitle": "No messages",
+  "@adminEmptyMessagesTitle": {
+    "description": "adminEmptyMessagesTitle"
+  },
+  "adminEmptyMessagesSub": "No conversations to show.",
+  "@adminEmptyMessagesSub": {
+    "description": "adminEmptyMessagesSub"
+  },
+  "adminEmptyReportsTitle": "No reports",
+  "@adminEmptyReportsTitle": {
+    "description": "adminEmptyReportsTitle"
+  },
+  "adminEmptyReportsSub": "No user reports to review.",
+  "@adminEmptyReportsSub": {
+    "description": "adminEmptyReportsSub"
+  },
+  "adminEmptyBusinessesTitle": "No businesses",
+  "@adminEmptyBusinessesTitle": {
+    "description": "adminEmptyBusinessesTitle"
+  },
+  "adminEmptyBusinessesSub": "No businesses match.",
+  "@adminEmptyBusinessesSub": {
+    "description": "adminEmptyBusinessesSub"
+  },
+  "adminEmptyNotifsTitle": "No notifications match",
+  "@adminEmptyNotifsTitle": {
+    "description": "adminEmptyNotifsTitle"
+  },
+  "adminEmptySubsTitle": "No subscriptions",
+  "@adminEmptySubsTitle": {
+    "description": "adminEmptySubsTitle"
+  },
+  "adminEmptySubsSub": "No subscriptions match.",
+  "@adminEmptySubsSub": {
+    "description": "adminEmptySubsSub"
+  },
+  "adminEmptyLogsTitle": "No logs match",
+  "@adminEmptyLogsTitle": {
+    "description": "adminEmptyLogsTitle"
+  },
+  "adminEmptyContentTitle": "No content matches",
+  "@adminEmptyContentTitle": {
+    "description": "adminEmptyContentTitle"
+  },
+  "adminEmptyInterviewsTitle": "No interviews",
+  "@adminEmptyInterviewsTitle": {
+    "description": "adminEmptyInterviewsTitle"
+  },
+  "adminEmptyInterviewsSub": "No interviews match.",
+  "@adminEmptyInterviewsSub": {
+    "description": "adminEmptyInterviewsSub"
+  },
+  "adminEmptyFeedback": "Feedback data will appear here",
+  "@adminEmptyFeedback": {
+    "description": "adminEmptyFeedback"
+  },
+  "adminEmptyMatchNotifs": "Match notifications will appear here",
+  "@adminEmptyMatchNotifs": {
+    "description": "adminEmptyMatchNotifs"
+  },
+  "adminTitleMatchManagement": "Match Management",
+  "@adminTitleMatchManagement": {
+    "description": "adminTitleMatchManagement"
+  },
+  "adminTitleAdminLogs": "Admin Logs",
+  "@adminTitleAdminLogs": {
+    "description": "adminTitleAdminLogs"
+  },
+  "adminTitleContentFeatured": "Content / Featured",
+  "@adminTitleContentFeatured": {
+    "description": "adminTitleContentFeatured"
+  },
+  "adminTabFeedback": "Feedback",
+  "@adminTabFeedback": {
+    "description": "adminTabFeedback"
+  },
+  "adminTabStats": "Stats",
+  "@adminTabStats": {
+    "description": "adminTabStats"
+  },
+  "adminSortNewest": "Newest",
+  "@adminSortNewest": {
+    "description": "adminSortNewest"
+  },
+  "adminSortPriority": "Priority",
+  "@adminSortPriority": {
+    "description": "adminSortPriority"
+  },
+  "adminStatTotalMatches": "Total Matches",
+  "@adminStatTotalMatches": {
+    "description": "adminStatTotalMatches"
+  },
+  "adminStatAccepted": "Accepted",
+  "@adminStatAccepted": {
+    "description": "adminStatAccepted"
+  },
+  "adminStatDenied": "Denied",
+  "@adminStatDenied": {
+    "description": "adminStatDenied"
+  },
+  "adminStatFeedbackCount": "Feedback",
+  "@adminStatFeedbackCount": {
+    "description": "adminStatFeedbackCount"
+  },
+  "adminStatMatchQuality": "Match Quality Score",
+  "@adminStatMatchQuality": {
+    "description": "adminStatMatchQuality"
+  },
+  "adminStatTotal": "Total",
+  "@adminStatTotal": {
+    "description": "adminStatTotal"
+  },
+  "adminStatPendingCount": "Pending",
+  "@adminStatPendingCount": {
+    "description": "adminStatPendingCount"
+  },
+  "adminStatNotificationsCount": "Notifications",
+  "@adminStatNotificationsCount": {
+    "description": "adminStatNotificationsCount"
+  },
+  "adminStatActiveCount": "Active",
+  "@adminStatActiveCount": {
+    "description": "adminStatActiveCount"
+  },
+  "adminSectionPlatformSettings": "Platform Settings",
+  "@adminSectionPlatformSettings": {
+    "description": "adminSectionPlatformSettings"
+  },
+  "adminSectionNotificationSettings": "Notification Settings",
+  "@adminSectionNotificationSettings": {
+    "description": "adminSectionNotificationSettings"
+  },
+  "adminSettingMaintenanceTitle": "Maintenance Mode",
+  "@adminSettingMaintenanceTitle": {
+    "description": "adminSettingMaintenanceTitle"
+  },
+  "adminSettingMaintenanceSub": "Disable access for all users",
+  "@adminSettingMaintenanceSub": {
+    "description": "adminSettingMaintenanceSub"
+  },
+  "adminSettingNewRegsTitle": "New Registrations",
+  "@adminSettingNewRegsTitle": {
+    "description": "adminSettingNewRegsTitle"
+  },
+  "adminSettingNewRegsSub": "Allow new user sign-ups",
+  "@adminSettingNewRegsSub": {
+    "description": "adminSettingNewRegsSub"
+  },
+  "adminSettingFeaturedJobsTitle": "Featured Jobs",
+  "@adminSettingFeaturedJobsTitle": {
+    "description": "adminSettingFeaturedJobsTitle"
+  },
+  "adminSettingFeaturedJobsSub": "Show featured jobs on home",
+  "@adminSettingFeaturedJobsSub": {
+    "description": "adminSettingFeaturedJobsSub"
+  },
+  "adminSettingEmailNotifsTitle": "Email Notifications",
+  "@adminSettingEmailNotifsTitle": {
+    "description": "adminSettingEmailNotifsTitle"
+  },
+  "adminSettingEmailNotifsSub": "Send email alerts",
+  "@adminSettingEmailNotifsSub": {
+    "description": "adminSettingEmailNotifsSub"
+  },
+  "adminSettingPushNotifsTitle": "Push Notifications",
+  "@adminSettingPushNotifsTitle": {
+    "description": "adminSettingPushNotifsTitle"
+  },
+  "adminSettingPushNotifsSub": "Send push notifications",
+  "@adminSettingPushNotifsSub": {
+    "description": "adminSettingPushNotifsSub"
+  },
+  "adminActionSaveChanges": "Save Changes",
+  "@adminActionSaveChanges": {
+    "description": "adminActionSaveChanges"
+  },
+  "adminToastSettingsSaved": "Settings saved",
+  "@adminToastSettingsSaved": {
+    "description": "adminToastSettingsSaved"
+  },
+  "adminActionResolve": "Resolve",
+  "@adminActionResolve": {
+    "description": "adminActionResolve"
+  },
+  "adminActionDismiss": "Dismiss",
+  "@adminActionDismiss": {
+    "description": "adminActionDismiss"
+  },
+  "adminActionBanUser": "Ban User",
+  "@adminActionBanUser": {
+    "description": "adminActionBanUser"
+  },
+  "adminSearchUsersHint": "Search name, email, role, location...",
+  "@adminSearchUsersHint": {
+    "description": "adminSearchUsersHint"
+  },
+  "adminMiscPositive": "positive",
+  "@adminMiscPositive": {
+    "description": "adminMiscPositive"
+  },
+  "adminCountUsers": "{count} users",
+  "@adminCountUsers": {
+    "description": "adminCountUsers",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminCountNotifs": "{count} notifications",
+  "@adminCountNotifs": {
+    "description": "adminCountNotifs",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminCountLogs": "{count} log entries",
+  "@adminCountLogs": {
+    "description": "adminCountLogs",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminCountItems": "{count} items",
+  "@adminCountItems": {
+    "description": "adminCountItems",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "adminBadgeNRetried": "Retried x{count}",
+  "@adminBadgeNRetried": {
+    "description": "adminBadgeNRetried",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

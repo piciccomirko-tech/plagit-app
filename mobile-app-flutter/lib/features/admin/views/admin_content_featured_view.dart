@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class AdminContentFeaturedView extends StatefulWidget {
   const AdminContentFeaturedView({super.key});
@@ -8,7 +8,7 @@ class AdminContentFeaturedView extends StatefulWidget {
 }
 
 class _S extends State<AdminContentFeaturedView> {
-  String _filter = 'All';
+  int _filterIdx = 0;
   final _filters = ['All', 'Featured Employer', 'Featured Job', 'Home Banner', 'Active', 'Scheduled', 'Pinned', 'Expired'];
   final _items = [
     ('Nobu Restaurant Spotlight', 'Featured Employer', 'Active', 'Home Banner', 'Nobu Restaurant', true, 450, 120, 1, 'Mar 15'),
@@ -20,46 +20,90 @@ class _S extends State<AdminContentFeaturedView> {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _filter == 'All' ? _items : _filter == 'Pinned' ? _items.where((i) => i.$6).toList() : _items.where((i) => i.$2 == _filter || i.$3 == _filter).toList();
-    return Scaffold(backgroundColor: AppColors.background, body: SafeArea(child: Column(children: [
-      AdminTopBar(title: 'Content / Featured', onBack: () => Navigator.pop(context), trailing: const Icon(Icons.add_circle, size: 24, color: AppColors.teal)),
-      Padding(padding: const EdgeInsets.only(top: AppSpacing.xs), child: SingleChildScrollView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl), child: Row(children: [
-        AdminSummaryChip(label: 'All', count: '${_items.length}', color: AppColors.charcoal, width: 66), const SizedBox(width: AppSpacing.sm),
-        AdminSummaryChip(label: 'Employers', count: '${_items.where((i) => i.$2 == 'Featured Employer').length}', color: AppColors.teal, width: 66), const SizedBox(width: AppSpacing.sm),
-        AdminSummaryChip(label: 'Jobs', count: '${_items.where((i) => i.$2 == 'Featured Job').length}', color: AppColors.indigo, width: 66), const SizedBox(width: AppSpacing.sm),
-        AdminSummaryChip(label: 'Banners', count: '${_items.where((i) => i.$2 == 'Home Banner').length}', color: AppColors.amber, width: 66), const SizedBox(width: AppSpacing.sm),
-        AdminSummaryChip(label: 'Active', count: '${_items.where((i) => i.$3 == 'Active').length}', color: AppColors.online, width: 66),
+    final l = AppLocalizations.of(context);
+    final chipLabels = [
+      l.adminFilterAll,
+      l.adminFilterFeaturedEmployer,
+      l.adminFilterFeaturedJob,
+      l.adminFilterHomeBanner,
+      l.adminStatusActive,
+      l.adminStatusScheduled,
+      l.adminFilterPinned,
+      l.adminStatusExpired,
+    ];
+    final filter = _filters[_filterIdx];
+    final filtered = filter == 'All' ? _items : filter == 'Pinned' ? _items.where((i) => i.$6).toList() : _items.where((i) => i.$2 == filter || i.$3 == filter).toList();
+    return Scaffold(backgroundColor: aBg, body: SafeArea(child: Column(children: [
+      aTopBar(context, l.adminTitleContentFeatured, trailing: const Icon(Icons.add_circle, size: 24, color: aTeal)),
+      Padding(padding: const EdgeInsets.only(top: 4), child: SingleChildScrollView(scrollDirection: Axis.horizontal, padding: const EdgeInsets.symmetric(horizontal: 20), child: Row(children: [
+        _summaryChip(l.adminFilterAll, '${_items.length}', aCharcoal), const SizedBox(width: 8),
+        _summaryChip(l.adminFilterEmployers, '${_items.where((i) => i.$2 == 'Featured Employer').length}', aTeal), const SizedBox(width: 8),
+        _summaryChip(l.adminMenuJobs, '${_items.where((i) => i.$2 == 'Featured Job').length}', aIndigo), const SizedBox(width: 8),
+        _summaryChip(l.adminFilterBanners, '${_items.where((i) => i.$2 == 'Home Banner').length}', aAmber), const SizedBox(width: 8),
+        _summaryChip(l.adminStatusActive, '${_items.where((i) => i.$3 == 'Active').length}', aGreen),
       ]))),
-      Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: AdminFilterChips(filters: _filters, selected: _filter, onSelected: (f) => setState(() => _filter = f))),
-      Padding(padding: const EdgeInsets.only(top: AppSpacing.sm), child: AdminSortRow(count: filtered.length, entityName: 'items', sortLabel: 'Priority', onSort: () {})),
-      Expanded(child: filtered.isEmpty ? AdminEmptyState(icon: Icons.star, title: 'No content matches', subtitle: 'Try adjusting filters.') : SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.md, AppSpacing.xl, AppSpacing.xxxl),
+      Padding(padding: const EdgeInsets.only(top: 8), child: aChips(labels: chipLabels, selected: _filterIdx, onTap: (i) => setState(() => _filterIdx = i))),
+      _sortRow(l.adminCountItems(filtered.length), l.adminSortPriority, l),
+      Expanded(child: filtered.isEmpty ? aEmpty(Icons.star, l.adminEmptyContentTitle, l.adminEmptyAdjustFilters) : SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
         child: Container(
-          decoration: BoxDecoration(color: AppColors.cardBackground, borderRadius: BorderRadius.circular(AppRadius.xl), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))]),
+          decoration: BoxDecoration(color: aCard, borderRadius: BorderRadius.circular(20), boxShadow: [aSubtleShadow]),
           child: Column(children: filtered.asMap().entries.map((e) {
             final it = e.value;
-            final typeColor = it.$2 == 'Featured Employer' ? AppColors.teal : it.$2 == 'Featured Job' ? AppColors.indigo : AppColors.amber;
+            final typeColor = it.$2 == 'Featured Employer' ? aTeal : it.$2 == 'Featured Job' ? aIndigo : aAmber;
             final typeIcon = it.$2 == 'Featured Employer' ? Icons.business : it.$2 == 'Featured Job' ? Icons.work : Icons.view_carousel;
-            final statusColor = it.$3 == 'Active' ? AppColors.online : it.$3 == 'Scheduled' ? AppColors.indigo : AppColors.tertiary;
+            final statusColor = it.$3 == 'Active' ? aGreen : it.$3 == 'Scheduled' ? aIndigo : aTertiary;
             return Column(children: [
-              if (e.key > 0) Padding(padding: EdgeInsets.only(left: AppSpacing.xl + 36 + AppSpacing.md), child: const Divider(height: 1, color: AppColors.divider)),
-              Padding(padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl, vertical: AppSpacing.lg), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Container(width: 36, height: 36, decoration: BoxDecoration(color: typeColor.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(AppRadius.sm)), child: Icon(typeIcon, size: 16, color: typeColor)),
-                const SizedBox(width: AppSpacing.md),
+              if (e.key > 0) Padding(padding: const EdgeInsets.only(left: 68), child: const Divider(height: 1, color: aDivider)),
+              Padding(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16), child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Container(width: 36, height: 36, decoration: BoxDecoration(color: typeColor.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)), child: Icon(typeIcon, size: 16, color: typeColor)),
+                const SizedBox(width: 12),
                 Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Row(children: [Flexible(child: Text(it.$1, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal), maxLines: 1, overflow: TextOverflow.ellipsis)), const SizedBox(width: AppSpacing.xs), StatusPill(text: it.$3, color: statusColor), if (it.$6) ...[const SizedBox(width: AppSpacing.xs), const StatusPill(text: 'Pinned', color: AppColors.amber)]]),
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(children: [StatusPill(text: it.$2, color: typeColor), const SizedBox(width: AppSpacing.sm), Text(it.$4, style: const TextStyle(fontSize: 10, color: AppColors.tertiary))]),
-                  if (it.$5.isNotEmpty) ...[const SizedBox(height: AppSpacing.xs), Row(children: [const Icon(Icons.link, size: 10, color: AppColors.tertiary), const SizedBox(width: 2), Text(it.$5, style: const TextStyle(fontSize: 10, color: AppColors.secondary))])],
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(children: [if (it.$7 > 0) ...[const Icon(Icons.visibility, size: 10, color: AppColors.tertiary), const SizedBox(width: 2), Text('${it.$7}', style: const TextStyle(fontSize: 10, color: AppColors.secondary)), const SizedBox(width: AppSpacing.md)], if (it.$8 > 0) ...[const Icon(Icons.touch_app, size: 10, color: AppColors.tertiary), const SizedBox(width: 2), Text('${it.$8}', style: const TextStyle(fontSize: 10, color: AppColors.secondary)), const SizedBox(width: AppSpacing.md)], Text('#${it.$9}', style: const TextStyle(fontSize: 10, color: AppColors.teal)), const SizedBox(width: AppSpacing.md), Text(it.$10, style: const TextStyle(fontSize: 10, color: AppColors.tertiary))]),
+                  Row(children: [Flexible(child: Text(it.$1, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: aCharcoal), maxLines: 1, overflow: TextOverflow.ellipsis)), const SizedBox(width: 4), aPill(aStatusLabel(l, it.$3), statusColor), if (it.$6) ...[const SizedBox(width: 4), aPill(l.adminFilterPinned, aAmber)]]),
+                  const SizedBox(height: 4),
+                  Row(children: [aPill(_typeLabel(l, it.$2), typeColor), const SizedBox(width: 8), Text(it.$4, style: const TextStyle(fontSize: 10, color: aTertiary))]),
+                  if (it.$5.isNotEmpty) ...[const SizedBox(height: 4), Row(children: [const Icon(Icons.link, size: 10, color: aTertiary), const SizedBox(width: 2), Text(it.$5, style: const TextStyle(fontSize: 10, color: aSecondary))])],
+                  const SizedBox(height: 4),
+                  Row(children: [if (it.$7 > 0) ...[const Icon(Icons.visibility, size: 10, color: aTertiary), const SizedBox(width: 2), Text('${it.$7}', style: const TextStyle(fontSize: 10, color: aSecondary)), const SizedBox(width: 12)], if (it.$8 > 0) ...[const Icon(Icons.touch_app, size: 10, color: aTertiary), const SizedBox(width: 2), Text('${it.$8}', style: const TextStyle(fontSize: 10, color: aSecondary)), const SizedBox(width: 12)], Text('#${it.$9}', style: const TextStyle(fontSize: 10, color: aTeal)), const SizedBox(width: 12), Text(it.$10, style: const TextStyle(fontSize: 10, color: aTertiary))]),
                 ])),
-                const Icon(Icons.more_horiz, size: 18, color: AppColors.tertiary),
+                const Icon(Icons.more_horiz, size: 18, color: aTertiary),
               ])),
             ]);
           }).toList()),
         ),
       )),
     ])));
+  }
+
+  Widget _summaryChip(String label, String count, Color color) => Container(
+    width: 66, padding: const EdgeInsets.symmetric(vertical: 8),
+    decoration: BoxDecoration(color: color.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12)),
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      Text(count, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: color)),
+      const SizedBox(height: 2),
+      Text(label, style: const TextStyle(fontSize: 10, color: aSecondary)),
+    ]),
+  );
+
+  Widget _sortRow(String countLabel, String sortLabel, AppLocalizations l) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+    child: Row(children: [
+      Text(countLabel, style: const TextStyle(fontSize: 13, color: aSecondary)),
+      const Spacer(),
+      GestureDetector(onTap: () {}, child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Text(sortLabel, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: aTeal)),
+        const SizedBox(width: 4),
+        const Icon(Icons.swap_vert, size: 14, color: aTeal),
+      ])),
+    ]),
+  );
+
+  String _typeLabel(AppLocalizations l, String type) {
+    switch (type) {
+      case 'Featured Employer': return l.adminFilterFeaturedEmployer;
+      case 'Featured Job': return l.adminFilterFeaturedJob;
+      case 'Home Banner': return l.adminFilterHomeBanner;
+      default: return type;
+    }
   }
 }

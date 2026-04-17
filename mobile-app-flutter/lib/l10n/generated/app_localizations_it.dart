@@ -4102,4 +4102,658 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get acceptInterview => 'Accetta colloquio';
+
+  @override
+  String get adminMenuDashboard => 'Dashboard';
+
+  @override
+  String get adminMenuUsers => 'Utenti';
+
+  @override
+  String get adminMenuCandidates => 'Candidati';
+
+  @override
+  String get adminMenuBusinesses => 'Aziende';
+
+  @override
+  String get adminMenuJobs => 'Lavori';
+
+  @override
+  String get adminMenuApplications => 'Candidature';
+
+  @override
+  String get adminMenuBookings => 'Prenotazioni';
+
+  @override
+  String get adminMenuPayments => 'Pagamenti';
+
+  @override
+  String get adminMenuMessages => 'Messaggi';
+
+  @override
+  String get adminMenuNotifications => 'Notifiche';
+
+  @override
+  String get adminMenuReports => 'Report';
+
+  @override
+  String get adminMenuAnalytics => 'Analisi';
+
+  @override
+  String get adminMenuSettings => 'Impostazioni';
+
+  @override
+  String get adminMenuSupport => 'Supporto';
+
+  @override
+  String get adminMenuModeration => 'Moderazione';
+
+  @override
+  String get adminMenuRoles => 'Ruoli';
+
+  @override
+  String get adminMenuInvoices => 'Fatture';
+
+  @override
+  String get adminMenuLogs => 'Log';
+
+  @override
+  String get adminMenuIntegrations => 'Integrazioni';
+
+  @override
+  String get adminMenuLogout => 'Esci';
+
+  @override
+  String get adminActionApprove => 'Approva';
+
+  @override
+  String get adminActionReject => 'Rifiuta';
+
+  @override
+  String get adminActionSuspend => 'Sospendi';
+
+  @override
+  String get adminActionActivate => 'Attiva';
+
+  @override
+  String get adminActionDelete => 'Elimina';
+
+  @override
+  String get adminActionExport => 'Esporta';
+
+  @override
+  String get adminSectionOverview => 'Panoramica';
+
+  @override
+  String get adminSectionManagement => 'Gestione';
+
+  @override
+  String get adminSectionFinance => 'Finanza';
+
+  @override
+  String get adminSectionOperations => 'Operazioni';
+
+  @override
+  String get adminSectionSystem => 'Sistema';
+
+  @override
+  String get adminStatTotalUsers => 'Utenti totali';
+
+  @override
+  String get adminStatActiveJobs => 'Lavori attivi';
+
+  @override
+  String get adminStatPendingApprovals => 'Approvazioni in sospeso';
+
+  @override
+  String get adminStatRevenue => 'Ricavi';
+
+  @override
+  String get adminStatBookingsToday => 'Prenotazioni oggi';
+
+  @override
+  String get adminStatNewSignups => 'Nuove registrazioni';
+
+  @override
+  String get adminStatConversionRate => 'Tasso di conversione';
+
+  @override
+  String get adminMiscWelcome => 'Bentornato';
+
+  @override
+  String get adminMiscLoading => 'Caricamento…';
+
+  @override
+  String get adminMiscNoData => 'Nessun dato disponibile';
+
+  @override
+  String get adminMiscSearchPlaceholder => 'Cerca…';
+
+  @override
+  String get adminMenuContent => 'Contenuti';
+
+  @override
+  String get adminMenuMore => 'Altro';
+
+  @override
+  String get adminMenuVerifications => 'Verifiche';
+
+  @override
+  String get adminMenuSubscriptions => 'Abbonamenti';
+
+  @override
+  String get adminMenuCommunity => 'Community';
+
+  @override
+  String get adminMenuInterviews => 'Colloqui';
+
+  @override
+  String get adminMenuMatches => 'Match';
+
+  @override
+  String get adminMenuFeaturedContent => 'Contenuti in evidenza';
+
+  @override
+  String get adminMenuAuditLog => 'Log di audit';
+
+  @override
+  String get adminMenuChangePassword => 'Cambia password';
+
+  @override
+  String get adminSectionPeople => 'Persone';
+
+  @override
+  String get adminSectionHiring => 'Operazioni di hiring';
+
+  @override
+  String get adminSectionContentComm => 'Contenuti e comunicazioni';
+
+  @override
+  String get adminSectionRevenue => 'Business e ricavi';
+
+  @override
+  String get adminSectionToolsContent => 'Strumenti e contenuti';
+
+  @override
+  String get adminSectionQuickActions => 'Azioni rapide';
+
+  @override
+  String get adminSectionNeedsAttention => 'Richiede attenzione';
+
+  @override
+  String get adminStatActiveBusinesses => 'Aziende attive';
+
+  @override
+  String get adminStatApplicationsToday => 'Candidature oggi';
+
+  @override
+  String get adminStatInterviewsToday => 'Colloqui oggi';
+
+  @override
+  String get adminStatFlaggedContent => 'Contenuti segnalati';
+
+  @override
+  String get adminStatActiveSubs => 'Abbonamenti attivi';
+
+  @override
+  String get adminActionFlagged => 'Segnalati';
+
+  @override
+  String get adminActionFeatured => 'In evidenza';
+
+  @override
+  String get adminActionReviewFlagged => 'Controlla contenuti segnalati';
+
+  @override
+  String get adminActionTodayInterviews => 'Colloqui di oggi';
+
+  @override
+  String get adminActionOpenReports => 'Segnalazioni aperte';
+
+  @override
+  String get adminActionManageSubscriptions => 'Gestisci abbonamenti';
+
+  @override
+  String get adminActionAnalyticsDashboard => 'Dashboard analisi';
+
+  @override
+  String get adminActionSendNotification => 'Invia notifica';
+
+  @override
+  String get adminActionCreateCommunityPost => 'Crea post community';
+
+  @override
+  String get adminActionRetry => 'Riprova';
+
+  @override
+  String get adminMiscGreetingMorning => 'Buongiorno';
+
+  @override
+  String get adminMiscGreetingAfternoon => 'Buon pomeriggio';
+
+  @override
+  String get adminMiscGreetingEvening => 'Buonasera';
+
+  @override
+  String get adminMiscAllClear => 'Tutto ok — nulla richiede attenzione.';
+
+  @override
+  String get adminSubtitleAllUsers => 'Tutti gli utenti della piattaforma';
+
+  @override
+  String get adminSubtitleCandidates => 'Profili candidati';
+
+  @override
+  String get adminSubtitleBusinesses => 'Account aziendali';
+
+  @override
+  String get adminSubtitleJobs => 'Offerte di lavoro attive';
+
+  @override
+  String get adminSubtitleApplications => 'Candidature inviate';
+
+  @override
+  String get adminSubtitleInterviews => 'Colloqui programmati';
+
+  @override
+  String get adminSubtitleMatches => 'Corrispondenze ruolo e tipo lavoro';
+
+  @override
+  String get adminSubtitleVerifications => 'Revisiona verifiche in sospeso';
+
+  @override
+  String get adminSubtitleReports => 'Segnalazioni e moderazione';
+
+  @override
+  String get adminSubtitleSupport => 'Problemi di supporto aperti';
+
+  @override
+  String get adminSubtitleMessages => 'Conversazioni utenti';
+
+  @override
+  String get adminSubtitleNotifications => 'Avvisi push e in-app';
+
+  @override
+  String get adminSubtitleCommunity => 'Post e discussioni';
+
+  @override
+  String get adminSubtitleFeaturedContent => 'Contenuti in evidenza';
+
+  @override
+  String get adminSubtitleSubscriptions => 'Piani e fatturazione';
+
+  @override
+  String get adminSubtitleAuditLog => 'Log attività admin';
+
+  @override
+  String get adminSubtitleAnalytics => 'Metriche piattaforma';
+
+  @override
+  String get adminSubtitleSettings => 'Configurazione piattaforma';
+
+  @override
+  String get adminSubtitleUsersPage => 'Gestisci gli account della piattaforma';
+
+  @override
+  String get adminSubtitleContentPage => 'Lavori, candidature e colloqui';
+
+  @override
+  String get adminSubtitleModerationPage =>
+      'Verifiche, segnalazioni e supporto';
+
+  @override
+  String get adminSubtitleMorePage => 'Impostazioni, analitiche e account';
+
+  @override
+  String get adminSubtitleAnalyticsHero =>
+      'KPI, tendenze e salute della piattaforma';
+
+  @override
+  String get adminBadgeUrgent => 'Urgente';
+
+  @override
+  String get adminBadgeReview => 'Rivedi';
+
+  @override
+  String get adminBadgeAction => 'Azione';
+
+  @override
+  String get adminMenuAllUsers => 'Tutti gli utenti';
+
+  @override
+  String get adminMiscSuperAdmin => 'Super Admin';
+
+  @override
+  String adminBadgeNToday(int count) {
+    return '$count oggi';
+  }
+
+  @override
+  String adminBadgeNOpen(int count) {
+    return '$count aperti';
+  }
+
+  @override
+  String adminBadgeNActive(int count) {
+    return '$count attivi';
+  }
+
+  @override
+  String adminBadgeNUnread(int count) {
+    return '$count non letti';
+  }
+
+  @override
+  String adminBadgeNPending(int count) {
+    return '$count in sospeso';
+  }
+
+  @override
+  String adminBadgeNPosts(int count) {
+    return '$count post';
+  }
+
+  @override
+  String adminBadgeNFeatured(int count) {
+    return '$count in evidenza';
+  }
+
+  @override
+  String get adminStatusActive => 'Attivo';
+
+  @override
+  String get adminStatusPaused => 'In pausa';
+
+  @override
+  String get adminStatusClosed => 'Chiuso';
+
+  @override
+  String get adminStatusDraft => 'Bozza';
+
+  @override
+  String get adminStatusFlagged => 'Segnalato';
+
+  @override
+  String get adminStatusSuspended => 'Sospeso';
+
+  @override
+  String get adminStatusPending => 'In sospeso';
+
+  @override
+  String get adminStatusConfirmed => 'Confermato';
+
+  @override
+  String get adminStatusCompleted => 'Completato';
+
+  @override
+  String get adminStatusCancelled => 'Annullato';
+
+  @override
+  String get adminStatusAccepted => 'Accettato';
+
+  @override
+  String get adminStatusDenied => 'Rifiutato';
+
+  @override
+  String get adminStatusExpired => 'Scaduto';
+
+  @override
+  String get adminStatusResolved => 'Risolto';
+
+  @override
+  String get adminStatusScheduled => 'Programmato';
+
+  @override
+  String get adminStatusBanned => 'Bannato';
+
+  @override
+  String get adminStatusVerified => 'Verificato';
+
+  @override
+  String get adminStatusFailed => 'Fallito';
+
+  @override
+  String get adminStatusSuccess => 'Successo';
+
+  @override
+  String get adminStatusDelivered => 'Consegnato';
+
+  @override
+  String get adminFilterAll => 'Tutti';
+
+  @override
+  String get adminFilterToday => 'Oggi';
+
+  @override
+  String get adminFilterUnread => 'Non letti';
+
+  @override
+  String get adminFilterRead => 'Letti';
+
+  @override
+  String get adminFilterCandidates => 'Candidati';
+
+  @override
+  String get adminFilterBusinesses => 'Aziende';
+
+  @override
+  String get adminFilterAdmins => 'Admin';
+
+  @override
+  String get adminFilterCandidate => 'Candidato';
+
+  @override
+  String get adminFilterBusiness => 'Azienda';
+
+  @override
+  String get adminFilterSystem => 'Sistema';
+
+  @override
+  String get adminFilterPinned => 'Fissati';
+
+  @override
+  String get adminFilterEmployers => 'Datori';
+
+  @override
+  String get adminFilterBanners => 'Banner';
+
+  @override
+  String get adminFilterBilling => 'Fatturazione';
+
+  @override
+  String get adminFilterFeaturedEmployer => 'Datore in evidenza';
+
+  @override
+  String get adminFilterFeaturedJob => 'Lavoro in evidenza';
+
+  @override
+  String get adminFilterHomeBanner => 'Banner Home';
+
+  @override
+  String get adminEmptyAdjustFilters => 'Prova a modificare i filtri.';
+
+  @override
+  String get adminEmptyJobsTitle => 'Nessun lavoro';
+
+  @override
+  String get adminEmptyJobsSub => 'Nessun lavoro corrisponde.';
+
+  @override
+  String get adminEmptyUsersTitle => 'Nessun utente';
+
+  @override
+  String get adminEmptyMessagesTitle => 'Nessun messaggio';
+
+  @override
+  String get adminEmptyMessagesSub => 'Nessuna conversazione da mostrare.';
+
+  @override
+  String get adminEmptyReportsTitle => 'Nessuna segnalazione';
+
+  @override
+  String get adminEmptyReportsSub => 'Nessuna segnalazione da rivedere.';
+
+  @override
+  String get adminEmptyBusinessesTitle => 'Nessuna azienda';
+
+  @override
+  String get adminEmptyBusinessesSub => 'Nessuna azienda corrisponde.';
+
+  @override
+  String get adminEmptyNotifsTitle => 'Nessuna notifica';
+
+  @override
+  String get adminEmptySubsTitle => 'Nessun abbonamento';
+
+  @override
+  String get adminEmptySubsSub => 'Nessun abbonamento corrisponde.';
+
+  @override
+  String get adminEmptyLogsTitle => 'Nessun log';
+
+  @override
+  String get adminEmptyContentTitle => 'Nessun contenuto';
+
+  @override
+  String get adminEmptyInterviewsTitle => 'Nessun colloquio';
+
+  @override
+  String get adminEmptyInterviewsSub => 'Nessun colloquio corrisponde.';
+
+  @override
+  String get adminEmptyFeedback => 'I feedback appariranno qui';
+
+  @override
+  String get adminEmptyMatchNotifs => 'Le notifiche match appariranno qui';
+
+  @override
+  String get adminTitleMatchManagement => 'Gestione match';
+
+  @override
+  String get adminTitleAdminLogs => 'Log admin';
+
+  @override
+  String get adminTitleContentFeatured => 'Contenuti / In evidenza';
+
+  @override
+  String get adminTabFeedback => 'Feedback';
+
+  @override
+  String get adminTabStats => 'Statistiche';
+
+  @override
+  String get adminSortNewest => 'Più recenti';
+
+  @override
+  String get adminSortPriority => 'Priorità';
+
+  @override
+  String get adminStatTotalMatches => 'Match totali';
+
+  @override
+  String get adminStatAccepted => 'Accettati';
+
+  @override
+  String get adminStatDenied => 'Rifiutati';
+
+  @override
+  String get adminStatFeedbackCount => 'Feedback';
+
+  @override
+  String get adminStatMatchQuality => 'Punteggio qualità match';
+
+  @override
+  String get adminStatTotal => 'Totale';
+
+  @override
+  String get adminStatPendingCount => 'In sospeso';
+
+  @override
+  String get adminStatNotificationsCount => 'Notifiche';
+
+  @override
+  String get adminStatActiveCount => 'Attivi';
+
+  @override
+  String get adminSectionPlatformSettings => 'Impostazioni piattaforma';
+
+  @override
+  String get adminSectionNotificationSettings => 'Impostazioni notifiche';
+
+  @override
+  String get adminSettingMaintenanceTitle => 'Modalità manutenzione';
+
+  @override
+  String get adminSettingMaintenanceSub => 'Disabilita l\'accesso per tutti';
+
+  @override
+  String get adminSettingNewRegsTitle => 'Nuove registrazioni';
+
+  @override
+  String get adminSettingNewRegsSub => 'Consenti nuove iscrizioni';
+
+  @override
+  String get adminSettingFeaturedJobsTitle => 'Lavori in evidenza';
+
+  @override
+  String get adminSettingFeaturedJobsSub =>
+      'Mostra i lavori in evidenza in home';
+
+  @override
+  String get adminSettingEmailNotifsTitle => 'Notifiche email';
+
+  @override
+  String get adminSettingEmailNotifsSub => 'Invia avvisi email';
+
+  @override
+  String get adminSettingPushNotifsTitle => 'Notifiche push';
+
+  @override
+  String get adminSettingPushNotifsSub => 'Invia notifiche push';
+
+  @override
+  String get adminActionSaveChanges => 'Salva modifiche';
+
+  @override
+  String get adminToastSettingsSaved => 'Impostazioni salvate';
+
+  @override
+  String get adminActionResolve => 'Risolvi';
+
+  @override
+  String get adminActionDismiss => 'Ignora';
+
+  @override
+  String get adminActionBanUser => 'Banna utente';
+
+  @override
+  String get adminSearchUsersHint => 'Cerca nome, email, ruolo, sede...';
+
+  @override
+  String get adminMiscPositive => 'positivo';
+
+  @override
+  String adminCountUsers(int count) {
+    return '$count utenti';
+  }
+
+  @override
+  String adminCountNotifs(int count) {
+    return '$count notifiche';
+  }
+
+  @override
+  String adminCountLogs(int count) {
+    return '$count voci log';
+  }
+
+  @override
+  String adminCountItems(int count) {
+    return '$count elementi';
+  }
+
+  @override
+  String adminBadgeNRetried(int count) {
+    return 'Ritentato x$count';
+  }
 }
