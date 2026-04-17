@@ -5520,4 +5520,134 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'Signalement créé par la détection automatique de la plateforme';
+
+  @override
+  String get adminActionPause => 'Mettre en pause';
+
+  @override
+  String get adminActionClose => 'Fermer';
+
+  @override
+  String get adminActionViewApplicants => 'Voir les candidats';
+
+  @override
+  String get adminBadgeFeatured => 'En vedette';
+
+  @override
+  String get adminFieldPosted => 'Publié';
+
+  @override
+  String get adminFieldViews => 'Vues';
+
+  @override
+  String get adminFieldPay => 'Salaire';
+
+  @override
+  String get adminFieldEmployment => 'Emploi';
+
+  @override
+  String get adminFieldSummary => 'Résumé';
+
+  @override
+  String get adminFieldAnnual => 'Annuel';
+
+  @override
+  String get adminFieldMonthly => 'Mensuel';
+
+  @override
+  String get adminFieldDuration => 'Durée';
+
+  @override
+  String get adminFieldHourly => 'Horaire';
+
+  @override
+  String get adminFieldWeeklyHours => 'Heures hebdo.';
+
+  @override
+  String get adminFieldBonus => 'Prime';
+
+  @override
+  String get adminFieldShift => 'Quart';
+
+  @override
+  String get adminFieldSalaryRange => 'Fourchette salariale';
+
+  @override
+  String get adminMiscNotSpecified => 'Non spécifié';
+
+  @override
+  String get adminSectionModeration => 'Modération';
+
+  @override
+  String get adminSectionCompensationReview => 'Revue de la rémunération';
+
+  @override
+  String get adminSectionApplicantsSummary => 'Résumé des candidats';
+
+  @override
+  String get adminSectionExtras => 'Extras';
+
+  @override
+  String get adminPlaceholderFlagReason => 'Raison du signalement...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'Offre mise en avant';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'Offre retirée des vedettes';
+
+  @override
+  String get adminSnackbarJobRemoved => 'Offre supprimée';
+
+  @override
+  String get adminDialogPauseJobTitle => 'Mettre l\'offre en pause';
+
+  @override
+  String get adminDialogPauseJobBody => 'Mettre cette offre en pause ?';
+
+  @override
+  String get adminDialogCloseJobTitle => 'Fermer l\'offre';
+
+  @override
+  String get adminDialogCloseJobBody => 'Fermer cette offre définitivement ?';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'Supprimer l\'offre';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'Supprimer complètement cette offre ? Cette action est irréversible.';
+
+  @override
+  String get adminModerationFlagThis => 'Signaler cette offre';
+
+  @override
+  String get adminModerationIsFlagged => 'Cette offre est signalée';
+
+  @override
+  String get adminPerkHousing => 'Logement inclus';
+
+  @override
+  String get adminPerkTravel => 'Voyage inclus';
+
+  @override
+  String get adminPerkOvertime => 'Heures sup. possibles';
+
+  @override
+  String get adminPerkFlexible => 'Horaire flexible';
+
+  @override
+  String get adminPerkWeekend => 'Shifts le week-end';
+
+  @override
+  String get adminStatNew => 'Nouveaux';
+
+  @override
+  String get adminStatReviewed => 'Examinés';
+
+  @override
+  String get adminStatShortlisted => 'Présélectionnés';
+
+  @override
+  String get adminStatRejected => 'Rejetés';
 }

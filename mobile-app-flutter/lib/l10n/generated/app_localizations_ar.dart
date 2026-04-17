@@ -5514,4 +5514,134 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'تم إنشاء البلاغ تلقائيًا من قبل المنصة';
+
+  @override
+  String get adminActionPause => 'إيقاف مؤقت';
+
+  @override
+  String get adminActionClose => 'إغلاق';
+
+  @override
+  String get adminActionViewApplicants => 'عرض المتقدمين';
+
+  @override
+  String get adminBadgeFeatured => 'مميز';
+
+  @override
+  String get adminFieldPosted => 'تم النشر';
+
+  @override
+  String get adminFieldViews => 'المشاهدات';
+
+  @override
+  String get adminFieldPay => 'الأجر';
+
+  @override
+  String get adminFieldEmployment => 'التوظيف';
+
+  @override
+  String get adminFieldSummary => 'الملخص';
+
+  @override
+  String get adminFieldAnnual => 'سنوي';
+
+  @override
+  String get adminFieldMonthly => 'شهري';
+
+  @override
+  String get adminFieldDuration => 'المدة';
+
+  @override
+  String get adminFieldHourly => 'بالساعة';
+
+  @override
+  String get adminFieldWeeklyHours => 'ساعات أسبوعية';
+
+  @override
+  String get adminFieldBonus => 'مكافأة';
+
+  @override
+  String get adminFieldShift => 'الوردية';
+
+  @override
+  String get adminFieldSalaryRange => 'نطاق الراتب';
+
+  @override
+  String get adminMiscNotSpecified => 'غير محدد';
+
+  @override
+  String get adminSectionModeration => 'الإشراف';
+
+  @override
+  String get adminSectionCompensationReview => 'مراجعة الأجر';
+
+  @override
+  String get adminSectionApplicantsSummary => 'ملخص المتقدمين';
+
+  @override
+  String get adminSectionExtras => 'إضافات';
+
+  @override
+  String get adminPlaceholderFlagReason => 'سبب الإبلاغ...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'تم تمييز الوظيفة';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'تم إلغاء تمييز الوظيفة';
+
+  @override
+  String get adminSnackbarJobRemoved => 'تمت إزالة الوظيفة';
+
+  @override
+  String get adminDialogPauseJobTitle => 'إيقاف الوظيفة مؤقتاً';
+
+  @override
+  String get adminDialogPauseJobBody => 'هل تريد إيقاف هذا الإعلان مؤقتاً؟';
+
+  @override
+  String get adminDialogCloseJobTitle => 'إغلاق الوظيفة';
+
+  @override
+  String get adminDialogCloseJobBody => 'هل تريد إغلاق هذا الإعلان بشكل دائم؟';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'إزالة الوظيفة';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'هل تريد إزالة هذه الوظيفة بالكامل؟ لا يمكن التراجع عن هذا الإجراء.';
+
+  @override
+  String get adminModerationFlagThis => 'الإبلاغ عن هذه الوظيفة';
+
+  @override
+  String get adminModerationIsFlagged => 'تم الإبلاغ عن هذه الوظيفة';
+
+  @override
+  String get adminPerkHousing => 'يشمل السكن';
+
+  @override
+  String get adminPerkTravel => 'يشمل السفر';
+
+  @override
+  String get adminPerkOvertime => 'ساعات إضافية متاحة';
+
+  @override
+  String get adminPerkFlexible => 'جدول مرن';
+
+  @override
+  String get adminPerkWeekend => 'نوبات نهاية الأسبوع';
+
+  @override
+  String get adminStatNew => 'جديد';
+
+  @override
+  String get adminStatReviewed => 'تمت المراجعة';
+
+  @override
+  String get adminStatShortlisted => 'القائمة القصيرة';
+
+  @override
+  String get adminStatRejected => 'مرفوضون';
 }

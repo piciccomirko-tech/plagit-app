@@ -147,7 +147,8 @@ Widget aPill(String text, Color color) {
 // Sort row — used in list pages
 // ═══════════════════════════════════════════════════════
 
-Widget aSortRow(int count, String entity) {
+Widget aSortRow(BuildContext context, int count, String entity) {
+  final l = AppLocalizations.of(context);
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
     child: Row(
@@ -157,7 +158,7 @@ Widget aSortRow(int count, String entity) {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Newest', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
+            Text(l.adminSortNewest, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
             const SizedBox(width: 4),
             const Icon(Icons.swap_vert, size: 14, color: AppColors.teal),
           ],

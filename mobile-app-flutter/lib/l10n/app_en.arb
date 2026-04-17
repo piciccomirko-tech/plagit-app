@@ -3833,5 +3833,177 @@
   "adminMiscReportCreatedByPlatform": "Report created by Platform auto-detection",
   "@adminMiscReportCreatedByPlatform": {
     "description": "adminMiscReportCreatedByPlatform"
+  },
+  "adminActionPause": "Pause",
+  "@adminActionPause": {
+    "description": "Admin job detail: adminActionPause"
+  },
+  "adminActionClose": "Close",
+  "@adminActionClose": {
+    "description": "Admin job detail: adminActionClose"
+  },
+  "adminActionViewApplicants": "View Applicants",
+  "@adminActionViewApplicants": {
+    "description": "Admin job detail: adminActionViewApplicants"
+  },
+  "adminBadgeFeatured": "Featured",
+  "@adminBadgeFeatured": {
+    "description": "Admin job detail: adminBadgeFeatured"
+  },
+  "adminFieldPosted": "Posted",
+  "@adminFieldPosted": {
+    "description": "Admin job detail: adminFieldPosted"
+  },
+  "adminFieldViews": "Views",
+  "@adminFieldViews": {
+    "description": "Admin job detail: adminFieldViews"
+  },
+  "adminFieldPay": "Pay",
+  "@adminFieldPay": {
+    "description": "Admin job detail: adminFieldPay"
+  },
+  "adminFieldEmployment": "Employment",
+  "@adminFieldEmployment": {
+    "description": "Admin job detail: adminFieldEmployment"
+  },
+  "adminFieldSummary": "Summary",
+  "@adminFieldSummary": {
+    "description": "Admin job detail: adminFieldSummary"
+  },
+  "adminFieldAnnual": "Annual",
+  "@adminFieldAnnual": {
+    "description": "Admin job detail: adminFieldAnnual"
+  },
+  "adminFieldMonthly": "Monthly",
+  "@adminFieldMonthly": {
+    "description": "Admin job detail: adminFieldMonthly"
+  },
+  "adminFieldDuration": "Duration",
+  "@adminFieldDuration": {
+    "description": "Admin job detail: adminFieldDuration"
+  },
+  "adminFieldHourly": "Hourly",
+  "@adminFieldHourly": {
+    "description": "Admin job detail: adminFieldHourly"
+  },
+  "adminFieldWeeklyHours": "Weekly hours",
+  "@adminFieldWeeklyHours": {
+    "description": "Admin job detail: adminFieldWeeklyHours"
+  },
+  "adminFieldBonus": "Bonus",
+  "@adminFieldBonus": {
+    "description": "Admin job detail: adminFieldBonus"
+  },
+  "adminFieldShift": "Shift",
+  "@adminFieldShift": {
+    "description": "Admin job detail: adminFieldShift"
+  },
+  "adminFieldSalaryRange": "Salary range",
+  "@adminFieldSalaryRange": {
+    "description": "Admin job detail: adminFieldSalaryRange"
+  },
+  "adminMiscNotSpecified": "Not specified",
+  "@adminMiscNotSpecified": {
+    "description": "Admin job detail: adminMiscNotSpecified"
+  },
+  "adminSectionModeration": "Moderation",
+  "@adminSectionModeration": {
+    "description": "Admin job detail: adminSectionModeration"
+  },
+  "adminSectionCompensationReview": "Compensation Review",
+  "@adminSectionCompensationReview": {
+    "description": "Admin job detail: adminSectionCompensationReview"
+  },
+  "adminSectionApplicantsSummary": "Applicants Summary",
+  "@adminSectionApplicantsSummary": {
+    "description": "Admin job detail: adminSectionApplicantsSummary"
+  },
+  "adminSectionExtras": "Extras",
+  "@adminSectionExtras": {
+    "description": "Admin job detail: adminSectionExtras"
+  },
+  "adminPlaceholderFlagReason": "Reason for flagging...",
+  "@adminPlaceholderFlagReason": {
+    "description": "Admin job detail: adminPlaceholderFlagReason"
+  },
+  "adminSnackbarJobFeatured": "Job featured",
+  "@adminSnackbarJobFeatured": {
+    "description": "Admin job detail: adminSnackbarJobFeatured"
+  },
+  "adminSnackbarJobUnfeatured": "Job unfeatured",
+  "@adminSnackbarJobUnfeatured": {
+    "description": "Admin job detail: adminSnackbarJobUnfeatured"
+  },
+  "adminSnackbarJobRemoved": "Job removed",
+  "@adminSnackbarJobRemoved": {
+    "description": "Admin job detail: adminSnackbarJobRemoved"
+  },
+  "adminDialogPauseJobTitle": "Pause Job",
+  "@adminDialogPauseJobTitle": {
+    "description": "Admin job detail: adminDialogPauseJobTitle"
+  },
+  "adminDialogPauseJobBody": "Pause this job listing?",
+  "@adminDialogPauseJobBody": {
+    "description": "Admin job detail: adminDialogPauseJobBody"
+  },
+  "adminDialogCloseJobTitle": "Close Job",
+  "@adminDialogCloseJobTitle": {
+    "description": "Admin job detail: adminDialogCloseJobTitle"
+  },
+  "adminDialogCloseJobBody": "Close this job listing permanently?",
+  "@adminDialogCloseJobBody": {
+    "description": "Admin job detail: adminDialogCloseJobBody"
+  },
+  "adminDialogRemoveJobTitle": "Remove Job",
+  "@adminDialogRemoveJobTitle": {
+    "description": "Admin job detail: adminDialogRemoveJobTitle"
+  },
+  "adminDialogRemoveJobBody": "Remove this job completely? This cannot be undone.",
+  "@adminDialogRemoveJobBody": {
+    "description": "Admin job detail: adminDialogRemoveJobBody"
+  },
+  "adminModerationFlagThis": "Flag this job",
+  "@adminModerationFlagThis": {
+    "description": "Admin job detail: adminModerationFlagThis"
+  },
+  "adminModerationIsFlagged": "This job is flagged",
+  "@adminModerationIsFlagged": {
+    "description": "Admin job detail: adminModerationIsFlagged"
+  },
+  "adminPerkHousing": "Housing included",
+  "@adminPerkHousing": {
+    "description": "Admin job detail: adminPerkHousing"
+  },
+  "adminPerkTravel": "Travel included",
+  "@adminPerkTravel": {
+    "description": "Admin job detail: adminPerkTravel"
+  },
+  "adminPerkOvertime": "Overtime available",
+  "@adminPerkOvertime": {
+    "description": "Admin job detail: adminPerkOvertime"
+  },
+  "adminPerkFlexible": "Flexible schedule",
+  "@adminPerkFlexible": {
+    "description": "Admin job detail: adminPerkFlexible"
+  },
+  "adminPerkWeekend": "Weekend shifts",
+  "@adminPerkWeekend": {
+    "description": "Admin job detail: adminPerkWeekend"
+  },
+  "adminStatNew": "New",
+  "@adminStatNew": {
+    "description": "Admin job detail: adminStatNew"
+  },
+  "adminStatReviewed": "Reviewed",
+  "@adminStatReviewed": {
+    "description": "Admin job detail: adminStatReviewed"
+  },
+  "adminStatShortlisted": "Shortlisted",
+  "@adminStatShortlisted": {
+    "description": "Admin job detail: adminStatShortlisted"
+  },
+  "adminStatRejected": "Rejected",
+  "@adminStatRejected": {
+    "description": "Admin job detail: adminStatRejected"
   }
 }
