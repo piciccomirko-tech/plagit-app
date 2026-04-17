@@ -2382,5 +2382,11 @@
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Preseleccionados",
   "adminStatRejected": "Rechazados",
-  "codeSentToEmail": "Se ha enviado un código a {email}"
+  "switchRoleTitle": "Cambiar rol",
+  "postsTab": "Publicaciones",
+  "galleryTab": "Galería",
+  "promotionsTab": "Promociones",
+  "filterUpdates": "Actualizaciones",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }

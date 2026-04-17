@@ -5642,7 +5642,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminStatRejected => 'Abgelehnt';
 
   @override
-  String codeSentToEmail(String email) {
-    return 'Ein Code wurde an $email gesendet';
-  }
+  String get switchRoleTitle => 'Rolle wechseln';
+
+  @override
+  String get postsTab => 'Beiträge';
+
+  @override
+  String get galleryTab => 'Galerie';
+
+  @override
+  String get promotionsTab => 'Angebote';
+
+  @override
+  String get filterUpdates => 'Updates';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

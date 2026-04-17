@@ -6,6 +6,7 @@ import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class AdminModerationView extends StatefulWidget {
   const AdminModerationView({super.key});
@@ -227,7 +228,7 @@ class _AdminModerationViewState extends State<AdminModerationView> {
                                 const SizedBox(width: 4),
                                 const Padding(
                                   padding: EdgeInsets.only(top: 8),
-                                  child: Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
+                                  child: ForwardChevron(size: 28, color: AppColors.tertiary),
                                 ),
                               ],
                             ),

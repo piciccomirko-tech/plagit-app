@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+<<<<<<< HEAD
 import 'package:provider/provider.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
@@ -20,6 +21,10 @@ BoxShadow get _subtleShadow => BoxShadow(color: Colors.black.withValues(alpha: 0
 
 const _types = ['Video Call', 'Phone', 'In Person'];
 const _timezones = ['UTC', 'GST', 'GMT', 'CET', 'EST', 'PST'];
+=======
+import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
+>>>>>>> origin/phase10-rtl-overflow-hardening
 
 class BusinessScheduleInterviewView extends StatefulWidget {
   const BusinessScheduleInterviewView({super.key});
@@ -67,6 +72,7 @@ class _BusinessScheduleInterviewViewState extends State<BusinessScheduleIntervie
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Scaffold(backgroundColor: _bgMain, body: SafeArea(child: Column(children: [
       // Header
       Padding(padding: const EdgeInsets.fromLTRB(20, 16, 20, 0), child: Row(children: [
@@ -74,6 +80,58 @@ class _BusinessScheduleInterviewViewState extends State<BusinessScheduleIntervie
         const SizedBox(width: 12),
         Text(AppLocalizations.of(context).scheduleInterviewTitle, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: _charcoal)),
       ])),
+=======
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
+          onPressed: () => context.pop(),
+        ),
+        title: const Text(
+          'Schedule Interview',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w600,
+            color: AppColors.charcoal,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Candidate
+            const Text(
+              'Candidate',
+              style: TextStyle(fontSize: 12, color: AppColors.secondary),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Text(
+                _candidateName.isNotEmpty ? _candidateName : 'Select candidate',
+                style: TextStyle(
+                  fontSize: 15,
+                  color: _candidateName.isNotEmpty
+                      ? AppColors.charcoal
+                      : AppColors.tertiary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+>>>>>>> origin/phase10-rtl-overflow-hardening
 
       Expanded(child: SingleChildScrollView(padding: const EdgeInsets.only(top: 20), child: Column(children: [
         // CANDIDATE CARD

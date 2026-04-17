@@ -5,6 +5,7 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Business interview detail screen.
 class BusinessInterviewDetailView extends StatefulWidget {
@@ -86,7 +87,7 @@ class _BusinessInterviewDetailViewState
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
           title: const Text(
@@ -114,7 +115,7 @@ class _BusinessInterviewDetailViewState
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
         title: const Text(

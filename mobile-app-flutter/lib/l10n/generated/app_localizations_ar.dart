@@ -5646,7 +5646,23 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminStatRejected => 'مرفوضون';
 
   @override
-  String codeSentToEmail(String email) {
-    return 'تم إرسال رمز إلى $email';
-  }
+  String get switchRoleTitle => 'تبديل الدور';
+
+  @override
+  String get postsTab => 'المنشورات';
+
+  @override
+  String get galleryTab => 'المعرض';
+
+  @override
+  String get promotionsTab => 'العروض';
+
+  @override
+  String get filterUpdates => 'التحديثات';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

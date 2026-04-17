@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Forgot password screen — enter email to receive a reset link.
 class ForgotPasswordView extends StatefulWidget {
@@ -62,7 +63,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.go('/candidate/login'),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Expanded(
                     child: Text(

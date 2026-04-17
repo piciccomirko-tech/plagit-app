@@ -6,6 +6,7 @@ import 'package:plagit/services/auth_service.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
 import 'package:plagit/widgets/chip_selector.dart';
 import 'package:plagit/widgets/hospitality_category_picker.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Business registration — mirrors BusinessSignUpView.swift.
 class BusinessSignupView extends StatefulWidget {
@@ -96,7 +97,7 @@ class _BusinessSignupViewState extends State<BusinessSignupView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.go('/business/login'),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Expanded(
                     child: Text(
@@ -213,7 +214,7 @@ class _BusinessSignupViewState extends State<BusinessSignupView> {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
+                      ForwardChevron(size: 18, color: AppColors.tertiary),
                     ],
                   ),
                 ),

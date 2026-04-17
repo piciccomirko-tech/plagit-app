@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:plagit/core/city_helpers.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 const Color _orange = Color(0xFFF97316);
 
@@ -61,7 +63,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
               foregroundColor: Colors.white,
               actions: [
                 IconButton(icon: const Icon(Icons.share), onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Share coming soon')));
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).shareComingSoon)));
                 }),
               ],
               flexibleSpace: FlexibleSpaceBar(
@@ -88,11 +90,11 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                   indicatorWeight: 2,
                   labelStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                   unselectedLabelStyle: const TextStyle(fontSize: 13),
-                  tabs: const [
-                    Tab(text: 'About'),
-                    Tab(text: 'Posts'),
-                    Tab(text: 'Promotions'),
-                    Tab(text: 'Gallery'),
+                  tabs: [
+                    Tab(text: AppLocalizations.of(context).about),
+                    Tab(text: AppLocalizations.of(context).postsTab),
+                    Tab(text: AppLocalizations.of(context).promotionsTab),
+                    Tab(text: AppLocalizations.of(context).galleryTab),
                   ],
                 ),
               ),
@@ -146,7 +148,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
               child: Text(category, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: _orange)),
             ),
             const SizedBox(height: 6),
-            Text('\u{1F4CD} $location', style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
+            Text('\u{1F4CD} ${localizedCity(context, location)}', style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
             const SizedBox(height: 6),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -154,13 +156,13 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                 if (verified) ...[
                   const Icon(Icons.verified, size: 16, color: AppColors.teal),
                   const SizedBox(width: 4),
-                  const Text('Verified', style: TextStyle(fontSize: 12, color: AppColors.teal)),
+                  Text(AppLocalizations.of(context).verified, style: const TextStyle(fontSize: 12, color: AppColors.teal)),
                   const SizedBox(width: 12),
                 ],
                 if (featured) ...[
                   const Icon(Icons.star, size: 16, color: AppColors.gold),
                   const SizedBox(width: 4),
-                  const Text('Featured', style: TextStyle(fontSize: 12, color: AppColors.gold)),
+                  Text(AppLocalizations.of(context).featuredBadge, style: const TextStyle(fontSize: 12, color: AppColors.gold)),
                 ],
               ],
             ),
@@ -204,7 +206,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                 height: 44,
                 decoration: BoxDecoration(color: AppColors.teal, borderRadius: BorderRadius.circular(12)),
                 alignment: Alignment.center,
-                child: const Text('Message', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+                child: Text(AppLocalizations.of(context).message, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
               ),
             ),
           ),
@@ -217,7 +219,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                 height: 44,
                 decoration: BoxDecoration(color: _orange, borderRadius: BorderRadius.circular(12)),
                 alignment: Alignment.center,
-                child: const Text('Request Quote', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
+                child: Text(AppLocalizations.of(context).requestQuote, style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.white)),
               ),
             ),
           ),
@@ -238,12 +240,12 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('About Us', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(AppLocalizations.of(context).aboutUs, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 8),
           Text(description, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.5)),
           const SizedBox(height: 20),
 
-          const Text('Services Offered', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(AppLocalizations.of(context).servicesOffered, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 8),
           Wrap(
             spacing: 8,
@@ -256,7 +258,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
           ),
           const SizedBox(height: 20),
 
-          const Text('Service Area', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(AppLocalizations.of(context).serviceArea, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 8),
           Row(
             children: [
@@ -267,7 +269,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
           ),
           const SizedBox(height: 20),
 
-          const Text('Contact', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          Text(AppLocalizations.of(context).contactLabel, style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const SizedBox(height: 8),
           if (phone.isNotEmpty)
             Padding(
@@ -299,15 +301,15 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
     final posts = MockData.serviceFeedPosts.cast<Map<String, dynamic>>().where((p) => p['companyId'] == companyId).toList();
 
     if (posts.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.article_outlined, size: 48, color: AppColors.tertiary),
             SizedBox(height: 12),
-            Text('No posts yet', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+            Text(AppLocalizations.of(context).noPostsYetCompany, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
             SizedBox(height: 4),
-            Text('This company has not posted any updates.', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+            Text(AppLocalizations.of(context).companyHasNoUpdates, style: TextStyle(fontSize: 13, color: AppColors.secondary)),
           ],
         ),
       );
@@ -367,15 +369,15 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
     final promos = MockData.servicePromotions.cast<Map<String, dynamic>>().where((p) => p['companyId'] == companyId).toList();
 
     if (promos.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.local_offer_outlined, size: 48, color: AppColors.tertiary),
             SizedBox(height: 12),
-            Text('No promotions', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
+            Text(AppLocalizations.of(context).noPromotions, style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),
             SizedBox(height: 4),
-            Text('This company has no active promotions.', style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+            Text(AppLocalizations.of(context).companyHasNoPromotions, style: TextStyle(fontSize: 13, color: AppColors.secondary)),
           ],
         ),
       );
@@ -403,7 +405,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(color: _orange, borderRadius: BorderRadius.circular(8)),
-                    child: const Text('OFFER', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
+                    child: Text(AppLocalizations.of(context).offer, style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white)),
                   ),
                   const SizedBox(width: 8),
                   Expanded(child: Text(p['title'] as String, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal))),
@@ -412,7 +414,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
               const SizedBox(height: 8),
               Text(p['description'] as String, style: const TextStyle(fontSize: 13, color: AppColors.secondary, height: 1.4)),
               const SizedBox(height: 8),
-              Text('Valid until ${p['validUntil']}', style: TextStyle(fontSize: 12, color: _orange, fontWeight: FontWeight.w500)),
+              Text(AppLocalizations.of(context).validUntilDate(p['validUntil'] as String), style: TextStyle(fontSize: 12, color: _orange, fontWeight: FontWeight.w500)),
             ],
           ),
         );
@@ -439,7 +441,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
       ),
       itemCount: 6,
       itemBuilder: (ctx, i) => GestureDetector(
-        onTap: () => ScaffoldMessenger.of(ctx).showSnackBar(const SnackBar(content: Text('Full image viewer coming soon'))),
+        onTap: () => ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).fullImageViewerComingSoon))),
         child: Container(
           decoration: BoxDecoration(
             color: pastelColors[i],
@@ -462,7 +464,7 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
 
         return AlertDialog(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Text('Request a Quote from $companyName', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          title: Text(AppLocalizations.of(context).requestQuoteFromCompany(companyName), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -470,9 +472,11 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                 TextField(
                   controller: serviceController,
                   decoration: InputDecoration(
-                    labelText: 'Service Type',
+                    labelText: AppLocalizations.of(context).serviceType,
                     labelStyle: const TextStyle(fontSize: 14),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
                 ),
@@ -480,9 +484,11 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                 TextField(
                   controller: dateController,
                   decoration: InputDecoration(
-                    labelText: 'Date Needed',
+                    labelText: AppLocalizations.of(context).dateNeeded,
                     labelStyle: const TextStyle(fontSize: 14),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
                 ),
@@ -491,10 +497,12 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
                   controller: detailsController,
                   maxLines: 4,
                   decoration: InputDecoration(
-                    labelText: 'Details',
+                    labelText: AppLocalizations.of(context).details,
                     labelStyle: const TextStyle(fontSize: 14),
                     alignLabelWithHint: true,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
+                    focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(10), borderSide: BorderSide.none),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                   ),
                 ),
@@ -504,19 +512,19 @@ class _ServiceCompanyProfileViewState extends State<ServiceCompanyProfileView> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel', style: TextStyle(color: AppColors.secondary)),
+              child: Text(AppLocalizations.of(ctx).cancel, style: const TextStyle(color: AppColors.secondary)),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(ctx);
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Quote request sent!')));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(AppLocalizations.of(context).quoteRequestSent)));
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: _orange,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('Send Request'),
+              child: Text(AppLocalizations.of(context).sendRequest),
             ),
           ],
         );

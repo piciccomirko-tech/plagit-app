@@ -8,6 +8,7 @@ import 'package:plagit/core/widgets/search_screen.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 // ═══════════════════════════════════════════════════════════════
 // Theme (exact from Swift Theme.swift)
@@ -1318,10 +1319,7 @@ class _SearchJobResultRow extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(
-              CupertinoIcons.chevron_right,
-              size: 13,
-              color: Color(0xFFC7C7CC),
+            const ForwardChevron(size: 13, color: Color(0xFFC7C7CC),
             ),
           ],
         ),

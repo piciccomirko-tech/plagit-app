@@ -2382,5 +2382,11 @@
   "adminStatReviewed": "Проверено",
   "adminStatShortlisted": "В шортлисте",
   "adminStatRejected": "Отклонены",
-  "codeSentToEmail": "Код отправлен на {email}"
+  "switchRoleTitle": "Сменить роль",
+  "postsTab": "Публикации",
+  "galleryTab": "Галерея",
+  "promotionsTab": "Акции",
+  "filterUpdates": "Обновления",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }

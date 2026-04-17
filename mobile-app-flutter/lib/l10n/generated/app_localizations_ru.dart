@@ -5709,7 +5709,23 @@ class AppLocalizationsRu extends AppLocalizations {
   String get adminStatRejected => 'Отклонены';
 
   @override
-  String codeSentToEmail(String email) {
-    return 'Код отправлен на $email';
-  }
+  String get switchRoleTitle => 'Сменить роль';
+
+  @override
+  String get postsTab => 'Публикации';
+
+  @override
+  String get galleryTab => 'Галерея';
+
+  @override
+  String get promotionsTab => 'Акции';
+
+  @override
+  String get filterUpdates => 'Обновления';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

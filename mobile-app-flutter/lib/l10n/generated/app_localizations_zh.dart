@@ -5468,7 +5468,23 @@ class AppLocalizationsZh extends AppLocalizations {
   String get adminStatRejected => '已拒绝';
 
   @override
-  String codeSentToEmail(String email) {
-    return '验证码已发送至 $email';
-  }
+  String get switchRoleTitle => '切换角色';
+
+  @override
+  String get postsTab => '帖子';
+
+  @override
+  String get galleryTab => '图库';
+
+  @override
+  String get promotionsTab => '促销';
+
+  @override
+  String get filterUpdates => '更新';
+
+  @override
+  String get badgePro => 'PRO';
+
+  @override
+  String get badgeAdmin => 'ADMIN';
 }

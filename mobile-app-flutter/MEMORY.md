@@ -1,5 +1,27 @@
 # Plagit Flutter — Project Memory
 
+## Ultima sessione
+
+- **2026-04-17 — Fase 10 RTL & Overflow Hardening**
+  - Scope: fix meccanici visivi/layout emersi dalla review i18n/RTL finale. Zero nuove chiavi ARB, zero business logic.
+  - **Nuovo helper**: `core/widgets/directional_chevron.dart` → `BackChevron` + `ForwardChevron` che auto-mirror `chevron_left`/`chevron_right` in RTL via `Directionality.of(context)`.
+  - **Sweep meccanico**: 59 file — `Icon(Icons.chevron_left|right, ...)` → `BackChevron`/`ForwardChevron`, import auto-iniettato dove mancante.
+  - **status_badge**: padding orizzontale 10 → 12, `maxLines: 1` + `TextOverflow.ellipsis` per evitare overflow su DE/RU/AR.
+  - **TabBar admin detail**: `admin_business_detail_view` + `admin_candidate_detail_view` → `isScrollable: true`, `tabAlignment: TabAlignment.start` per evitare clipping su locali lunghe.
+  - build bump 1.0.0+17 → 1.0.0+18, branch `phase10-rtl-overflow-hardening` (base: phase9a), **pushed to remote**
+  - analyze: **0 errori** sui file toccati da phase10. Errori pre-esistenti su WIP main (EmploymentType/BusinessProfile/etc.) fuori scope.
+  - Residui non affrontati: sweep `EdgeInsets.only(left/right)` → `EdgeInsetsDirectional.only(start/end)` (83 occorrenze/61 file) e `Alignment.centerRight/Left` funzionali (4-5 casi) rinviati per mantenere scope contenuto.
+
+- **2026-04-17 — Fase 9A Services + Shared Widgets i18n closure**
+  - Scope: `role_switcher.dart`, `post_insights_premium_sheet.dart`, `service_notifications_view.dart`, `service_company_profile_view.dart`
+  - **9 chiavi riusate** dal catalogo: `candidate`, `businessLabel`, `admin`, `browseServices`, `cancel`, `about`, `messages`, `filterAll`, `allCaughtUp`, `validUntilDate`
+  - **7 chiavi nuove** × 11 locali: `switchRoleTitle`, `postsTab`, `galleryTab`, `promotionsTab`, `filterUpdates`, `badgePro`, `badgeAdmin`
+  - 11 sostituzioni totali: 6 in role_switcher + 2 badges in post_insights + 5 in service views (filter+empty+4 tabs+validUntil)
+  - build bump 1.0.0+11 → 1.0.0+17, branch `phase9a-services-widgets-i18n`
+  - analyze: **0 issues** sui file modificati (31 pre-esistenti altrove)
+  - Cumulativo dopo 9A: **406 chiavi × 9 locali nativi** (399 + 7)
+  - **App sostanzialmente chiusa lato i18n user-facing al 100%** — Admin + Business + Candidate + Auth + Services + Shared Widgets tutti coperti
+
 ## Stato schermate
 
 ### Admin (core)
@@ -54,6 +76,58 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - Riusati: `adminActionCancel`, `adminActionConfirm`, `adminActionApplyOverride`, `adminPlaceholderReasonOverride`, `adminPlaceholderAddNote`, `adminTabNotes`, `adminSectionAdminOverride`
   - build bump 1.0.0+8 → 1.0.0+9, branch `phase5a-admin-i18n`
   - analyze: **0 issues**
+### Candidate
+
+- DONE (Fase 7C — 2026-04-17) — quick plug badge + profile setup divider (chiusura Candidate):
+  - `candidate_quick_plug_view.dart`, `candidate_profile_setup_view.dart`
+  - Coperti: `{count} new` pendingCount badge (quick_plug header), `Looking for: {jobTitle}` context label (InterestCard), `or` divider (profile_setup tra upload CV e fill manually)
+  - **1 chiave riusata** dal catalogo esistente (`lookingFor({role})`)
+  - **2 chiavi nuove** × 11 locali (`quickPlugNewBadge({count}, plural)`, `orLabel`)
+  - Tutti i 9 locali con forme native (en/it/ar/es/fr/pt/de/ru/zh) + fallback en per hi/tr
+  - build bump 1.0.0+11 → 1.0.0+15, branch `phase7c-candidate-i18n`
+  - analyze: **0 errors/warnings** (30 info-level pre-esistenti)
+  - **Candidate i18n sostanzialmente chiuso.** Dopo 7A+7B+7C i file principali dell'area candidate (`candidate_chat_view`, `candidate_messages_tab`, `candidate_quick_plug_view`, `candidate_profile_setup_view`) non hanno più residui user-facing semplici. Residui puntuali rimasti sono runtime/mock data e helper interni classificati fuori scope
+
+- DONE (Fase 7B — 2026-04-17) — messages tab summary + delete flows:
+  - `candidate_messages_tab.dart`
+  - Coperti: conversation count (ICU plural), unread count (ICU), Retry action, empty state (title + subtitle), selection bar (Select items / N selected / Clear / Select all), swipe background Delete, dialog single delete (title + body `{company}`), dialog bulk delete (title plural + body), dialog delete-all (title + body ICU count), Delete all / Cancel buttons, `Re:` prefix x2 (ICU `{context}`)
+  - **12 chiavi riusate** dal catalogo esistente (`cancel`, `delete`, `retry`, `clear`, `selectAll`, `selectItems`, `countSelected`, `noMessagesYet`, `whenEmployersMessageYou`, `deleteConversation`, `deleteAllConversations`, `deleteAll`)
+  - **7 chiavi nuove** con ICU placeholder (`rePrefix({context})`, `conversationCount({count}, plural)`, `unreadCount({count})`, `removeChatBody({company})`, `deleteConversationsCount({count}, plural)`, `selectedChatsBody`, `clearInboxBody({count}, plural)`)
+  - Tutti i 9 locali con forme plurali native (en/it/ar/es/fr/pt/de/ru/zh) + fallback en per hi/tr
+  - build bump 1.0.0+11 → 1.0.0+14, branch `phase7b-candidate-i18n`
+  - analyze: **0 errors/warnings** (30 info-level pre-esistenti)
+  - **File chiuso al 100%** — nessun residuo user-facing rimasto
+
+- DONE (Fase 7A — 2026-04-17) — chat view online/business/waiting:
+  - `candidate_chat_view.dart`
+  - Coperti: `Online now` status indicator (header), `BUSINESS` badge (bubble sender name), `Waiting for the business to send the first message` empty state (composer banner)
+  - **0 chiavi nuove** — riuso totale del catalogo esistente: `onlineNow`, `businessUpper`, `waitingForBusinessFirstMessage` (già presenti in 9 locali + hi/tr fallback)
+  - build bump 1.0.0+11 → 1.0.0+13, branch `phase7a-candidate-i18n`
+  - analyze: **0 errors/warnings** (30 info-level pre-esistenti)
+  - Residui `candidate_chat_view.dart`: separatore decorativo `'  ·  '` (SKIP, non-testuale), `PM`/`AM` (SKIP, helper interno `_formatTime`)
+
+### Auth
+
+- DONE (Fase 8A — 2026-04-17) — forgot password step 2 subtitle:
+  - `forgot_password_sheet.dart` (solo 1 sostituzione)
+  - File scansionati senza modifiche: `business_login_view.dart`, `candidate_login_view.dart`, `entry_view.dart` (già completamente i18n)
+  - Coperti: subtitle step 2 `A code has been sent to {email}` (ICU `{email}` String placeholder)
+  - **1 chiave nuova** × 11 locali (`codeSentToEmail({email})`) — nessun riuso possibile dal catalogo
+  - Tutti i 9 locali con traduzioni native (en/it/ar/es/fr/pt/de/ru/zh) + fallback en per hi/tr
+  - build bump 1.0.0+11 → 1.0.0+16, branch `phase8a-auth-i18n`
+  - analyze: **0 errors/warnings** (31 info-level pre-esistenti)
+  - **Auth sostanzialmente chiuso.** Residui rimasti fuori scope per design: dev-only text dentro `kDebugMode` (`Dev Login → ...`, `Dev Skip → ...`, `Create Test Candidate → ...`), logo fallback `'P'`, brand name `'Plagit'` (line 82 entry_view), OTP hint `'000000'` (pattern numerico universale). Audit iniziale (10-12 chiavi stimate) si è rivelato sovrastimato: i 4 file erano già quasi completamente localizzati dalle fasi precedenti
+
+### Business
+
+- DONE (Fase 6A — 2026-04-17) — schedule interview field labels (chiusura Business):
+  - `business_schedule_interview_view.dart`
+  - Coperti: 2 conditional field labels (`Meeting Link` quando type=Video Call, `Location` quando type=In Person) — entrambi usati sia come `Text` label sia come `hintText` del TextField tramite helper `_field`
+  - 2 nuove chiavi (`businessFieldMeetingLink`, `businessFieldLocation`) × 11 locali ARB
+  - build bump 1.0.0+11 → 1.0.0+12, branch `phase6a-business-i18n`
+  - analyze: **0 errors/warnings** (30 info-level pre-esistenti non introdotti da 6A)
+  - **Business i18n sostanzialmente chiuso.** Audit completo su 22 view ha confermato: 19/22 file già clean, 2 residui su nearby_talent (role keys interne, già mappate a label i18n) e post_job (hint numerici placeholder non-UI) classificati FUORI SCOPE
+
 - DONE (Fase 5D — 2026-04-17) — job detail (ultima chiusura Admin):
   - `admin_job_detail_view.dart`, `admin_shared_widgets.dart` (micro-fix)
   - Coperti (job_detail): action bar (Feature/Unfeature toggle + Pause/Close/Remove), snackbar `Job featured/unfeatured/removed`, 3 dialog confermativi (Pause/Close/Remove Job) con title+body, `View Applicants` button, job info card (Pay/Type/Location/Posted/Applicants/Views labels), badge `Featured`/`Urgent`, Compensation Review section + Moderation pill, tutti i field compensation (Employment/Summary/Salary range/Annual/Monthly/Duration/Hourly/Weekly hours/Bonus/Shift + `Not specified`), Extras subsection, 5 perks chip (Housing/Travel/Overtime/Flexible/Weekend), Applicants Summary section + 5 count chips (Total/New/Reviewed/Shortlisted/Rejected), Moderation section + flag toggle text (`Flag this job` / `This job is flagged`), flag reason placeholder, dialog helper `_showConfirmDialog` rifattorizzato per ricevere `AppLocalizations` + Cancel/Confirm via catalogo
@@ -95,7 +169,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
-(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A + 51 chiavi Fase 5B + 43 chiavi Fase 5D → totale cumulativo 387 chiavi × 9 locali)
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A + 51 chiavi Fase 5B + 43 chiavi Fase 5D Admin + 2 chiavi Fase 6A Business + 0 chiavi Fase 7A Candidate (tutto riuso) + 7 chiavi Fase 7B Candidate + 2 chiavi Fase 7C Candidate + 1 chiave Fase 8A Auth → totale cumulativo 399 chiavi × 9 locali)
 
 ## Decisioni tecniche
 

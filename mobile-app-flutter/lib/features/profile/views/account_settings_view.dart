@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class AccountSettingsView extends StatelessWidget {
   const AccountSettingsView({super.key});
@@ -375,7 +376,7 @@ class _SettingsTile extends StatelessWidget {
               ),
             ),
             if (showChevron && onTap != null)
-              Icon(Icons.chevron_right, size: 20, color: AppColors.tertiary),
+              ForwardChevron(size: 20, color: AppColors.tertiary),
           ],
         ),
       ),

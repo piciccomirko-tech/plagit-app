@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Shared preservation-first header: back button, centered title, trailing.
 ///
@@ -60,10 +61,7 @@ class AppBackTitleBar extends StatelessWidget {
               child: Center(
                 child:
                     backIcon ??
-                    const Icon(
-                      CupertinoIcons.chevron_left,
-                      size: 16,
-                      color: Color(0xFF1A1C24),
+                    const BackChevron(size: 16, color: Color(0xFF1A1C24),
                     ),
               ),
             ),

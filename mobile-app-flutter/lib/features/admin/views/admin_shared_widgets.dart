@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/profile_photo.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 // ═══════════════════════════════════════════════════════
 // Admin color aliases — maps old tokens to AppColors
@@ -43,7 +44,7 @@ Widget aTopBar(BuildContext context, String title, {Widget? trailing}) {
           child: Container(
             width: 36, height: 36,
             decoration: BoxDecoration(color: aSurface, borderRadius: BorderRadius.circular(18)),
-            child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            child: const BackChevron(size: 28, color: AppColors.charcoal),
           ),
         ),
         const SizedBox(width: 12),

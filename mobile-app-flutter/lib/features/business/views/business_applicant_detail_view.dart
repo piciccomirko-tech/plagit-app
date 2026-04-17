@@ -5,6 +5,7 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Applicant detail / candidate profile — uses typed Applicant model.
 class BusinessApplicantDetailView extends StatefulWidget {
@@ -61,7 +62,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
             backgroundColor: Colors.white,
             elevation: 0,
             leading: IconButton(
-              icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+              icon: const BackChevron(size: 28, color: AppColors.charcoal),
               onPressed: () => context.pop(),
             ),
             title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
@@ -75,7 +76,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           backgroundColor: Colors.white,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+            icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
           title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
@@ -94,7 +95,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
         title: Text(

@@ -6,6 +6,7 @@ import 'package:plagit/core/widgets/application_status_pill.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Admin Applications screen — list of every application across all
 /// businesses with the unified status taxonomy and a moderation flag.
@@ -395,7 +396,7 @@ class _AdminAppCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      const Icon(CupertinoIcons.chevron_right, size: 28, color: aTertiary),
+                      const ForwardChevron(size: 28, color: aTertiary),
                     ],
                   ),
                 ),

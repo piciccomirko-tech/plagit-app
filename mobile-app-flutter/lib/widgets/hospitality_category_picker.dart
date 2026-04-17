@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/hospitality_catalog.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// 3-step drill-down picker: Category → Subcategory → Role.
 /// Mirrors HospitalityCategoryPicker.swift.
@@ -370,7 +371,7 @@ class _CategoryRow extends StatelessWidget {
           ),
           if (selected) const Icon(Icons.check, size: 18, color: AppColors.teal),
           const SizedBox(width: 4),
-          Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
+          ForwardChevron(size: 18, color: AppColors.tertiary),
         ],
       ),
     ),
@@ -406,7 +407,7 @@ class _SubcategoryRow extends StatelessWidget {
           ),
           if (selected) const Icon(Icons.check, size: 18, color: AppColors.teal),
           const SizedBox(width: 4),
-          Icon(Icons.chevron_right, size: 18, color: AppColors.tertiary),
+          ForwardChevron(size: 18, color: AppColors.tertiary),
         ],
       ),
     ),
@@ -476,7 +477,7 @@ class _SearchResultRow extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(child: Text(result.text, style: const TextStyle(fontSize: 14, color: AppColors.charcoal), overflow: TextOverflow.ellipsis)),
-          Icon(Icons.chevron_right, size: 16, color: AppColors.tertiary),
+          ForwardChevron(size: 16, color: AppColors.tertiary),
         ],
       ),
     ),
