@@ -2381,5 +2381,7 @@
   "adminStatNew": "Nuevos",
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Preseleccionados",
-  "adminStatRejected": "Rechazados"
+  "adminStatRejected": "Rechazados",
+  "businessFieldMeetingLink": "Enlace de la reunión",
+  "businessFieldLocation": "Ubicación"
 }

@@ -5466,4 +5466,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminStatRejected => '已拒绝';
+
+  @override
+  String get businessFieldMeetingLink => '会议链接';
+
+  @override
+  String get businessFieldLocation => '地点';
 }

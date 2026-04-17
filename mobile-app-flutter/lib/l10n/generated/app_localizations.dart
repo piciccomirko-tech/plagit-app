@@ -10141,6 +10141,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rejected'**
   String get adminStatRejected;
+
+  /// Field label for meeting link in business schedule interview form
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting Link'**
+  String get businessFieldMeetingLink;
+
+  /// Field label for location in business schedule interview form
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get businessFieldLocation;
 }
 
 class _AppLocalizationsDelegate

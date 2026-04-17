@@ -726,5 +726,7 @@
   "candidateMessages": "CANDIDATE MESSAGES",
   "businessMessages": "BUSINESS MESSAGES",
   "serviceInquiries": "SERVICE INQUIRIES",
-  "acceptInterview": "Accept Interview"
+  "acceptInterview": "Accept Interview",
+  "businessFieldMeetingLink": "Meeting Link",
+  "businessFieldLocation": "Location"
 }

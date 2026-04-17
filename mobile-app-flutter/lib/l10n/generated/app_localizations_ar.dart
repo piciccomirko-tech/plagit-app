@@ -5644,4 +5644,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'مرفوضون';
+
+  @override
+  String get businessFieldMeetingLink => 'رابط الاجتماع';
+
+  @override
+  String get businessFieldLocation => 'الموقع';
 }
