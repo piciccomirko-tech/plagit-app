@@ -6,6 +6,7 @@ import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate login screen — email/password sign-in with mock auth.
 class CandidateLoginView extends StatefulWidget {
@@ -82,7 +83,7 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.go('/entry'),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Expanded(
                     child: Text(

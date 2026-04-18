@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Service module notifications view.
 class ServiceNotificationsView extends StatefulWidget {
@@ -92,11 +94,10 @@ class _ServiceNotificationsViewState extends State<ServiceNotificationsView> {
             child: const SizedBox(
                 width: 36,
                 height: 36,
-                child: Icon(Icons.chevron_left,
-                    size: 22, color: AppColors.charcoal)),
+                child: BackChevron(size: 28, color: AppColors.charcoal)),
           ),
           const Spacer(),
-          const Text('Notifications',
+          Text(AppLocalizations.of(context).notifications,
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -106,6 +107,22 @@ class _ServiceNotificationsViewState extends State<ServiceNotificationsView> {
         ],
       ),
     );
+  }
+
+  String _filterLabel(BuildContext context, String filter) {
+    final l = AppLocalizations.of(context);
+    switch (filter) {
+      case 'All':
+        return l.filterAll;
+      case 'Messages':
+        return l.messages;
+      case 'Updates':
+        return l.filterUpdates;
+      case 'Promotions':
+        return l.promotionsTab;
+      default:
+        return filter;
+    }
   }
 
   Widget _filterChips() {
@@ -130,7 +147,7 @@ class _ServiceNotificationsViewState extends State<ServiceNotificationsView> {
                             ? null
                             : Border.all(color: AppColors.border, width: 0.5),
                       ),
-                      child: Text(f,
+                      child: Text(_filterLabel(context, f),
                           style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -236,14 +253,14 @@ class _ServiceNotificationsViewState extends State<ServiceNotificationsView> {
                 size: 24, color: _orange),
           ),
           const SizedBox(height: AppSpacing.lg),
-          const Text('No notifications',
+          Text(AppLocalizations.of(context).noNotifications,
               style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
                   color: AppColors.charcoal)),
           const SizedBox(height: AppSpacing.xs),
-          const Text('You\'re all caught up!',
-              style: TextStyle(fontSize: 13, color: AppColors.secondary)),
+          Text(AppLocalizations.of(context).allCaughtUp,
+              style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
         ],
       ),
     );

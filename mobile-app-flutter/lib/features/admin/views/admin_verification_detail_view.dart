@@ -6,6 +6,7 @@ import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class AdminVerificationDetailView extends StatefulWidget {
   final String verificationId;
@@ -46,7 +47,7 @@ class _AdminVerificationDetailViewState extends State<AdminVerificationDetailVie
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   Column(

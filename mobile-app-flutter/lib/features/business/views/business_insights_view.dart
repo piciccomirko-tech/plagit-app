@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Business Insights / Analytics screen.
 /// Mirrors BusinessInsightsView.swift.
@@ -25,8 +26,7 @@ class BusinessInsightsView extends StatelessWidget {
                     child: const SizedBox(
                       width: 36,
                       height: 36,
-                      child: Icon(Icons.chevron_left,
-                          size: 22, color: AppColors.charcoal),
+                      child: BackChevron(size: 22, color: AppColors.charcoal),
                     ),
                   ),
                   const Spacer(),

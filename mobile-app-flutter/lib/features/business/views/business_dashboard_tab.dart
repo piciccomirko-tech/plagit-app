@@ -11,6 +11,7 @@ import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_home_data.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 // ═══════════════════════════════════════════════════════════════
 // Theme (exact from Swift Theme.swift)
@@ -347,7 +348,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                             : AppLocalizations.of(context).postJobToStart,
                             style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: Color(0xFF0F6E6A), letterSpacing: -0.1),
                           )),
-                          const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFF1A9090)),
+                          const ForwardChevron(size: 28, color: Color(0xFF1A9090)),
                         ]),
                       ),
                     ),
@@ -368,7 +369,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                         child: Row(mainAxisSize: MainAxisSize.min, children: [
                           Text(AppLocalizations.of(context).seeAll, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF2BB8B0))),
                           const SizedBox(width: 2),
-                          const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFF2BB8B0)),
+                          const ForwardChevron(size: 28, color: Color(0xFF2BB8B0)),
                         ]),
                       ),
                     ]),
@@ -456,7 +457,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                               const SizedBox(height: 1),
                               Text(AppLocalizations.of(context).businessPremiumSubtitle, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF8E8E93)), maxLines: 1, overflow: TextOverflow.ellipsis),
                             ])),
-                            const Icon(CupertinoIcons.chevron_right, size: 28, color: _indigo),
+                            const ForwardChevron(size: 28, color: _indigo),
                           ]),
                         ),
                       ),
@@ -564,7 +565,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                 ),
               ]),
             ])),
-            const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFFC7C7CC)),
+            const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
           ]),
         ),
       ),
@@ -668,7 +669,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
               Text(AppLocalizations.of(context).notifAppliedForRole(a.name, localizedJobRole(context, a.role)), style: const TextStyle(fontSize: 13, color: _charcoal)),
               Text(a.status.displayName, style: const TextStyle(fontSize: 11, color: _tertiary)),
             ])),
-            const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFFC7C7CC)),
+            const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
           ]),
         ),
       ),
@@ -714,7 +715,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   const SizedBox(height: 2),
                   Text('${localizedJobRole(context, a.role)} · ${localizedCity(context, a.location)}', style: const TextStyle(fontSize: 13, color: _secondary)),
                 ])),
-                const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFFC7C7CC)),
+                const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
               ]),
             ),
           ),
@@ -748,7 +749,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   Text('${localizedJobRole(context, a.role)} · ${localizedCity(context, a.location)}', style: const TextStyle(fontSize: 13, color: _secondary)),
                   Text(a.status.displayName, style: const TextStyle(fontSize: 11, color: _tertiary)),
                 ])),
-                const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFFC7C7CC)),
+                const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
               ]),
             ),
           ),
@@ -831,7 +832,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                       Text(a.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _charcoal)),
                       Text('${localizedJobRole(context, a.role)} · ${localizedCity(context, a.location)}', style: const TextStyle(fontSize: 13, color: _secondary)),
                     ])),
-                    const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFFC7C7CC)),
+                    const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
                   ]),
                 )),
               );
@@ -899,7 +900,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
           Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _charcoal)),
           Text(subtitle, style: const TextStyle(fontSize: 13, color: _secondary)),
         ])),
-        const Icon(CupertinoIcons.chevron_right, size: 28, color: Color(0xFFC7C7CC)),
+        const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
       ]),
     );
   }

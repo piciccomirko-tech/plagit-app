@@ -2134,5 +2134,11 @@
   "adminStatReviewed": "Revisionati",
   "adminStatShortlisted": "In shortlist",
   "adminStatRejected": "Respinti",
-  "codeSentToEmail": "Un codice è stato inviato a {email}"
+  "switchRoleTitle": "Cambia ruolo",
+  "postsTab": "Post",
+  "galleryTab": "Galleria",
+  "promotionsTab": "Promozioni",
+  "filterUpdates": "Aggiornamenti",
+  "badgePro": "PRO",
+  "badgeAdmin": "ADMIN"
 }

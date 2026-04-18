@@ -6,6 +6,7 @@ import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 class AdminModerationDetailView extends StatefulWidget {
   final String reportId;
   const AdminModerationDetailView({super.key, required this.reportId});
@@ -88,7 +89,7 @@ class _AdminModerationDetailViewState extends State<AdminModerationDetailView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Spacer(),
                   Text(

@@ -6,6 +6,7 @@ import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 class CandidateJobDetailView extends StatefulWidget {
   final String jobId;
@@ -295,7 +296,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.tertiary),
+              const ForwardChevron(color: AppColors.tertiary),
             ],
           ),
         ),

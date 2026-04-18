@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 const _orange = Color(0xFFF97316);
 
@@ -652,7 +653,7 @@ class _SavedRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right, color: AppColors.secondary, size: 20),
+              const ForwardChevron(size: 20, color: AppColors.secondary),
             ],
           ),
         ),

@@ -10142,11 +10142,47 @@ abstract class AppLocalizations {
   /// **'Rejected'**
   String get adminStatRejected;
 
-  /// Subtitle on forgot-password step 2 informing the user where the reset code was sent
+  /// Title of the role switcher modal sheet
   ///
   /// In en, this message translates to:
-  /// **'A code has been sent to {email}'**
-  String codeSentToEmail(String email);
+  /// **'Switch Role'**
+  String get switchRoleTitle;
+
+  /// Service company profile tab: Posts
+  ///
+  /// In en, this message translates to:
+  /// **'Posts'**
+  String get postsTab;
+
+  /// Service company profile tab: Gallery
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get galleryTab;
+
+  /// Service company profile tab: Promotions
+  ///
+  /// In en, this message translates to:
+  /// **'Promotions'**
+  String get promotionsTab;
+
+  /// Filter chip label: Updates (service notifications)
+  ///
+  /// In en, this message translates to:
+  /// **'Updates'**
+  String get filterUpdates;
+
+  /// Uppercase PRO badge shown in premium UI
+  ///
+  /// In en, this message translates to:
+  /// **'PRO'**
+  String get badgePro;
+
+  /// Uppercase ADMIN badge shown in premium UI
+  ///
+  /// In en, this message translates to:
+  /// **'ADMIN'**
+  String get badgeAdmin;
 }
 
 class _AppLocalizationsDelegate

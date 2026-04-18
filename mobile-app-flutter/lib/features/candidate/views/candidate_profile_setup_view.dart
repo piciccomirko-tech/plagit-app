@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/core/widgets/avatar_picker_sheet.dart';
-import 'package:plagit/core/widgets/profile_photo.dart';
-import 'package:plagit/l10n/generated/app_localizations.dart';
-import 'package:plagit/core/widgets/professional_avatar.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate profile setup / onboarding — mirrors CandidateProfileSetupView.swift.
 class CandidateProfileSetupView extends StatefulWidget {
@@ -20,18 +17,12 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
   final _bioController = TextEditingController();
 
   String _jobType = '';
-  final String _languages = '';
+  String _languages = '';
   String _startDate = 'Immediately';
   bool _availableToRelocate = false;
   String? _cvFileName;
   bool _isLoading = false;
   String? _errorMessage;
-
-  /// Selected profile photo. Either a real upload (network/asset/base64
-  /// string) or a system avatar identifier (`avatar:role:gender:variant`).
-  /// Stored as a single string so it round-trips through CandidateProfile
-  /// without any new field.
-  String? _photoUrl;
 
   final List<String> _jobTypes = ['Full-time', 'Part-time', 'Contract', 'Freelance', 'Temporary', 'Flexible'];
   final List<String> _startDateOptions = ['Immediately', 'Within 1 week', 'Within 2 weeks', 'Within 1 month', 'Flexible'];
@@ -84,10 +75,10 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
-            child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal)),
+            child: const SizedBox(width: 36, height: 36, child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
-          Text(AppLocalizations.of(context).completeYourProfile, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          const Text('Complete Your Profile', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           const Spacer(),
           const SizedBox(width: 36, height: 36),
         ],
@@ -130,20 +121,20 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(AppLocalizations.of(context).uploadCV, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
-                        const SizedBox(height: 2),
-                        Text(AppLocalizations.of(context).uploadCVBig, style: const TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 2),
+                      children: const [
+                        Text('Upload CV', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                        SizedBox(height: 2),
+                        Text('Upload your CV to pre-fill your profile automatically and save time.', style: TextStyle(fontSize: 13, color: AppColors.secondary), maxLines: 2),
                       ],
                     ),
                   ),
-                  const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
+                  const ForwardChevron(size: 12, color: AppColors.tertiary),
                 ],
               ),
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(AppLocalizations.of(context).supportedFormats, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
+          const Text('Supported formats: PDF, DOC, DOCX', style: TextStyle(fontSize: 10, color: AppColors.tertiary)),
           const SizedBox(height: AppSpacing.lg),
           // Divider
           Row(
@@ -151,108 +142,36 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
               const Expanded(child: Divider(color: AppColors.divider)),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                child: Text(AppLocalizations.of(context).orLabel, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
+                child: const Text('or', style: TextStyle(fontSize: 10, color: AppColors.tertiary)),
               ),
               const Expanded(child: Divider(color: AppColors.divider)),
             ],
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text(AppLocalizations.of(context).fillManually, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+          const Text('Fill Manually', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
           const SizedBox(height: 2),
-          Text(AppLocalizations.of(context).fillManuallySubtitle, style: const TextStyle(fontSize: 10, color: AppColors.tertiary), textAlign: TextAlign.center),
+          const Text('Enter your details yourself and complete your profile step by step.', style: TextStyle(fontSize: 10, color: AppColors.tertiary), textAlign: TextAlign.center),
         ],
       ),
     );
   }
 
   Widget _buildPhotoUpload() {
-    final hasPhoto = _photoUrl != null && _photoUrl!.isNotEmpty;
-    final isAvatar = ProfessionalAvatar.isAvatarId(_photoUrl);
     return Column(
       children: [
-        GestureDetector(
-          onTap: _openAvatarPicker,
-          behavior: HitTestBehavior.opaque,
-          child: hasPhoto
-              ? ProfilePhoto(
-                  photoUrl: _photoUrl,
-                  initials: '?',
-                  size: 96,
-                )
-              : Container(
-                  width: 96,
-                  height: 96,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.surface,
-                    border: Border.all(
-                      color: AppColors.teal.withValues(alpha: 0.3),
-                      width: 1.5,
-                      strokeAlign: BorderSide.strokeAlignOutside,
-                    ),
-                  ),
-                  child: const Icon(Icons.camera_alt,
-                      size: 28, color: AppColors.teal),
-                ),
+        Container(
+          width: 80, height: 80,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: AppColors.surface,
+            border: Border.all(color: AppColors.teal.withValues(alpha: 0.3), width: 1.5, strokeAlign: BorderSide.strokeAlignOutside),
+          ),
+          child: const Icon(Icons.camera_alt, size: 24, color: AppColors.teal),
         ),
         const SizedBox(height: AppSpacing.sm),
-        // ── Primary action: upload a real headshot ──
-        // Real personal photos are the preferred identity standard on
-        // Plagit (work platform, hospitality hiring) so the upload CTA
-        // is the visually dominant action. Avatar fallback is a small
-        // secondary link below.
-        GestureDetector(
-          onTap: _openAvatarPicker,
-          child: Text(
-            !hasPhoto
-                ? 'Upload your photo'
-                : isAvatar
-                    ? 'Change avatar'
-                    : 'Change photo',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w700,
-              color: AppColors.teal,
-              letterSpacing: -0.1,
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        const Text(
-          'A real headshot builds the most trust with employers',
-          style: TextStyle(
-            fontSize: 11,
-            color: AppColors.tertiary,
-            letterSpacing: -0.05,
-          ),
-        ),
+        const Text('Add Photo', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
       ],
     );
-  }
-
-  /// Opens the photo source picker. The picker returns either an
-  /// upload-requested signal (we'd hand off to the platform image
-  /// picker) or a confirmed [ProfessionalAvatar] selection.
-  Future<void> _openAvatarPicker() async {
-    final result = await showAvatarPickerSheet(
-      context: context,
-      currentRoleText: _jobType,
-      currentAvatar: ProfessionalAvatar.tryParse(_photoUrl),
-    );
-    if (!mounted || result == null) return;
-    if (result is AvatarPickerAvatarChosen) {
-      setState(() => _photoUrl = result.avatar.id);
-    } else if (result is AvatarPickerUploadRequested) {
-      // Real photo upload — hand off to the platform image picker.
-      // Image-picker plugin integration is out of scope for this widget;
-      // we surface a clear placeholder so the caller knows what to wire.
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).photoUploadSoon),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
   }
 
   Widget _buildDetailsCard() {
@@ -267,10 +186,10 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context).yourDetails, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+          const Text('Your Details', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
           const SizedBox(height: AppSpacing.lg),
           // Category & Role
-          Text(AppLocalizations.of(context).categoryAndRole, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+          const Text('Category & Role', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
           const SizedBox(height: AppSpacing.sm),
           GestureDetector(
             onTap: () {
@@ -281,19 +200,19 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md + 2),
               decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
               child: Row(
-                children: [
-                  const Icon(Icons.work, size: 13, color: AppColors.teal),
-                  const SizedBox(width: AppSpacing.md),
-                  Text(AppLocalizations.of(context).selectCategoryRoleShort, style: const TextStyle(fontSize: 15, color: AppColors.tertiary)),
-                  const Spacer(),
-                  const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
+                children: const [
+                  Icon(Icons.work, size: 13, color: AppColors.teal),
+                  SizedBox(width: AppSpacing.md),
+                  Text('Select category & role', style: TextStyle(fontSize: 15, color: AppColors.tertiary)),
+                  Spacer(),
+                  ForwardChevron(size: 11, color: AppColors.tertiary),
                 ],
               ),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
           // Job type chips
-          Text(AppLocalizations.of(context).jobType, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
+          const Text('Job Type', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.secondary)),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
             spacing: AppSpacing.sm,
@@ -340,7 +259,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                             maxLines: 1, overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
+                        const ForwardChevron(size: 11, color: AppColors.tertiary),
                       ],
                     ),
                   ),
@@ -392,7 +311,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context).yourCV, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+          const Text('Your CV', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
           const SizedBox(height: AppSpacing.lg),
           GestureDetector(
             onTap: () {
@@ -423,7 +342,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                   if (_cvFileName != null)
                     const Icon(Icons.check_circle, size: 14, color: AppColors.online)
                   else
-                    const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
+                    const ForwardChevron(size: 12, color: AppColors.tertiary),
                 ],
               ),
             ),
@@ -445,7 +364,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(AppLocalizations.of(context).availability, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+          const Text('Availability', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
           const SizedBox(height: AppSpacing.lg),
           Container(
             decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
@@ -458,7 +377,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                   children: [
                     const Icon(Icons.calendar_today, size: 13, color: AppColors.teal),
                     const SizedBox(width: AppSpacing.md),
-                    Text(AppLocalizations.of(context).startDate, style: const TextStyle(fontSize: 15, color: AppColors.secondary)),
+                    const Text('Start Date', style: TextStyle(fontSize: 15, color: AppColors.secondary)),
                     const Spacer(),
                     Text(_startDate, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
                   ],
@@ -471,11 +390,11 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
             children: [
               const Icon(Icons.public, size: 12, color: AppColors.indigo),
               const SizedBox(width: AppSpacing.xs),
-              Expanded(child: Text(AppLocalizations.of(context).openToRelocation, style: const TextStyle(fontSize: 15, color: AppColors.charcoal))),
+              const Expanded(child: Text('Open to relocation', style: TextStyle(fontSize: 15, color: AppColors.charcoal))),
               Switch(
                 value: _availableToRelocate,
                 onChanged: (v) => setState(() => _availableToRelocate = v),
-                activeTrackColor: AppColors.indigo,
+                activeColor: AppColors.indigo,
               ),
             ],
           ),
@@ -498,12 +417,12 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
         children: [
           Row(
             children: [
-              Text(AppLocalizations.of(context).aboutYou, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
+              const Text('About You', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: AppColors.charcoal)),
               const SizedBox(width: AppSpacing.sm),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: 3),
                 decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(AppRadius.full)),
-                child: Text(AppLocalizations.of(context).optional, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
+                child: const Text('Optional', style: TextStyle(fontSize: 10, color: AppColors.tertiary)),
               ),
             ],
           ),
@@ -517,8 +436,8 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
               maxLines: null,
               maxLength: 300,
               style: const TextStyle(fontSize: 15, color: AppColors.charcoal),
-              decoration: InputDecoration(
-                hintText: AppLocalizations.of(context).writeShortIntroAboutYourself,
+              decoration: const InputDecoration(
+                hintText: 'Write a short intro about yourself...',
                 hintStyle: TextStyle(color: AppColors.tertiary),
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -572,7 +491,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                 alignment: Alignment.center,
                 child: _isLoading
                     ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : Text(AppLocalizations.of(context).completeProfile, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
+                    : const Text('Complete Profile', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.white)),
               ),
             ),
           ),
@@ -584,7 +503,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
   Widget _buildSkipButton() {
     return GestureDetector(
       onTap: () => context.go('/candidate/home'),
-      child: Text(AppLocalizations.of(context).skipForNow, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
+      child: const Text('Skip for now', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.teal)),
     );
   }
 

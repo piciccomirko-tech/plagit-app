@@ -6,6 +6,7 @@ import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/models/conversation.dart'; // ChatMessage
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/repositories/business_repository.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Business chat thread view.
 class BusinessChatView extends StatefulWidget {
@@ -105,7 +106,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+          icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
         title: Column(

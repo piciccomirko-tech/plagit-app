@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/models/candidate_profile.dart';
 import 'package:plagit/providers/candidate_providers.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate profile — mirrors CandidateRealProfileView.swift exactly.
 class CandidateProfileTab extends StatefulWidget {
@@ -75,7 +76,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
                 children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 24, color: AppColors.charcoal)),
+                    child: const SizedBox(width: 36, height: 36, child: BackChevron(size: 24, color: AppColors.charcoal)),
                   ),
                   const Spacer(),
                   const Text('Profile', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.charcoal)),

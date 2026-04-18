@@ -5,6 +5,7 @@ import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/features/auth/widgets/auth_form_card.dart';
 import 'package:plagit/repositories/auth_repository.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
+import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Candidate registration screen — create a new account.
 class CandidateRegisterView extends StatefulWidget {
@@ -94,7 +95,7 @@ class _CandidateRegisterViewState extends State<CandidateRegisterView> {
                 children: [
                   GestureDetector(
                     onTap: () => context.go('/candidate/login'),
-                    child: const Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal),
+                    child: const BackChevron(size: 28, color: AppColors.charcoal),
                   ),
                   const Expanded(
                     child: Text(
