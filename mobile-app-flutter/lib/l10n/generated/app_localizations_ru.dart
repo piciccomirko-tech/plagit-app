@@ -5051,4 +5051,108 @@ class AppLocalizationsRu extends AppLocalizations {
   String adminMiscPremiumOutOfTotal(int premium, int total) {
     return '$premium премиум из $total';
   }
+
+  @override
+  String get adminActionUnverify => 'Отменить верификацию';
+
+  @override
+  String get adminActionReactivate => 'Реактивировать';
+
+  @override
+  String get adminActionFeature => 'Выделить';
+
+  @override
+  String get adminActionUnfeature => 'Снять выделение';
+
+  @override
+  String get adminActionFlagAccount => 'Отметить аккаунт';
+
+  @override
+  String get adminActionUnflagAccount => 'Снять отметку';
+
+  @override
+  String get adminActionConfirm => 'Подтвердить';
+
+  @override
+  String get adminDialogVerifyBusinessTitle => 'Верифицировать компанию';
+
+  @override
+  String get adminDialogUnverifyBusinessTitle =>
+      'Отменить верификацию компании';
+
+  @override
+  String get adminDialogSuspendBusinessTitle => 'Приостановить компанию';
+
+  @override
+  String get adminDialogReactivateBusinessTitle => 'Реактивировать компанию';
+
+  @override
+  String get adminDialogVerifyCandidateTitle => 'Верифицировать кандидата';
+
+  @override
+  String get adminDialogSuspendCandidateTitle => 'Приостановить кандидата';
+
+  @override
+  String get adminDialogReactivateCandidateTitle => 'Реактивировать кандидата';
+
+  @override
+  String get adminSnackbarBusinessVerified => 'Компания верифицирована';
+
+  @override
+  String get adminSnackbarVerificationRemoved => 'Верификация снята';
+
+  @override
+  String get adminSnackbarBusinessSuspended => 'Компания приостановлена';
+
+  @override
+  String get adminSnackbarBusinessReactivated => 'Компания реактивирована';
+
+  @override
+  String get adminSnackbarBusinessFeatured => 'Компания выделена';
+
+  @override
+  String get adminSnackbarBusinessUnfeatured => 'Выделение компании снято';
+
+  @override
+  String get adminSnackbarUserVerified => 'Пользователь верифицирован';
+
+  @override
+  String get adminSnackbarUserSuspended => 'Пользователь приостановлен';
+
+  @override
+  String get adminSnackbarUserReactivated => 'Пользователь реактивирован';
+
+  @override
+  String get adminTabProfile => 'Профиль';
+
+  @override
+  String get adminTabActivity => 'Активность';
+
+  @override
+  String get adminTabNotes => 'Заметки';
+
+  @override
+  String adminDialogVerifyBody(String name) {
+    return 'Отметить $name как верифицированного?';
+  }
+
+  @override
+  String adminDialogUnverifyBody(String name) {
+    return 'Снять верификацию с $name?';
+  }
+
+  @override
+  String adminDialogReactivateBody(String name) {
+    return 'Реактивировать $name?';
+  }
+
+  @override
+  String adminDialogSuspendBusinessBody(String name) {
+    return 'Приостановить $name? Все вакансии будут приостановлены.';
+  }
+
+  @override
+  String adminDialogSuspendCandidateBody(String name) {
+    return 'Приостановить $name? Доступ будет закрыт.';
+  }
 }

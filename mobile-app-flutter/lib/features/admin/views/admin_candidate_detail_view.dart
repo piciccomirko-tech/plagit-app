@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/profile_photo.dart';
+import 'package:plagit/core/widgets/professional_avatar.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/providers/admin_providers.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class AdminCandidateDetailView extends StatefulWidget {
   final String candidateId;
@@ -80,12 +85,11 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
   void initState() {
     super.initState();
     _tabCtrl = TabController(length: 4, vsync: this);
-    _candidate = Map<String, dynamic>.from(
-      MockData.adminCandidates.firstWhere(
-        (c) => c['id'] == widget.candidateId,
-        orElse: () => MockData.adminCandidates.first,
-      ),
-    );
+    final providerItems = context.read<AdminCandidatesListProvider>().items;
+    final match = providerItems.isNotEmpty
+        ? providerItems.firstWhere((c) => c['id'] == widget.candidateId, orElse: () => providerItems.first)
+        : MockData.adminCandidates.firstWhere((c) => c['id'] == widget.candidateId, orElse: () => MockData.adminCandidates.first);
+    _candidate = Map<String, dynamic>.from(match);
   }
 
   @override
@@ -97,9 +101,11 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final c = _candidate;
     final status = c['status'] as String;
     final verified = c['verified'] as String;
+    final name = c['name'] as String;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -125,30 +131,42 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
               children: [
                 if (verified != 'Verified')
                   Expanded(
-                    child: _actionBtn('Verify', AppColors.teal, true, () {
-                      _showConfirmDialog('Verify Candidate',
-                          'Mark ${c['name']} as verified?', () {
-                        setState(() => _candidate['verified'] = 'Verified');
+                    child: _actionBtn(l.adminActionVerify, AppColors.teal, true, () {
+                      _showConfirmDialog(l.adminDialogVerifyCandidateTitle,
+                          l.adminDialogVerifyBody(name), () async {
+                        final ok = await context.read<AdminActionsProvider>().verifyUser((c['user_id'] ?? c['id']) as String);
+                        if (ok && mounted) {
+                          setState(() => _candidate['verified'] = 'Verified');
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.adminSnackbarUserVerified), backgroundColor: AppColors.teal));
+                        }
                       });
                     }),
                   ),
                 if (verified != 'Verified') const SizedBox(width: 8),
                 if (status == 'Active')
                   Expanded(
-                    child: _actionBtn('Suspend', AppColors.red, false, () {
-                      _showConfirmDialog('Suspend Candidate',
-                          'Suspend ${c['name']}? They will lose access.', () {
-                        setState(() => _candidate['status'] = 'Suspended');
+                    child: _actionBtn(l.adminActionSuspend, AppColors.red, false, () {
+                      _showConfirmDialog(l.adminDialogSuspendCandidateTitle,
+                          l.adminDialogSuspendCandidateBody(name), () async {
+                        final ok = await context.read<AdminActionsProvider>().suspendUser((c['user_id'] ?? c['id']) as String);
+                        if (ok && mounted) {
+                          setState(() => _candidate['status'] = 'Suspended');
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.adminSnackbarUserSuspended), backgroundColor: AppColors.red));
+                        }
                       });
                     }),
                   )
                 else if (status == 'Suspended')
                   Expanded(
                     child:
-                        _actionBtn('Reactivate', AppColors.green, true, () {
-                      _showConfirmDialog('Reactivate Candidate',
-                          'Reactivate ${c['name']}?', () {
-                        setState(() => _candidate['status'] = 'Active');
+                        _actionBtn(l.adminActionReactivate, AppColors.green, true, () {
+                      _showConfirmDialog(l.adminDialogReactivateCandidateTitle,
+                          l.adminDialogReactivateBody(name), () async {
+                        final ok = await context.read<AdminActionsProvider>().unsuspendUser((c['user_id'] ?? c['id']) as String);
+                        if (ok && mounted) {
+                          setState(() => _candidate['status'] = 'Active');
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l.adminSnackbarUserReactivated), backgroundColor: AppColors.green));
+                        }
                       });
                     }),
                   ),
@@ -179,11 +197,11 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
                           indicatorColor: AppColors.teal,
                           labelStyle: const TextStyle(
                               fontSize: 13, fontWeight: FontWeight.w600),
-                          tabs: const [
-                            Tab(text: 'Profile'),
-                            Tab(text: 'Activity'),
-                            Tab(text: 'Applications'),
-                            Tab(text: 'Notes'),
+                          tabs: [
+                            Tab(text: l.adminTabProfile),
+                            Tab(text: l.adminTabActivity),
+                            Tab(text: l.adminMenuApplications),
+                            Tab(text: l.adminTabNotes),
                           ],
                         ),
                         SizedBox(
@@ -212,7 +230,7 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
                           size: 18,
                           color: AppColors.red),
                       label: Text(
-                          _flagged ? 'Unflag Account' : 'Flag Account',
+                          _flagged ? l.adminActionUnflagAccount : l.adminActionFlagAccount,
                           style: const TextStyle(
                               color: AppColors.red,
                               fontWeight: FontWeight.w600)),
@@ -245,19 +263,21 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
       ),
       child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppColors.teal.withValues(alpha: 0.15),
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(c['initials'] as String,
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.teal)),
+          // Profile imagery — uses the shared ProfilePhoto widget so a
+          // system-avatar identifier in `photoUrl` automatically renders
+          // the role-themed avatar instead of falling back to initials.
+          ProfilePhoto(
+            photoUrl: c['photoUrl'] as String?,
+            initials: c['initials'] as String,
+            size: 60,
+          ),
+          const SizedBox(height: 8),
+          // Identity-source badge — tells the reviewer at a glance
+          // whether this profile uses a real upload, a system avatar,
+          // or no image at all. Critical for moderation workflows.
+          IdentityTypeBadge(
+            type: IdentityType.classify(c['photoUrl'] as String?),
+            compact: true,
           ),
           const SizedBox(height: 10),
           Text(c['name'] as String,
@@ -431,7 +451,7 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _mockActivity.length,
-      separatorBuilder: (_, __) => const Divider(color: AppColors.divider),
+      separatorBuilder: (_, _) => const Divider(color: AppColors.divider),
       itemBuilder: (_, i) {
         final a = _mockActivity[i];
         return Padding(
@@ -468,7 +488,7 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _mockApps.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (_, i) {
         final a = _mockApps[i];
         return Container(
@@ -673,6 +693,7 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
 
   void _showConfirmDialog(
       String title, String message, VoidCallback onConfirm) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -689,16 +710,16 @@ class _AdminCandidateDetailViewState extends State<AdminCandidateDetailView>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.secondary)),
+            child: Text(l.adminActionCancel,
+                style: const TextStyle(color: AppColors.secondary)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               onConfirm();
             },
-            child: const Text('Confirm',
-                style: TextStyle(
+            child: Text(l.adminActionConfirm,
+                style: const TextStyle(
                     color: AppColors.teal, fontWeight: FontWeight.w600)),
           ),
         ],

@@ -25,7 +25,13 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - `admin_analytics_view.dart`, `admin_community_view.dart`
   - 36 nuove chiavi (33 semplici + 2 ICU `{count}` + 1 ICU `{premium}/{total}`)
   - build bump 1.0.0+4 → 1.0.0+5, branch `phase3-admin-i18n`
-- TODO — Fase 4 (detail profili: business_detail, candidate_detail)
+- DONE (Fase 4 — 2026-04-17) — detail profili (scope ridotto):
+  - `admin_business_detail_view.dart`, `admin_candidate_detail_view.dart`
+  - Coperti: action buttons, dialog title/body (ICU `{name}`), snackbar, tabs, cancel/confirm
+  - 31 nuove chiavi (26 semplici + 5 ICU `{name}`) — 7 action, 7 dialog title, 9 snackbar, 3 tab, 5 ICU body
+  - build bump 1.0.0+5 → 1.0.0+6, branch `phase4-admin-i18n`
+  - Rimandato a 4-bis: info-row labels, stat card labels, `Profile` completion, `Joined {date}`, `{size} employees`, `No jobs posted`, `Add a note...`, mock data/identity placeholder
+- TODO — Fase 4-bis (info-row, stat card, misc labels dei 2 detail)
 - TODO — Fase 5 (detail rimanenti: job, verification, support, interview, moderation, subscription, application, audit detail)
 
 ### Candidate / Business
@@ -46,7 +52,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
-(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 → totale cumulativo 177 chiavi × 9 locali)
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 → totale cumulativo 208 chiavi × 9 locali)
 
 ## Decisioni tecniche
 

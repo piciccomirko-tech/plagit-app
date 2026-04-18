@@ -4937,4 +4937,107 @@ class AppLocalizationsEn extends AppLocalizations {
   String adminMiscPremiumOutOfTotal(int premium, int total) {
     return '$premium premium out of $total total';
   }
+
+  @override
+  String get adminActionUnverify => 'Unverify';
+
+  @override
+  String get adminActionReactivate => 'Reactivate';
+
+  @override
+  String get adminActionFeature => 'Feature';
+
+  @override
+  String get adminActionUnfeature => 'Unfeature';
+
+  @override
+  String get adminActionFlagAccount => 'Flag Account';
+
+  @override
+  String get adminActionUnflagAccount => 'Unflag Account';
+
+  @override
+  String get adminActionConfirm => 'Confirm';
+
+  @override
+  String get adminDialogVerifyBusinessTitle => 'Verify Business';
+
+  @override
+  String get adminDialogUnverifyBusinessTitle => 'Unverify Business';
+
+  @override
+  String get adminDialogSuspendBusinessTitle => 'Suspend Business';
+
+  @override
+  String get adminDialogReactivateBusinessTitle => 'Reactivate Business';
+
+  @override
+  String get adminDialogVerifyCandidateTitle => 'Verify Candidate';
+
+  @override
+  String get adminDialogSuspendCandidateTitle => 'Suspend Candidate';
+
+  @override
+  String get adminDialogReactivateCandidateTitle => 'Reactivate Candidate';
+
+  @override
+  String get adminSnackbarBusinessVerified => 'Business verified';
+
+  @override
+  String get adminSnackbarVerificationRemoved => 'Verification removed';
+
+  @override
+  String get adminSnackbarBusinessSuspended => 'Business suspended';
+
+  @override
+  String get adminSnackbarBusinessReactivated => 'Business reactivated';
+
+  @override
+  String get adminSnackbarBusinessFeatured => 'Business featured';
+
+  @override
+  String get adminSnackbarBusinessUnfeatured => 'Business unfeatured';
+
+  @override
+  String get adminSnackbarUserVerified => 'User verified';
+
+  @override
+  String get adminSnackbarUserSuspended => 'User suspended';
+
+  @override
+  String get adminSnackbarUserReactivated => 'User reactivated';
+
+  @override
+  String get adminTabProfile => 'Profile';
+
+  @override
+  String get adminTabActivity => 'Activity';
+
+  @override
+  String get adminTabNotes => 'Notes';
+
+  @override
+  String adminDialogVerifyBody(String name) {
+    return 'Mark $name as verified?';
+  }
+
+  @override
+  String adminDialogUnverifyBody(String name) {
+    return 'Remove verification from $name?';
+  }
+
+  @override
+  String adminDialogReactivateBody(String name) {
+    return 'Reactivate $name?';
+  }
+
+  @override
+  String adminDialogSuspendBusinessBody(String name) {
+    return 'Suspend $name? All jobs will be paused.';
+  }
+
+  @override
+  String adminDialogSuspendCandidateBody(String name) {
+    return 'Suspend $name? They will lose access.';
+  }
 }

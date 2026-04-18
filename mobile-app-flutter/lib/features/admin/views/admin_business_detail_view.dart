@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/core/widgets/business_identity.dart';
+import 'package:plagit/core/widgets/professional_avatar.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminBusinessDetailView extends StatefulWidget {
   final String businessId;
@@ -38,12 +43,12 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
   void initState() {
     super.initState();
     _tabCtrl = TabController(length: 4, vsync: this);
-    _business = Map<String, dynamic>.from(
-      MockData.adminBusinesses.firstWhere(
-        (b) => b['id'] == widget.businessId,
-        orElse: () => MockData.adminBusinesses.first,
-      ),
-    );
+    // Try provider first (real backend data), fall back to MockData
+    final providerItems = context.read<AdminBusinessesListProvider>().items;
+    final match = providerItems.isNotEmpty
+        ? providerItems.firstWhere((b) => b['id'] == widget.businessId, orElse: () => providerItems.first)
+        : MockData.adminBusinesses.firstWhere((b) => b['id'] == widget.businessId, orElse: () => MockData.adminBusinesses.first);
+    _business = Map<String, dynamic>.from(match);
   }
 
   @override
@@ -55,9 +60,11 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final b = _business;
     final status = b['status'] as String;
     final verified = b['verified'] as String;
+    final name = b['name'] as String;
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -84,22 +91,36 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
                 // Verify / Unverify
                 Expanded(
                   child: _actionBtn(
-                    verified == 'Verified' ? 'Unverify' : 'Verify',
+                    verified == 'Verified' ? l.adminActionUnverify : l.adminActionVerify,
                     AppColors.teal,
                     verified != 'Verified',
                     () {
                       _showConfirmDialog(
                         verified == 'Verified'
-                            ? 'Unverify Business'
-                            : 'Verify Business',
+                            ? l.adminDialogUnverifyBusinessTitle
+                            : l.adminDialogVerifyBusinessTitle,
                         verified == 'Verified'
-                            ? 'Remove verification from ${b['name']}?'
-                            : 'Mark ${b['name']} as verified?',
-                        () {
-                          setState(() => _business['verified'] =
-                              verified == 'Verified'
-                                  ? 'Unverified'
-                                  : 'Verified');
+                            ? l.adminDialogUnverifyBody(name)
+                            : l.adminDialogVerifyBody(name),
+                        () async {
+                          // User-level action → use user_id, fall back to id
+                          final userId = (b['user_id'] ?? b['id']) as String;
+                          final bool ok;
+                          if (verified == 'Verified') {
+                            ok = await context.read<AdminActionsProvider>().unverifyUser(userId);
+                          } else {
+                            ok = await context.read<AdminActionsProvider>().verifyUser(userId);
+                          }
+                          if (ok && mounted) {
+                            setState(() => _business['verified'] =
+                                verified == 'Verified'
+                                    ? 'Unverified'
+                                    : 'Verified');
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(verified == 'Verified' ? l.adminSnackbarVerificationRemoved : l.adminSnackbarBusinessVerified),
+                              backgroundColor: AppColors.teal,
+                            ));
+                          }
                         },
                       );
                     },
@@ -109,22 +130,36 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
                 // Suspend / Reactivate
                 if (status == 'Active')
                   Expanded(
-                    child: _actionBtn('Suspend', AppColors.red, false, () {
-                      _showConfirmDialog('Suspend Business',
-                          'Suspend ${b['name']}? All jobs will be paused.',
-                          () {
-                        setState(() => _business['status'] = 'Suspended');
+                    child: _actionBtn(l.adminActionSuspend, AppColors.red, false, () {
+                      _showConfirmDialog(l.adminDialogSuspendBusinessTitle,
+                          l.adminDialogSuspendBusinessBody(name),
+                          () async {
+                        final ok = await context.read<AdminActionsProvider>().suspendUser((b['user_id'] ?? b['id']) as String);
+                        if (ok && mounted) {
+                          setState(() => _business['status'] = 'Suspended');
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(l.adminSnackbarBusinessSuspended),
+                            backgroundColor: AppColors.red,
+                          ));
+                        }
                       });
                     }),
                   )
                 else if (status == 'Suspended')
                   Expanded(
                     child:
-                        _actionBtn('Reactivate', AppColors.green, true, () {
+                        _actionBtn(l.adminActionReactivate, AppColors.green, true, () {
                       _showConfirmDialog(
-                          'Reactivate Business', 'Reactivate ${b['name']}?',
-                          () {
-                        setState(() => _business['status'] = 'Active');
+                          l.adminDialogReactivateBusinessTitle, l.adminDialogReactivateBody(name),
+                          () async {
+                        final ok = await context.read<AdminActionsProvider>().unsuspendUser((b['user_id'] ?? b['id']) as String);
+                        if (ok && mounted) {
+                          setState(() => _business['status'] = 'Active');
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(l.adminSnackbarBusinessReactivated),
+                            backgroundColor: AppColors.green,
+                          ));
+                        }
                       });
                     }),
                   ),
@@ -132,10 +167,25 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
                 // Feature / Unfeature
                 Expanded(
                   child: _actionBtn(
-                    _featured ? 'Unfeature' : 'Feature',
+                    _featured ? l.adminActionUnfeature : l.adminActionFeature,
                     AppColors.amber,
                     !_featured,
-                    () => setState(() => _featured = !_featured),
+                    () async {
+                      final id = b['id'] as String;
+                      final bool ok;
+                      if (_featured) {
+                        ok = await context.read<AdminActionsProvider>().unfeatureJob(id);
+                      } else {
+                        ok = await context.read<AdminActionsProvider>().featureJob(id);
+                      }
+                      if (ok && mounted) {
+                        setState(() => _featured = !_featured);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(_featured ? l.adminSnackbarBusinessFeatured : l.adminSnackbarBusinessUnfeatured),
+                          backgroundColor: AppColors.amber,
+                        ));
+                      }
+                    },
                   ),
                 ),
               ],
@@ -166,11 +216,11 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
                           indicatorColor: AppColors.teal,
                           labelStyle: const TextStyle(
                               fontSize: 13, fontWeight: FontWeight.w600),
-                          tabs: const [
-                            Tab(text: 'Profile'),
-                            Tab(text: 'Jobs'),
-                            Tab(text: 'Activity'),
-                            Tab(text: 'Notes'),
+                          tabs: [
+                            Tab(text: l.adminTabProfile),
+                            Tab(text: l.adminMenuJobs),
+                            Tab(text: l.adminTabActivity),
+                            Tab(text: l.adminTabNotes),
                           ],
                         ),
                         SizedBox(
@@ -208,19 +258,29 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
       ),
       child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: AppColors.navy.withValues(alpha: 0.10),
-              shape: BoxShape.circle,
-            ),
-            alignment: Alignment.center,
-            child: Text(b['initials'] as String,
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.navy)),
+          // Identity slot — runs the same fallback chain the business
+          // profile view uses (logo > venue cover > gallery > category
+          // fallback) so admin reviewers see exactly what the business
+          // shows publicly.
+          BusinessIdentity(
+            initials: b['initials'] as String,
+            category: b['category'] as String? ?? '',
+            logoUrl: b['logoUrl'] as String?,
+            coverImage: b['coverImage'] as String?,
+            galleryImages: (b['galleryImages'] as List?)?.cast<String>() ?? const [],
+            size: 60,
+          ),
+          const SizedBox(height: 8),
+          // Identity-source badge — tells reviewers whether this slot
+          // is the brand logo, a venue photo, or just the category
+          // fallback (no real imagery uploaded).
+          IdentityTypeBadge(
+            type: BusinessIdentitySource.classify(
+              logoUrl: b['logoUrl'] as String?,
+              coverImage: b['coverImage'] as String?,
+              galleryImages: (b['galleryImages'] as List?)?.cast<String>() ?? const [],
+            ).identityType,
+            compact: true,
           ),
           const SizedBox(height: 10),
           Text(b['name'] as String,
@@ -394,7 +454,7 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: jobs.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (_, i) {
         final j = jobs[i];
         return GestureDetector(
@@ -441,7 +501,7 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: _mockActivity.length,
-      separatorBuilder: (_, __) => const Divider(color: AppColors.divider),
+      separatorBuilder: (_, _) => const Divider(color: AppColors.divider),
       itemBuilder: (_, i) {
         final a = _mockActivity[i];
         return Padding(
@@ -653,7 +713,8 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
   }
 
   void _showConfirmDialog(
-      String title, String message, VoidCallback onConfirm) {
+      String title, String message, Function() onConfirm) {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -670,16 +731,16 @@ class _AdminBusinessDetailViewState extends State<AdminBusinessDetailView>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.secondary)),
+            child: Text(l.adminActionCancel,
+                style: const TextStyle(color: AppColors.secondary)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               onConfirm();
             },
-            child: const Text('Confirm',
-                style: TextStyle(
+            child: Text(l.adminActionConfirm,
+                style: const TextStyle(
                     color: AppColors.teal, fontWeight: FontWeight.w600)),
           ),
         ],
