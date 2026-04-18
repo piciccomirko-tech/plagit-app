@@ -5646,8 +5646,61 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminStatRejected => 'مرفوضون';
 
   @override
-  String get businessFieldMeetingLink => 'رابط الاجتماع';
+  String rePrefix(String context) {
+    return 'رد: $context';
+  }
 
   @override
-  String get businessFieldLocation => 'الموقع';
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count محادثة',
+      many: '$count محادثة',
+      few: '$count محادثات',
+      two: 'محادثتان',
+      one: 'محادثة واحدة',
+      zero: 'لا محادثات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count غير مقروءة';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'هل تريد إزالة المحادثة مع $company؟ سيتم حذف نسختك فقط — يحتفظ الطرف الآخر بنسخته.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'حذف $count محادثة؟',
+      many: 'حذف $count محادثة؟',
+      few: 'حذف $count محادثات؟',
+      two: 'حذف محادثتين؟',
+      one: 'حذف محادثة واحدة؟',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'ستتم إزالة المحادثات المحددة من صندوق الوارد. يحتفظ الطرف الآخر بنسخته.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count محادثة',
+      one: 'محادثة واحدة',
+    );
+    return 'سيؤدي هذا إلى مسح صندوق الوارد بالكامل ($_temp0). لا يمكن التراجع عن هذا من جانبك.';
+  }
 }

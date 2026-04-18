@@ -2382,6 +2382,11 @@
   "adminStatReviewed": "Examinés",
   "adminStatShortlisted": "Présélectionnés",
   "adminStatRejected": "Rejetés",
-  "businessFieldMeetingLink": "Lien de la réunion",
-  "businessFieldLocation": "Lieu"
+  "rePrefix": "Re : {context}",
+  "conversationCount": "{count, plural, =1{1 conversation} other{{count} conversations}}",
+  "unreadCount": "{count} non lus",
+  "removeChatBody": "Supprimer votre discussion avec {company} ? Seule votre copie est supprimée — l'autre partie conserve la sienne.",
+  "deleteConversationsCount": "{count, plural, =1{Supprimer 1 conversation ?} other{Supprimer {count} conversations ?}}",
+  "selectedChatsBody": "Les discussions sélectionnées seront supprimées de votre boîte de réception. L'autre partie conserve sa copie.",
+  "clearInboxBody": "Cela videra votre boîte de réception ({count, plural, =1{1 conversation} other{{count} conversations}}). Cette action ne peut pas être annulée de votre côté."
 }

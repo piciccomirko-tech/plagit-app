@@ -5642,8 +5642,54 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminStatRejected => 'Abgelehnt';
 
   @override
-  String get businessFieldMeetingLink => 'Meeting-Link';
+  String rePrefix(String context) {
+    return 'Re: $context';
+  }
 
   @override
-  String get businessFieldLocation => 'Ort';
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Konversationen',
+      one: '1 Konversation',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    return '$count ungelesen';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'Chat mit $company entfernen? Nur deine Kopie wird gelöscht — die andere Seite behält ihre.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Konversationen löschen?',
+      one: '1 Konversation löschen?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'Ausgewählte Chats werden aus deinem Posteingang entfernt. Die andere Seite behält ihre Kopie.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Konversationen',
+      one: '1 Konversation',
+    );
+    return 'Dadurch wird dein gesamter Posteingang geleert ($_temp0). Dies kann von deiner Seite nicht rückgängig gemacht werden.';
+  }
 }

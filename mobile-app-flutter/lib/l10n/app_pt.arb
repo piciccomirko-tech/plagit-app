@@ -2382,6 +2382,11 @@
   "adminStatReviewed": "Revisados",
   "adminStatShortlisted": "Pré-selecionados",
   "adminStatRejected": "Rejeitados",
-  "businessFieldMeetingLink": "Link da reunião",
-  "businessFieldLocation": "Localização"
+  "rePrefix": "Re: {context}",
+  "conversationCount": "{count, plural, =1{1 conversa} other{{count} conversas}}",
+  "unreadCount": "{count} não lidas",
+  "removeChatBody": "Remover a conversa com {company}? Apenas a tua cópia é eliminada — a outra parte mantém a sua.",
+  "deleteConversationsCount": "{count, plural, =1{Eliminar 1 conversa?} other{Eliminar {count} conversas?}}",
+  "selectedChatsBody": "As conversas selecionadas serão removidas da tua caixa de entrada. A outra parte mantém a sua cópia.",
+  "clearInboxBody": "Isto irá limpar toda a caixa de entrada ({count, plural, =1{1 conversa} other{{count} conversas}}). Não pode ser anulado do teu lado."
 }

@@ -4006,12 +4006,68 @@
   "@adminStatRejected": {
     "description": "Admin job detail: adminStatRejected"
   },
-  "businessFieldMeetingLink": "Meeting Link",
-  "businessFieldLocation": "Location",
-  "@businessFieldMeetingLink": {
-    "description": "Field label for meeting link in business schedule interview form"
+  "rePrefix": "Re: {context}",
+  "conversationCount": "{count, plural, =1{1 conversation} other{{count} conversations}}",
+  "unreadCount": "{count} unread",
+  "removeChatBody": "Remove your chat with {company}? Only your copy is deleted — the other side keeps theirs.",
+  "deleteConversationsCount": "{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}",
+  "selectedChatsBody": "Selected chats will be removed from your inbox. The other side still keeps their copy.",
+  "clearInboxBody": "This will clear your entire inbox ({count, plural, =1{1 conversation} other{{count} conversations}}). This cannot be undone from your side.",
+  "@rePrefix": {
+    "description": "Reply prefix used in conversation context (e.g. 'Re: Waiter position')",
+    "placeholders": {
+      "context": {
+        "type": "String",
+        "example": "Waiter position"
+      }
+    }
   },
-  "@businessFieldLocation": {
-    "description": "Field label for location in business schedule interview form"
+  "@conversationCount": {
+    "description": "Plural count of conversations in messages tab summary",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "@unreadCount": {
+    "description": "Unread count badge in messages tab summary",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "@removeChatBody": {
+    "description": "Delete single conversation dialog body with company name",
+    "placeholders": {
+      "company": {
+        "type": "String",
+        "example": "Ritz London"
+      }
+    }
+  },
+  "@deleteConversationsCount": {
+    "description": "Bulk delete confirmation dialog title with plural count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "@selectedChatsBody": {
+    "description": "Bulk delete confirmation dialog body (no placeholders)"
+  },
+  "@clearInboxBody": {
+    "description": "Delete all conversations dialog body with total count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "12"
+      }
+    }
   }
 }

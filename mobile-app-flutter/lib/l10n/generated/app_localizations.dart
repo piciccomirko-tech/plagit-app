@@ -10142,17 +10142,47 @@ abstract class AppLocalizations {
   /// **'Rejected'**
   String get adminStatRejected;
 
-  /// Field label for meeting link in business schedule interview form
+  /// Reply prefix used in conversation context (e.g. 'Re: Waiter position')
   ///
   /// In en, this message translates to:
-  /// **'Meeting Link'**
-  String get businessFieldMeetingLink;
+  /// **'Re: {context}'**
+  String rePrefix(String context);
 
-  /// Field label for location in business schedule interview form
+  /// Plural count of conversations in messages tab summary
   ///
   /// In en, this message translates to:
-  /// **'Location'**
-  String get businessFieldLocation;
+  /// **'{count, plural, =1{1 conversation} other{{count} conversations}}'**
+  String conversationCount(int count);
+
+  /// Unread count badge in messages tab summary
+  ///
+  /// In en, this message translates to:
+  /// **'{count} unread'**
+  String unreadCount(int count);
+
+  /// Delete single conversation dialog body with company name
+  ///
+  /// In en, this message translates to:
+  /// **'Remove your chat with {company}? Only your copy is deleted — the other side keeps theirs.'**
+  String removeChatBody(String company);
+
+  /// Bulk delete confirmation dialog title with plural count
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}'**
+  String deleteConversationsCount(int count);
+
+  /// Bulk delete confirmation dialog body (no placeholders)
+  ///
+  /// In en, this message translates to:
+  /// **'Selected chats will be removed from your inbox. The other side still keeps their copy.'**
+  String get selectedChatsBody;
+
+  /// Delete all conversations dialog body with total count
+  ///
+  /// In en, this message translates to:
+  /// **'This will clear your entire inbox ({count, plural, =1{1 conversation} other{{count} conversations}}). This cannot be undone from your side.'**
+  String clearInboxBody(int count);
 }
 
 class _AppLocalizationsDelegate
