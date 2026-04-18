@@ -61,7 +61,8 @@ class _SignInViewState extends State<SignInView> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              context.canPop() ? context.pop() : context.go('/entry'),
         ),
         title: const Text(
           'Sign In',

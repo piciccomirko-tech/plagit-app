@@ -65,7 +65,8 @@ class _BusinessLoginViewState extends State<BusinessLoginView> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: () => context.pop(),
+                    onTap: () =>
+                        context.canPop() ? context.pop() : context.go('/entry'),
                     child: const Icon(Icons.arrow_back_ios, size: 22, color: AppColors.charcoal),
                   ),
                   const Expanded(

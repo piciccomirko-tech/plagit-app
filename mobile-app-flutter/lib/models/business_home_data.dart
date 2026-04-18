@@ -41,35 +41,40 @@ class BusinessHomeData {
   // -- JSON serialisation --
 
   factory BusinessHomeData.fromJson(Map<String, dynamic> json) {
+    final profileJson =
+        (json['profile'] ?? json['business']) as Map<String, dynamic>?;
+    final stats = (json['stats'] as Map<String, dynamic>?) ?? const {};
+    final nextInterviewJson =
+        (json['nextInterview'] ?? json['next_interview']) as Map<String, dynamic>?;
     return BusinessHomeData(
-      profile: BusinessProfile.fromJson(
-          json['profile'] as Map<String, dynamic>),
+      profile: BusinessProfile.fromJson(profileJson ?? const {}),
       activeJobs: (json['activeJobs'] as List<dynamic>?)
-              ?.map((j) => BusinessJob.fromJson(j as Map<String, dynamic>))
+              ?.whereType<Map<String, dynamic>>()
+              .map(BusinessJob.fromJson)
               .toList() ??
           [],
       recentApplicants: (json['recentApplicants'] as List<dynamic>?)
-              ?.map((a) => Applicant.fromJson(a as Map<String, dynamic>))
+              ?.whereType<Map<String, dynamic>>()
+              .map(Applicant.fromJson)
               .toList() ??
           [],
       recommendedCandidates: (json['recommendedCandidates'] as List<dynamic>?)
-              ?.map((c) =>
-                  QuickPlugCandidate.fromJson(c as Map<String, dynamic>))
+              ?.whereType<Map<String, dynamic>>()
+              .map(QuickPlugCandidate.fromJson)
               .toList() ??
           [],
-      nextInterview: json['nextInterview'] != null
-          ? BusinessInterview.fromJson(
-              json['nextInterview'] as Map<String, dynamic>)
+      nextInterview: nextInterviewJson != null
+          ? BusinessInterview.fromJson(nextInterviewJson)
           : null,
       recentConversations: (json['recentConversations'] as List<dynamic>?)
-              ?.map((c) =>
-                  BusinessConversation.fromJson(c as Map<String, dynamic>))
+              ?.whereType<Map<String, dynamic>>()
+              .map(BusinessConversation.fromJson)
               .toList() ??
           [],
-      totalApplicants: json['totalApplicants'] as int? ?? 0,
-      interviewCount: json['interviewCount'] as int? ?? 0,
-      hiredCount: json['hiredCount'] as int? ?? 0,
-      unreadMessages: json['unreadMessages'] as int? ?? 0,
+      totalApplicants: (json['totalApplicants'] ?? stats['total_applicants']) as int? ?? 0,
+      interviewCount: (json['interviewCount'] ?? stats['interviews']) as int? ?? 0,
+      hiredCount: (json['hiredCount'] ?? stats['hired']) as int? ?? 0,
+      unreadMessages: (json['unreadMessages'] ?? json['unread_messages']) as int? ?? 0,
     );
   }
 
