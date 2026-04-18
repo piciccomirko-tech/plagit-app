@@ -414,7 +414,7 @@ class _CandidateProfileTabState extends State<CandidateProfileTab> {
   Widget _detailsCard(CandidateProfile p) {
     return _infoCard('Details', [
       (Icons.place, 'Based In', p.location?.trim() ?? 'Not set'),
-      (Icons.schedule, 'Experience', p.experience != null ? '${p.experience} years' : 'Not set'),
+      (Icons.schedule, 'Experience', p.experience?.trim().isNotEmpty == true ? p.experience!.trim() : 'Not set'),
       (Icons.language, 'Languages', p.languages?.isNotEmpty == true ? p.languages! : 'Not set'),
       (Icons.verified_user_outlined, 'Verification', _verificationLabel(p.verificationStatus)),
     ]);
