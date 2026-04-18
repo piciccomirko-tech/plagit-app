@@ -5093,4 +5093,52 @@ class AppLocalizationsAr extends AppLocalizations {
   String adminDialogSuspendCandidateBody(String name) {
     return 'تعليق $name؟ سيفقد الوصول.';
   }
+
+  @override
+  String get adminFieldName => 'الاسم';
+
+  @override
+  String get adminFieldEmail => 'البريد الإلكتروني';
+
+  @override
+  String get adminFieldPhone => 'الهاتف';
+
+  @override
+  String get adminFieldLocation => 'الموقع';
+
+  @override
+  String get adminFieldPlan => 'الخطة';
+
+  @override
+  String get adminFieldVerified => 'موثّق';
+
+  @override
+  String get adminFieldStatus => 'الحالة';
+
+  @override
+  String get adminFieldJoined => 'انضم';
+
+  @override
+  String get adminFieldCategory => 'الفئة';
+
+  @override
+  String get adminFieldSize => 'الحجم';
+
+  @override
+  String get adminFieldRole => 'الدور';
+
+  @override
+  String get adminFieldProfileCompletion => 'اكتمال الملف الشخصي';
+
+  @override
+  String get adminStatApplicants => 'المتقدّمون';
+
+  @override
+  String get adminStatSaved => 'المحفوظ';
+
+  @override
+  String get adminPlaceholderAddNote => 'أضف ملاحظة...';
+
+  @override
+  String get adminEmptyNoJobsPosted => 'لا توجد وظائف منشورة';
 }

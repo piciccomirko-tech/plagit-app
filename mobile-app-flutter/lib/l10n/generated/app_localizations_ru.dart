@@ -5155,4 +5155,52 @@ class AppLocalizationsRu extends AppLocalizations {
   String adminDialogSuspendCandidateBody(String name) {
     return 'Приостановить $name? Доступ будет закрыт.';
   }
+
+  @override
+  String get adminFieldName => 'Имя';
+
+  @override
+  String get adminFieldEmail => 'Электронная почта';
+
+  @override
+  String get adminFieldPhone => 'Телефон';
+
+  @override
+  String get adminFieldLocation => 'Местоположение';
+
+  @override
+  String get adminFieldPlan => 'Тариф';
+
+  @override
+  String get adminFieldVerified => 'Подтверждён';
+
+  @override
+  String get adminFieldStatus => 'Статус';
+
+  @override
+  String get adminFieldJoined => 'Присоединился';
+
+  @override
+  String get adminFieldCategory => 'Категория';
+
+  @override
+  String get adminFieldSize => 'Размер';
+
+  @override
+  String get adminFieldRole => 'Роль';
+
+  @override
+  String get adminFieldProfileCompletion => 'Заполнение профиля';
+
+  @override
+  String get adminStatApplicants => 'Кандидаты';
+
+  @override
+  String get adminStatSaved => 'Сохранённые';
+
+  @override
+  String get adminPlaceholderAddNote => 'Добавить заметку...';
+
+  @override
+  String get adminEmptyNoJobsPosted => 'Нет опубликованных вакансий';
 }

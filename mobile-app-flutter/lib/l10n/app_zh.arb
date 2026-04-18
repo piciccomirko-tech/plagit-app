@@ -2202,5 +2202,21 @@
   "adminDialogUnverifyBody": "取消对 {name} 的验证？",
   "adminDialogReactivateBody": "重新激活 {name}？",
   "adminDialogSuspendBusinessBody": "暂停 {name}？所有职位将被暂停。",
-  "adminDialogSuspendCandidateBody": "暂停 {name}？其访问权限将被取消。"
+  "adminDialogSuspendCandidateBody": "暂停 {name}？其访问权限将被取消。",
+  "adminFieldName": "姓名",
+  "adminFieldEmail": "电子邮件",
+  "adminFieldPhone": "电话",
+  "adminFieldLocation": "位置",
+  "adminFieldPlan": "套餐",
+  "adminFieldVerified": "已验证",
+  "adminFieldStatus": "状态",
+  "adminFieldJoined": "加入时间",
+  "adminFieldCategory": "类别",
+  "adminFieldSize": "规模",
+  "adminFieldRole": "角色",
+  "adminFieldProfileCompletion": "资料完成度",
+  "adminStatApplicants": "申请人",
+  "adminStatSaved": "已保存",
+  "adminPlaceholderAddNote": "添加备注...",
+  "adminEmptyNoJobsPosted": "暂无发布的职位"
 }
