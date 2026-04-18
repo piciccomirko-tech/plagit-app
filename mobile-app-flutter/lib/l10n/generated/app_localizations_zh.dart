@@ -5174,4 +5174,167 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminEmptyNoNotes => '暂无备注。';
+
+  @override
+  String get adminSectionVerificationReview => '验证审核';
+
+  @override
+  String get adminSectionProfileSummary => '个人资料摘要';
+
+  @override
+  String get adminSectionDocuments => '文档';
+
+  @override
+  String get adminSectionReportDetail => '举报详情';
+
+  @override
+  String get adminSectionReportInformation => '举报信息';
+
+  @override
+  String get adminSectionEvidence => '证据';
+
+  @override
+  String get adminSectionAdminDecision => '管理员决定';
+
+  @override
+  String get adminSectionAuditTrail => '审计记录';
+
+  @override
+  String get adminSectionSupportIssue => '支持工单';
+
+  @override
+  String get adminSectionDescription => '描述';
+
+  @override
+  String get adminSectionUpdateStatus => '更新状态';
+
+  @override
+  String get adminSectionResolution => '解决方案';
+
+  @override
+  String get adminFieldSubmitted => '已提交';
+
+  @override
+  String get adminFieldReporter => '举报人';
+
+  @override
+  String get adminFieldEntity => '实体';
+
+  @override
+  String get adminFieldUser => '用户';
+
+  @override
+  String get adminFieldNote => '备注';
+
+  @override
+  String get adminFieldCreated => '创建时间';
+
+  @override
+  String get adminFieldUpdated => '更新时间';
+
+  @override
+  String get adminFieldPriority => '优先级';
+
+  @override
+  String get adminDocTitleIdDocument => '身份证件';
+
+  @override
+  String get adminDocSubtitleIdDocument => '护照 / 身份证';
+
+  @override
+  String get adminDocTitleCv => '简历';
+
+  @override
+  String get adminDocSubtitleCv => '个人简历';
+
+  @override
+  String get adminDocTitleRegistration => '注册';
+
+  @override
+  String get adminDocSubtitleRegistration => '企业注册文件';
+
+  @override
+  String get adminActionViewDocument => '查看文档';
+
+  @override
+  String get adminActionSaveDecision => '保存决定';
+
+  @override
+  String get adminActionUpdate => '更新';
+
+  @override
+  String get adminActionMarkResolved => '标记为已解决';
+
+  @override
+  String get adminActionOptionNone => '无';
+
+  @override
+  String get adminActionOptionWarning => '警告';
+
+  @override
+  String get adminActionOptionContentRemoved => '内容已删除';
+
+  @override
+  String get adminActionOptionAccountSuspended => '账户已暂停';
+
+  @override
+  String get adminPlaceholderRejectionReason => '拒绝原因...';
+
+  @override
+  String get adminPlaceholderDecisionNotes => '添加决定备注...';
+
+  @override
+  String get adminPlaceholderResolutionSummary => '解决方案摘要...';
+
+  @override
+  String get adminSnackbarVerificationApproved => '验证已批准';
+
+  @override
+  String get adminSnackbarVerificationRejected => '验证已拒绝';
+
+  @override
+  String get adminSnackbarIssueResolved => '问题已解决';
+
+  @override
+  String adminSnackbarViewingDocument(String title) {
+    return '查看 $title(占位）';
+  }
+
+  @override
+  String adminSnackbarStatusUpdatedTo(String status) {
+    return '状态已更新为 $status';
+  }
+
+  @override
+  String adminSnackbarDecisionSaved(String status, String action) {
+    return '已保存决定：$status / $action';
+  }
+
+  @override
+  String get adminDialogApproveVerificationTitle => '批准验证';
+
+  @override
+  String adminDialogApproveVerificationBody(String name) {
+    return '批准 $name 的验证？';
+  }
+
+  @override
+  String get adminDialogRejectVerificationTitle => '拒绝验证';
+
+  @override
+  String adminDialogRejectVerificationBody(String name) {
+    return '拒绝 $name 的验证？';
+  }
+
+  @override
+  String get adminEmptyIssueNotFound => '未找到工单';
+
+  @override
+  String get adminValuePlatform => '平台';
+
+  @override
+  String get adminValueSupport => '支持';
+
+  @override
+  String get adminMiscReportCreatedByPlatform => '由平台自动检测创建的举报';
 }

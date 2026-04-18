@@ -54,7 +54,18 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - Riusati: `adminActionCancel`, `adminActionConfirm`, `adminActionApplyOverride`, `adminPlaceholderReasonOverride`, `adminPlaceholderAddNote`, `adminTabNotes`, `adminSectionAdminOverride`
   - build bump 1.0.0+8 → 1.0.0+9, branch `phase5a-admin-i18n`
   - analyze: **0 issues**
-- TODO — Fase 5B (verification + moderation + support detail)
+- DONE (Fase 5B — 2026-04-17) — verification + moderation + support detail:
+  - `admin_verification_detail_view.dart`, `admin_moderation_detail_view.dart`, `admin_support_detail_view.dart`
+  - Coperti (verification): header subtitle (Verification Review), Profile Summary section, Submitted field, Documents section, document cards (ID Document/CV/Registration titles+subtitles), View Document action, viewing-document snackbar (ICU `{title}`), Decision section (riuso `adminStatusDecision`), Approve/Reject buttons, Approve dialog (title + ICU body `{name}` + Cancel + Approve + verification approved snackbar), Reject dialog (title + ICU body `{name}` + rejection reason placeholder + Cancel + Reject + verification rejected snackbar), Notes section, Add a note placeholder, Save Note, Note saved snackbar
+  - Coperti (moderation): topbar (Report Detail), Report Information section, Type/Priority/Date/Reporter/Entity field labels, Platform value, `aPriorityLabel` su priority pill, Evidence section, Admin Decision section, Status dropdown via `aStatusLabel`, Action dropdown via nuovo helper `_actionOptionLabel` (None/Warning/Content Removed/Account Suspended), Note field label, decision notes placeholder, Save Decision button, Decision saved snackbar (ICU dual `{status}/{action}`), Audit Trail section, "Report created by Platform auto-detection"
+  - Coperti (support): topbar fallback (Support Issue), Issue not found empty state, Category/Priority/Created/Updated/User field labels, Support value, priority value via `aPriorityLabel`, Description section, Update Status section, status dropdown 4 valori via `aStatusLabel` (Open/In Review/Waiting/Resolved), Update button, ICU status-updated snackbar `{status}`, Notes section (riuso `adminTabNotes`), Add a note placeholder, Add Note button, Resolution section, Resolution summary placeholder, Mark Resolved button, Issue resolved snackbar
+  - 51 nuove chiavi (section×12, field×8, doc×6, action×4, actionOption×4, placeholder×3, snackbarStatic×3, snackbarICU×3, dialog×4, empty×1, misc×3) + 5 ICU (ViewingDocument `{title}`, StatusUpdatedTo `{status}`, DecisionSaved `{status,action}`, ApproveVerificationBody `{name}`, RejectVerificationBody `{name}`)
+  - Nuovo helper locale `_actionOptionLabel(l, option)` dentro moderation view
+  - Riusati: `adminStatusDecision` (5A), `adminFieldStatus`, `adminFieldAction`, `adminFieldType`, `adminFieldDate`, `adminFieldCategory`, `adminFieldReason`, `adminTabNotes`, `adminPlaceholderAddNote`, `adminActionCancel`, `adminActionApprove`, `adminActionReject`, `adminActionAddNote` (5A), `adminActionSaveNote`, `adminSnackbarNoteSaved`, `aStatusLabel` (Open/In Review/Waiting/Resolved/Decision), `aPriorityLabel`
+  - Skip volontari (fuori scope): `Admin User` (runtime identity), mock note text "Looking into this issue...", mock userName/userType nel type badge
+  - build bump 1.0.0+9 → 1.0.0+10, branch `phase5b-admin-i18n`
+  - analyze: **0 errors/warnings** (3 pre-esistenti `info use_build_context_synchronously` non introdotti da 5B — guardia `mounted` già presente)
+  - Gruppo 5 chiuso completamente: 5C + 5A + 5B = 6 detail views admin localizzate
 
 ### Candidate / Business
 - Non toccati in questa sessione
@@ -74,7 +85,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
-(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A → totale cumulativo 293 chiavi × 9 locali)
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A + 51 chiavi Fase 5B → totale cumulativo 344 chiavi × 9 locali)
 
 ## Decisioni tecniche
 
@@ -128,3 +139,20 @@ Esplicitamente fuori scope, non sono bug:
 3. Fase E opzionale: `_AttentionItem.text` con ICU `{count}` su frasi-intere (solo se vuoi il 100% assoluto)
 
 Prima di pushare: bump build nei 3 file + `plagit-push`.
+
+## Sessione 2026-04-17 — Fase 5B chiusa
+
+### Fatto
+- Fase 5B: verification + moderation + support detail (3 file Dart, 51 chiavi ARB + 5 ICU)
+- Helper locale `_actionOptionLabel` per dropdown action moderation (4 opzioni)
+- Riuso massimo catalogo esistente (status via `aStatusLabel`, priority via `aPriorityLabel`, field/section/action/placeholder da fasi precedenti)
+- Gruppo 5 (detail views) completamente chiuso: 5C (subscription/audit) + 5A (application/interview) + 5B (verification/moderation/support)
+
+### Rimasto a metà
+- Niente — 5B approvabile con analyze pulito
+
+### Prossimo passo consigliato
+1. **Altro gruppo di detail views** non ancora toccate (job_detail/candidate_detail/business_detail già fatti in 4/4-bis, subscription/audit in 5C, application/interview in 5A, verification/moderation/support in 5B)
+2. Eventuali **list views** admin che ancora hanno strings hardcoded oltre a quelle fatte in Fase 1/2
+3. Fase E opzionale per `_AttentionItem.text` con ICU
+4. Oppure: passare a Candidate/Business

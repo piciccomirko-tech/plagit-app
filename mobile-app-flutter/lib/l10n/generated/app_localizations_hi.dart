@@ -5297,4 +5297,168 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get adminEmptyNoNotes => 'No notes yet.';
+
+  @override
+  String get adminSectionVerificationReview => 'Verification Review';
+
+  @override
+  String get adminSectionProfileSummary => 'Profile Summary';
+
+  @override
+  String get adminSectionDocuments => 'Documents';
+
+  @override
+  String get adminSectionReportDetail => 'Report Detail';
+
+  @override
+  String get adminSectionReportInformation => 'Report Information';
+
+  @override
+  String get adminSectionEvidence => 'Evidence';
+
+  @override
+  String get adminSectionAdminDecision => 'Admin Decision';
+
+  @override
+  String get adminSectionAuditTrail => 'Audit Trail';
+
+  @override
+  String get adminSectionSupportIssue => 'Support Issue';
+
+  @override
+  String get adminSectionDescription => 'Description';
+
+  @override
+  String get adminSectionUpdateStatus => 'Update Status';
+
+  @override
+  String get adminSectionResolution => 'Resolution';
+
+  @override
+  String get adminFieldSubmitted => 'Submitted';
+
+  @override
+  String get adminFieldReporter => 'Reporter';
+
+  @override
+  String get adminFieldEntity => 'Entity';
+
+  @override
+  String get adminFieldUser => 'User';
+
+  @override
+  String get adminFieldNote => 'Note';
+
+  @override
+  String get adminFieldCreated => 'Created';
+
+  @override
+  String get adminFieldUpdated => 'Updated';
+
+  @override
+  String get adminFieldPriority => 'Priority';
+
+  @override
+  String get adminDocTitleIdDocument => 'ID Document';
+
+  @override
+  String get adminDocSubtitleIdDocument => 'Passport / National ID';
+
+  @override
+  String get adminDocTitleCv => 'CV';
+
+  @override
+  String get adminDocSubtitleCv => 'Curriculum Vitae';
+
+  @override
+  String get adminDocTitleRegistration => 'Registration';
+
+  @override
+  String get adminDocSubtitleRegistration => 'Business Registration Document';
+
+  @override
+  String get adminActionViewDocument => 'View Document';
+
+  @override
+  String get adminActionSaveDecision => 'Save Decision';
+
+  @override
+  String get adminActionUpdate => 'Update';
+
+  @override
+  String get adminActionMarkResolved => 'Mark Resolved';
+
+  @override
+  String get adminActionOptionNone => 'None';
+
+  @override
+  String get adminActionOptionWarning => 'Warning';
+
+  @override
+  String get adminActionOptionContentRemoved => 'Content Removed';
+
+  @override
+  String get adminActionOptionAccountSuspended => 'Account Suspended';
+
+  @override
+  String get adminPlaceholderRejectionReason => 'Reason for rejection...';
+
+  @override
+  String get adminPlaceholderDecisionNotes => 'Add decision notes...';
+
+  @override
+  String get adminPlaceholderResolutionSummary => 'Resolution summary...';
+
+  @override
+  String get adminSnackbarVerificationApproved => 'Verification approved';
+
+  @override
+  String get adminSnackbarVerificationRejected => 'Verification rejected';
+
+  @override
+  String get adminSnackbarIssueResolved => 'Issue resolved';
+
+  @override
+  String adminSnackbarViewingDocument(String title) {
+    return 'Viewing $title (placeholder)';
+  }
+
+  @override
+  String adminSnackbarStatusUpdatedTo(String status) {
+    return 'Status updated to $status';
+  }
+
+  @override
+  String adminSnackbarDecisionSaved(String status, String action) {
+    return 'Decision saved: $status / $action';
+  }
+
+  @override
+  String get adminDialogApproveVerificationTitle => 'Approve Verification';
+
+  @override
+  String adminDialogApproveVerificationBody(String name) {
+    return 'Approve verification for $name?';
+  }
+
+  @override
+  String get adminDialogRejectVerificationTitle => 'Reject Verification';
+
+  @override
+  String adminDialogRejectVerificationBody(String name) {
+    return 'Reject verification for $name?';
+  }
+
+  @override
+  String get adminEmptyIssueNotFound => 'Issue not found';
+
+  @override
+  String get adminValuePlatform => 'Platform';
+
+  @override
+  String get adminValueSupport => 'Support';
+
+  @override
+  String get adminMiscReportCreatedByPlatform =>
+      'Report created by Platform auto-detection';
 }
