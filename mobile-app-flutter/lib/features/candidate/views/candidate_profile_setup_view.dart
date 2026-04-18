@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
-<<<<<<< HEAD
 import 'package:plagit/core/widgets/avatar_picker_sheet.dart';
 import 'package:plagit/core/widgets/profile_photo.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/core/widgets/professional_avatar.dart';
-=======
-import 'package:plagit/core/widgets/directional_chevron.dart';
->>>>>>> origin/phase10-rtl-overflow-hardening
 
 /// Candidate profile setup / onboarding — mirrors CandidateProfileSetupView.swift.
 class CandidateProfileSetupView extends StatefulWidget {
@@ -88,11 +84,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
-<<<<<<< HEAD
             child: const SizedBox(width: 36, height: 36, child: Icon(Icons.chevron_left, size: 28, color: AppColors.charcoal)),
-=======
-            child: const SizedBox(width: 36, height: 36, child: BackChevron(size: 22, color: AppColors.charcoal)),
->>>>>>> origin/phase10-rtl-overflow-hardening
           ),
           const Spacer(),
           Text(AppLocalizations.of(context).completeYourProfile, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
@@ -145,11 +137,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                       ],
                     ),
                   ),
-<<<<<<< HEAD
                   const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
-=======
-                  const ForwardChevron(size: 12, color: AppColors.tertiary),
->>>>>>> origin/phase10-rtl-overflow-hardening
                 ],
               ),
             ),
@@ -293,21 +281,12 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.md + 2),
               decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(AppRadius.md)),
               child: Row(
-<<<<<<< HEAD
                 children: [
                   const Icon(Icons.work, size: 13, color: AppColors.teal),
                   const SizedBox(width: AppSpacing.md),
                   Text(AppLocalizations.of(context).selectCategoryRoleShort, style: const TextStyle(fontSize: 15, color: AppColors.tertiary)),
                   const Spacer(),
                   const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
-=======
-                children: const [
-                  Icon(Icons.work, size: 13, color: AppColors.teal),
-                  SizedBox(width: AppSpacing.md),
-                  Text('Select category & role', style: TextStyle(fontSize: 15, color: AppColors.tertiary)),
-                  Spacer(),
-                  ForwardChevron(size: 11, color: AppColors.tertiary),
->>>>>>> origin/phase10-rtl-overflow-hardening
                 ],
               ),
             ),
@@ -361,11 +340,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                             maxLines: 1, overflow: TextOverflow.ellipsis,
                           ),
                         ),
-<<<<<<< HEAD
                         const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
-=======
-                        const ForwardChevron(size: 11, color: AppColors.tertiary),
->>>>>>> origin/phase10-rtl-overflow-hardening
                       ],
                     ),
                   ),
@@ -448,11 +423,7 @@ class _CandidateProfileSetupViewState extends State<CandidateProfileSetupView> {
                   if (_cvFileName != null)
                     const Icon(Icons.check_circle, size: 14, color: AppColors.online)
                   else
-<<<<<<< HEAD
                     const Icon(Icons.chevron_right, size: 28, color: AppColors.tertiary),
-=======
-                    const ForwardChevron(size: 12, color: AppColors.tertiary),
->>>>>>> origin/phase10-rtl-overflow-hardening
                 ],
               ),
             ),

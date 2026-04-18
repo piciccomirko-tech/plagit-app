@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/employment.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/providers/admin_providers.dart';
 

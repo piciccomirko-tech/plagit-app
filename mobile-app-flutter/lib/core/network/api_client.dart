@@ -64,6 +64,15 @@ class PlagitApiClient {
     return _execute(() => _client.delete(uri, headers: _syncHeaders()));
   }
 
+  /// PATCH request with JSON body.
+  Future<Map<String, dynamic>> patch(String path,
+      {Map<String, dynamic>? body}) async {
+    final uri = Uri.parse('$_baseUrl$path');
+    return _execute(() => _client.patch(uri,
+        headers: _syncHeaders(),
+        body: body != null ? jsonEncode(body) : null));
+  }
+
   // We need async headers but http package wants sync — workaround:
   Map<String, String>? _cachedHeaders;
   Map<String, String> _syncHeaders() =>

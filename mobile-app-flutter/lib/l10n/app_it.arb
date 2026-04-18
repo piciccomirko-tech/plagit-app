@@ -2140,5 +2140,17 @@
   "promotionsTab": "Promozioni",
   "filterUpdates": "Aggiornamenti",
   "badgePro": "PRO",
-  "badgeAdmin": "ADMIN"
+  "badgeAdmin": "ADMIN",
+  "codeSentToEmail": "Abbiamo inviato un codice di 6 cifre a {email}.",
+  "businessFieldMeetingLink": "Link riunione",
+  "businessFieldLocation": "Posizione",
+  "rePrefix": "Re: {context}",
+  "conversationCount": "{count, plural, =1{1 conversazione} other{{count} conversazioni}}",
+  "unreadCount": "{count, plural, =1{1 da leggere} other{{count} da leggere}}",
+  "removeChatBody": "Rimuovere la conversazione con {company}? L'azione non è reversibile.",
+  "deleteConversationsCount": "{count, plural, =1{Eliminare 1 conversazione?} other{Eliminare {count} conversazioni?}}",
+  "selectedChatsBody": "Le chat selezionate verranno rimosse definitivamente.",
+  "clearInboxBody": "{count, plural, =1{Svuotare 1 conversazione dalla casella?} other{Svuotare tutte le {count} conversazioni dalla casella?}}",
+  "orLabel": "OPPURE",
+  "quickPlugNewBadge": "{count} NUOVI"
 }

@@ -5641,4 +5641,81 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get badgeAdmin => 'ADMIN';
+
+  @override
+  String codeSentToEmail(String email) {
+    return 'Abbiamo inviato un codice di 6 cifre a $email.';
+  }
+
+  @override
+  String get businessFieldMeetingLink => 'Link riunione';
+
+  @override
+  String get businessFieldLocation => 'Posizione';
+
+  @override
+  String rePrefix(String context) {
+    return 'Re: $context';
+  }
+
+  @override
+  String conversationCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conversazioni',
+      one: '1 conversazione',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String unreadCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count da leggere',
+      one: '1 da leggere',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String removeChatBody(String company) {
+    return 'Rimuovere la conversazione con $company? L\'azione non è reversibile.';
+  }
+
+  @override
+  String deleteConversationsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Eliminare $count conversazioni?',
+      one: 'Eliminare 1 conversazione?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get selectedChatsBody =>
+      'Le chat selezionate verranno rimosse definitivamente.';
+
+  @override
+  String clearInboxBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Svuotare tutte le $count conversazioni dalla casella?',
+      one: 'Svuotare 1 conversazione dalla casella?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orLabel => 'OPPURE';
+
+  @override
+  String quickPlugNewBadge(int count) {
+    return '$count NUOVI';
+  }
 }

@@ -829,4 +829,14 @@ class MockData {
     {'id': 'sn4', 'title': 'New company near you: CleanPro', 'time': '1 day ago', 'type': 'updates', 'read': true},
     {'id': 'sn5', 'title': 'Complete your preferences for better matches', 'time': '2 days ago', 'type': 'updates', 'read': true},
   ];
+
+  // ══════════════════════════════════════════
+  // ── Community seed (empty placeholders) ──
+  // Real mock content will be reintroduced when the community
+  // feature ships. Kept as empty lists so the provider seed
+  // loop is a no-op instead of a compile error.
+  // ══════════════════════════════════════════
+  static const List<Map<String, dynamic>> communityPosts = [];
+  static const List<Map<String, dynamic>> communityComments = [];
+  static const List<Map<String, dynamic>> communityNotifications = [];
 }

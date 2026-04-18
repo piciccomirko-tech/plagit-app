@@ -7,6 +7,7 @@ library;
 import 'package:flutter/widgets.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_job.dart';
+import 'package:plagit/models/employment.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/providers/community_provider.dart';
 

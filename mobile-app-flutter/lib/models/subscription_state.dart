@@ -23,6 +23,14 @@ enum SubscriptionPlan {
         candidateAnnual => 'Premium Annual',
       };
 
+  /// Billing-period label shown next to the plan name
+  /// (e.g. in the dev panel readout).
+  String get periodLabel => switch (this) {
+        free => 'Free',
+        candidateMonthly => 'Monthly',
+        candidateAnnual => 'Annual',
+      };
+
   /// Parse a string into the enum value. Falls back to [free].
   static SubscriptionPlan fromString(String s) {
     final lower = s.toLowerCase().replaceAll(' ', '');
@@ -69,6 +77,14 @@ class CandidateSubscription {
   /// Premium users appear higher in business search results.
   bool get hasIncreasedVisibility => plan.isPremium;
 
+  /// Parsed renewal date, or null when absent / unparseable.
+  /// Accepts ISO 8601 strings produced by [toJson] / [forPlan].
+  DateTime? get renewalDateParsed {
+    final raw = renewalDate;
+    if (raw == null || raw.isEmpty) return null;
+    return DateTime.tryParse(raw);
+  }
+
   // ── JSON serialisation ──
 
   factory CandidateSubscription.fromJson(Map<String, dynamic> json) {
@@ -89,4 +105,23 @@ class CandidateSubscription {
 
   /// Returns a free-tier subscription (same as current MockData default).
   static CandidateSubscription mock() => const CandidateSubscription();
+
+  /// Build a subscription for [plan] with start = now and a renewal date
+  /// matching the plan's billing period. Used by billing services right
+  /// after a successful purchase / restore.
+  factory CandidateSubscription.forPlan(SubscriptionPlan plan) {
+    final now = DateTime.now();
+    final renewal = switch (plan) {
+      SubscriptionPlan.candidateAnnual =>
+        DateTime(now.year + 1, now.month, now.day),
+      SubscriptionPlan.candidateMonthly =>
+        DateTime(now.year, now.month + 1, now.day),
+      SubscriptionPlan.free => null,
+    };
+    return CandidateSubscription(
+      plan: plan,
+      startDate: now.toIso8601String(),
+      renewalDate: renewal?.toIso8601String(),
+    );
+  }
 }

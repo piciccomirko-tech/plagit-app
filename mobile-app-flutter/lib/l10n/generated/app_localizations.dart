@@ -10183,6 +10183,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ADMIN'**
   String get badgeAdmin;
+
+  /// Info text after sending password reset code
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 6-digit code to {email}.'**
+  String codeSentToEmail(String email);
+
+  /// Schedule interview form field
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting link'**
+  String get businessFieldMeetingLink;
+
+  /// Schedule interview form field
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get businessFieldLocation;
+
+  /// Reply subject prefix
+  ///
+  /// In en, this message translates to:
+  /// **'Re: {context}'**
+  String rePrefix(String context);
+
+  /// Count of conversations
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 conversation} other{{count} conversations}}'**
+  String conversationCount(int count);
+
+  /// Count of unread messages
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 unread} other{{count} unread}}'**
+  String unreadCount(int count);
+
+  /// Remove chat confirm body
+  ///
+  /// In en, this message translates to:
+  /// **'Remove your conversation with {company}? This cannot be undone.'**
+  String removeChatBody(String company);
+
+  /// Bulk delete confirm
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}'**
+  String deleteConversationsCount(int count);
+
+  /// Bulk delete dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Selected chats will be permanently removed.'**
+  String get selectedChatsBody;
+
+  /// Clear inbox confirm
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Clear 1 conversation from your inbox?} other{Clear all {count} conversations from your inbox?}}'**
+  String clearInboxBody(int count);
+
+  /// Divider label between alternatives
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get orLabel;
+
+  /// Quick Plug new-match badge
+  ///
+  /// In en, this message translates to:
+  /// **'{count} NEW'**
+  String quickPlugNewBadge(int count);
 }
 
 class _AppLocalizationsDelegate

@@ -2140,5 +2140,17 @@
   "promotionsTab": "العروض",
   "filterUpdates": "التحديثات",
   "badgePro": "PRO",
-  "badgeAdmin": "ADMIN"
+  "badgeAdmin": "ADMIN",
+  "codeSentToEmail": "أرسلنا رمزًا مكونًا من 6 أرقام إلى {email}.",
+  "businessFieldMeetingLink": "رابط الاجتماع",
+  "businessFieldLocation": "الموقع",
+  "rePrefix": "رد: {context}",
+  "conversationCount": "{count, plural, =1{محادثة واحدة} other{{count} محادثات}}",
+  "unreadCount": "{count, plural, =1{رسالة غير مقروءة} other{{count} غير مقروءة}}",
+  "removeChatBody": "هل تريد إزالة محادثتك مع {company}؟ لا يمكن التراجع.",
+  "deleteConversationsCount": "{count, plural, =1{حذف محادثة واحدة؟} other{حذف {count} محادثات؟}}",
+  "selectedChatsBody": "سيتم حذف المحادثات المحددة نهائيًا.",
+  "clearInboxBody": "{count, plural, =1{مسح محادثة واحدة من البريد الوارد؟} other{مسح جميع {count} محادثات من البريد الوارد؟}}",
+  "orLabel": "أو",
+  "quickPlugNewBadge": "{count} جديد"
 }

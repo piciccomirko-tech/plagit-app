@@ -4,6 +4,7 @@
 library;
 
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/models/employment.dart';
 
 /// A hospitality job listing.
 class Job {
@@ -97,6 +98,35 @@ class Job {
         'applicantCount': applicantCount,
         'views': views,
       };
+
+  // ── Employment / compensation derivatives ──
+
+  /// Typed employment type derived from the raw [contract] string.
+  EmploymentType get employmentType => EmploymentType.fromString(contract);
+
+  /// Human-readable employment label (e.g. "Full-time", "Casual").
+  String get employmentLabel => employmentType.label;
+
+  /// Typed compensation parsed from the legacy [salary] string
+  /// (e.g. "£25,000/year", "£12/hr"). Structured fields (min/max,
+  /// hourly, monthly) are populated best-effort — use
+  /// [compensationDisplay] or [Compensation.displayLocalized] for
+  /// the pre-formatted summary.
+  Compensation get compensation =>
+      Compensation.fromLegacy(salary, employmentType);
+
+  /// Short single-line compensation summary parsed from the legacy [salary]
+  /// string. Falls back to the raw salary string if it cannot be parsed
+  /// into a structured figure.
+  String get compensationDisplay {
+    final parsed = compensation.display;
+    return parsed == '—' ? salary : parsed;
+  }
+
+  /// Gallery of venue images for the job. Currently not carried on
+  /// [Job] itself — returns an empty list so list tiles fall back
+  /// cleanly to the initials placeholder.
+  List<String> get venueImages => const [];
 
   // ── Mock factories ──
 

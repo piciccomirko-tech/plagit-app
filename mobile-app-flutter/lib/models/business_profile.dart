@@ -26,6 +26,10 @@ class BusinessProfile {
   final int profileCompletion;
   final String? website;
   final String? description;
+  final String? logoUrl;
+  final String? coverImage;
+  final List<String> galleryImages;
+  final String? videoUrl;
   final List<ProfileCompletionItem> completionItems;
 
   const BusinessProfile({
@@ -42,6 +46,10 @@ class BusinessProfile {
     this.profileCompletion = 0,
     this.website,
     this.description,
+    this.logoUrl,
+    this.coverImage,
+    this.galleryImages = const [],
+    this.videoUrl,
     this.completionItems = const [],
   });
 
@@ -63,6 +71,12 @@ class BusinessProfile {
             .toList() ??
         [];
 
+    final rawGallery =
+        json['galleryImages'] ?? json['gallery_images'] ?? json['gallery'];
+    final gallery = rawGallery is List
+        ? rawGallery.whereType<String>().toList()
+        : const <String>[];
+
     return BusinessProfile(
       id: json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
@@ -77,6 +91,11 @@ class BusinessProfile {
       profileCompletion: json['profileCompletion'] as int? ?? 0,
       website: json['website'] as String?,
       description: json['description'] as String?,
+      logoUrl: json['logoUrl'] as String? ?? json['logo_url'] as String?,
+      coverImage:
+          json['coverImage'] as String? ?? json['cover_image'] as String?,
+      galleryImages: gallery,
+      videoUrl: json['videoUrl'] as String? ?? json['video_url'] as String?,
       completionItems: items,
     );
   }
@@ -95,6 +114,10 @@ class BusinessProfile {
         'profileCompletion': profileCompletion,
         'website': website,
         'description': description,
+        'logoUrl': logoUrl,
+        'coverImage': coverImage,
+        'galleryImages': galleryImages,
+        'videoUrl': videoUrl,
         'completionItems': completionItems.map((i) => i.toJson()).toList(),
       };
 

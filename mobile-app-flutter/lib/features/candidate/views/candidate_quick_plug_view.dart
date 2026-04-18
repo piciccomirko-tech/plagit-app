@@ -59,7 +59,6 @@ class _CandidateQuickPlugViewState extends State<CandidateQuickPlugView> {
                   const SizedBox(width: 10),
                   const Icon(Icons.bolt, size: 28, color: _purple),
                   const SizedBox(width: 4),
-<<<<<<< HEAD
                   Text(AppLocalizations.of(context).quickPlug, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: _charcoal)),
                   const Spacer(),
                   if (provider.pendingCount > 0)
@@ -68,9 +67,6 @@ class _CandidateQuickPlugViewState extends State<CandidateQuickPlugView> {
                       decoration: BoxDecoration(color: _tealMain.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(100)),
                       child: Text(AppLocalizations.of(context).quickPlugNewBadge(provider.pendingCount), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _tealMain)),
                     ),
-=======
-                  const ForwardChevron(size: 18, color: AppColors.tertiary),
->>>>>>> origin/phase10-rtl-overflow-hardening
                 ],
               ),
             ),

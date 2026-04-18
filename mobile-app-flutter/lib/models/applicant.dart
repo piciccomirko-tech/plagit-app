@@ -14,16 +14,22 @@ enum ApplicantStatus {
   applied,
   shortlisted,
   underReview,
+  interviewInvited,
   interviewScheduled,
-  rejected;
+  hired,
+  rejected,
+  withdrawn;
 
   /// Human-readable label for UI display.
   String get displayName => switch (this) {
         applied => 'Applied',
         shortlisted => 'Shortlisted',
         underReview => 'Under Review',
+        interviewInvited => 'Interview Invited',
         interviewScheduled => 'Interview Scheduled',
+        hired => 'Hired',
         rejected => 'Rejected',
+        withdrawn => 'Withdrawn',
       };
 
   /// Parse a string into the enum value. Falls back to [applied].
@@ -33,8 +39,11 @@ enum ApplicantStatus {
       'applied' => applied,
       'shortlisted' => shortlisted,
       'underreview' => underReview,
+      'interviewinvited' => interviewInvited,
       'interviewscheduled' => interviewScheduled,
+      'hired' => hired,
       'rejected' => rejected,
+      'withdrawn' => withdrawn,
       _ => applied,
     };
   }

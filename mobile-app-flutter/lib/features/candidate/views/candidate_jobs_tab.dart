@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/core/widgets/app_back_title_bar.dart';
 import 'package:plagit/core/widgets/header_action_icon.dart';
 import 'package:plagit/core/widgets/search_screen.dart';
+import 'package:plagit/models/employment.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';

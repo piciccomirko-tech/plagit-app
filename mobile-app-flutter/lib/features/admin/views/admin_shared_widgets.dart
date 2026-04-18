@@ -229,3 +229,178 @@ String aPriorityLabel(AppLocalizations l, String priority) {
     default: return priority;
   }
 }
+
+// ═══════════════════════════════════════════════════════
+// Widget classes — used by super_admin_home_view
+// ═══════════════════════════════════════════════════════
+
+/// White rounded card with the approved admin shadow.
+/// Wraps [child] in the same visual container used across
+/// the admin surfaces (e.g. list rows, section groups).
+class AdminCard extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry margin;
+
+  const AdminCard({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.all(20),
+    this.margin = const EdgeInsets.symmetric(horizontal: 20),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      padding: padding,
+      decoration: BoxDecoration(
+        color: aCard,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [aCardShadow],
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Top bar — class form of [aTopBar]. Exposes an explicit
+/// [onBack] callback so screens outside the go_router stack
+/// can control their own back behaviour.
+class AdminTopBar extends StatelessWidget {
+  final String title;
+  final VoidCallback onBack;
+  final Widget? trailing;
+
+  const AdminTopBar({
+    super.key,
+    required this.title,
+    required this.onBack,
+    this.trailing,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: onBack,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: aSurface,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const BackChevron(size: 28, color: AppColors.charcoal),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 19,
+              fontWeight: FontWeight.bold,
+              color: AppColors.charcoal,
+            ),
+          ),
+          const Spacer(),
+          trailing ?? const SizedBox(width: 36, height: 36),
+        ],
+      ),
+    );
+  }
+}
+
+/// Section title with leading icon — used inside admin cards
+/// to introduce grouped form content.
+class AdminSectionTitle extends StatelessWidget {
+  final String title;
+  final IconData icon;
+
+  const AdminSectionTitle({
+    super.key,
+    required this.title,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: AppColors.teal),
+        const SizedBox(width: 8),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            color: AppColors.charcoal,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Pill-shaped status badge — class form of [aPill] so it
+/// can be used where a `Widget` constructor is expected.
+class StatusPill extends StatelessWidget {
+  final String text;
+  final Color color;
+
+  const StatusPill({super.key, required this.text, required this.color});
+
+  @override
+  Widget build(BuildContext context) => aPill(text, color);
+}
+
+/// Horizontal scroller chip used by the super-admin Quick
+/// Actions strip. Icon on the left, label on the right,
+/// full row tappable.
+class QuickActionChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  const QuickActionChip({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: aCard,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(color: aBorder, width: 0.5),
+          boxShadow: [aSubtleShadow],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: AppColors.teal),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: AppColors.charcoal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
