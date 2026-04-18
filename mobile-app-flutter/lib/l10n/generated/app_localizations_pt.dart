@@ -5631,4 +5631,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Rejeitados';
+
+  @override
+  String get businessFieldMeetingLink => 'Link da reunião';
+
+  @override
+  String get businessFieldLocation => 'Localização';
 }

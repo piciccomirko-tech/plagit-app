@@ -5620,4 +5620,10 @@ class AppLocalizationsIt extends AppLocalizations {
 
   @override
   String get adminStatRejected => 'Respinti';
+
+  @override
+  String get businessFieldMeetingLink => 'Link riunione';
+
+  @override
+  String get businessFieldLocation => 'Posizione';
 }

@@ -2133,5 +2133,7 @@
   "adminStatNew": "جديد",
   "adminStatReviewed": "تمت المراجعة",
   "adminStatShortlisted": "القائمة القصيرة",
-  "adminStatRejected": "مرفوضون"
+  "adminStatRejected": "مرفوضون",
+  "businessFieldMeetingLink": "رابط الاجتماع",
+  "businessFieldLocation": "الموقع"
 }
