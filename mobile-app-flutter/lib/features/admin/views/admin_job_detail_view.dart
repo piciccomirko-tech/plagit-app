@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/job.dart';
+import 'package:plagit/providers/admin_providers.dart';
 
 class AdminJobDetailView extends StatefulWidget {
   final String jobId;
@@ -38,6 +42,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final j = _job;
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -65,18 +70,33 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                 // Feature toggle
                 Expanded(
                   child: _actionBtn(
-                    _featured ? 'Unfeature' : 'Feature',
+                    _featured ? l.adminActionUnfeature : l.adminActionFeature,
                     AppColors.amber,
                     !_featured,
-                    () => setState(() => _featured = !_featured),
+                    () async {
+                      final id = j['id'] as String;
+                      final bool ok;
+                      if (_featured) {
+                        ok = await context.read<AdminActionsProvider>().unfeatureJob(id);
+                      } else {
+                        ok = await context.read<AdminActionsProvider>().featureJob(id);
+                      }
+                      if (ok && mounted) {
+                        setState(() => _featured = !_featured);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(_featured ? l.adminSnackbarJobFeatured : l.adminSnackbarJobUnfeatured),
+                          backgroundColor: AppColors.amber,
+                        ));
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(width: 6),
                 // Pause
                 Expanded(
-                  child: _actionBtn('Pause', AppColors.amber, false, () {
+                  child: _actionBtn(l.adminActionPause, AppColors.amber, false, () {
                     _showConfirmDialog(
-                        'Pause Job', 'Pause this job listing?', () {
+                        l, l.adminDialogPauseJobTitle, l.adminDialogPauseJobBody, () {
                       setState(() => _job['status'] = 'Paused');
                     });
                   }),
@@ -84,9 +104,9 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                 const SizedBox(width: 6),
                 // Close
                 Expanded(
-                  child: _actionBtn('Close', AppColors.red, false, () {
+                  child: _actionBtn(l.adminActionClose, AppColors.red, false, () {
                     _showConfirmDialog(
-                        'Close Job', 'Close this job listing permanently?',
+                        l, l.adminDialogCloseJobTitle, l.adminDialogCloseJobBody,
                         () {
                       setState(() => _job['status'] = 'Closed');
                     });
@@ -96,16 +116,23 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                 // Remove (text only)
                 GestureDetector(
                   onTap: () {
-                    _showConfirmDialog('Remove Job',
-                        'Remove this job completely? This cannot be undone.',
-                        () {
-                      context.pop();
+                    _showConfirmDialog(l, l.adminDialogRemoveJobTitle,
+                        l.adminDialogRemoveJobBody,
+                        () async {
+                      final ok = await context.read<AdminActionsProvider>().removeJob(j['id'] as String);
+                      if (ok && mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(l.adminSnackbarJobRemoved),
+                          backgroundColor: AppColors.red,
+                        ));
+                        context.pop();
+                      }
                     });
                   },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                    child: Text('Remove',
-                        style: TextStyle(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    child: Text(l.adminActionRemove,
+                        style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             color: AppColors.red)),
@@ -121,10 +148,13 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Job info card
-                  _jobInfoCard(j),
+                  _jobInfoCard(l, j),
+                  const SizedBox(height: 16),
+                  // Structured compensation review (moderation-ready)
+                  _compensationReviewCard(l, j),
                   const SizedBox(height: 16),
                   // Applicants summary
-                  _applicantsSummary(j),
+                  _applicantsSummary(l, j),
                   const SizedBox(height: 12),
                   // View Applicants button
                   SizedBox(
@@ -138,14 +168,14 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                             borderRadius: BorderRadius.circular(12)),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
-                      child: const Text('View Applicants',
-                          style: TextStyle(
+                      child: Text(l.adminActionViewApplicants,
+                          style: const TextStyle(
                               fontSize: 15, fontWeight: FontWeight.w600)),
                     ),
                   ),
                   const SizedBox(height: 16),
                   // Moderation section
-                  _moderationSection(),
+                  _moderationSection(l),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -156,7 +186,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
     );
   }
 
-  Widget _jobInfoCard(Map<String, dynamic> j) {
+  Widget _jobInfoCard(AppLocalizations l, Map<String, dynamic> j) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -202,20 +232,21 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
           const SizedBox(height: 12),
           const Divider(color: AppColors.divider),
           const SizedBox(height: 12),
-          _infoRow(Icons.attach_money, 'Salary', j['salary'] as String),
+          // Smart compensation display — same format as Candidate / Business sides
+          _infoRow(Icons.attach_money, l.adminFieldPay, _compFor(j).display),
+          const SizedBox(height: 8),
+          _infoRow(Icons.description_outlined, l.adminFieldType,
+              _empTypeFor(j).label),
           const SizedBox(height: 8),
           _infoRow(
-              Icons.description_outlined, 'Contract', j['contract'] as String),
+              Icons.location_on_outlined, l.adminFieldLocation, j['location'] as String),
           const SizedBox(height: 8),
-          _infoRow(
-              Icons.location_on_outlined, 'Location', j['location'] as String),
+          _infoRow(Icons.schedule, l.adminFieldPosted, j['posted'] as String),
           const SizedBox(height: 8),
-          _infoRow(Icons.schedule, 'Posted', j['posted'] as String),
-          const SizedBox(height: 8),
-          _infoRow(Icons.people_outline, 'Applicants',
+          _infoRow(Icons.people_outline, l.adminStatApplicants,
               '${j['applicants']}'),
           const SizedBox(height: 8),
-          _infoRow(Icons.visibility, 'Views', '142'),
+          _infoRow(Icons.visibility, l.adminFieldViews, '142'),
           const SizedBox(height: 12),
           // Badge row
           Row(
@@ -233,8 +264,8 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                     children: [
                       const Icon(Icons.star, size: 12, color: AppColors.amber),
                       const SizedBox(width: 3),
-                      const Text('Featured',
-                          style: TextStyle(
+                      Text(l.adminBadgeFeatured,
+                          style: const TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                               color: AppColors.amber)),
@@ -251,14 +282,201 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
                     color: AppColors.red.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(100),
                   ),
-                  child: const Text('Urgent',
-                      style: TextStyle(
+                  child: Text(l.adminBadgeUrgent,
+                      style: const TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
                           color: AppColors.red)),
                 ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+
+  // ── Compensation helpers ──
+  // Prefers the structured `compensation` map (sent by the new post-job flow
+  // and embedded in our mock data) and falls back to parsing the legacy
+  // `salary` string for older entries. Same model as Candidate / Business.
+  EmploymentType _empTypeFor(Map<String, dynamic> j) =>
+      EmploymentType.fromString(j['contract'] as String? ?? 'Full-time');
+
+  Compensation _compFor(Map<String, dynamic> j) {
+    final empType = _empTypeFor(j);
+    final rawComp = j['compensation'];
+    if (rawComp is Map) {
+      return Compensation.fromJson(
+          Map<String, dynamic>.from(rawComp), empType);
+    }
+    return Compensation.fromLegacy(j['salary'] as String? ?? '', empType);
+  }
+
+  /// Moderation-ready breakdown of the job's compensation.
+  ///
+  /// Renders the relevant fields per employment type so a moderator can
+  /// validate the listing without guessing what the salary string means:
+  ///   • Full-time → annual salary
+  ///   • Temporary → monthly pay + contract duration
+  ///   • Part-time → hourly rate + weekly hours
+  ///   • Casual    → hourly rate
+  /// Plus any optional extras (housing / travel / bonus / shift) if present.
+  Widget _compensationReviewCard(AppLocalizations l, Map<String, dynamic> j) {
+    final empType = _empTypeFor(j);
+    final comp = _compFor(j);
+
+    final List<Widget> rows = [];
+
+    void addRow(IconData icon, String label, String value) {
+      if (rows.isNotEmpty) rows.add(const SizedBox(height: 8));
+      rows.add(_infoRow(icon, label, value));
+    }
+
+    // Always show the employment type & primary compensation summary first.
+    addRow(Icons.work_outline, l.adminFieldEmployment, empType.label);
+    addRow(Icons.payments_outlined, l.adminFieldSummary, comp.display);
+
+    // Per-type structured fields
+    switch (empType) {
+      case EmploymentType.fullTime:
+        if (comp.annualSalaryMin != null && comp.annualSalaryMax != null) {
+          addRow(Icons.attach_money, l.adminFieldSalaryRange,
+              '${comp.currency}${comp.annualSalaryMin!.toStringAsFixed(0)}–${comp.currency}${comp.annualSalaryMax!.toStringAsFixed(0)}/year');
+        } else if (comp.annualSalary != null) {
+          addRow(Icons.attach_money, l.adminFieldAnnual,
+              '${comp.currency}${comp.annualSalary!.toStringAsFixed(0)}/year');
+        } else {
+          addRow(Icons.attach_money, l.adminFieldAnnual, l.adminMiscNotSpecified);
+        }
+        break;
+      case EmploymentType.fixedTerm:
+        if (comp.monthlyPay != null) {
+          addRow(Icons.attach_money, l.adminFieldMonthly,
+              '${comp.currency}${comp.monthlyPay!.toStringAsFixed(0)}/month');
+        } else {
+          addRow(Icons.attach_money, l.adminFieldMonthly, l.adminMiscNotSpecified);
+        }
+        if (comp.contractDurationMonths != null) {
+          addRow(Icons.event_outlined, l.adminFieldDuration,
+              '${comp.contractDurationMonths} month${comp.contractDurationMonths == 1 ? '' : 's'}');
+        }
+        break;
+      case EmploymentType.partTime:
+        if (comp.hourlyRate != null) {
+          addRow(Icons.attach_money, l.adminFieldHourly,
+              '${comp.currency}${comp.hourlyRate!.toStringAsFixed(0)}/hr');
+        }
+        if (comp.weeklyHours != null) {
+          addRow(Icons.schedule, l.adminFieldWeeklyHours,
+              '${comp.weeklyHours!.toStringAsFixed(0)} hrs');
+        }
+        break;
+      case EmploymentType.hourly:
+        if (comp.hourlyRate != null) {
+          addRow(Icons.attach_money, l.adminFieldHourly,
+              '${comp.currency}${comp.hourlyRate!.toStringAsFixed(0)}/hr');
+        } else {
+          addRow(Icons.attach_money, l.adminFieldHourly, l.adminMiscNotSpecified);
+        }
+        if (comp.weeklyHours != null) {
+          addRow(Icons.schedule, l.adminFieldWeeklyHours,
+              '${comp.weeklyHours!.toStringAsFixed(0)} hrs');
+        }
+        break;
+    }
+
+    // Optional extras
+    if (comp.bonus != null && comp.bonus!.isNotEmpty) {
+      addRow(Icons.card_giftcard, l.adminFieldBonus, comp.bonus!);
+    }
+    if (comp.shiftPattern != null && comp.shiftPattern!.isNotEmpty) {
+      addRow(Icons.schedule_outlined, l.adminFieldShift, comp.shiftPattern!);
+    }
+
+    // Boolean perks rendered as compact chips
+    final perks = <(String, IconData)>[
+      if (comp.housingIncluded) (l.adminPerkHousing, Icons.home_outlined),
+      if (comp.travelIncluded) (l.adminPerkTravel, Icons.flight_outlined),
+      if (comp.overtimeAvailable) (l.adminPerkOvertime, Icons.timelapse),
+      if (comp.flexibleSchedule) (l.adminPerkFlexible, Icons.tune),
+      if (comp.weekendShifts) (l.adminPerkWeekend, Icons.weekend_outlined),
+    ];
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [AppColors.cardShadow],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.fact_check_outlined,
+                  size: 16, color: AppColors.teal),
+              const SizedBox(width: 6),
+              Text(l.adminSectionCompensationReview,
+                  style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.charcoal)),
+              const Spacer(),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.teal.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Text(l.adminSectionModeration,
+                    style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.teal)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ...rows,
+          if (perks.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Divider(color: AppColors.divider),
+            const SizedBox(height: 12),
+            Text(l.adminSectionExtras,
+                style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.secondary)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: perks
+                  .map((p) => Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        decoration: BoxDecoration(
+                          color: AppColors.teal.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(p.$2, size: 12, color: AppColors.teal),
+                            const SizedBox(width: 4),
+                            Text(p.$1,
+                                style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.teal)),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+            ),
+          ],
         ],
       ),
     );
@@ -286,7 +504,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
     );
   }
 
-  Widget _applicantsSummary(Map<String, dynamic> j) {
+  Widget _applicantsSummary(AppLocalizations l, Map<String, dynamic> j) {
     final total = j['applicants'] as int;
     return Container(
       padding: const EdgeInsets.all(16),
@@ -298,26 +516,26 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Applicants Summary',
-              style: TextStyle(
+          Text(l.adminSectionApplicantsSummary,
+              style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: AppColors.charcoal)),
           const SizedBox(height: 12),
           Row(
             children: [
-              _countChip('Total', '$total', AppColors.charcoal),
+              _countChip(l.adminStatTotal, '$total', AppColors.charcoal),
               const SizedBox(width: 8),
-              _countChip('New', '${(total * 0.4).round()}', AppColors.teal),
-              const SizedBox(width: 8),
-              _countChip(
-                  'Reviewed', '${(total * 0.3).round()}', AppColors.amber),
+              _countChip(l.adminStatNew, '${(total * 0.4).round()}', AppColors.teal),
               const SizedBox(width: 8),
               _countChip(
-                  'Shortlisted', '${(total * 0.2).round()}', AppColors.purple),
+                  l.adminStatReviewed, '${(total * 0.3).round()}', AppColors.amber),
               const SizedBox(width: 8),
               _countChip(
-                  'Rejected', '${(total * 0.1).round()}', AppColors.red),
+                  l.adminStatShortlisted, '${(total * 0.2).round()}', AppColors.purple),
+              const SizedBox(width: 8),
+              _countChip(
+                  l.adminStatRejected, '${(total * 0.1).round()}', AppColors.red),
             ],
           ),
         ],
@@ -342,7 +560,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
     );
   }
 
-  Widget _moderationSection() {
+  Widget _moderationSection(AppLocalizations l) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -353,8 +571,8 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Moderation',
-              style: TextStyle(
+          Text(l.adminSectionModeration,
+              style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
                   color: AppColors.charcoal)),
@@ -363,7 +581,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
           Row(
             children: [
               Expanded(
-                child: Text(_flagged ? 'This job is flagged' : 'Flag this job',
+                child: Text(_flagged ? l.adminModerationIsFlagged : l.adminModerationFlagThis,
                     style: TextStyle(
                         fontSize: 14,
                         color:
@@ -372,7 +590,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
               Switch(
                 value: _flagged,
                 onChanged: (v) => setState(() => _flagged = v),
-                activeColor: AppColors.red,
+                activeTrackColor: AppColors.red,
               ),
             ],
           ),
@@ -382,7 +600,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
               controller: _flagReasonController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Reason for flagging...',
+                hintText: l.adminPlaceholderFlagReason,
                 hintStyle: const TextStyle(
                     fontSize: 13, color: AppColors.tertiary),
                 filled: true,
@@ -421,7 +639,7 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
   }
 
   void _showConfirmDialog(
-      String title, String message, VoidCallback onConfirm) {
+      AppLocalizations l, String title, String message, Function() onConfirm) {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -438,16 +656,16 @@ class _AdminJobDetailViewState extends State<AdminJobDetailView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel',
-                style: TextStyle(color: AppColors.secondary)),
+            child: Text(l.adminActionCancel,
+                style: const TextStyle(color: AppColors.secondary)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
               onConfirm();
             },
-            child: const Text('Confirm',
-                style: TextStyle(
+            child: Text(l.adminActionConfirm,
+                style: const TextStyle(
                     color: AppColors.teal, fontWeight: FontWeight.w600)),
           ),
         ],

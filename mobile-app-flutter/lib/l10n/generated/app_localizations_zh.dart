@@ -5337,4 +5337,133 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminMiscReportCreatedByPlatform => '由平台自动检测创建的举报';
+
+  @override
+  String get adminActionPause => '暂停';
+
+  @override
+  String get adminActionClose => '关闭';
+
+  @override
+  String get adminActionViewApplicants => '查看申请人';
+
+  @override
+  String get adminBadgeFeatured => '精选';
+
+  @override
+  String get adminFieldPosted => '已发布';
+
+  @override
+  String get adminFieldViews => '浏览量';
+
+  @override
+  String get adminFieldPay => '薪酬';
+
+  @override
+  String get adminFieldEmployment => '就业';
+
+  @override
+  String get adminFieldSummary => '摘要';
+
+  @override
+  String get adminFieldAnnual => '年度';
+
+  @override
+  String get adminFieldMonthly => '每月';
+
+  @override
+  String get adminFieldDuration => '时长';
+
+  @override
+  String get adminFieldHourly => '每小时';
+
+  @override
+  String get adminFieldWeeklyHours => '每周工时';
+
+  @override
+  String get adminFieldBonus => '奖金';
+
+  @override
+  String get adminFieldShift => '班次';
+
+  @override
+  String get adminFieldSalaryRange => '薪资范围';
+
+  @override
+  String get adminMiscNotSpecified => '未指定';
+
+  @override
+  String get adminSectionModeration => '审核';
+
+  @override
+  String get adminSectionCompensationReview => '薪酬审查';
+
+  @override
+  String get adminSectionApplicantsSummary => '申请人摘要';
+
+  @override
+  String get adminSectionExtras => '额外福利';
+
+  @override
+  String get adminPlaceholderFlagReason => '标记原因...';
+
+  @override
+  String get adminSnackbarJobFeatured => '职位已精选';
+
+  @override
+  String get adminSnackbarJobUnfeatured => '已取消精选';
+
+  @override
+  String get adminSnackbarJobRemoved => '职位已移除';
+
+  @override
+  String get adminDialogPauseJobTitle => '暂停职位';
+
+  @override
+  String get adminDialogPauseJobBody => '暂停此职位发布？';
+
+  @override
+  String get adminDialogCloseJobTitle => '关闭职位';
+
+  @override
+  String get adminDialogCloseJobBody => '永久关闭此职位发布？';
+
+  @override
+  String get adminDialogRemoveJobTitle => '移除职位';
+
+  @override
+  String get adminDialogRemoveJobBody => '完全移除此职位？此操作无法撤销。';
+
+  @override
+  String get adminModerationFlagThis => '举报此职位';
+
+  @override
+  String get adminModerationIsFlagged => '此职位已被举报';
+
+  @override
+  String get adminPerkHousing => '包含住宿';
+
+  @override
+  String get adminPerkTravel => '包含差旅';
+
+  @override
+  String get adminPerkOvertime => '可加班';
+
+  @override
+  String get adminPerkFlexible => '弹性工作时间';
+
+  @override
+  String get adminPerkWeekend => '周末班次';
+
+  @override
+  String get adminStatNew => '新的';
+
+  @override
+  String get adminStatReviewed => '已审核';
+
+  @override
+  String get adminStatShortlisted => '入围';
+
+  @override
+  String get adminStatRejected => '已拒绝';
 }

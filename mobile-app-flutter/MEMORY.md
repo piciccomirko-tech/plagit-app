@@ -54,6 +54,16 @@ Il **core Admin è production-ready** al 100% per tutto ciò che è localizzabil
   - Riusati: `adminActionCancel`, `adminActionConfirm`, `adminActionApplyOverride`, `adminPlaceholderReasonOverride`, `adminPlaceholderAddNote`, `adminTabNotes`, `adminSectionAdminOverride`
   - build bump 1.0.0+8 → 1.0.0+9, branch `phase5a-admin-i18n`
   - analyze: **0 issues**
+- DONE (Fase 5D — 2026-04-17) — job detail (ultima chiusura Admin):
+  - `admin_job_detail_view.dart`, `admin_shared_widgets.dart` (micro-fix)
+  - Coperti (job_detail): action bar (Feature/Unfeature toggle + Pause/Close/Remove), snackbar `Job featured/unfeatured/removed`, 3 dialog confermativi (Pause/Close/Remove Job) con title+body, `View Applicants` button, job info card (Pay/Type/Location/Posted/Applicants/Views labels), badge `Featured`/`Urgent`, Compensation Review section + Moderation pill, tutti i field compensation (Employment/Summary/Salary range/Annual/Monthly/Duration/Hourly/Weekly hours/Bonus/Shift + `Not specified`), Extras subsection, 5 perks chip (Housing/Travel/Overtime/Flexible/Weekend), Applicants Summary section + 5 count chips (Total/New/Reviewed/Shortlisted/Rejected), Moderation section + flag toggle text (`Flag this job` / `This job is flagged`), flag reason placeholder, dialog helper `_showConfirmDialog` rifattorizzato per ricevere `AppLocalizations` + Cancel/Confirm via catalogo
+  - Coperti (shared_widgets): `aSortRow` ora accetta `BuildContext` → label `Newest` via `adminSortNewest` (chiave già esistente)
+  - 43 nuove chiavi (action×3, badge×1, field×13, misc×1, section×4, placeholder×1, snackbar×3, dialog×6, moderation×2, perk×5, stat×4)
+  - Riusati: `adminActionFeature`, `adminActionUnfeature`, `adminActionRemove`, `adminActionCancel`, `adminActionConfirm`, `adminBadgeUrgent`, `adminFieldType`, `adminFieldLocation`, `adminStatApplicants`, `adminStatTotal`, `adminSortNewest`
+  - build bump 1.0.0+10 → 1.0.0+11, branch `phase5d-admin-i18n`
+  - analyze: **0 errors/warnings** (3 pre-esistenti `info use_build_context_synchronously` non introdotti da 5D)
+  - **Admin i18n chiuso al 100% sulle views user-facing.** Residui rimanenti sono solo runtime/mock/out-of-scope documentati (Mirko Picicco identity, _AttentionItem.text Fase E opzionale, mock notes, % progress, ICU opzionali di Fase 4)
+
 - DONE (Fase 5B — 2026-04-17) — verification + moderation + support detail:
   - `admin_verification_detail_view.dart`, `admin_moderation_detail_view.dart`, `admin_support_detail_view.dart`
   - Coperti (verification): header subtitle (Verification Review), Profile Summary section, Submitted field, Documents section, document cards (ID Document/CV/Registration titles+subtitles), View Document action, viewing-document snackbar (ICU `{title}`), Decision section (riuso `adminStatusDecision`), Approve/Reject buttons, Approve dialog (title + ICU body `{name}` + Cancel + Approve + verification approved snackbar), Reject dialog (title + ICU body `{name}` + rejection reason placeholder + Cancel + Reject + verification rejected snackbar), Notes section, Add a note placeholder, Save Note, Note saved snackbar
@@ -85,7 +95,7 @@ en, it, ar, es, fr, pt, de, ru, zh
 
 ### Totali
 **113 chiavi admin × 9 locali = 1017 valori localizzati + @metadata**
-(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A + 51 chiavi Fase 5B → totale cumulativo 344 chiavi × 9 locali)
+(+ 28 chiavi Fase 2 + 36 chiavi Fase 3 + 31 chiavi Fase 4 + 16 chiavi Fase 4-bis + 36 chiavi Fase 5C + 33 chiavi Fase 5A + 51 chiavi Fase 5B + 43 chiavi Fase 5D → totale cumulativo 387 chiavi × 9 locali)
 
 ## Decisioni tecniche
 
@@ -151,8 +161,29 @@ Prima di pushare: bump build nei 3 file + `plagit-push`.
 ### Rimasto a metà
 - Niente — 5B approvabile con analyze pulito
 
+## Sessione 2026-04-17 — Fase 5D chiusa (chiusura finale Admin)
+
+### Audit finale pre-5D
+- Scan 35 file `lib/features/admin/views/*.dart` → solo 2 aperti (admin_job_detail_view + micro-residuo in admin_shared_widgets `aSortRow`)
+- Admin sostanzialmente chiuso al 94% prima di 5D
+
+### Fatto
+- Fase 5D: job detail + shared_widgets (1 file principale + 1 micro-fix)
+- 43 chiavi nuove iniettate in 9 locali (action/badge/field/misc/section/placeholder/snackbar/dialog/moderation/perk/stat)
+- Refactor helper `_showConfirmDialog` per accettare `AppLocalizations` → Cancel/Confirm via catalogo
+- Refactor `aSortRow(BuildContext, int, String)` per usare `adminSortNewest` già esistente
+- Riuso 11 chiavi già in catalogo
+
+### Rimasto a metà
+- Niente — Admin i18n chiuso al 100% sulle views user-facing
+
+### Stato finale Admin i18n
+- **Totale chiavi admin* cumulative:** 387 × 9 locali
+- **Views coperte:** 35/35 (core + secondarie + detail)
+- **Residui esclusi per scelta esplicita:** identità runtime (Mirko Picicco, email), `_AttentionItem.text` (Fase E opzionale), mock notes/fake phone, `%` progress, ICU opzionali Fase 4, model labels (Compensation/EmploymentType)
+- **10 fasi admin chiuse:** core(A/B/B-bis/C/D) + 1 + 2 + 3 + 4 + 4-bis + 5C + 5A + 5B + 5D
+
 ### Prossimo passo consigliato
-1. **Altro gruppo di detail views** non ancora toccate (job_detail/candidate_detail/business_detail già fatti in 4/4-bis, subscription/audit in 5C, application/interview in 5A, verification/moderation/support in 5B)
-2. Eventuali **list views** admin che ancora hanno strings hardcoded oltre a quelle fatte in Fase 1/2
-3. Fase E opzionale per `_AttentionItem.text` con ICU
-4. Oppure: passare a Candidate/Business
+1. **Admin chiuso, passare ad altra area:** Candidate o Business
+2. Opzionale: Fase E (`_AttentionItem.text` con ICU `{count}`) per coprire l'ultimo 1% — consigliato solo se serve il 100% assoluto
+3. Opzionale: sostituire identità runtime con `AdminAuthProvider.userName/userEmail` (refactor, non i18n)

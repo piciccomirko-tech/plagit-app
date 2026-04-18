@@ -5501,4 +5501,134 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'Relatório criado pela detecção automática da plataforma';
+
+  @override
+  String get adminActionPause => 'Pausar';
+
+  @override
+  String get adminActionClose => 'Fechar';
+
+  @override
+  String get adminActionViewApplicants => 'Ver candidatos';
+
+  @override
+  String get adminBadgeFeatured => 'Destaque';
+
+  @override
+  String get adminFieldPosted => 'Publicado';
+
+  @override
+  String get adminFieldViews => 'Visualizações';
+
+  @override
+  String get adminFieldPay => 'Pagamento';
+
+  @override
+  String get adminFieldEmployment => 'Emprego';
+
+  @override
+  String get adminFieldSummary => 'Resumo';
+
+  @override
+  String get adminFieldAnnual => 'Anual';
+
+  @override
+  String get adminFieldMonthly => 'Mensal';
+
+  @override
+  String get adminFieldDuration => 'Duração';
+
+  @override
+  String get adminFieldHourly => 'Por hora';
+
+  @override
+  String get adminFieldWeeklyHours => 'Horas semanais';
+
+  @override
+  String get adminFieldBonus => 'Bônus';
+
+  @override
+  String get adminFieldShift => 'Turno';
+
+  @override
+  String get adminFieldSalaryRange => 'Faixa salarial';
+
+  @override
+  String get adminMiscNotSpecified => 'Não especificado';
+
+  @override
+  String get adminSectionModeration => 'Moderação';
+
+  @override
+  String get adminSectionCompensationReview => 'Revisão de remuneração';
+
+  @override
+  String get adminSectionApplicantsSummary => 'Resumo de candidatos';
+
+  @override
+  String get adminSectionExtras => 'Extras';
+
+  @override
+  String get adminPlaceholderFlagReason => 'Motivo da denúncia...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'Vaga em destaque';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'Destaque removido da vaga';
+
+  @override
+  String get adminSnackbarJobRemoved => 'Vaga removida';
+
+  @override
+  String get adminDialogPauseJobTitle => 'Pausar vaga';
+
+  @override
+  String get adminDialogPauseJobBody => 'Pausar este anúncio?';
+
+  @override
+  String get adminDialogCloseJobTitle => 'Fechar vaga';
+
+  @override
+  String get adminDialogCloseJobBody => 'Fechar esta vaga permanentemente?';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'Remover vaga';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'Remover esta vaga completamente? Esta ação não pode ser desfeita.';
+
+  @override
+  String get adminModerationFlagThis => 'Sinalizar esta vaga';
+
+  @override
+  String get adminModerationIsFlagged => 'Esta vaga está sinalizada';
+
+  @override
+  String get adminPerkHousing => 'Alojamento incluído';
+
+  @override
+  String get adminPerkTravel => 'Viagem incluída';
+
+  @override
+  String get adminPerkOvertime => 'Horas extras disponíveis';
+
+  @override
+  String get adminPerkFlexible => 'Horário flexível';
+
+  @override
+  String get adminPerkWeekend => 'Turnos de fim de semana';
+
+  @override
+  String get adminStatNew => 'Novos';
+
+  @override
+  String get adminStatReviewed => 'Revisados';
+
+  @override
+  String get adminStatShortlisted => 'Pré-selecionados';
+
+  @override
+  String get adminStatRejected => 'Rejeitados';
 }

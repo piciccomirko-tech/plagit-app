@@ -5577,4 +5577,134 @@ class AppLocalizationsRu extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'Отчёт создан автоматическим обнаружением платформы';
+
+  @override
+  String get adminActionPause => 'Приостановить';
+
+  @override
+  String get adminActionClose => 'Закрыть';
+
+  @override
+  String get adminActionViewApplicants => 'Просмотреть кандидатов';
+
+  @override
+  String get adminBadgeFeatured => 'Рекомендуемое';
+
+  @override
+  String get adminFieldPosted => 'Опубликовано';
+
+  @override
+  String get adminFieldViews => 'Просмотры';
+
+  @override
+  String get adminFieldPay => 'Оплата';
+
+  @override
+  String get adminFieldEmployment => 'Трудоустройство';
+
+  @override
+  String get adminFieldSummary => 'Сводка';
+
+  @override
+  String get adminFieldAnnual => 'Годовой';
+
+  @override
+  String get adminFieldMonthly => 'Ежемесячно';
+
+  @override
+  String get adminFieldDuration => 'Продолжительность';
+
+  @override
+  String get adminFieldHourly => 'Почасово';
+
+  @override
+  String get adminFieldWeeklyHours => 'Часов в неделю';
+
+  @override
+  String get adminFieldBonus => 'Бонус';
+
+  @override
+  String get adminFieldShift => 'Смена';
+
+  @override
+  String get adminFieldSalaryRange => 'Диапазон зарплаты';
+
+  @override
+  String get adminMiscNotSpecified => 'Не указано';
+
+  @override
+  String get adminSectionModeration => 'Модерация';
+
+  @override
+  String get adminSectionCompensationReview => 'Обзор вознаграждения';
+
+  @override
+  String get adminSectionApplicantsSummary => 'Сводка кандидатов';
+
+  @override
+  String get adminSectionExtras => 'Дополнительно';
+
+  @override
+  String get adminPlaceholderFlagReason => 'Причина пометки...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'Вакансия выделена';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'Вакансия снята с рекомендаций';
+
+  @override
+  String get adminSnackbarJobRemoved => 'Вакансия удалена';
+
+  @override
+  String get adminDialogPauseJobTitle => 'Приостановить вакансию';
+
+  @override
+  String get adminDialogPauseJobBody => 'Приостановить это объявление?';
+
+  @override
+  String get adminDialogCloseJobTitle => 'Закрыть вакансию';
+
+  @override
+  String get adminDialogCloseJobBody => 'Закрыть эту вакансию навсегда?';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'Удалить вакансию';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'Полностью удалить эту вакансию? Это действие нельзя отменить.';
+
+  @override
+  String get adminModerationFlagThis => 'Пометить эту вакансию';
+
+  @override
+  String get adminModerationIsFlagged => 'Эта вакансия помечена';
+
+  @override
+  String get adminPerkHousing => 'Включает жильё';
+
+  @override
+  String get adminPerkTravel => 'Включает проезд';
+
+  @override
+  String get adminPerkOvertime => 'Сверхурочная работа';
+
+  @override
+  String get adminPerkFlexible => 'Гибкий график';
+
+  @override
+  String get adminPerkWeekend => 'Смены в выходные';
+
+  @override
+  String get adminStatNew => 'Новые';
+
+  @override
+  String get adminStatReviewed => 'Проверено';
+
+  @override
+  String get adminStatShortlisted => 'В шортлисте';
+
+  @override
+  String get adminStatRejected => 'Отклонены';
 }

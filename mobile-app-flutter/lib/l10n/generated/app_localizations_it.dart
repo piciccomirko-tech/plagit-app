@@ -5489,4 +5489,135 @@ class AppLocalizationsIt extends AppLocalizations {
   @override
   String get adminMiscReportCreatedByPlatform =>
       'Segnalazione creata dal rilevamento automatico piattaforma';
+
+  @override
+  String get adminActionPause => 'Pausa';
+
+  @override
+  String get adminActionClose => 'Chiudi';
+
+  @override
+  String get adminActionViewApplicants => 'Visualizza candidati';
+
+  @override
+  String get adminBadgeFeatured => 'In evidenza';
+
+  @override
+  String get adminFieldPosted => 'Pubblicato';
+
+  @override
+  String get adminFieldViews => 'Visualizzazioni';
+
+  @override
+  String get adminFieldPay => 'Retribuzione';
+
+  @override
+  String get adminFieldEmployment => 'Impiego';
+
+  @override
+  String get adminFieldSummary => 'Riepilogo';
+
+  @override
+  String get adminFieldAnnual => 'Annuale';
+
+  @override
+  String get adminFieldMonthly => 'Mensile';
+
+  @override
+  String get adminFieldDuration => 'Durata';
+
+  @override
+  String get adminFieldHourly => 'Orario';
+
+  @override
+  String get adminFieldWeeklyHours => 'Ore settimanali';
+
+  @override
+  String get adminFieldBonus => 'Bonus';
+
+  @override
+  String get adminFieldShift => 'Turno';
+
+  @override
+  String get adminFieldSalaryRange => 'Fascia salariale';
+
+  @override
+  String get adminMiscNotSpecified => 'Non specificato';
+
+  @override
+  String get adminSectionModeration => 'Moderazione';
+
+  @override
+  String get adminSectionCompensationReview => 'Revisione retribuzione';
+
+  @override
+  String get adminSectionApplicantsSummary => 'Riepilogo candidati';
+
+  @override
+  String get adminSectionExtras => 'Extra';
+
+  @override
+  String get adminPlaceholderFlagReason => 'Motivo della segnalazione...';
+
+  @override
+  String get adminSnackbarJobFeatured => 'Lavoro in evidenza';
+
+  @override
+  String get adminSnackbarJobUnfeatured => 'Lavoro non più in evidenza';
+
+  @override
+  String get adminSnackbarJobRemoved => 'Lavoro rimosso';
+
+  @override
+  String get adminDialogPauseJobTitle => 'Sospendi lavoro';
+
+  @override
+  String get adminDialogPauseJobBody => 'Sospendere questo annuncio?';
+
+  @override
+  String get adminDialogCloseJobTitle => 'Chiudi lavoro';
+
+  @override
+  String get adminDialogCloseJobBody =>
+      'Chiudere definitivamente questo annuncio?';
+
+  @override
+  String get adminDialogRemoveJobTitle => 'Rimuovi lavoro';
+
+  @override
+  String get adminDialogRemoveJobBody =>
+      'Rimuovere completamente questo lavoro? Operazione irreversibile.';
+
+  @override
+  String get adminModerationFlagThis => 'Segnala questo lavoro';
+
+  @override
+  String get adminModerationIsFlagged => 'Questo lavoro è segnalato';
+
+  @override
+  String get adminPerkHousing => 'Alloggio incluso';
+
+  @override
+  String get adminPerkTravel => 'Viaggio incluso';
+
+  @override
+  String get adminPerkOvertime => 'Straordinari disponibili';
+
+  @override
+  String get adminPerkFlexible => 'Orario flessibile';
+
+  @override
+  String get adminPerkWeekend => 'Turni nel weekend';
+
+  @override
+  String get adminStatNew => 'Nuovi';
+
+  @override
+  String get adminStatReviewed => 'Revisionati';
+
+  @override
+  String get adminStatShortlisted => 'In shortlist';
+
+  @override
+  String get adminStatRejected => 'Respinti';
 }

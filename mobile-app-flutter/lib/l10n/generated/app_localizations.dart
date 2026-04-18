@@ -9883,6 +9883,264 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Report created by Platform auto-detection'**
   String get adminMiscReportCreatedByPlatform;
+
+  /// Admin job detail: adminActionPause
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get adminActionPause;
+
+  /// Admin job detail: adminActionClose
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get adminActionClose;
+
+  /// Admin job detail: adminActionViewApplicants
+  ///
+  /// In en, this message translates to:
+  /// **'View Applicants'**
+  String get adminActionViewApplicants;
+
+  /// Admin job detail: adminBadgeFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Featured'**
+  String get adminBadgeFeatured;
+
+  /// Admin job detail: adminFieldPosted
+  ///
+  /// In en, this message translates to:
+  /// **'Posted'**
+  String get adminFieldPosted;
+
+  /// Admin job detail: adminFieldViews
+  ///
+  /// In en, this message translates to:
+  /// **'Views'**
+  String get adminFieldViews;
+
+  /// Admin job detail: adminFieldPay
+  ///
+  /// In en, this message translates to:
+  /// **'Pay'**
+  String get adminFieldPay;
+
+  /// Admin job detail: adminFieldEmployment
+  ///
+  /// In en, this message translates to:
+  /// **'Employment'**
+  String get adminFieldEmployment;
+
+  /// Admin job detail: adminFieldSummary
+  ///
+  /// In en, this message translates to:
+  /// **'Summary'**
+  String get adminFieldSummary;
+
+  /// Admin job detail: adminFieldAnnual
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get adminFieldAnnual;
+
+  /// Admin job detail: adminFieldMonthly
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get adminFieldMonthly;
+
+  /// Admin job detail: adminFieldDuration
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get adminFieldDuration;
+
+  /// Admin job detail: adminFieldHourly
+  ///
+  /// In en, this message translates to:
+  /// **'Hourly'**
+  String get adminFieldHourly;
+
+  /// Admin job detail: adminFieldWeeklyHours
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly hours'**
+  String get adminFieldWeeklyHours;
+
+  /// Admin job detail: adminFieldBonus
+  ///
+  /// In en, this message translates to:
+  /// **'Bonus'**
+  String get adminFieldBonus;
+
+  /// Admin job detail: adminFieldShift
+  ///
+  /// In en, this message translates to:
+  /// **'Shift'**
+  String get adminFieldShift;
+
+  /// Admin job detail: adminFieldSalaryRange
+  ///
+  /// In en, this message translates to:
+  /// **'Salary range'**
+  String get adminFieldSalaryRange;
+
+  /// Admin job detail: adminMiscNotSpecified
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get adminMiscNotSpecified;
+
+  /// Admin job detail: adminSectionModeration
+  ///
+  /// In en, this message translates to:
+  /// **'Moderation'**
+  String get adminSectionModeration;
+
+  /// Admin job detail: adminSectionCompensationReview
+  ///
+  /// In en, this message translates to:
+  /// **'Compensation Review'**
+  String get adminSectionCompensationReview;
+
+  /// Admin job detail: adminSectionApplicantsSummary
+  ///
+  /// In en, this message translates to:
+  /// **'Applicants Summary'**
+  String get adminSectionApplicantsSummary;
+
+  /// Admin job detail: adminSectionExtras
+  ///
+  /// In en, this message translates to:
+  /// **'Extras'**
+  String get adminSectionExtras;
+
+  /// Admin job detail: adminPlaceholderFlagReason
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for flagging...'**
+  String get adminPlaceholderFlagReason;
+
+  /// Admin job detail: adminSnackbarJobFeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Job featured'**
+  String get adminSnackbarJobFeatured;
+
+  /// Admin job detail: adminSnackbarJobUnfeatured
+  ///
+  /// In en, this message translates to:
+  /// **'Job unfeatured'**
+  String get adminSnackbarJobUnfeatured;
+
+  /// Admin job detail: adminSnackbarJobRemoved
+  ///
+  /// In en, this message translates to:
+  /// **'Job removed'**
+  String get adminSnackbarJobRemoved;
+
+  /// Admin job detail: adminDialogPauseJobTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Pause Job'**
+  String get adminDialogPauseJobTitle;
+
+  /// Admin job detail: adminDialogPauseJobBody
+  ///
+  /// In en, this message translates to:
+  /// **'Pause this job listing?'**
+  String get adminDialogPauseJobBody;
+
+  /// Admin job detail: adminDialogCloseJobTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Close Job'**
+  String get adminDialogCloseJobTitle;
+
+  /// Admin job detail: adminDialogCloseJobBody
+  ///
+  /// In en, this message translates to:
+  /// **'Close this job listing permanently?'**
+  String get adminDialogCloseJobBody;
+
+  /// Admin job detail: adminDialogRemoveJobTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Job'**
+  String get adminDialogRemoveJobTitle;
+
+  /// Admin job detail: adminDialogRemoveJobBody
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this job completely? This cannot be undone.'**
+  String get adminDialogRemoveJobBody;
+
+  /// Admin job detail: adminModerationFlagThis
+  ///
+  /// In en, this message translates to:
+  /// **'Flag this job'**
+  String get adminModerationFlagThis;
+
+  /// Admin job detail: adminModerationIsFlagged
+  ///
+  /// In en, this message translates to:
+  /// **'This job is flagged'**
+  String get adminModerationIsFlagged;
+
+  /// Admin job detail: adminPerkHousing
+  ///
+  /// In en, this message translates to:
+  /// **'Housing included'**
+  String get adminPerkHousing;
+
+  /// Admin job detail: adminPerkTravel
+  ///
+  /// In en, this message translates to:
+  /// **'Travel included'**
+  String get adminPerkTravel;
+
+  /// Admin job detail: adminPerkOvertime
+  ///
+  /// In en, this message translates to:
+  /// **'Overtime available'**
+  String get adminPerkOvertime;
+
+  /// Admin job detail: adminPerkFlexible
+  ///
+  /// In en, this message translates to:
+  /// **'Flexible schedule'**
+  String get adminPerkFlexible;
+
+  /// Admin job detail: adminPerkWeekend
+  ///
+  /// In en, this message translates to:
+  /// **'Weekend shifts'**
+  String get adminPerkWeekend;
+
+  /// Admin job detail: adminStatNew
+  ///
+  /// In en, this message translates to:
+  /// **'New'**
+  String get adminStatNew;
+
+  /// Admin job detail: adminStatReviewed
+  ///
+  /// In en, this message translates to:
+  /// **'Reviewed'**
+  String get adminStatReviewed;
+
+  /// Admin job detail: adminStatShortlisted
+  ///
+  /// In en, this message translates to:
+  /// **'Shortlisted'**
+  String get adminStatShortlisted;
+
+  /// Admin job detail: adminStatRejected
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get adminStatRejected;
 }
 
 class _AppLocalizationsDelegate
