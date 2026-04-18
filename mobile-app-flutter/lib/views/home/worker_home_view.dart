@@ -621,14 +621,6 @@ class _WorkerHomeViewState extends State<WorkerHomeView>
               ),
               const SizedBox(width: 14),
             ],
-            if (data.nearbyJobs.isNotEmpty) ...[
-              const Icon(CupertinoIcons.location_solid, size: 10, color: _tealMain),
-              const SizedBox(width: 4),
-              Text(
-                l.jobsNearYouCount(data.nearbyJobs.length),
-                style: const TextStyle(fontSize: 11, color: _tealMain),
-              ),
-            ],
             if (!hasMomentum)
               Text(
                 l.applyFirstJob,

@@ -69,63 +69,89 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F7),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 8),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF5FBFB),
+              Color(0xFFF5F5F7),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
 
-              // ── Top bar ──
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => context.go('/entry'),
-                    child: const BackChevron(size: 28, color: AppColors.charcoal),
-                  ),
-                  const Expanded(
-                    child: Text(
-                      'Join as Candidate',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.charcoal,
+                // ── Top bar ──
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => context.go('/entry'),
+                      child: const BackChevron(size: 28, color: AppColors.charcoal),
+                    ),
+                    const Expanded(
+                      child: Text(
+                        'Join as Candidate',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.charcoal,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 28), // balance the back button
-                ],
-              ),
+                    const SizedBox(width: 28), // balance the back button
+                  ],
+                ),
 
-              const SizedBox(height: 32),
+                const SizedBox(height: 36),
 
-              // ── Brand intro ──
-              const Center(child: PlagitLogo(size: 56, borderRadius: 14)),
-              const SizedBox(height: 16),
-              const Center(
-                child: Text(
-                  'Find your next hospitality role',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.charcoal,
+                // ── Brand intro ──
+                Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.teal.withValues(alpha: 0.18),
+                          blurRadius: 22,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: const PlagitLogo(size: 72, borderRadius: 18, withShadow: true),
                   ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              const Center(
-                child: Text(
-                  'Sign in or create an account to start applying',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 14, color: AppColors.secondary),
+                const SizedBox(height: 20),
+                const Center(
+                  child: Text(
+                    'Find your next hospitality role',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.charcoal,
+                      letterSpacing: -0.4,
+                      height: 1.15,
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 8),
+                const Center(
+                  child: Text(
+                    'Sign in or create an account to start applying',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.35),
+                  ),
+                ),
 
-              const SizedBox(height: 28),
+                const SizedBox(height: 32),
 
               // ── Form card ──
               AuthFormCard(
@@ -293,7 +319,8 @@ class _CandidateLoginViewState extends State<CandidateLoginView> {
               ),
 
               const SizedBox(height: 32),
-            ],
+              ],
+            ),
           ),
         ),
       ),
