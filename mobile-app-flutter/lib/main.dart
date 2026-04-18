@@ -18,7 +18,7 @@ import 'package:plagit/repositories/admin_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  EnvConfig.initialize(Environment.localReal);
+  EnvConfig.initialize(Environment.development);
   AuthExpiredHandler.instance.initialize(AppRouter.navigatorKey);
   runApp(const PlagitApp());
 }

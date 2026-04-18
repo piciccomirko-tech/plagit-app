@@ -19,12 +19,12 @@ class MockData {
   // ── Candidate ──
   static const candidate = {
     'id': '1',
-    'name': 'Test Candidate',
-    'initials': 'TC',
+    'name': 'Elena Rossi',
+    'initials': 'ER',
     'email': 'candidate@test.com',
     'phone': '+44 7700 900123',
     'location': 'London, UK',
-    'role': 'Waiter',
+    'role': 'Hospitality Pro',
     'experience': '3 years',
     'nationality': 'British',
     'languages': ['English (Fluent)', 'Italian (Native)'],

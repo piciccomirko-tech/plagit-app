@@ -5,7 +5,6 @@
 /// into a single fetch result.
 library;
 
-import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/models/candidate_profile.dart';
 import 'package:plagit/models/interview.dart';
 import 'package:plagit/models/job.dart';
@@ -97,24 +96,34 @@ class CandidateHomeData {
   // ── Mock factory ──
 
   /// Builds a mock home payload from [MockData].
+  /// Builds a mock home payload.
+  ///
+  /// Stats (1 applied / 0 review / 1 interview / 0 offer) and the
+  /// "Senior Chef · 15 APR · 17:39 · Video · Confirmed" next interview
+  /// match the Candidate Home reference screenshot (2026-04-14).
   static CandidateHomeData mock() {
     final allJobs = Job.mockAll();
-    final interviews = Interview.mockAll();
-    final totalUnread = MockData.conversations
-        .fold<int>(0, (sum, c) => sum + ((c['unread'] as int?) ?? 0));
+
+    const nextInterview = Interview(
+      id: 'mock_next_senior_chef',
+      jobTitle: 'Senior Chef',
+      company: 'The Ritz',
+      date: '15 APR',
+      time: '17:39',
+      format: InterviewFormat.video,
+      status: InterviewStatus.confirmed,
+    );
 
     return CandidateHomeData(
       profile: CandidateProfile.mock(),
       featuredJobs: allJobs.where((j) => j.featured).toList(),
       nearbyJobs: allJobs.where((j) => j.location == 'London').toList(),
-      totalApplications: MockData.applications.length,
-      underReviewCount: MockData.applications
-          .where((a) => a['status'] == 'Under Review')
-          .length,
-      interviewCount: MockData.interviews.length,
+      totalApplications: 1,
+      underReviewCount: 0,
+      interviewCount: 1,
       offerCount: 0,
-      nextInterview: interviews.isNotEmpty ? interviews.first : null,
-      unreadMessages: totalUnread,
+      nextInterview: nextInterview,
+      unreadMessages: 1,
     );
   }
 }
