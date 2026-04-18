@@ -8497,6 +8497,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retried x{count}'**
   String adminBadgeNRetried(int count);
+
+  /// Phase 2 admin key: adminStatusApplied
+  ///
+  /// In en, this message translates to:
+  /// **'Applied'**
+  String get adminStatusApplied;
+
+  /// Phase 2 admin key: adminStatusUnderReview
+  ///
+  /// In en, this message translates to:
+  /// **'Under Review'**
+  String get adminStatusUnderReview;
+
+  /// Phase 2 admin key: adminStatusShortlisted
+  ///
+  /// In en, this message translates to:
+  /// **'Shortlisted'**
+  String get adminStatusShortlisted;
+
+  /// Phase 2 admin key: adminStatusInterview
+  ///
+  /// In en, this message translates to:
+  /// **'Interview'**
+  String get adminStatusInterview;
+
+  /// Phase 2 admin key: adminStatusHired
+  ///
+  /// In en, this message translates to:
+  /// **'Hired'**
+  String get adminStatusHired;
+
+  /// Phase 2 admin key: adminStatusRejected
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get adminStatusRejected;
+
+  /// Phase 2 admin key: adminStatusOpen
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get adminStatusOpen;
+
+  /// Phase 2 admin key: adminStatusInReview
+  ///
+  /// In en, this message translates to:
+  /// **'In Review'**
+  String get adminStatusInReview;
+
+  /// Phase 2 admin key: adminStatusWaiting
+  ///
+  /// In en, this message translates to:
+  /// **'Waiting'**
+  String get adminStatusWaiting;
+
+  /// Phase 2 admin key: adminPriorityHigh
+  ///
+  /// In en, this message translates to:
+  /// **'High'**
+  String get adminPriorityHigh;
+
+  /// Phase 2 admin key: adminPriorityMedium
+  ///
+  /// In en, this message translates to:
+  /// **'Medium'**
+  String get adminPriorityMedium;
+
+  /// Phase 2 admin key: adminPriorityLow
+  ///
+  /// In en, this message translates to:
+  /// **'Low'**
+  String get adminPriorityLow;
+
+  /// Phase 2 admin key: adminActionViewProfile
+  ///
+  /// In en, this message translates to:
+  /// **'View Profile'**
+  String get adminActionViewProfile;
+
+  /// Phase 2 admin key: adminActionVerify
+  ///
+  /// In en, this message translates to:
+  /// **'Verify'**
+  String get adminActionVerify;
+
+  /// Phase 2 admin key: adminActionReview
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get adminActionReview;
+
+  /// Phase 2 admin key: adminActionOverride
+  ///
+  /// In en, this message translates to:
+  /// **'Override'**
+  String get adminActionOverride;
+
+  /// Phase 2 admin key: adminEmptyCandidatesTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No candidates'**
+  String get adminEmptyCandidatesTitle;
+
+  /// Phase 2 admin key: adminEmptyApplicationsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No applications'**
+  String get adminEmptyApplicationsTitle;
+
+  /// Phase 2 admin key: adminEmptyVerificationsTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No pending verifications'**
+  String get adminEmptyVerificationsTitle;
+
+  /// Phase 2 admin key: adminEmptyIssuesTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No issues found'**
+  String get adminEmptyIssuesTitle;
+
+  /// Phase 2 admin key: adminEmptyAuditTitle
+  ///
+  /// In en, this message translates to:
+  /// **'No audit entries found'**
+  String get adminEmptyAuditTitle;
+
+  /// Phase 2 admin key: adminSearchCandidatesTitle
+  ///
+  /// In en, this message translates to:
+  /// **'Search candidates'**
+  String get adminSearchCandidatesTitle;
+
+  /// Phase 2 admin key: adminSearchCandidatesHint
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name, email or role…'**
+  String get adminSearchCandidatesHint;
+
+  /// Phase 2 admin key: adminSearchAuditHint
+  ///
+  /// In en, this message translates to:
+  /// **'Search audit log…'**
+  String get adminSearchAuditHint;
+
+  /// Phase 2 admin key: adminMiscUnknown
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get adminMiscUnknown;
+
+  /// Phase 2 admin ICU: adminCountTotal
+  ///
+  /// In en, this message translates to:
+  /// **'{count} total'**
+  String adminCountTotal(int count);
+
+  /// Phase 2 admin ICU: adminBadgeNFlagged
+  ///
+  /// In en, this message translates to:
+  /// **'{count} flagged'**
+  String adminBadgeNFlagged(int count);
+
+  /// Phase 2 admin ICU: adminBadgeNDaysWaiting
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days waiting'**
+  String adminBadgeNDaysWaiting(int count);
 }
 
 class _AppLocalizationsDelegate

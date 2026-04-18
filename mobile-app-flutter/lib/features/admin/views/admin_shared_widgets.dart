@@ -195,6 +195,28 @@ String aStatusLabel(AppLocalizations l, String status) {
     case 'failed': return l.adminStatusFailed;
     case 'success': return l.adminStatusSuccess;
     case 'delivered': return l.adminStatusDelivered;
+    case 'applied': return l.adminStatusApplied;
+    case 'under review':
+    case 'underreview': return l.adminStatusUnderReview;
+    case 'shortlisted': return l.adminStatusShortlisted;
+    case 'interview':
+    case 'interviewinvited':
+    case 'interviewscheduled': return l.adminStatusInterview;
+    case 'hired': return l.adminStatusHired;
+    case 'rejected': return l.adminStatusRejected;
+    case 'open': return l.adminStatusOpen;
+    case 'in review':
+    case 'inreview': return l.adminStatusInReview;
+    case 'waiting': return l.adminStatusWaiting;
     default: return status;
+  }
+}
+
+String aPriorityLabel(AppLocalizations l, String priority) {
+  switch (priority.toLowerCase()) {
+    case 'high': return l.adminPriorityHigh;
+    case 'medium': return l.adminPriorityMedium;
+    case 'low': return l.adminPriorityLow;
+    default: return priority;
   }
 }

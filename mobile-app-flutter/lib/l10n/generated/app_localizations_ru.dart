@@ -4845,4 +4845,94 @@ class AppLocalizationsRu extends AppLocalizations {
   String adminBadgeNRetried(int count) {
     return 'Повторы x$count';
   }
+
+  @override
+  String get adminStatusApplied => 'Подана';
+
+  @override
+  String get adminStatusUnderReview => 'На рассмотрении';
+
+  @override
+  String get adminStatusShortlisted => 'В шорт-листе';
+
+  @override
+  String get adminStatusInterview => 'Интервью';
+
+  @override
+  String get adminStatusHired => 'Нанят';
+
+  @override
+  String get adminStatusRejected => 'Отклонён';
+
+  @override
+  String get adminStatusOpen => 'Открыт';
+
+  @override
+  String get adminStatusInReview => 'На рассмотрении';
+
+  @override
+  String get adminStatusWaiting => 'Ожидание';
+
+  @override
+  String get adminPriorityHigh => 'Высокий';
+
+  @override
+  String get adminPriorityMedium => 'Средний';
+
+  @override
+  String get adminPriorityLow => 'Низкий';
+
+  @override
+  String get adminActionViewProfile => 'Смотреть профиль';
+
+  @override
+  String get adminActionVerify => 'Проверить';
+
+  @override
+  String get adminActionReview => 'Проверить';
+
+  @override
+  String get adminActionOverride => 'Переопределить';
+
+  @override
+  String get adminEmptyCandidatesTitle => 'Нет кандидатов';
+
+  @override
+  String get adminEmptyApplicationsTitle => 'Нет заявок';
+
+  @override
+  String get adminEmptyVerificationsTitle => 'Нет ожидающих проверок';
+
+  @override
+  String get adminEmptyIssuesTitle => 'Нет обращений';
+
+  @override
+  String get adminEmptyAuditTitle => 'Нет записей аудита';
+
+  @override
+  String get adminSearchCandidatesTitle => 'Поиск кандидатов';
+
+  @override
+  String get adminSearchCandidatesHint => 'Поиск по имени, email или роли…';
+
+  @override
+  String get adminSearchAuditHint => 'Поиск в журнале…';
+
+  @override
+  String get adminMiscUnknown => 'Неизвестно';
+
+  @override
+  String adminCountTotal(int count) {
+    return 'всего $count';
+  }
+
+  @override
+  String adminBadgeNFlagged(int count) {
+    return '$count отмечено';
+  }
+
+  @override
+  String adminBadgeNDaysWaiting(int count) {
+    return 'ожидание $count дн.';
+  }
 }
