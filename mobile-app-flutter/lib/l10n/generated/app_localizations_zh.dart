@@ -5468,10 +5468,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get adminStatRejected => '已拒绝';
 
   @override
-  String quickPlugNewBadge(int count) {
-    return '$count 个新';
+  String codeSentToEmail(String email) {
+    return '验证码已发送至 $email';
   }
-
-  @override
-  String get orLabel => '或';
 }

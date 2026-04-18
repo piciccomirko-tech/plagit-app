@@ -2134,6 +2134,5 @@
   "adminStatReviewed": "Revisionati",
   "adminStatShortlisted": "In shortlist",
   "adminStatRejected": "Respinti",
-  "quickPlugNewBadge": "{count, plural, =1{1 nuovo} other{{count} nuovi}}",
-  "orLabel": "oppure"
+  "codeSentToEmail": "Un codice è stato inviato a {email}"
 }

@@ -10142,17 +10142,11 @@ abstract class AppLocalizations {
   /// **'Rejected'**
   String get adminStatRejected;
 
-  /// Plural badge for new quick plug items (pendingCount)
+  /// Subtitle on forgot-password step 2 informing the user where the reset code was sent
   ///
   /// In en, this message translates to:
-  /// **'{count, plural, =1{1 new} other{{count} new}}'**
-  String quickPlugNewBadge(int count);
-
-  /// Simple 'or' divider between upload and manual fill options
-  ///
-  /// In en, this message translates to:
-  /// **'or'**
-  String get orLabel;
+  /// **'A code has been sent to {email}'**
+  String codeSentToEmail(String email);
 }
 
 class _AppLocalizationsDelegate

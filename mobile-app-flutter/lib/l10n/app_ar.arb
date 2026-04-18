@@ -2134,6 +2134,5 @@
   "adminStatReviewed": "تمت المراجعة",
   "adminStatShortlisted": "القائمة القصيرة",
   "adminStatRejected": "مرفوضون",
-  "quickPlugNewBadge": "{count, plural, =0{لا جديد} =1{جديد واحد} =2{اثنان جديدان} few{{count} جدد} many{{count} جديد} other{{count} جديد}}",
-  "orLabel": "أو"
+  "codeSentToEmail": "تم إرسال رمز إلى {email}"
 }
