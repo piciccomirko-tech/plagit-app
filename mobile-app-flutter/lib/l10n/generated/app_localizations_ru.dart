@@ -4935,4 +4935,120 @@ class AppLocalizationsRu extends AppLocalizations {
   String adminBadgeNDaysWaiting(int count) {
     return 'ожидание $count дн.';
   }
+
+  @override
+  String get adminPeriodWeek => 'Неделя';
+
+  @override
+  String get adminPeriodMonth => 'Месяц';
+
+  @override
+  String get adminPeriodYear => 'Год';
+
+  @override
+  String get adminKpiNewCandidates => 'Новые кандидаты';
+
+  @override
+  String get adminKpiNewBusinesses => 'Новые компании';
+
+  @override
+  String get adminKpiJobsPosted => 'Размещённые вакансии';
+
+  @override
+  String get adminSectionApplicationFunnel => 'Воронка заявок';
+
+  @override
+  String get adminSectionPlatformGrowth => 'Рост платформы';
+
+  @override
+  String get adminSectionPremiumConversion => 'Премиум-конверсия';
+
+  @override
+  String get adminSectionTopLocations => 'Топ городов';
+
+  @override
+  String get adminStatusViewed => 'Просмотрено';
+
+  @override
+  String get adminWeekdayMon => 'Пн';
+
+  @override
+  String get adminWeekdayTue => 'Вт';
+
+  @override
+  String get adminWeekdayWed => 'Ср';
+
+  @override
+  String get adminWeekdayThu => 'Чт';
+
+  @override
+  String get adminWeekdayFri => 'Пт';
+
+  @override
+  String get adminWeekdaySat => 'Сб';
+
+  @override
+  String get adminWeekdaySun => 'Вс';
+
+  @override
+  String get adminFilterReported => 'Сообщённые';
+
+  @override
+  String get adminFilterHidden => 'Скрытые';
+
+  @override
+  String get adminEmptyPostsTitle => 'Нет публикаций';
+
+  @override
+  String get adminEmptyContentFilter =>
+      'Ничего не соответствует этому фильтру.';
+
+  @override
+  String get adminBannerReportedReview => 'СООБЩЕНО — ТРЕБУЕТСЯ ПРОВЕРКА';
+
+  @override
+  String get adminBannerHiddenFromFeed => 'СКРЫТО ИЗ ЛЕНТЫ';
+
+  @override
+  String get adminActionInsights => 'Аналитика';
+
+  @override
+  String get adminActionHide => 'Скрыть';
+
+  @override
+  String get adminActionRemove => 'Удалить';
+
+  @override
+  String get adminActionCancel => 'Отмена';
+
+  @override
+  String get adminDialogRemovePostTitle => 'Удалить публикацию?';
+
+  @override
+  String get adminDialogRemovePostBody =>
+      'Публикация и её комментарии будут удалены навсегда. Это действие нельзя отменить.';
+
+  @override
+  String get adminSnackbarReportCleared => 'Жалоба снята';
+
+  @override
+  String get adminSnackbarPostHidden => 'Публикация скрыта из ленты';
+
+  @override
+  String get adminSnackbarPostRemoved => 'Публикация удалена';
+
+  @override
+  String adminCountReported(int count) {
+    return 'Сообщено: $count';
+  }
+
+  @override
+  String adminCountHidden(int count) {
+    return 'Скрыто: $count';
+  }
+
+  @override
+  String adminMiscPremiumOutOfTotal(int premium, int total) {
+    return '$premium премиум из $total';
+  }
 }

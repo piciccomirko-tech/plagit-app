@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class AdminAnalyticsView extends StatefulWidget {
   const AdminAnalyticsView({super.key});
@@ -14,26 +15,22 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final periodLabel = {
+      'Today': l.adminFilterToday,
+      'Week': l.adminPeriodWeek,
+      'Month': l.adminPeriodMonth,
+      'Year': l.adminPeriodYear,
+    };
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.transparent,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.charcoal),
-          onPressed: () => context.pop(),
-        ),
-        title: const Text('Analytics',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: AppColors.charcoal)),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
+        child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            aTopBar(context, l.adminMenuAnalytics),
             // Period selector chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -53,7 +50,7 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
                               : AppColors.teal.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(100),
                         ),
-                        child: Text(p,
+                        child: Text(periodLabel[p] ?? p,
                             style: TextStyle(
                                 fontSize: 13,
                                 fontWeight: FontWeight.w600,
@@ -72,11 +69,11 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
               children: [
                 Expanded(
                     child: _kpiCard(
-                        '47', 'New Candidates', '+12%', AppColors.teal)),
+                        '47', l.adminKpiNewCandidates, '+12%', AppColors.teal)),
                 const SizedBox(width: 10),
                 Expanded(
                     child: _kpiCard(
-                        '8', 'New Businesses', '+5%', AppColors.purple)),
+                        '8', l.adminKpiNewBusinesses, '+5%', AppColors.purple)),
               ],
             ),
             const SizedBox(height: 10),
@@ -84,11 +81,11 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
               children: [
                 Expanded(
                     child: _kpiCard(
-                        '23', 'Jobs Posted', '+8%', AppColors.amber)),
+                        '23', l.adminKpiJobsPosted, '+8%', AppColors.amber)),
                 const SizedBox(width: 10),
                 Expanded(
                     child: _kpiCard(
-                        '156', 'Applications', '+15%', AppColors.green)),
+                        '156', l.adminMenuApplications, '+15%', AppColors.green)),
               ],
             ),
             const SizedBox(height: 16),
@@ -98,20 +95,20 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Application Funnel',
-                      style: TextStyle(
+                  Text(l.adminSectionApplicationFunnel,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.charcoal)),
                   const SizedBox(height: 14),
-                  _funnelBar('Applied', 156, 100, AppColors.teal),
-                  _funnelBar('Viewed', 134, 86,
+                  _funnelBar(l.adminStatusApplied, 156, 100, AppColors.teal),
+                  _funnelBar(l.adminStatusViewed, 134, 86,
                       AppColors.teal.withValues(alpha: 0.7)),
-                  _funnelBar('Shortlisted', 67, 43,
+                  _funnelBar(l.adminStatusShortlisted, 67, 43,
                       AppColors.teal.withValues(alpha: 0.55)),
-                  _funnelBar('Interview', 23, 15,
+                  _funnelBar(l.adminStatusInterview, 23, 15,
                       AppColors.teal.withValues(alpha: 0.4)),
-                  _funnelBar('Hired', 8, 5,
+                  _funnelBar(l.adminStatusHired, 8, 5,
                       AppColors.teal.withValues(alpha: 0.3)),
                 ],
               ),
@@ -123,8 +120,8 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Platform Growth',
-                      style: TextStyle(
+                  Text(l.adminSectionPlatformGrowth,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.charcoal)),
@@ -134,13 +131,13 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        _barGroup('Mon', 0.6, 0.3),
-                        _barGroup('Tue', 0.8, 0.4),
-                        _barGroup('Wed', 0.5, 0.5),
-                        _barGroup('Thu', 0.9, 0.35),
-                        _barGroup('Fri', 0.7, 0.6),
-                        _barGroup('Sat', 0.4, 0.2),
-                        _barGroup('Sun', 0.3, 0.15),
+                        _barGroup(l.adminWeekdayMon, 0.6, 0.3),
+                        _barGroup(l.adminWeekdayTue, 0.8, 0.4),
+                        _barGroup(l.adminWeekdayWed, 0.5, 0.5),
+                        _barGroup(l.adminWeekdayThu, 0.9, 0.35),
+                        _barGroup(l.adminWeekdayFri, 0.7, 0.6),
+                        _barGroup(l.adminWeekdaySat, 0.4, 0.2),
+                        _barGroup(l.adminWeekdaySun, 0.3, 0.15),
                       ],
                     ),
                   ),
@@ -148,9 +145,9 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _legendDot(AppColors.teal, 'Candidates'),
+                      _legendDot(AppColors.teal, l.adminFilterCandidates),
                       const SizedBox(width: 16),
-                      _legendDot(AppColors.purple, 'Businesses'),
+                      _legendDot(AppColors.purple, l.adminFilterBusinesses),
                     ],
                   ),
                 ],
@@ -163,8 +160,8 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Premium Conversion',
-                      style: TextStyle(
+                  Text(l.adminSectionPremiumConversion,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.charcoal)),
@@ -175,8 +172,8 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
                           fontWeight: FontWeight.w700,
                           color: AppColors.teal)),
                   const SizedBox(height: 4),
-                  const Text('156 premium out of 1,336 total',
-                      style: TextStyle(
+                  Text(l.adminMiscPremiumOutOfTotal(156, 1336),
+                      style: const TextStyle(
                           fontSize: 13, color: AppColors.secondary)),
                   const SizedBox(height: 12),
                   ClipRRect(
@@ -200,8 +197,8 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Top Locations',
-                      style: TextStyle(
+                  Text(l.adminSectionTopLocations,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: AppColors.charcoal)),
@@ -217,6 +214,7 @@ class _AdminAnalyticsViewState extends State<AdminAnalyticsView> {
             const SizedBox(height: 32),
           ],
         ),
+      ),
       ),
     );
   }
