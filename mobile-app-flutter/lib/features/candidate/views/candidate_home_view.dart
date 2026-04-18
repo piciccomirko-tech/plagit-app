@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/features/candidate/views/candidate_dashboard_tab.dart';
+import 'package:plagit/views/home/worker_home_view.dart';
 import 'package:plagit/features/candidate/views/candidate_jobs_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_applications_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_quick_plug_view.dart';
@@ -17,7 +17,7 @@ class _CandidateHomeViewState extends State<CandidateHomeView> {
   int _currentIndex = 0;
 
   final List<Widget> _tabs = const [
-    CandidateDashboardTab(),
+    WorkerHomeView(),
     CandidateJobsTab(),
     CandidateApplicationsTab(),
     CandidateQuickPlugView(),
