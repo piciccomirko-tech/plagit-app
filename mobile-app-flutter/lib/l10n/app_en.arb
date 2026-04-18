@@ -4033,5 +4033,53 @@
   },
   "@badgeAdmin": {
     "description": "Uppercase ADMIN badge shown in premium UI"
+  },
+  "codeSentToEmail": "We sent a 6-digit code to {email}.",
+  "@codeSentToEmail": {
+    "description": "Info text after sending password reset code",
+    "placeholders": { "email": { "type": "String" } }
+  },
+  "businessFieldMeetingLink": "Meeting link",
+  "@businessFieldMeetingLink": { "description": "Schedule interview form field" },
+  "businessFieldLocation": "Location",
+  "@businessFieldLocation": { "description": "Schedule interview form field" },
+  "rePrefix": "Re: {context}",
+  "@rePrefix": {
+    "description": "Reply subject prefix",
+    "placeholders": { "context": { "type": "String" } }
+  },
+  "conversationCount": "{count, plural, =1{1 conversation} other{{count} conversations}}",
+  "@conversationCount": {
+    "description": "Count of conversations",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "unreadCount": "{count, plural, =1{1 unread} other{{count} unread}}",
+  "@unreadCount": {
+    "description": "Count of unread messages",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "removeChatBody": "Remove your conversation with {company}? This cannot be undone.",
+  "@removeChatBody": {
+    "description": "Remove chat confirm body",
+    "placeholders": { "company": { "type": "String" } }
+  },
+  "deleteConversationsCount": "{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}",
+  "@deleteConversationsCount": {
+    "description": "Bulk delete confirm",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "selectedChatsBody": "Selected chats will be permanently removed.",
+  "@selectedChatsBody": { "description": "Bulk delete dialog body" },
+  "clearInboxBody": "{count, plural, =1{Clear 1 conversation from your inbox?} other{Clear all {count} conversations from your inbox?}}",
+  "@clearInboxBody": {
+    "description": "Clear inbox confirm",
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "orLabel": "OR",
+  "@orLabel": { "description": "Divider label between alternatives" },
+  "quickPlugNewBadge": "{count} NEW",
+  "@quickPlugNewBadge": {
+    "description": "Quick Plug new-match badge",
+    "placeholders": { "count": { "type": "int" } }
   }
 }

@@ -1,4 +1,4 @@
-enum Environment { development, staging, production }
+enum Environment { development, localReal, staging, production }
 
 class EnvConfig {
   static Environment _current = Environment.development;
@@ -9,10 +9,11 @@ class EnvConfig {
 
   /// Whether to use mock data instead of real API calls.
   /// In development: always true. In production: always false.
-  static bool get useMockData => _current != Environment.production;
+  static bool get useMockData => _current == Environment.development;
 
   static String get apiBaseUrl => switch (_current) {
         Environment.development => 'http://localhost:3000/v1',
+        Environment.localReal => 'http://localhost:3000/v1',
         Environment.staging =>
           'https://plagit-backend-staging.up.railway.app/v1',
         Environment.production =>
@@ -21,6 +22,7 @@ class EnvConfig {
 
   static String get wsBaseUrl => switch (_current) {
         Environment.development => 'ws://localhost:3000',
+        Environment.localReal => 'ws://localhost:3000',
         Environment.staging =>
           'wss://plagit-backend-staging.up.railway.app',
         Environment.production =>

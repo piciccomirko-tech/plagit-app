@@ -829,4 +829,8 @@ class MockData {
     {'id': 'sn4', 'title': 'New company near you: CleanPro', 'time': '1 day ago', 'type': 'updates', 'read': true},
     {'id': 'sn5', 'title': 'Complete your preferences for better matches', 'time': '2 days ago', 'type': 'updates', 'read': true},
   ];
+
+  static const List<Map<String, dynamic>> communityPosts = [];
+  static const List<Map<String, dynamic>> communityComments = [];
+  static const List<Map<String, dynamic>> communityNotifications = [];
 }

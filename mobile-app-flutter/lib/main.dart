@@ -100,20 +100,12 @@ class PlagitApp extends StatelessWidget {
 
         // ── Localization ──
         // Device locale drives the app language automatically on iOS + Android.
-        // Production-visible locales: EN / IT / AR / ES / FR / PT / DE / RU / ZH.
-        // HI/TR exist in ARB structure but are hidden
-        // until translations are fully completed and reviewed.
+        // Production-visible locales: EN / IT / AR.
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: const [
           Locale('en'),
           Locale('it'),
           Locale('ar'),
-          Locale('es'),
-          Locale('fr'),
-          Locale('pt'),
-          Locale('de'),
-          Locale('ru'),
-          Locale('zh'),
         ],
         localeResolutionCallback: (deviceLocale, supported) {
           if (deviceLocale == null) return const Locale('en');

@@ -305,6 +305,31 @@ class BusinessMessagesProvider extends ChangeNotifier {
     _loading = false;
     notifyListeners();
   }
+
+  /// Remove a single conversation by [id]. In-memory only for now —
+  /// the repository does not yet expose a delete endpoint, so the
+  /// state reverts on next [load]. Mirrors
+  /// [CandidateMessagesProvider.deleteConversation].
+  void deleteConversation(String id) {
+    final before = _conversations.length;
+    _conversations = _conversations.where((c) => c.id != id).toList();
+    if (_conversations.length != before) notifyListeners();
+  }
+
+  /// Remove every conversation whose id is in [ids].
+  void deleteConversations(Set<String> ids) {
+    if (ids.isEmpty) return;
+    final before = _conversations.length;
+    _conversations = _conversations.where((c) => !ids.contains(c.id)).toList();
+    if (_conversations.length != before) notifyListeners();
+  }
+
+  /// Clear all conversations from the in-memory list.
+  void deleteAllConversations() {
+    if (_conversations.isEmpty) return;
+    _conversations = [];
+    notifyListeners();
+  }
 }
 
 // ================================================================

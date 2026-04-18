@@ -6,16 +6,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
-import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
-import 'app_localizations_es.dart';
-import 'app_localizations_fr.dart';
-import 'app_localizations_hi.dart';
 import 'app_localizations_it.dart';
-import 'app_localizations_pt.dart';
-import 'app_localizations_ru.dart';
-import 'app_localizations_tr.dart';
-import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
 
@@ -104,16 +96,8 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('de'),
     Locale('en'),
-    Locale('es'),
-    Locale('fr'),
-    Locale('hi'),
     Locale('it'),
-    Locale('pt'),
-    Locale('ru'),
-    Locale('tr'),
-    Locale('zh'),
   ];
 
   /// No description provided for @appName.
@@ -10183,6 +10167,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'ADMIN'**
   String get badgeAdmin;
+
+  /// Info text after sending password reset code
+  ///
+  /// In en, this message translates to:
+  /// **'We sent a 6-digit code to {email}.'**
+  String codeSentToEmail(String email);
+
+  /// Schedule interview form field
+  ///
+  /// In en, this message translates to:
+  /// **'Meeting link'**
+  String get businessFieldMeetingLink;
+
+  /// Schedule interview form field
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get businessFieldLocation;
+
+  /// Reply subject prefix
+  ///
+  /// In en, this message translates to:
+  /// **'Re: {context}'**
+  String rePrefix(String context);
+
+  /// Count of conversations
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 conversation} other{{count} conversations}}'**
+  String conversationCount(int count);
+
+  /// Count of unread messages
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 unread} other{{count} unread}}'**
+  String unreadCount(int count);
+
+  /// Remove chat confirm body
+  ///
+  /// In en, this message translates to:
+  /// **'Remove your conversation with {company}? This cannot be undone.'**
+  String removeChatBody(String company);
+
+  /// Bulk delete confirm
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}'**
+  String deleteConversationsCount(int count);
+
+  /// Bulk delete dialog body
+  ///
+  /// In en, this message translates to:
+  /// **'Selected chats will be permanently removed.'**
+  String get selectedChatsBody;
+
+  /// Clear inbox confirm
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Clear 1 conversation from your inbox?} other{Clear all {count} conversations from your inbox?}}'**
+  String clearInboxBody(int count);
+
+  /// Divider label between alternatives
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get orLabel;
+
+  /// Quick Plug new-match badge
+  ///
+  /// In en, this message translates to:
+  /// **'{count} NEW'**
+  String quickPlugNewBadge(int count);
 }
 
 class _AppLocalizationsDelegate
@@ -10197,16 +10253,8 @@ class _AppLocalizationsDelegate
   @override
   bool isSupported(Locale locale) => <String>[
     'ar',
-    'de',
     'en',
-    'es',
-    'fr',
-    'hi',
     'it',
-    'pt',
-    'ru',
-    'tr',
-    'zh',
   ].contains(locale.languageCode);
 
   @override
@@ -10218,26 +10266,10 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'ar':
       return AppLocalizationsAr();
-    case 'de':
-      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
-    case 'es':
-      return AppLocalizationsEs();
-    case 'fr':
-      return AppLocalizationsFr();
-    case 'hi':
-      return AppLocalizationsHi();
     case 'it':
       return AppLocalizationsIt();
-    case 'pt':
-      return AppLocalizationsPt();
-    case 'ru':
-      return AppLocalizationsRu();
-    case 'tr':
-      return AppLocalizationsTr();
-    case 'zh':
-      return AppLocalizationsZh();
   }
 
   throw FlutterError(

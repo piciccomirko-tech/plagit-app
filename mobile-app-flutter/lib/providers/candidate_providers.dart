@@ -14,6 +14,7 @@ import 'package:plagit/models/conversation.dart';
 import 'package:plagit/models/interview.dart';
 import 'package:plagit/models/job.dart';
 import 'package:plagit/models/notification_item.dart';
+import 'package:plagit/models/quick_plug_match.dart';
 import 'package:plagit/models/subscription_state.dart';
 import 'package:plagit/repositories/candidate_repository.dart';
 import 'package:plagit/repositories/auth_repository.dart';
@@ -38,6 +39,56 @@ class CandidateAuthProvider extends ChangeNotifier {
   bool get isRestoring => _isRestoring;
   CandidateProfile? get profile => _profile;
   CandidateSubscription get subscription => _subscription;
+
+  /// Fast premium check — mirrors Swift `SubscriptionManager.isPremium`.
+  /// Reads directly from the current subscription so UI reacts the
+  /// instant a purchase / restore / dev-activation mutates state.
+  bool get isPremium => _subscription.plan.isPremium;
+
+  // ── Dev / billing harness (used by BillingDevPanel) ──
+  //
+  // These mutate [_subscription] in-memory only. The real StoreKit /
+  // backend wiring lives in the billing services — the provider is
+  // kept as the single source of truth for UI gating.
+  SubscriptionPlan? _pendingRestorePlan;
+
+  /// Flip the subscription to [plan] immediately. Used by the dev
+  /// panel's "Activate Premium" button.
+  Future<void> devActivatePremium(SubscriptionPlan plan) async {
+    _subscription = CandidateSubscription.forPlan(plan);
+    notifyListeners();
+  }
+
+  /// Drop back to the free tier. Used by the dev panel's
+  /// "Deactivate Premium" button.
+  Future<void> devDeactivatePremium() async {
+    _subscription = CandidateSubscription.mock();
+    notifyListeners();
+  }
+
+  /// Stage a successful restore for the next [restorePurchases] call.
+  /// Synchronous — the panel awaits [restorePurchases] separately.
+  void devSimulateRestoreSuccess(SubscriptionPlan plan) {
+    _pendingRestorePlan = plan;
+  }
+
+  /// Stage a "nothing to restore" outcome for the next
+  /// [restorePurchases] call.
+  Future<void> devSimulateRestoreNothing() async {
+    _pendingRestorePlan = null;
+  }
+
+  /// Consume whatever was staged by the dev harness and apply it.
+  /// With a real billing service this would round-trip StoreKit /
+  /// Play Billing — here it just replays the staged plan (if any).
+  Future<void> restorePurchases() async {
+    final pending = _pendingRestorePlan;
+    _pendingRestorePlan = null;
+    if (pending != null) {
+      _subscription = CandidateSubscription.forPlan(pending);
+      notifyListeners();
+    }
+  }
 
   /// Login via AuthRepository. Persists token, loads profile.
   Future<void> login(String email, String password) async {
@@ -265,6 +316,31 @@ class CandidateMessagesProvider extends ChangeNotifier {
     _loading = false;
     notifyListeners();
   }
+
+  /// Remove a single conversation by [id]. In-memory only for now —
+  /// the repository does not yet expose a delete endpoint, so the
+  /// state reverts on next [load]. Keeps the UI (swipe-to-delete)
+  /// responsive in the meantime.
+  void deleteConversation(String id) {
+    final before = _conversations.length;
+    _conversations = _conversations.where((c) => c.id != id).toList();
+    if (_conversations.length != before) notifyListeners();
+  }
+
+  /// Remove every conversation whose id is in [ids].
+  void deleteConversations(Set<String> ids) {
+    if (ids.isEmpty) return;
+    final before = _conversations.length;
+    _conversations = _conversations.where((c) => !ids.contains(c.id)).toList();
+    if (_conversations.length != before) notifyListeners();
+  }
+
+  /// Clear all conversations from the in-memory list.
+  void deleteAllConversations() {
+    if (_conversations.isEmpty) return;
+    _conversations = [];
+    notifyListeners();
+  }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -352,6 +428,38 @@ class CandidateNotificationsProvider extends ChangeNotifier {
     for (final n in _notifications) {
       n.read = true;
     }
+    notifyListeners();
+  }
+}
+
+class CandidateQuickPlugProvider extends ChangeNotifier {
+  CandidateQuickPlugProvider({CandidateRepository? repo});
+
+  List<QuickPlugLike> _pendingLikes = [];
+  bool _loading = false;
+  String? _error;
+
+  List<QuickPlugLike> get pendingLikes => _pendingLikes;
+  int get pendingCount => _pendingLikes.length;
+  bool get loading => _loading;
+  String? get error => _error;
+
+  Future<void> load() async {
+    _loading = true;
+    _error = null;
+    notifyListeners();
+    _pendingLikes = const [];
+    _loading = false;
+    notifyListeners();
+  }
+
+  Future<void> accept(String likeId) async {
+    _pendingLikes = _pendingLikes.where((l) => l.id != likeId).toList();
+    notifyListeners();
+  }
+
+  Future<void> reject(String likeId) async {
+    _pendingLikes = _pendingLikes.where((l) => l.id != likeId).toList();
     notifyListeners();
   }
 }
