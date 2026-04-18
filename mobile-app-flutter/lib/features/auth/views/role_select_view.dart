@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/widgets/plagit_logo.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 class RoleSelectView extends StatelessWidget {
   const RoleSelectView({super.key});
@@ -40,32 +41,32 @@ class RoleSelectView extends StatelessWidget {
                   _RoleCard(
                     initials: 'TC',
                     color: AppColors.teal,
-                    title: 'Continue as Candidate',
-                    subtitle: 'Find jobs and apply',
+                    title: AppLocalizations.of(context).continueAsCandidate,
+                    subtitle: AppLocalizations.of(context).findJobsAndApply,
                     onTap: () => context.go('/candidate/home'),
                   ),
                   const SizedBox(height: 12),
                   _RoleCard(
                     initials: 'TB',
                     color: AppColors.purple,
-                    title: 'Continue as Business',
-                    subtitle: 'Manage jobs and hiring',
+                    title: AppLocalizations.of(context).continueAsBusiness,
+                    subtitle: AppLocalizations.of(context).manageJobsAndHiring,
                     onTap: () => context.go('/business/home'),
                   ),
                   const SizedBox(height: 12),
                   _RoleCard(
                     initials: 'AU',
                     color: AppColors.navy,
-                    title: 'Admin Portal',
-                    subtitle: 'Manage platform',
+                    title: AppLocalizations.of(context).adminPortal,
+                    subtitle: AppLocalizations.of(context).managePlatform,
                     onTap: () => context.go('/admin/dashboard'),
                   ),
                   const SizedBox(height: 12),
                   _RoleCard(
                     icon: Icons.grid_view_rounded,
                     color: _orange,
-                    title: 'Browse Services',
-                    subtitle: 'Find hospitality companies',
+                    title: AppLocalizations.of(context).browseServices,
+                    subtitle: AppLocalizations.of(context).findHospitalityCompanies,
                     onTap: () => context.go('/services/home'),
                   ),
                 ],
@@ -165,7 +166,7 @@ class _RoleCard extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: AppColors.teal, size: 22),
+            const Icon(Icons.chevron_right, color: AppColors.teal, size: 28),
           ],
         ),
       ),

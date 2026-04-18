@@ -1,0 +1,2111 @@
+{
+  "@@locale": "ru",
+  "appName": "Plagit",
+  "welcome": "Добро пожаловать",
+  "signIn": "Войти",
+  "signUp": "Регистрация",
+  "createAccount": "Создать аккаунт",
+  "createBusinessAccount": "Создать бизнес-аккаунт",
+  "alreadyHaveAccount": "Уже есть аккаунт?",
+  "email": "Электронная почта",
+  "password": "Пароль",
+  "continueLabel": "Продолжить",
+  "cancel": "Отмена",
+  "save": "Сохранить",
+  "done": "Готово",
+  "retry": "Повторить",
+  "search": "Поиск",
+  "back": "Назад",
+  "next": "Далее",
+  "apply": "Откликнуться",
+  "clear": "Очистить",
+  "clearAll": "Очистить всё",
+  "edit": "Изменить",
+  "delete": "Удалить",
+  "confirm": "Подтвердить",
+  "home": "Главная",
+  "jobs": "Вакансии",
+  "messages": "Сообщения",
+  "profile": "Профиль",
+  "settings": "Настройки",
+  "language": "Язык",
+  "logout": "Выйти",
+  "categoryAndRole": "Категория и должность",
+  "selectCategory": "Выберите категорию",
+  "subcategory": "Подкатегория",
+  "role": "Должность",
+  "recentSearches": "Недавние запросы",
+  "noResultsFor": "Нет результатов по запросу «{query}»",
+  "@noResultsFor": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "mostPopular": "Самые популярные",
+  "allCategories": "Все категории",
+  "selectVenueTypeAndRole": "Выберите тип заведения и требуемую должность",
+  "selectCategoryAndRole": "Выберите категорию и должность",
+  "businessDetails": "Данные о компании",
+  "yourDetails": "Ваши данные",
+  "companyName": "Название компании",
+  "contactPerson": "Контактное лицо",
+  "location": "Местоположение",
+  "website": "Website",
+  "fullName": "Полное имя",
+  "yearsExperience": "Стаж работы (лет)",
+  "languagesSpoken": "Владение языками",
+  "jobType": "Тип занятости",
+  "jobTypeFullTime": "Полная занятость",
+  "jobTypePartTime": "Неполная занятость",
+  "jobTypeTemporary": "Временная работа",
+  "jobTypeFreelance": "Фриланс",
+  "openToInternational": "Рассматриваю международных кандидатов",
+  "passwordHint": "Пароль (минимум 8 символов)",
+  "termsOfServiceNote": "Создавая аккаунт, Вы соглашаетесь с Условиями использования и Политикой конфиденциальности.",
+  "networkError": "Ошибка сети",
+  "somethingWentWrong": "Что-то пошло не так",
+  "loading": "Загрузка…",
+  "errorGeneric": "Произошла непредвиденная ошибка. Попробуйте ещё раз.",
+  "joinAsCandidate": "Вход для кандидатов",
+  "joinAsBusiness": "Вход для бизнеса",
+  "findYourNextRole": "Найдите свою следующую работу в сфере гостеприимства",
+  "candidateLoginSubtitle": "Общайтесь с ведущими работодателями Лондона, Дубая и не только.",
+  "businessLoginSubtitle": "Находите лучших специалистов и развивайте свою команду.",
+  "rememberMe": "Запомнить меня",
+  "forgotPassword": "Забыли пароль?",
+  "lookingForStaff": "Ищете персонал? ",
+  "lookingForJob": "Ищете работу? ",
+  "switchToBusiness": "Переключиться на бизнес",
+  "switchToCandidate": "Переключиться на кандидата",
+  "createYourProfile": "Создайте профиль, чтобы Вас заметили лучшие работодатели.",
+  "createBusinessProfile": "Создайте бизнес-профиль и начните нанимать лучших специалистов индустрии гостеприимства.",
+  "locationCityCountry": "Местоположение (город, страна)",
+  "termsAgreement": "Создавая аккаунт, Вы соглашаетесь с Условиями использования и Политикой конфиденциальности.",
+  "searchHospitalityHint": "Поиск по категории, подкатегории или должности…",
+  "mostCommonRoles": "Самые востребованные должности",
+  "allRoles": "Все должности",
+  "suggestionCount": "{count,plural, one{{count} подсказка} few{{count} подсказки} many{{count} подсказок} other{{count} подсказки}}",
+  "@suggestionCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "subcategoriesCount": "{count,plural, one{{count} подкатегория} few{{count} подкатегории} many{{count} подкатегорий} other{{count} подкатегории}}",
+  "@subcategoriesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "rolesCount": "{count,plural, one{{count} должность} few{{count} должности} many{{count} должностей} other{{count} должности}}",
+  "@rolesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "kindCategory": "Категория",
+  "kindSubcategory": "Подкатегория",
+  "kindRole": "Должность",
+  "resetPassword": "Сбросить пароль",
+  "forgotPasswordSubtitle": "Введите электронную почту, и мы отправим ссылку для сброса пароля.",
+  "sendResetLink": "Отправить ссылку",
+  "resetEmailSent": "Если аккаунт с такой почтой существует, ссылка для сброса уже отправлена.",
+  "profileSetupTitle": "Заполните профиль",
+  "profileSetupSubtitle": "Полный профиль замечают быстрее.",
+  "uploadPhoto": "Загрузить фото",
+  "uploadCV": "Загрузить резюме",
+  "skipForNow": "Пропустить",
+  "finish": "Завершить",
+  "noInternet": "Нет подключения к интернету. Проверьте сеть.",
+  "tryAgain": "Попробовать снова",
+  "emptyJobs": "Вакансий пока нет",
+  "emptyApplications": "Откликов пока нет",
+  "emptyMessages": "Сообщений пока нет",
+  "emptyNotifications": "Все прочитано",
+  "onboardingRoleTitle": "Какую должность Вы ищете?",
+  "onboardingRoleSubtitle": "Выберите все подходящие варианты",
+  "onboardingExperienceTitle": "Какой у Вас опыт?",
+  "onboardingLocationTitle": "Где Вы находитесь?",
+  "onboardingLocationHint": "Введите город или индекс",
+  "useMyCurrentLocation": "Использовать моё текущее местоположение",
+  "onboardingAvailabilityTitle": "Что Вы ищете?",
+  "finishSetup": "Завершить настройку",
+  "goodMorning": "Доброе утро",
+  "goodAfternoon": "Добрый день",
+  "goodEvening": "Добрый вечер",
+  "findJobs": "Найти работу",
+  "applications": "Отклики",
+  "community": "Сообщество",
+  "recommendedForYou": "Рекомендуем Вам",
+  "seeAll": "Смотреть все",
+  "searchJobsHint": "Поиск вакансий, должностей, городов…",
+  "searchJobs": "Поиск вакансий",
+  "postedJob": "Опубликовано",
+  "applyNow": "Откликнуться",
+  "applied": "Откликнулся",
+  "saveJob": "Сохранить",
+  "saved": "Сохранено",
+  "jobDescription": "Описание вакансии",
+  "requirements": "Требования",
+  "benefits": "Бонусы",
+  "salary": "Зарплата",
+  "contract": "Контракт",
+  "schedule": "График",
+  "viewCompany": "Посмотреть компанию",
+  "interview": "Собеседование",
+  "interviews": "Собеседования",
+  "notifications": "Уведомления",
+  "matches": "Совпадения",
+  "quickPlug": "Quick Plug",
+  "discover": "Обзор",
+  "shortlist": "Шортлист",
+  "message": "Сообщение",
+  "messageCandidate": "Написать",
+  "nextInterview": "Собеседование",
+  "loadingDashboard": "Загрузка панели…",
+  "tryAgainCta": "Повторить",
+  "careerDashboard": "ПАНЕЛЬ КАРЬЕРЫ",
+  "yourNextInterview": "Ваше следующее собеседование\nуже назначено",
+  "yourCareerTakingOff": "Ваша карьера\nнабирает обороты",
+  "yourCareerOnTheMove": "Ваша карьера\nдвижется вперёд",
+  "yourJourneyStartsHere": "Ваш путь\nначинается",
+  "applyFirstJob": "Откликнитесь на первую вакансию, чтобы начать",
+  "interviewComingUp": "Скоро собеседование",
+  "unlockPlagitPremium": "Откройте Plagit Premium",
+  "premiumSubtitle": "Выделяйтесь среди лучших заведений — получайте отклики быстрее",
+  "premiumActive": "Premium активен",
+  "premiumActiveSubtitle": "Приоритетная видимость включена · Управление тарифом",
+  "noJobsFound": "По Вашему запросу вакансий не найдено",
+  "noApplicationsYet": "Откликов пока нет",
+  "startApplying": "Начните просматривать вакансии и откликаться",
+  "noMessagesYet": "Сообщений пока нет",
+  "allCaughtUp": "Всё прочитано",
+  "noNotificationsYet": "Уведомлений пока нет",
+  "about": "О себе",
+  "experience": "Опыт",
+  "skills": "Навыки",
+  "languages": "Языки",
+  "availability": "Доступность",
+  "verified": "Проверено",
+  "totalViews": "Всего просмотров",
+  "verifiedVenuePrefix": "Проверено",
+  "notVerified": "Не проверено",
+  "pendingReview": "На рассмотрении",
+  "viewProfile": "Посмотреть профиль",
+  "editProfile": "Редактировать профиль",
+  "share": "Поделиться",
+  "report": "Пожаловаться",
+  "block": "Заблокировать",
+  "typeMessage": "Введите сообщение…",
+  "send": "Отправить",
+  "today": "Сегодня",
+  "yesterday": "Вчера",
+  "now": "сейчас",
+  "minutesAgo": "{count,plural, one{{count} мин назад} few{{count} мин назад} many{{count} мин назад} other{{count} мин назад}}",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursAgo": "{count,plural, one{{count} ч назад} few{{count} ч назад} many{{count} ч назад} other{{count} ч назад}}",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "daysAgo": "{count,plural, one{{count} д назад} few{{count} д назад} many{{count} д назад} other{{count} д назад}}",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "filters": "Фильтры",
+  "refineSearch": "Уточнить поиск",
+  "distance": "Расстояние",
+  "applyFilters": "Применить фильтры",
+  "reset": "Сбросить",
+  "noResultsTitle": "Нет результатов по запросу «{query}»",
+  "@noResultsTitle": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "noResultsSubtitle": "Попробуйте другое слово или очистите поиск.",
+  "recentSearchesEmptyTitle": "Недавних запросов нет",
+  "recentSearchesEmptyHint": "Ваши недавние поиски появятся здесь",
+  "allJobs": "Все вакансии",
+  "nearby": "Рядом",
+  "saved2": "Сохранённые",
+  "remote": "Удалённо",
+  "inPerson": "Очно",
+  "aboutTheJob": "О вакансии",
+  "aboutCompany": "О компании",
+  "applyForJob": "Откликнуться на вакансию",
+  "unsaveJob": "Убрать",
+  "noJobsNearby": "Вакансий поблизости нет",
+  "noSavedJobs": "Сохранённых вакансий нет",
+  "adjustFilters": "Измените фильтры, чтобы увидеть больше вакансий",
+  "fullTime": "Полная занятость",
+  "partTime": "Неполная занятость",
+  "temporary": "Временная работа",
+  "freelance": "Фриланс",
+  "postedAgo": "Опубликовано {time}",
+  "@postedAgo": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "kmAway": "{km} км от Вас",
+  "@kmAway": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
+  "jobDetails": "Детали вакансии",
+  "aboutThisRole": "Об этой должности",
+  "aboutTheBusiness": "О компании",
+  "urgentHiring": "Срочный найм",
+  "distanceRadius": "Радиус поиска",
+  "contractType": "Тип контракта",
+  "shiftType": "Тип смены",
+  "all": "Все",
+  "casual": "Подработка",
+  "seasonal": "Сезонная работа",
+  "morning": "Утро",
+  "afternoon": "День",
+  "evening": "Вечер",
+  "night": "Ночь",
+  "startDate": "Дата начала",
+  "shiftHours": "Часы смены",
+  "category": "Категория",
+  "venueType": "Тип заведения",
+  "employment": "Занятость",
+  "pay": "Оплата",
+  "duration": "Продолжительность",
+  "weeklyHours": "Часов в неделю",
+  "businessLocation": "Адрес компании",
+  "jobViews": "Просмотры вакансии",
+  "positions": "{count,plural, one{{count} позиция} few{{count} позиции} many{{count} позиций} other{{count} позиции}}",
+  "@positions": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "monthsCount": "{count,plural, one{{count} месяц} few{{count} месяца} many{{count} месяцев} other{{count} месяца}}",
+  "@monthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "myApplications": "Мои отклики",
+  "active": "Активно",
+  "interviewStatus": "Собеседование",
+  "rejected": "Отклонено",
+  "offer": "Оффер",
+  "appliedOn": "Отклик отправлен {date}",
+  "@appliedOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "viewJob": "Открыть",
+  "withdraw": "Отозвать отклик",
+  "applicationStatus": "Статус отклика",
+  "noConversations": "Диалогов пока нет",
+  "startConversation": "Ответьте на вакансию, чтобы начать общение",
+  "online": "В сети",
+  "offline": "Не в сети",
+  "lastSeen": "Был(а) в сети {time}",
+  "@lastSeen": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "newNotification": "Новое",
+  "markAllRead": "Отметить все как прочитанные",
+  "yourProfile": "Ваш профиль",
+  "completionPercent": "{percent}% заполнено",
+  "@completionPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "personalDetails": "Личные данные",
+  "phone": "Телефон",
+  "bio": "Bio",
+  "addPhoto": "Добавить фото",
+  "addCV": "Добавить резюме",
+  "saveChanges": "Сохранить изменения",
+  "logoutConfirm": "Вы уверены, что хотите выйти?",
+  "subscription": "Подписка",
+  "support": "Поддержка",
+  "privacy": "Конфиденциальность",
+  "terms": "Условия",
+  "applicationDetails": "Детали отклика",
+  "timeline": "Хронология",
+  "submitted": "Отправлено",
+  "underReview": "На рассмотрении",
+  "interviewScheduled": "Собеседование назначено",
+  "offerExtended": "Оффер получен",
+  "withdrawApp": "Отозвать отклик",
+  "withdrawConfirm": "Вы уверены, что хотите отозвать отклик?",
+  "applicationWithdrawn": "Отклик отозван",
+  "statusApplied": "Отправлен",
+  "statusInReview": "Проверка",
+  "statusInterview": "Интервью",
+  "statusHired": "Принят(а)",
+  "statusClosed": "Закрыт",
+  "statusRejected": "Отклонён",
+  "statusOffer": "Оффер",
+  "messagesSearch": "Поиск по сообщениям…",
+  "noMessagesTitle": "Сообщений пока нет",
+  "noMessagesSubtitle": "Ответьте на вакансию, чтобы начать общение",
+  "youOnline": "Вы в сети",
+  "noNotificationsTitle": "Уведомлений пока нет",
+  "noNotificationsSubtitle": "Мы сообщим, когда появятся новости",
+  "today2": "Сегодня",
+  "earlier": "Ранее",
+  "completeYourProfile": "Заполните профиль",
+  "profileCompletion": "Заполнение профиля",
+  "personalInfo": "Личная информация",
+  "professional": "Профессиональное",
+  "preferences": "Предпочтения",
+  "documents": "Документы",
+  "myCV": "Моё резюме",
+  "premium": "Premium",
+  "addLanguages": "Добавить языки",
+  "addExperience": "Добавить опыт",
+  "addAvailability": "Добавить доступность",
+  "matchesTitle": "Ваши совпадения",
+  "noMatchesTitle": "Совпадений пока нет",
+  "noMatchesSubtitle": "Продолжайте откликаться — совпадения появятся здесь",
+  "interestedBusinesses": "Заинтересованные компании",
+  "accept": "Принять",
+  "decline": "Отклонить",
+  "newMatch": "Новое совпадение",
+  "quickPlugTitle": "Quick Plug",
+  "quickPlugEmpty": "Новых компаний пока нет",
+  "quickPlugSubtitle": "Загляните позже — появятся свежие возможности",
+  "uploadYourCV": "Загрузите резюме",
+  "cvSubtitle": "Добавьте резюме, чтобы откликаться быстрее и выделяться",
+  "chooseFile": "Выбрать файл",
+  "removeCV": "Удалить резюме",
+  "noCVUploaded": "Резюме ещё не загружено",
+  "discoverCompanies": "Откройте компании",
+  "exploreSubtitle": "Изучайте ведущие компании индустрии гостеприимства",
+  "follow": "Подписаться",
+  "following": "Подписки",
+  "view": "Смотреть",
+  "selectLanguages": "Выберите языки",
+  "selectedCount": "Выбрано: {count}",
+  "@selectedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "allLanguages": "Все языки",
+  "uploadCVBig": "Загрузите резюме, чтобы автоматически заполнить профиль и сэкономить время.",
+  "supportedFormats": "Поддерживаемые форматы: PDF, DOC, DOCX",
+  "fillManually": "Заполнить вручную",
+  "fillManuallySubtitle": "Введите данные самостоятельно и заполните профиль шаг за шагом.",
+  "photoUploadSoon": "Загрузка фото скоро появится — используйте профессиональный аватар.",
+  "yourCV": "Ваше резюме",
+  "aboutYou": "О Вас",
+  "optional": "Необязательно",
+  "completeProfile": "Завершить профиль",
+  "openToRelocation": "Готов(а) к переезду",
+  "matchLabel": "Match",
+  "accepted": "Принято",
+  "deny": "Отклонить",
+  "featured": "Избранное",
+  "reviewYourProfile": "Проверьте свой профиль",
+  "nothingSavedYet": "Ничего не будет сохранено до Вашего подтверждения.",
+  "editAnyField": "Вы можете отредактировать любое поле перед сохранением.",
+  "saveToProfile": "Сохранить в профиль",
+  "findCompanies": "Найти компании",
+  "mapView": "Карта",
+  "mapComingSoon": "Просмотр карты скоро появится.",
+  "noCompaniesFound": "Компании не найдены",
+  "tryWiderRadius": "Попробуйте увеличить радиус или выбрать другую категорию.",
+  "verifiedOnly": "Только проверенные",
+  "resetFilters": "Сбросить фильтры",
+  "available": "Доступен",
+  "lookingFor": "Ищет: {role}",
+  "@lookingFor": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "boostMyProfile": "Продвинуть профиль",
+  "openToRelocationTravel": "Готов(а) к переезду / командировкам",
+  "tellEmployersAboutYourself": "Расскажите работодателям о себе…",
+  "profileUpdated": "Профиль обновлён",
+  "contractPreference": "Предпочтения по контракту",
+  "restorePurchases": "Восстановить покупки",
+  "languagePickerSoon": "Выбор языка скоро появится",
+  "selectCategoryRoleShort": "Выберите категорию и должность",
+  "cvUploadSoon": "Загрузка резюме скоро появится",
+  "restorePurchasesSoon": "Восстановление покупок скоро появится",
+  "photoUploadShort": "Загрузка фото скоро появится",
+  "hireBestTalent": "Нанимайте лучших специалистов индустрии гостеприимства",
+  "businessLoginSub": "Публикуйте вакансии и находите проверенных кандидатов.",
+  "lookingForWork": "Ищете работу? ",
+  "postJob": "Опубликовать вакансию",
+  "editJob": "Редактировать",
+  "jobTitle": "Название вакансии",
+  "jobDescription2": "Описание вакансии",
+  "publish": "Опубликовать",
+  "saveDraft": "Сохранить черновик",
+  "applicantsTitle": "Кандидаты",
+  "newApplicants": "Новые отклики",
+  "noApplicantsYet": "Откликов пока нет",
+  "noApplicantsSubtitle": "Кандидаты появятся здесь, как только откликнутся.",
+  "scheduleInterview": "Назначить собеседование",
+  "sendInvite": "Отправить приглашение",
+  "interviewSent": "Приглашение на собеседование отправлено",
+  "rejectCandidate": "Отклонить",
+  "shortlistCandidate": "В шортлист",
+  "hiringDashboard": "ПАНЕЛЬ НАЙМА",
+  "yourPipelineActive": "Ваша воронка\nактивна",
+  "postJobToStart": "Опубликуйте первую вакансию",
+  "reviewApplicants": "Рассмотреть новых кандидатов: {count}",
+  "@reviewApplicants": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "replyMessages": "Ответить на непрочитанные сообщения: {count}",
+  "@replyMessages": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviews2": "Собеседования",
+  "businessProfile": "Профиль компании",
+  "venueGallery": "Галерея заведения",
+  "addPhotos": "Добавить фото",
+  "businessName": "Название компании",
+  "venueTypeLabel": "Тип заведения",
+  "selectedItems": "Выбрано: {count}",
+  "@selectedItems": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "hiringProgress": "Прогресс найма",
+  "unlockBusinessPremium": "Откройте Business Premium",
+  "businessPremiumSubtitle": "Получите приоритетный доступ к лучшим кандидатам",
+  "scheduleFromApplicants": "Назначить из откликов",
+  "recentApplicants": "Недавние кандидаты",
+  "viewAll": "Смотреть все ›",
+  "recentActivity": "Недавняя активность",
+  "candidatePipeline": "Воронка кандидатов",
+  "allApplicants": "Все кандидаты",
+  "searchCandidates": "Поиск кандидатов, вакансий, собеседований...",
+  "thisWeek": "На этой неделе",
+  "thisMonth": "В этом месяце",
+  "allTime": "За всё время",
+  "post": "Опубликовать",
+  "candidates": "Кандидаты",
+  "applicantDetail": "Данные кандидата",
+  "candidateProfile": "Профиль кандидата",
+  "shortlistTitle": "Шортлист",
+  "noShortlistedCandidates": "В шортлисте пока нет кандидатов",
+  "shortlistEmpty": "Кандидаты, которых Вы добавите в шортлист, появятся здесь",
+  "removeFromShortlist": "Убрать из шортлиста",
+  "viewMessages": "Смотреть сообщения",
+  "manageJobs": "Управление вакансиями",
+  "yourJobs": "Ваши вакансии",
+  "noJobsPosted": "Вакансий ещё не опубликовано",
+  "noJobsPostedSubtitle": "Опубликуйте первую вакансию, чтобы начать нанимать",
+  "draftJobs": "Черновики",
+  "activeJobs": "Активные",
+  "expiredJobs": "Истёкшие",
+  "closedJobs": "Закрытые",
+  "createJob": "Создать вакансию",
+  "jobDetailsTitle": "Детали вакансии",
+  "salaryRange": "Диапазон зарплаты",
+  "currency": "Валюта",
+  "monthly": "В месяц",
+  "annual": "В год",
+  "hourly": "В час",
+  "minSalary": "Мин.",
+  "maxSalary": "Макс.",
+  "perks": "Бонусы",
+  "addPerk": "Добавить бонус",
+  "remove": "Удалить",
+  "preview": "Предпросмотр",
+  "publishJob": "Опубликовать вакансию",
+  "jobPublished": "Вакансия опубликована",
+  "jobUpdated": "Вакансия обновлена",
+  "jobSavedDraft": "Сохранено как черновик",
+  "fillRequired": "Пожалуйста, заполните обязательные поля",
+  "jobUrgent": "Отметить как срочную",
+  "addAtLeastOne": "Добавьте хотя бы одно требование",
+  "createUpdate": "Создать новость",
+  "shareCompanyNews": "Поделитесь новостями компании",
+  "addStory": "Добавить историю",
+  "showWorkplace": "Покажите своё рабочее место",
+  "viewShortlist": "Смотреть шортлист",
+  "yourSavedCandidates": "Ваши сохранённые кандидаты",
+  "inviteCandidate": "Пригласить кандидата",
+  "reachOutDirectly": "Связаться напрямую",
+  "activeJobsCount": "{count,plural, one{{count} активная вакансия} few{{count} активные вакансии} many{{count} активных вакансий} other{{count} активных вакансий}}",
+  "@activeJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "employmentType": "Тип занятости",
+  "requiredRole": "Требуемая должность",
+  "selectCategoryRole2": "Выберите категорию и должность",
+  "hiresNeeded": "Требуется сотрудников",
+  "compensation": "Вознаграждение",
+  "useSalaryRange": "Использовать диапазон зарплаты",
+  "contractDuration": "Срок контракта",
+  "limitReached": "Лимит исчерпан",
+  "upgradePlan": "Улучшить тариф",
+  "usingXofY": "Вы используете {used} из {total} публикаций.",
+  "@usingXofY": {
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "businessInterviewsTitle": "Собеседования",
+  "noInterviewsYet": "Собеседований пока нет",
+  "scheduleFirstInterview": "Назначьте первое собеседование с кандидатом",
+  "sendInterviewInvite": "Отправить приглашение на собеседование",
+  "interviewSentTitle": "Приглашение отправлено!",
+  "interviewSentSubtitle": "Кандидат получил уведомление.",
+  "scheduleInterviewTitle": "Назначить собеседование",
+  "interviewType": "Тип собеседования",
+  "inPersonInterview": "Очно",
+  "videoCallInterview": "Видеозвонок",
+  "phoneCallInterview": "Телефонный звонок",
+  "interviewDate": "Дата",
+  "interviewTime": "Время",
+  "interviewLocation": "Место",
+  "interviewNotes": "Заметки",
+  "optionalLabel": "Необязательно",
+  "sendInviteCta": "Отправить приглашение",
+  "messagesCountLabel": "{count,plural, one{{count} сообщение} few{{count} сообщения} many{{count} сообщений} other{{count} сообщения}}",
+  "@messagesCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "noNewMessages": "Новых сообщений нет",
+  "subscriptionTitle": "Подписка",
+  "currentPlan": "Текущий тариф",
+  "manage": "Управлять",
+  "upgrade": "Улучшить",
+  "renewalDate": "Дата продления",
+  "nearbyTalent": "Специалисты рядом",
+  "searchNearby": "Поиск рядом",
+  "communityTitle": "Сообщество",
+  "createPost": "Создать публикацию",
+  "insights": "Аналитика",
+  "viewsLabel": "Просмотры",
+  "applicationsLabel": "Отклики",
+  "conversionRate": "Конверсия",
+  "topPerformingJob": "Самая эффективная вакансия",
+  "viewAllSimple": "Смотреть все",
+  "viewAllApplicantsForJob": "Смотреть всех кандидатов по вакансии",
+  "noUpcomingInterviews": "Предстоящих собеседований нет",
+  "noActivityYet": "Активности пока нет",
+  "noResultsFound": "Ничего не найдено",
+  "renewsAutomatically": "Продлевается автоматически",
+  "plagitBusinessPlans": "Тарифы Plagit Business",
+  "scaleYourHiringSubtitle": "Масштабируйте найм с подходящим тарифом.",
+  "yearly": "Годовой",
+  "saveWithAnnualBilling": "Экономьте больше при годовой оплате",
+  "chooseYourPlanSubtitle": "Выберите тариф под Ваши задачи по найму.",
+  "continueWithPlan": "Продолжить с {plan}",
+  "@continueWithPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionAutoRenewNote": "Подписка продлевается автоматически. Отмена в Настройках.",
+  "purchaseFlowComingSoon": "Оплата скоро появится",
+  "applicant": "Кандидат",
+  "applicantNotFound": "Кандидат не найден",
+  "cvViewerComingSoon": "Просмотр резюме скоро появится",
+  "viewCV": "Открыть резюме",
+  "application": "Отклик",
+  "messagingComingSoon": "Сообщения скоро появятся",
+  "interviewConfirmed": "Собеседование подтверждено",
+  "interviewMarkedCompleted": "Собеседование отмечено как завершённое",
+  "cancelInterviewConfirm": "Вы уверены, что хотите отменить собеседование?",
+  "yesCancel": "Да, отменить",
+  "interviewNotFound": "Собеседование не найдено",
+  "openingMeetingLink": "Открываем ссылку на встречу...",
+  "rescheduleComingSoon": "Перенос скоро появится",
+  "notesFeatureComingSoon": "Заметки скоро появятся",
+  "candidateMarkedHired": "Кандидат отмечен как нанятый!",
+  "feedbackComingSoon": "Обратная связь скоро появится",
+  "googleMapsComingSoon": "Интеграция с Google Maps скоро появится",
+  "noCandidatesNearby": "Кандидатов рядом нет",
+  "tryExpandingRadius": "Попробуйте увеличить радиус поиска.",
+  "candidate": "Кандидат",
+  "forOpenPosition": "На открытую позицию",
+  "dateAndTimeUpper": "ДАТА И ВРЕМЯ",
+  "interviewTypeUpper": "ТИП СОБЕСЕДОВАНИЯ",
+  "timezoneUpper": "ЧАСОВОЙ ПОЯС",
+  "highlights": "Ключевое",
+  "cvNotAvailable": "Резюме недоступно",
+  "cvWillAppearHere": "Появится здесь после загрузки",
+  "seenEveryone": "Вы просмотрели всех",
+  "checkBackForCandidates": "Загляните позже — будут новые кандидаты.",
+  "dailyLimitReached": "Дневной лимит исчерпан",
+  "upgradeForUnlimitedSwipes": "Улучшите тариф для безлимитных свайпов.",
+  "distanceUpper": "РАССТОЯНИЕ",
+  "inviteToInterview": "Пригласить на собеседование",
+  "details": "Подробнее",
+  "shortlistedSuccessfully": "Добавлен(а) в шортлист",
+  "tabDashboard": "Панель",
+  "tabCandidates": "Кандидаты",
+  "tabActivity": "Активность",
+  "statusPosted": "Опубликовано",
+  "statusApplicants": "Отклики",
+  "statusInterviewsShort": "Собеседования",
+  "statusHiredShort": "Нанято",
+  "jobLiveVisible": "Ваша вакансия опубликована и видна",
+  "postJobShort": "Опубликовать",
+  "messagesTitle": "Сообщения",
+  "online2": "В сети",
+  "candidateUpper": "КАНДИДАТ",
+  "searchConversationsHint": "Поиск диалогов, кандидатов, должностей…",
+  "filterUnread": "Непрочитанные",
+  "filterAll": "Все",
+  "whenCandidatesMessage": "Когда кандидаты напишут Вам, диалоги появятся здесь.",
+  "trySwitchingFilter": "Попробуйте другой фильтр.",
+  "reply": "Ответить",
+  "selectItems": "Выбрать",
+  "countSelected": "Выбрано: {count}",
+  "@countSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "Выбрать все",
+  "deleteConversation": "Удалить диалог?",
+  "deleteAllConversations": "Удалить все диалоги?",
+  "deleteSelectedNote": "Выбранные чаты будут удалены из Вашей папки «Входящие». У кандидата копия сохранится.",
+  "deleteAll": "Удалить все",
+  "selectConversations": "Выберите диалоги",
+  "feedTab": "Feed",
+  "myPostsTab": "Мои публикации",
+  "savedTab": "Сохранённые",
+  "postingAs": "Публикуется как {name}",
+  "@postingAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noPostsYet": "Вы ещё ничего не опубликовали",
+  "nothingHereYet": "Здесь пока пусто",
+  "shareVenueUpdate": "Поделитесь новостями из Вашего заведения, чтобы строить присутствие в сообществе.",
+  "communityPostsAppearHere": "Публикации сообщества появятся здесь.",
+  "createFirstPost": "Создать первую публикацию",
+  "yourPostUpper": "ВАША ПУБЛИКАЦИЯ",
+  "businessLabel": "Бизнес",
+  "profileNotAvailable": "Профиль недоступен",
+  "companyProfile": "Профиль компании",
+  "premiumVenue": "Premium-заведение",
+  "businessDetailsTitle": "Данные о компании",
+  "businessNameLabel": "Название компании",
+  "categoryLabel": "Категория",
+  "locationLabel": "Местоположение",
+  "verificationLabel": "Верификация",
+  "pendingLabel": "В ожидании",
+  "notSet": "Не указано",
+  "contactLabel": "Контакт",
+  "emailLabel": "Email",
+  "phoneLabel": "Телефон",
+  "editProfileTitle": "Редактировать профиль",
+  "companyNameField": "Название компании",
+  "phoneField": "Телефон",
+  "locationField": "Местоположение",
+  "signOut": "Выйти",
+  "signOutTitle": "Выйти?",
+  "signOutConfirm": "Вы уверены, что хотите выйти?",
+  "activeCountLabel": "{count,plural, one{{count} активно} few{{count} активно} many{{count} активно} other{{count} активно}}",
+  "@activeCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newThisWeekLabel": "{count,plural, one{{count} новый на этой неделе} few{{count} новых на этой неделе} many{{count} новых на этой неделе} other{{count} новых на этой неделе}}",
+  "@newThisWeekLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jobStatusActive": "Активна",
+  "jobStatusPaused": "На паузе",
+  "jobStatusClosed": "Закрыта",
+  "jobStatusDraft": "Черновик",
+  "contractCasual": "Подработка",
+  "planBasic": "Basic",
+  "planPro": "Pro",
+  "planPremium": "Premium",
+  "bestForMaxVisibility": "Идеально для максимальной видимости",
+  "saveDollarsPerYear": "Экономия {currency}{amount} в год",
+  "@saveDollarsPerYear": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "planBasicFeature1": "До 3 вакансий",
+  "planBasicFeature2": "Просмотр профилей кандидатов",
+  "planBasicFeature3": "Базовый поиск кандидатов",
+  "planBasicFeature4": "Поддержка по email",
+  "planProFeature1": "До 10 вакансий",
+  "planProFeature2": "Расширенный поиск кандидатов",
+  "planProFeature3": "Приоритетная сортировка откликов",
+  "planProFeature4": "Доступ к Quick Plug",
+  "planProFeature5": "Чат-поддержка",
+  "planPremiumFeature1": "Безлимит вакансий",
+  "planPremiumFeature2": "Избранные вакансии",
+  "planPremiumFeature3": "Расширенная аналитика",
+  "planPremiumFeature4": "Безлимит Quick Plug",
+  "planPremiumFeature5": "Приоритетный подбор кандидатов",
+  "planPremiumFeature6": "Персональный менеджер",
+  "currentSelectionCheck": "Текущий выбор ✓",
+  "selectPlanName": "Выбрать {plan}",
+  "@selectPlanName": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "perYear": "/год",
+  "perMonth": "/мес.",
+  "jobTitleHintExample": "напр. Шеф-повар",
+  "locationHintExample": "напр. Дубай, ОАЭ",
+  "annualSalaryLabel": "Годовая зарплата ({currency})",
+  "@annualSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyPayLabel": "Зарплата в месяц ({currency})",
+  "@monthlyPayLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "hourlyRateLabel": "Ставка в час ({currency})",
+  "@hourlyRateLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "minSalaryLabel": "Мин. ({currency})",
+  "@minSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "maxSalaryLabel": "Макс. ({currency})",
+  "@maxSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursPerWeekLabel": "Часов / неделю",
+  "expectedHoursWeekLabel": "Ожидаемые часы / неделю (необязательно)",
+  "bonusTipsLabel": "Бонус / чаевые (необязательно)",
+  "bonusTipsHint": "напр. чаевые и сервисный сбор",
+  "housingIncludedLabel": "Проживание включено",
+  "travelIncludedLabel": "Проезд включён",
+  "overtimeAvailableLabel": "Возможны переработки",
+  "flexibleScheduleLabel": "Гибкий график",
+  "weekendShiftsLabel": "Смены по выходным",
+  "describeRoleHint": "Опишите должность, обязанности и что делает эту работу особенной...",
+  "requirementsHint": "Необходимые навыки, опыт, сертификаты...",
+  "previewPrefix": "Предпросмотр: {text}",
+  "@previewPrefix": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "monthsShort": "{count} мес.",
+  "@monthsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "roleAll": "Все",
+  "roleChef": "Шеф-повар",
+  "roleWaiter": "Официант",
+  "roleBartender": "Бармен",
+  "roleHost": "Хостес",
+  "roleManager": "Менеджер",
+  "roleReception": "Администратор",
+  "roleKitchenPorter": "Помощник на кухне",
+  "roleRelocate": "Переезд",
+  "experience02Years": "0–2 года",
+  "experience35Years": "3–5 лет",
+  "experience5PlusYears": "5+ лет",
+  "roleUpper": "ДОЛЖНОСТЬ",
+  "experienceUpper": "ОПЫТ",
+  "cvLabel": "Резюме",
+  "addShort": "Добавить",
+  "photosCount": "{count,plural, one{{count} фото} few{{count} фото} many{{count} фото} other{{count} фото}}",
+  "@photosCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "candidatesFoundCount": "{count,plural, one{{count} кандидат найден} few{{count} кандидата найдено} many{{count} кандидатов найдено} other{{count} кандидатов найдено}}",
+  "@candidatesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "maxKmLabel": "макс. 50 км",
+  "shortlistAction": "В шортлист",
+  "messageAction": "Написать",
+  "interviewAction": "Собеседование",
+  "viewAction": "Смотреть",
+  "rejectAction": "Отклонить",
+  "basedIn": "Находится в",
+  "verificationPending": "Верификация в ожидании",
+  "refreshAction": "Обновить",
+  "upgradeAction": "Улучшить",
+  "searchJobsByTitleHint": "Поиск вакансий по названию, должности или месту…",
+  "xShortlisted": "{name} добавлен(а) в шортлист",
+  "@xShortlisted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "xRejected": "{name} отклонён(а)",
+  "@xRejected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectConfirmName": "Вы уверены, что хотите отклонить {name}?",
+  "@rejectConfirmName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appliedToRoleOn": "Откликнулся(ась) на {role} {date}",
+  "@appliedToRoleOn": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "appliedDatePrefix": "Отклик {date}",
+  "@appliedDatePrefix": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "salaryExpectationTitle": "Ожидания по зарплате",
+  "previousEmployer": "Предыдущий работодатель",
+  "earlierVenue": "Более раннее заведение",
+  "presentLabel": "Сейчас",
+  "skillCustomerService": "Клиентский сервис",
+  "skillTeamwork": "Командная работа",
+  "skillCommunication": "Коммуникация",
+  "stepApplied": "Отправлено",
+  "stepViewed": "Просмотрено",
+  "stepShortlisted": "В шортлисте",
+  "stepInterviewScheduled": "Собеседование назначено",
+  "stepRejected": "Отклонено",
+  "stepUnderReview": "На рассмотрении",
+  "stepPendingReview": "Ожидает рассмотрения",
+  "sortNewest": "Сначала новые",
+  "sortMostExperienced": "По опыту",
+  "sortBestMatch": "Лучшее совпадение",
+  "filterApplied": "Откликнулся",
+  "filterUnderReview": "На рассмотрении",
+  "filterShortlisted": "В шортлисте",
+  "filterInterview": "Собеседование",
+  "filterHired": "Нанят(а)",
+  "filterRejected": "Отклонён(а)",
+  "confirmed": "Подтверждено",
+  "pending": "В ожидании",
+  "completed": "Завершено",
+  "cancelled": "Отменено",
+  "videoLabel": "Видео",
+  "viewDetails": "Подробнее",
+  "interviewDetails": "Детали собеседования",
+  "interviewConfirmedHeadline": "Собеседование подтверждено",
+  "interviewConfirmedSubline": "Всё готово. Мы напомним ближе к началу.",
+  "dateLabel": "Дата",
+  "timeLabel": "Время",
+  "formatLabel": "Формат",
+  "joinMeeting": "Подключиться",
+  "viewJobAction": "Открыть вакансию",
+  "addToCalendar": "В календарь",
+  "needsYourAttention": "Требует Вашего внимания",
+  "reviewAction": "Рассмотреть",
+  "applicationsCount": "{count, plural, one{{count} отклик} few{{count} отклика} many{{count} откликов} other{{count} отклика}}",
+  "@applicationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sortMostRecent": "Сначала новые",
+  "interviewScheduledLabel": "Собеседование назначено",
+  "editAction": "Изменить",
+  "currentPlanLabel": "Текущий тариф",
+  "freePlan": "Бесплатный тариф",
+  "profileStrength": "Сила профиля",
+  "detailsLabel": "Подробнее",
+  "basedInLabel": "Находится в",
+  "verificationLabel2": "Верификация",
+  "contactLabel2": "Контакт",
+  "notSetLabel": "Не указано",
+  "chipAll": "Все",
+  "chipFullTime": "Полная занятость",
+  "chipPartTime": "Неполная",
+  "chipTemporary": "Временная работа",
+  "chipCasual": "Подработка",
+  "sortBestMatchLabel": "Лучшее совпадение",
+  "sortAZ": "А–Я",
+  "sortBy": "Сортировка",
+  "featuredBadge": "Избранное",
+  "urgentBadge": "Срочно",
+  "salaryOnRequest": "Зарплата по запросу",
+  "upgradeToPremium": "Перейти на Premium",
+  "urgentJobsOnly": "Только срочные вакансии",
+  "showOnlyUrgentListings": "Показывать только срочные вакансии",
+  "verifiedBusinessesOnly": "Только проверенные компании",
+  "showOnlyVerifiedBusinesses": "Показывать только проверенные компании",
+  "split": "Разделить",
+  "payUpper": "ОПЛАТА",
+  "typeUpper": "ТИП",
+  "whereUpper": "ГДЕ",
+  "payLabel": "Оплата",
+  "typeLabel": "Тип",
+  "whereLabel": "Где",
+  "whereYouWillWork": "Где Вы будете работать",
+  "mapPreviewDirections": "Предпросмотр карты · открыть для маршрута",
+  "directionsAction": "Маршрут",
+  "communityTabForYou": "Для Вас",
+  "communityTabFollowing": "Подписки",
+  "communityTabNearby": "Рядом",
+  "communityTabSaved": "Сохранённые",
+  "viewProfileAction": "Посмотреть профиль",
+  "copyLinkAction": "Копировать ссылку",
+  "savePostAction": "Сохранить публикацию",
+  "unsavePostAction": "Убрать из сохранённых",
+  "hideThisPost": "Скрыть публикацию",
+  "reportPost": "Пожаловаться на публикацию",
+  "cancelAction": "Отмена",
+  "newPostTitle": "Новая публикация",
+  "youLabel": "Вы",
+  "postingToCommunityAsBusiness": "Публикация в сообществе от имени бизнеса",
+  "postingToCommunityAsPro": "Публикация в сообществе от имени специалиста",
+  "whatsOnYourMind": "О чём Вы думаете?",
+  "publishAction": "Опубликовать",
+  "attachmentPhoto": "Фото",
+  "attachmentVideo": "Видео",
+  "attachmentLocation": "Местоположение",
+  "boostMyProfileCta": "Продвинуть профиль",
+  "unlockYourFullPotential": "Раскройте весь свой потенциал",
+  "annualPlan": "Годовой",
+  "monthlyPlan": "Месячный",
+  "bestValueBadge": "ВЫГОДНО",
+  "whatsIncluded": "Что входит",
+  "continueWithAnnual": "Продолжить с годовым",
+  "continueWithMonthly": "Продолжить с месячным",
+  "maybeLater": "Возможно, позже",
+  "restorePurchasesLabel": "Восстановить покупки",
+  "subscriptionAutoRenewsNote": "Подписка продлевается автоматически. Отмена в Настройках.",
+  "appStatusPillApplied": "Отправлен",
+  "appStatusPillUnderReview": "На рассмотрении",
+  "appStatusPillShortlisted": "В шортлисте",
+  "appStatusPillInterviewInvited": "Собеседование",
+  "appStatusPillInterviewScheduled": "Собеседование назначено",
+  "appStatusPillHired": "Нанят(а)",
+  "appStatusPillRejected": "Отклонён(а)",
+  "appStatusPillWithdrawn": "Отозван",
+  "jobActionPause": "Поставить на паузу",
+  "jobActionResume": "Возобновить",
+  "jobActionClose": "Закрыть вакансию",
+  "statusConfirmedLower": "подтверждено",
+  "postInsightsTitle": "Статистика публикации",
+  "postInsightsSubtitle": "Кто видит Ваш контент",
+  "recentViewers": "Недавние зрители",
+  "lockedBadge": "ЗАКРЫТО",
+  "viewerBreakdown": "Разбивка аудитории",
+  "viewersByRole": "Зрители по должностям",
+  "topLocations": "Топ локаций",
+  "businesses": "Компании",
+  "saveToCollectionTitle": "Сохранить в коллекцию",
+  "chooseCategory": "Выберите категорию",
+  "removeFromCollection": "Убрать из коллекции",
+  "newApplicationTemplate": "Новый отклик — {role}",
+  "@newApplicationTemplate": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryRestaurants": "Рестораны",
+  "categoryCookingVideos": "Кулинарные видео",
+  "categoryJobsTips": "Советы по трудоустройству",
+  "categoryHospitalityNews": "Новости индустрии",
+  "categoryRecipes": "Рецепты",
+  "categoryOther": "Другое",
+  "premiumHeroTagline": "Больше видимости, приоритетные уведомления и расширенные фильтры для серьёзных профессионалов гостеприимства.",
+  "benefitAdvancedFilters": "Расширенные фильтры поиска",
+  "benefitPriorityNotifications": "Приоритетные уведомления о вакансиях",
+  "benefitProfileVisibility": "Повышенная видимость профиля",
+  "benefitPremiumBadge": "Значок Premium на профиле",
+  "benefitEarlyAccess": "Ранний доступ к новым вакансиям",
+  "unlockCandidatePremium": "Откройте Candidate Premium",
+  "getStartedAction": "Начать",
+  "findYourFirstJob": "Найдите свою первую работу",
+  "browseHospitalityRolesNearby": "Смотрите сотни вакансий в гостеприимстве рядом с Вами",
+  "seeWhoViewedYourPostTitle": "Узнайте, кто просмотрел Вашу публикацию",
+  "upgradeToPremiumCta": "Перейти на Premium",
+  "upgradeToPremiumSubtitle": "Перейдите на Premium, чтобы увидеть проверенные компании, рекрутёров и руководителей, просматривавших Ваш контент.",
+  "verifiedBusinessViewers": "Проверенные просмотры от компаний",
+  "recruiterHiringManagerActivity": "Активность рекрутёров и менеджеров по найму",
+  "cityLevelReachBreakdown": "Разбивка охвата по городам",
+  "liveApplicationsCount": "{count, plural, one{{count} активный} few{{count} активных} many{{count} активных} other{{count} активных}}",
+  "nearbyJobsCount": "{count, plural, one{{count} рядом} few{{count} рядом} many{{count} рядом} other{{count} рядом}}",
+  "jobsNearYouCount": "{count, plural, one{{count} вакансия рядом} few{{count} вакансии рядом} many{{count} вакансий рядом} other{{count} вакансии рядом}}",
+  "applicationsUnderReviewCount": "{count, plural, one{{count} отклик на рассмотрении} few{{count} отклика на рассмотрении} many{{count} откликов на рассмотрении} other{{count} отклика на рассмотрении}}",
+  "interviewsScheduledCount": "{count, plural, one{{count} собеседование назначено} few{{count} собеседования назначено} many{{count} собеседований назначено} other{{count} собеседования назначено}}",
+  "unreadMessagesCount": "{count, plural, one{{count} непрочитанное сообщение} few{{count} непрочитанных сообщения} many{{count} непрочитанных сообщений} other{{count} непрочитанных сообщения}}",
+  "unreadMessagesFromEmployersCount": "{count, plural, one{{count} непрочитанное сообщение от работодателей} few{{count} непрочитанных сообщения от работодателей} many{{count} непрочитанных сообщений от работодателей} other{{count} непрочитанных сообщения от работодателей}}",
+  "stepsLeftCount": "{count, plural, one{остался {count} шаг} few{осталось {count} шага} many{осталось {count} шагов} other{осталось {count} шага}}",
+  "profileCompleteGreatWork": "Профиль заполнен — отличная работа",
+  "@liveApplicationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@nearbyJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@jobsNearYouCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@applicationsUnderReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@interviewsScheduledCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@unreadMessagesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@unreadMessagesFromEmployersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "@stepsLeftCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "yearsCount": "{count, plural, one{{count} год} few{{count} года} many{{count} лет} other{{count} года}}",
+  "@yearsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "perHour": "/час",
+  "hoursPerWeekShort": "{count, plural, one{{count} ч/нед.} few{{count} ч/нед.} many{{count} ч/нед.} other{{count} ч/нед.}}",
+  "@hoursPerWeekShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "forMonthsCount": "{count, plural, one{на {count} месяц} few{на {count} месяца} many{на {count} месяцев} other{на {count} месяца}}",
+  "@forMonthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewsCount": "{count, plural, one{{count} собеседование} few{{count} собеседования} many{{count} собеседований} other{{count} собеседования}}",
+  "@interviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quickActionFindJobs": "Найти работу",
+  "quickActionMyApplications": "Мои отклики",
+  "quickActionUpdateProfile": "Обновить профиль",
+  "quickActionCreatePost": "Создать публикацию",
+  "quickActionViewInterviews": "Смотреть собеседования",
+  "confirmSubscriptionTitle": "Подтвердите подписку",
+  "confirmAndSubscribeCta": "Подтвердить и подписаться",
+  "timelineLabel": "Хронология",
+  "interviewLabel": "Собеседование",
+  "payOnRequest": "Оплата по запросу",
+  "rateOnRequest": "Ставка по запросу",
+  "quickActionFindJobsSubtitle": "Найдите вакансии рядом",
+  "quickActionMyApplicationsSubtitle": "Отслеживайте каждый отклик",
+  "quickActionUpdateProfileSubtitle": "Повысьте видимость и совпадение",
+  "quickActionCreatePostSubtitle": "Поделитесь работой с сообществом",
+  "quickActionViewInterviewsSubtitle": "Готовьтесь к следующему шагу",
+  "offerLabel": "Оффер",
+  "hiringForTemplate": "Набираем на {role}",
+  "@hiringForTemplate": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToOpenInMaps": "Нажмите, чтобы открыть в Картах",
+  "alreadyAppliedToJob": "Вы уже откликнулись на эту вакансию.",
+  "changePhoto": "Изменить фото",
+  "changeAvatar": "Изменить аватар",
+  "addPhotoAction": "Добавить фото",
+  "nationalityLabel": "Гражданство",
+  "targetRoleLabel": "Желаемая должность",
+  "salaryExpectationLabel": "Ожидания по зарплате",
+  "addLanguageCta": "+ Добавить язык",
+  "experienceLabel": "Опыт",
+  "nameLabel": "Имя",
+  "zeroHours": "Нулевой контракт",
+  "checkInterviewDetailsLine": "Проверьте детали собеседования",
+  "interviewInvitedSubline": "Работодатель хочет провести собеседование — подтвердите время",
+  "shortlistedSubline": "Вы попали в шортлист — ждите следующего шага",
+  "underReviewSubline": "Работодатель изучает Ваш профиль",
+  "hiredHeadline": "Приняты",
+  "hiredSubline": "Поздравляем! Вы получили оффер",
+  "applicationSubmittedHeadline": "Отклик отправлен",
+  "applicationSubmittedSubline": "Работодатель рассмотрит Ваш отклик",
+  "withdrawnHeadline": "Отозван",
+  "withdrawnSubline": "Вы отозвали этот отклик",
+  "notSelectedHeadline": "Не выбран(а)",
+  "notSelectedSubline": "Спасибо за интерес",
+  "jobsFoundCount": "{count, plural, one{{count} вакансия найдена} few{{count} вакансии найдено} many{{count} вакансий найдено} other{{count} вакансии найдено}}",
+  "@jobsFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsTotalCount": "{count, plural, one{всего {count}} few{всего {count}} many{всего {count}} other{всего {count}}}",
+  "@applicationsTotalCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsInReviewCount": "{count, plural, one{{count} на рассмотрении} few{{count} на рассмотрении} many{{count} на рассмотрении} other{{count} на рассмотрении}}",
+  "@applicationsInReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsLiveCount": "{count, plural, one{{count} активный} few{{count} активных} many{{count} активных} other{{count} активных}}",
+  "@applicationsLiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewsPendingConfirmTime": "{count, plural, one{{count} собеседование ожидает — подтвердите время.} few{{count} собеседования ожидают — подтвердите время.} many{{count} собеседований ожидают — подтвердите время.} other{{count} собеседования ожидают — подтвердите время.}}",
+  "@interviewsPendingConfirmTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notifInterviewConfirmedTitle": "Собеседование подтверждено — {name}",
+  "@notifInterviewConfirmedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInterviewRequestTitle": "Запрос на собеседование — {name}",
+  "@notifInterviewRequestTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApplicationUpdateTitle": "Обновление по отклику — {name}",
+  "@notifApplicationUpdateTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifOfferReceivedTitle": "Получен оффер — {name}",
+  "@notifOfferReceivedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifMessageFromTitle": "Сообщение от — {name}",
+  "@notifMessageFromTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInterviewReminderTitle": "Напоминание о собеседовании — {name}",
+  "@notifInterviewReminderTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifProfileViewedTitle": "Профиль просмотрен — {name}",
+  "@notifProfileViewedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifNewJobMatchTitle": "Новое совпадение — {name}",
+  "@notifNewJobMatchTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApplicationViewedTitle": "Отклик просмотрен — {name}",
+  "@notifApplicationViewedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifShortlistedTitle": "В шортлисте — {name}",
+  "@notifShortlistedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifCompleteProfile": "Заполните профиль для лучших совпадений",
+  "notifCompleteBusinessProfile": "Заполните профиль компании для большей видимости",
+  "notifNewJobViews": "Ваша вакансия {role} получила новых просмотров: {count}",
+  "@notifNewJobViews": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "notifAppliedForRole": "{name} откликнулся(ась) на {role}",
+  "@notifAppliedForRole": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "notifNewApplicationNameRole": "Новый отклик: {name} на {role}",
+  "@notifNewApplicationNameRole": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTyping": "Печатает...",
+  "chatStatusSeen": "Прочитано",
+  "chatStatusDelivered": "Доставлено",
+  "entryTagline": "Платформа подбора персонала для индустрии гостеприимства.",
+  "entryFindWork": "Найти работу",
+  "entryFindWorkSubtitle": "Смотрите вакансии от ведущих заведений",
+  "entryHireStaff": "Нанять персонал",
+  "entryHireStaffSubtitle": "Публикуйте вакансии и находите лучших специалистов",
+  "entryFindCompanies": "Найти компании",
+  "entryFindCompaniesSubtitle": "Открывайте заведения и сервисные компании",
+  "servicesEntryTitle": "Поиск компаний",
+  "servicesHospitalityServices": "Услуги для индустрии гостеприимства",
+  "servicesEntrySubtitle": "Зарегистрируйте свою компанию или найдите поставщиков услуг рядом",
+  "servicesRegisterCardTitle": "Зарегистрировать бизнес",
+  "servicesRegisterCardSubtitle": "Разместите свою услугу и получайте новых клиентов",
+  "servicesLookingCardTitle": "Я ищу компанию",
+  "servicesLookingCardSubtitle": "Найдите поставщиков услуг для индустрии гостеприимства рядом",
+  "registerBusinessTitle": "Зарегистрируйте бизнес",
+  "enterCompanyName": "Введите название компании",
+  "subcategoryOptional": "Подкатегория (необязательно)",
+  "subcategoryHintFloristDj": "напр. Флорист, DJ-услуги",
+  "searchCompaniesHint": "Поиск компаний...",
+  "browseCategories": "Все категории",
+  "companiesFoundCount": "{count, plural, one{{count} компания найдена} few{{count} компании найдено} many{{count} компаний найдено} other{{count} компании найдено}}",
+  "@companiesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serviceCategoryFoodBeverage": "Поставщики еды и напитков",
+  "serviceCategoryEventServices": "Услуги для мероприятий",
+  "serviceCategoryDecorDesign": "Декор и дизайн",
+  "serviceCategoryEntertainment": "Развлечения",
+  "serviceCategoryEquipmentOps": "Оборудование и операции",
+  "serviceCategoryCleaningMaintenance": "Уборка и обслуживание",
+  "distanceMiles": "{value} mi",
+  "@distanceMiles": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "distanceKilometers": "{value} km",
+  "@distanceKilometers": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "postDetailTitle": "Публикация",
+  "likeAction": "Нравится",
+  "commentAction": "Комментировать",
+  "saveActionLabel": "Сохранить",
+  "commentsTitle": "Комментарии",
+  "addCommentHint": "Добавьте комментарий…",
+  "likesCount": "{count,plural, one{{count} лайк} few{{count} лайка} many{{count} лайков} other{{count} лайка}}",
+  "@likesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commentsCount": "{count,plural, one{{count} комментарий} few{{count} комментария} many{{count} комментариев} other{{count} комментария}}",
+  "@commentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savesCount": "{count,plural, one{{count} сохранение} few{{count} сохранения} many{{count} сохранений} other{{count} сохранения}}",
+  "@savesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoMinutesShort": "{count}мин",
+  "@timeAgoMinutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoHoursShort": "{count}ч",
+  "@timeAgoHoursShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoDaysShort": "{count}д",
+  "@timeAgoDaysShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoNow": "сейчас",
+  "activityTitle": "Активность",
+  "activityLikedPost": "лайкнул(а) Вашу публикацию",
+  "activityCommented": "прокомментировал(а) Вашу публикацию",
+  "activityStartedFollowing": "подписался(ась) на Вас",
+  "activityMentioned": "упомянул(а) Вас",
+  "activitySystemUpdate": "отправил(а) Вам обновление",
+  "noActivityYetDesc": "Когда кто-то поставит лайк, прокомментирует или подпишется — это появится здесь.",
+  "activeStatus": "Активно",
+  "activeBadge": "АКТИВНО",
+  "nextRenewalLabel": "Следующее продление",
+  "startedLabel": "Начало",
+  "statusLabel": "Статус",
+  "billingAndCancellation": "Оплата и отмена",
+  "billingAndCancellationCopy": "Ваша подписка оплачивается через аккаунт App Store / Google Play. Вы можете отменить её в любой момент в настройках устройства — премиум-доступ сохранится до даты продления.",
+  "premiumIsActive": "Premium активен",
+  "premiumThanksCopy": "Спасибо, что поддерживаете Plagit. Вам доступны все возможности Premium.",
+  "manageSubscription": "Управление подпиской",
+  "candidatePremiumPlanName": "Candidate Premium",
+  "renewsOnDate": "Продление {date}",
+  "@renewsOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fullViewerAccessLine": "Полный доступ к аудитории · вся аналитика открыта",
+  "premiumActiveBadge": "Premium активен",
+  "fullInsightsUnlocked": "Вся аналитика и данные о зрителях открыты.",
+  "noViewersInCategory": "В этой категории пока нет зрителей",
+  "onlyVerifiedViewersShown": "Показаны только проверенные зрители с публичными профилями.",
+  "notEnoughDataYet": "Данных пока недостаточно.",
+  "noViewInsightsYet": "Аналитики просмотров пока нет",
+  "noViewInsightsDesc": "Аналитика появится, когда публикация наберёт больше просмотров.",
+  "suspiciousEngagementDetected": "Обнаружена подозрительная активность",
+  "patternReviewRequired": "Требуется проверка паттернов",
+  "adminInsightsFooter": "Режим администратора — та же аналитика, что видит автор, плюс модерационные флаги. Только агрегированные данные, личности зрителей не раскрываются.",
+  "viewerKindBusiness": "Бизнес",
+  "viewerKindCandidate": "Кандидат",
+  "viewerKindRecruiter": "Рекрутёр",
+  "viewerKindHiringManager": "Менеджер по найму",
+  "viewerKindBusinessesPlural": "Компании",
+  "viewerKindCandidatesPlural": "Кандидаты",
+  "viewerKindRecruitersPlural": "Рекрутёры",
+  "viewerKindHiringManagersPlural": "Менеджеры по найму",
+  "searchPeoplePostsVenuesHint": "Поиск людей, публикаций, заведений…",
+  "searchCommunityTitle": "Поиск по сообществу",
+  "roleSommelier": "Сомелье",
+  "candidatePremiumActivated": "Вы теперь Candidate Premium",
+  "purchasesRestoredPremium": "Покупки восстановлены — Вы теперь Candidate Premium",
+  "nothingToRestore": "Нечего восстанавливать",
+  "noValidSubscriptionPremiumRemoved": "Действующая подписка не найдена — премиум-доступ снят",
+  "restoreFailedWithError": "Восстановление не удалось. {error}",
+  "@restoreFailedWithError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionTitleAnnual": "Candidate Premium · Годовой",
+  "subscriptionTitleMonthly": "Candidate Premium · Месячный",
+  "pricePerYearSlash": "{price} / год",
+  "@pricePerYearSlash": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "pricePerMonthSlash": "{price} / мес.",
+  "@pricePerMonthSlash": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbyJobsTitle": "Вакансии рядом",
+  "@nearbyJobsTitle": {},
+  "expandRadius": "Увеличить радиус",
+  "@expandRadius": {},
+  "noJobsInRadius": "В этом радиусе вакансий нет",
+  "@noJobsInRadius": {},
+  "jobsWithinRadius": "{count, plural, one{{count} вакансия в радиусе {radius} миль} few{{count} вакансии в радиусе {radius} миль} many{{count} вакансий в радиусе {radius} миль} other{{count} вакансии в радиусе {radius} миль}}",
+  "@jobsWithinRadius": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "radius": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewAcceptedSnack": "Собеседование принято!",
+  "@interviewAcceptedSnack": {},
+  "declineInterviewTitle": "Отклонить собеседование",
+  "@declineInterviewTitle": {},
+  "declineInterviewConfirm": "Вы уверены, что хотите отклонить это собеседование?",
+  "@declineInterviewConfirm": {},
+  "addedToCalendar": "Добавлено в календарь",
+  "@addedToCalendar": {},
+  "removeCompanyTitle": "Удалить?",
+  "@removeCompanyTitle": {},
+  "removeCompanyConfirm": "Вы уверены, что хотите удалить эту компанию из сохранённых?",
+  "@removeCompanyConfirm": {},
+  "signOutAllRolesConfirm": "Вы уверены, что хотите выйти из всех ролей?",
+  "@signOutAllRolesConfirm": {},
+  "tapToViewAllConversations": "Нажмите, чтобы посмотреть все диалоги",
+  "@tapToViewAllConversations": {},
+  "savedJobsTitle": "Сохранённые вакансии",
+  "@savedJobsTitle": {},
+  "savedJobsCount": "{count, plural, one{{count} сохранённая вакансия} few{{count} сохранённые вакансии} many{{count} сохранённых вакансий} other{{count} сохранённые вакансии}}",
+  "@savedJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "removeFromSavedTitle": "Удалить из сохранённых?",
+  "@removeFromSavedTitle": {},
+  "removeFromSavedConfirm": "Эта вакансия будет удалена из Ваших сохранённых.",
+  "@removeFromSavedConfirm": {},
+  "noSavedJobsSubtitle": "Просматривайте вакансии и сохраняйте понравившиеся",
+  "@noSavedJobsSubtitle": {},
+  "browseJobsAction": "Смотреть вакансии",
+  "@browseJobsAction": {},
+  "matchingJobsCount": "{count, plural, one{{count} подходящая вакансия} few{{count} подходящие вакансии} many{{count} подходящих вакансий} other{{count} подходящие вакансии}}",
+  "@matchingJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savedPostsTitle": "Сохранённые публикации",
+  "@savedPostsTitle": {},
+  "searchSavedPostsHint": "Поиск по сохранённым публикациям…",
+  "@searchSavedPostsHint": {},
+  "skipAction": "Пропустить",
+  "submitAction": "Отправить",
+  "doneAction": "Готово",
+  "resetYourPasswordTitle": "Сброс пароля",
+  "enterEmailForResetCode": "Введите электронную почту, чтобы получить код сброса",
+  "sendResetCode": "Отправить код",
+  "enterResetCode": "Введите код сброса",
+  "resendCode": "Отправить повторно",
+  "passwordResetComplete": "Сброс пароля завершён",
+  "backToSignIn": "Вернуться ко входу",
+  "passwordChanged": "Пароль изменён",
+  "passwordUpdatedShort": "Ваш пароль успешно обновлён.",
+  "passwordUpdatedRelogin": "Ваш пароль обновлён. Пожалуйста, войдите снова с новым паролем.",
+  "updatePassword": "Обновить пароль",
+  "changePasswordTitle": "Изменить пароль",
+  "passwordRequirements": "Требования к паролю",
+  "newPasswordHint": "Новый пароль (минимум 8 символов)",
+  "confirmPasswordField": "Подтвердите пароль",
+  "enterEmailField": "Введите электронную почту",
+  "enterPasswordField": "Введите пароль",
+  "welcomeBack": "С возвращением!",
+  "selectHowToUse": "Выберите, как хотите использовать Plagit сегодня",
+  "continueAsCandidate": "Войти как кандидат",
+  "continueAsBusiness": "Войти как бизнес",
+  "signInToPlagit": "Вход в Plagit",
+  "enterCredentials": "Введите данные для входа",
+  "adminPortal": "Портал администратора",
+  "plagitAdmin": "Plagit Admin",
+  "signInToAdminAccount": "Войдите в аккаунт администратора",
+  "admin": "Admin",
+  "searchJobsRolesRestaurantsHint": "Поиск вакансий, должностей, ресторанов...",
+  "exploreNearbyJobs": "Вакансии рядом",
+  "findOpportunitiesOnMap": "Найдите возможности на карте вокруг Вас",
+  "featuredJobs": "Избранные вакансии",
+  "jobsNearYou": "Вакансии рядом",
+  "jobsMatchingRoleType": "Вакансии под Вашу должность и тип занятости",
+  "availableNow": "Доступно сейчас",
+  "noNearbyJobsYet": "Вакансий рядом пока нет",
+  "tryIncreasingRadius": "Попробуйте увеличить радиус или изменить фильтры",
+  "checkBackForOpportunities": "Загляните позже — появятся новые возможности",
+  "noNotifications": "Уведомлений нет",
+  "okAction": "ОК",
+  "onlineNow": "В сети",
+  "businessUpper": "БИЗНЕС",
+  "waitingForBusinessFirstMessage": "Ждём, когда компания напишет первой",
+  "whenEmployersMessageYou": "Когда работодатели напишут Вам, они появятся здесь.",
+  "replyToCandidate": "Ответить кандидату…",
+  "quickFeedback": "Быстрая обратная связь",
+  "helpImproveMatches": "Помогите улучшить Ваши совпадения",
+  "thanksForFeedback": "Спасибо за отзыв!",
+  "accountSettings": "Настройки аккаунта",
+  "notificationSettings": "Настройки уведомлений",
+  "privacyAndSecurity": "Конфиденциальность и безопасность",
+  "helpAndSupport": "Помощь и поддержка",
+  "activeRoleUpper": "АКТИВНАЯ РОЛЬ",
+  "meetingLink": "Ссылка на встречу",
+  "joinMeeting2": "Подключиться ко встрече",
+  "notes": "Заметки",
+  "completeBusinessProfileTitle": "Заполните профиль компании",
+  "businessDescription": "Описание компании",
+  "finishSetupAction": "Завершить настройку",
+  "describeBusinessHintLong": "Опишите Вашу компанию, культуру и что делает её отличным местом работы... (рекомендуется минимум 150 символов)",
+  "describeBusinessHintShort": "Опишите Вашу компанию...",
+  "writeShortIntroAboutYourself": "Напишите короткое представление о себе...",
+  "createBusinessAccountTitle": "Создать бизнес-аккаунт",
+  "businessDetailsSection": "Данные о компании",
+  "openToInternationalCandidates": "Рассматриваю международных кандидатов",
+  "createAccountShort": "Создать аккаунт",
+  "yourDetailsSection": "Ваши данные",
+  "jobTypeField": "Тип занятости",
+  "communityFeed": "Лента сообщества",
+  "postPublished": "Публикация опубликована",
+  "postHidden": "Публикация скрыта",
+  "postReportedReview": "Жалоба отправлена — администратор рассмотрит",
+  "postNotFound": "Публикация не найдена",
+  "goBack": "Назад",
+  "linkCopied": "Ссылка скопирована",
+  "removedFromSaved": "Удалено из сохранённых",
+  "noPostsFound": "Публикаций не найдено",
+  "tipsStoriesAdvice": "Советы, истории и опыт профессионалов индустрии гостеприимства",
+  "searchTalentPostsRolesHint": "Поиск специалистов, публикаций, должностей…",
+  "videoAttachmentsComingSoon": "Вложения видео скоро появятся",
+  "locationTaggingComingSoon": "Метки местоположения скоро появятся",
+  "fullImageViewerComingSoon": "Полный просмотр изображений скоро появится",
+  "shareComingSoon": "Поделиться скоро появится",
+  "findServices": "Найти услуги",
+  "findHospitalityServices": "Найти услуги для индустрии гостеприимства",
+  "browseServices": "Просмотр услуг",
+  "searchServicesCompaniesLocationsHint": "Поиск услуг, компаний, адресов...",
+  "searchCompaniesServicesLocationsHint": "Поиск компаний, услуг, адресов...",
+  "nearbyCompanies": "Компании рядом",
+  "nearYou": "Рядом с Вами",
+  "listLabel": "Список",
+  "mapViewLabel": "Карта",
+  "noServicesFound": "Услуг не найдено",
+  "noCompaniesFoundNearby": "Компаний поблизости не найдено",
+  "noSavedCompanies": "Сохранённых компаний нет",
+  "savedCompaniesTitle": "Сохранённые компании",
+  "saveCompaniesForLater": "Сохраняйте понравившиеся компании, чтобы легко находить их позже",
+  "latestUpdates": "Последние новости",
+  "noPromotions": "Акций нет",
+  "companyHasNoPromotions": "У этой компании нет активных акций.",
+  "companyHasNoUpdates": "Эта компания не публиковала новостей.",
+  "promotionsAndOffers": "Акции и предложения",
+  "promotionNotFound": "Акция не найдена",
+  "promotionDetails": "Детали акции",
+  "termsAndConditions": "Правила и условия",
+  "relatedPosts": "Похожие публикации",
+  "viewOffer": "Открыть",
+  "offerBadge": "АКЦИЯ",
+  "requestQuote": "Запросить смету",
+  "sendRequest": "Отправить запрос",
+  "quoteRequestSent": "Запрос сметы отправлен!",
+  "inquiry": "Запрос",
+  "dateNeeded": "Нужная дата",
+  "serviceType": "Тип услуги",
+  "serviceArea": "Район обслуживания",
+  "servicesOffered": "Предлагаемые услуги",
+  "servicesLabel": "Услуги",
+  "servicePlans": "Тарифы на услуги",
+  "growYourServiceBusiness": "Развивайте свой сервисный бизнес",
+  "getDiscoveredPremium": "Привлекайте больше клиентов с premium-размещением.",
+  "unlockPremium": "Открыть Premium",
+  "getMoreVisibility": "Получите больше видимости и лучшие совпадения",
+  "plagitPremiumUpper": "PLAGIT PREMIUM",
+  "premiumOnly": "Только Premium",
+  "savePercent17": "Скидка 17%",
+  "registerBusinessCta": "Зарегистрировать бизнес",
+  "registrationSubmitted": "Регистрация отправлена",
+  "serviceDescription": "Описание услуги",
+  "describeServicesHint": "Опишите Ваши услуги, опыт и что выделяет Вас среди других...",
+  "websiteOptional": "Website (необязательно)",
+  "viewCompanyProfileCta": "Посмотреть профиль компании",
+  "contactCompany": "Связаться с компанией",
+  "aboutUs": "О нас",
+  "address": "Адрес",
+  "city": "Город",
+  "yourLocation": "Ваше местоположение",
+  "enterYourCity": "Введите Ваш город",
+  "clearFilters": "Очистить фильтры",
+  "tryDifferentSearchTerm": "Попробуйте другой запрос",
+  "tryDifferentOrAdjust": "Попробуйте другой запрос, категорию или измените фильтры.",
+  "noPostsYetCompany": "Публикаций пока нет",
+  "requestQuoteFromCompany": "Запросить смету у {companyName}",
+  "@requestQuoteFromCompany": {
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+  "validUntilDate": "Действует до {validUntil}",
+  "@validUntilDate": {
+    "placeholders": {
+      "validUntil": {
+        "type": "String"
+      }
+    }
+  },
+  "employerCheckingProfile": "Работодатель сейчас смотрит Ваш профиль",
+  "profileStrengthPercent": "Ваш профиль заполнен на {percent}%",
+  "@profileStrengthPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "profileGetsMoreViews": "Полный профиль получает в 3× больше просмотров",
+  "applicationUpdate": "Статус отклика",
+  "findJobsAndApply": "Найти работу и откликнуться",
+  "manageJobsAndHiring": "Управление вакансиями и наймом",
+  "managePlatform": "Управление платформой",
+  "findHospitalityCompanies": "Найти hospitality-компании",
+  "candidateMessages": "СООБЩЕНИЯ КАНДИДАТОВ",
+  "businessMessages": "СООБЩЕНИЯ БИЗНЕСА",
+  "serviceInquiries": "ЗАПРОСЫ УСЛУГ",
+  "acceptInterview": "Принять интервью",
+  "adminMenuDashboard": "Панель",
+  "adminMenuUsers": "Пользователи",
+  "adminMenuCandidates": "Кандидаты",
+  "adminMenuBusinesses": "Компании",
+  "adminMenuJobs": "Вакансии",
+  "adminMenuApplications": "Заявки",
+  "adminMenuBookings": "Бронирования",
+  "adminMenuPayments": "Платежи",
+  "adminMenuMessages": "Сообщения",
+  "adminMenuNotifications": "Уведомления",
+  "adminMenuReports": "Отчёты",
+  "adminMenuAnalytics": "Аналитика",
+  "adminMenuSettings": "Настройки",
+  "adminMenuSupport": "Поддержка",
+  "adminMenuModeration": "Модерация",
+  "adminMenuRoles": "Роли",
+  "adminMenuInvoices": "Счета",
+  "adminMenuLogs": "Журналы",
+  "adminMenuIntegrations": "Интеграции",
+  "adminMenuLogout": "Выйти",
+  "adminActionApprove": "Одобрить",
+  "adminActionReject": "Отклонить",
+  "adminActionSuspend": "Приостановить",
+  "adminActionActivate": "Активировать",
+  "adminActionDelete": "Удалить",
+  "adminActionExport": "Экспорт",
+  "adminSectionOverview": "Обзор",
+  "adminSectionManagement": "Управление",
+  "adminSectionFinance": "Финансы",
+  "adminSectionOperations": "Операции",
+  "adminSectionSystem": "Система",
+  "adminStatTotalUsers": "Всего пользователей",
+  "adminStatActiveJobs": "Активные вакансии",
+  "adminStatPendingApprovals": "Ожидающие одобрения",
+  "adminStatRevenue": "Доход",
+  "adminStatBookingsToday": "Бронирования сегодня",
+  "adminStatNewSignups": "Новые регистрации",
+  "adminStatConversionRate": "Коэффициент конверсии",
+  "adminMiscWelcome": "С возвращением",
+  "adminMiscLoading": "Загрузка…",
+  "adminMiscNoData": "Нет данных",
+  "adminMiscSearchPlaceholder": "Поиск…",
+  "adminMenuContent": "Контент",
+  "adminMenuMore": "Ещё",
+  "adminMenuVerifications": "Проверки",
+  "adminMenuSubscriptions": "Подписки",
+  "adminMenuCommunity": "Сообщество",
+  "adminMenuInterviews": "Собеседования",
+  "adminMenuMatches": "Совпадения",
+  "adminMenuFeaturedContent": "Рекомендуемое",
+  "adminMenuAuditLog": "Журнал аудита",
+  "adminMenuChangePassword": "Изменить пароль",
+  "adminSectionPeople": "Люди",
+  "adminSectionHiring": "Операции найма",
+  "adminSectionContentComm": "Контент и коммуникации",
+  "adminSectionRevenue": "Бизнес и доход",
+  "adminSectionToolsContent": "Инструменты и контент",
+  "adminSectionQuickActions": "Быстрые действия",
+  "adminSectionNeedsAttention": "Требует внимания",
+  "adminStatActiveBusinesses": "Активные компании",
+  "adminStatApplicationsToday": "Заявки сегодня",
+  "adminStatInterviewsToday": "Собеседования сегодня",
+  "adminStatFlaggedContent": "Помеченный контент",
+  "adminStatActiveSubs": "Активные подписки",
+  "adminActionFlagged": "Помечено",
+  "adminActionFeatured": "Избранное",
+  "adminActionReviewFlagged": "Проверить помеченное",
+  "adminActionTodayInterviews": "Собеседования сегодня",
+  "adminActionOpenReports": "Открытые отчёты",
+  "adminActionManageSubscriptions": "Управление подписками",
+  "adminActionAnalyticsDashboard": "Панель аналитики",
+  "adminActionSendNotification": "Отправить уведомление",
+  "adminActionCreateCommunityPost": "Создать пост сообщества",
+  "adminActionRetry": "Повторить",
+  "adminMiscGreetingMorning": "Доброе утро",
+  "adminMiscGreetingAfternoon": "Добрый день",
+  "adminMiscGreetingEvening": "Добрый вечер",
+  "adminMiscAllClear": "Всё в порядке — ничего не требует внимания.",
+  "adminSubtitleAllUsers": "Все пользователи",
+  "adminSubtitleCandidates": "Профили соискателей",
+  "adminSubtitleBusinesses": "Аккаунты работодателей",
+  "adminSubtitleJobs": "Активные вакансии",
+  "adminSubtitleApplications": "Поданные заявки",
+  "adminSubtitleInterviews": "Назначенные собеседования",
+  "adminSubtitleMatches": "Совпадения по роли и типу",
+  "adminSubtitleVerifications": "Проверки в ожидании",
+  "adminSubtitleReports": "Жалобы и модерация",
+  "adminSubtitleSupport": "Открытые обращения",
+  "adminSubtitleMessages": "Разговоры пользователей",
+  "adminSubtitleNotifications": "Push- и in-app уведомления",
+  "adminSubtitleCommunity": "Публикации и обсуждения",
+  "adminSubtitleFeaturedContent": "Избранный контент",
+  "adminSubtitleSubscriptions": "Планы и оплата",
+  "adminSubtitleAuditLog": "Журналы действий администратора",
+  "adminSubtitleAnalytics": "Метрики платформы",
+  "adminSubtitleSettings": "Настройки платформы",
+  "adminSubtitleUsersPage": "Управление аккаунтами",
+  "adminSubtitleContentPage": "Вакансии, заявки и собеседования",
+  "adminSubtitleModerationPage": "Проверки, жалобы и поддержка",
+  "adminSubtitleMorePage": "Настройки, аналитика и аккаунт",
+  "adminSubtitleAnalyticsHero": "KPI, тренды и здоровье платформы",
+  "adminBadgeUrgent": "Срочно",
+  "adminBadgeReview": "Проверить",
+  "adminBadgeAction": "Действие",
+  "adminMenuAllUsers": "Все пользователи",
+  "adminMiscSuperAdmin": "Супер-админ",
+  "adminBadgeNToday": "{count} сегодня",
+  "adminBadgeNOpen": "{count} открытых",
+  "adminBadgeNActive": "{count} активных",
+  "adminBadgeNUnread": "{count} непрочит.",
+  "adminBadgeNPending": "{count} в ожидании",
+  "adminBadgeNPosts": "{count} публикаций",
+  "adminBadgeNFeatured": "{count} избранных",
+  "adminStatusActive": "Активно",
+  "adminStatusPaused": "Приостановлено",
+  "adminStatusClosed": "Закрыто",
+  "adminStatusDraft": "Черновик",
+  "adminStatusFlagged": "Помечено",
+  "adminStatusSuspended": "Приостановлен",
+  "adminStatusPending": "В ожидании",
+  "adminStatusConfirmed": "Подтверждено",
+  "adminStatusCompleted": "Завершено",
+  "adminStatusCancelled": "Отменено",
+  "adminStatusAccepted": "Принято",
+  "adminStatusDenied": "Отклонено",
+  "adminStatusExpired": "Истёк",
+  "adminStatusResolved": "Решено",
+  "adminStatusScheduled": "Запланировано",
+  "adminStatusBanned": "Заблокировано",
+  "adminStatusVerified": "Проверено",
+  "adminStatusFailed": "Ошибка",
+  "adminStatusSuccess": "Успех",
+  "adminStatusDelivered": "Доставлено",
+  "adminFilterAll": "Все",
+  "adminFilterToday": "Сегодня",
+  "adminFilterUnread": "Непрочитанные",
+  "adminFilterRead": "Прочитанные",
+  "adminFilterCandidates": "Кандидаты",
+  "adminFilterBusinesses": "Компании",
+  "adminFilterAdmins": "Админы",
+  "adminFilterCandidate": "Кандидат",
+  "adminFilterBusiness": "Компания",
+  "adminFilterSystem": "Система",
+  "adminFilterPinned": "Закреплённые",
+  "adminFilterEmployers": "Работодатели",
+  "adminFilterBanners": "Баннеры",
+  "adminFilterBilling": "Биллинг",
+  "adminFilterFeaturedEmployer": "Избранный работодатель",
+  "adminFilterFeaturedJob": "Избранная вакансия",
+  "adminFilterHomeBanner": "Баннер главной",
+  "adminEmptyAdjustFilters": "Попробуйте изменить фильтры.",
+  "adminEmptyJobsTitle": "Нет вакансий",
+  "adminEmptyJobsSub": "Нет совпадений.",
+  "adminEmptyUsersTitle": "Нет пользователей",
+  "adminEmptyMessagesTitle": "Нет сообщений",
+  "adminEmptyMessagesSub": "Нет разговоров.",
+  "adminEmptyReportsTitle": "Нет жалоб",
+  "adminEmptyReportsSub": "Нет жалоб для проверки.",
+  "adminEmptyBusinessesTitle": "Нет компаний",
+  "adminEmptyBusinessesSub": "Нет совпадений.",
+  "adminEmptyNotifsTitle": "Нет уведомлений",
+  "adminEmptySubsTitle": "Нет подписок",
+  "adminEmptySubsSub": "Нет совпадений.",
+  "adminEmptyLogsTitle": "Нет записей",
+  "adminEmptyContentTitle": "Нет контента",
+  "adminEmptyInterviewsTitle": "Нет собеседований",
+  "adminEmptyInterviewsSub": "Нет совпадений.",
+  "adminEmptyFeedback": "Отзывы появятся здесь",
+  "adminEmptyMatchNotifs": "Уведомления о совпадениях появятся здесь",
+  "adminTitleMatchManagement": "Управление совпадениями",
+  "adminTitleAdminLogs": "Логи админа",
+  "adminTitleContentFeatured": "Контент / Избранное",
+  "adminTabFeedback": "Отзывы",
+  "adminTabStats": "Статистика",
+  "adminSortNewest": "Новые",
+  "adminSortPriority": "Приоритет",
+  "adminStatTotalMatches": "Всего совпадений",
+  "adminStatAccepted": "Принято",
+  "adminStatDenied": "Отклонено",
+  "adminStatFeedbackCount": "Отзывы",
+  "adminStatMatchQuality": "Оценка качества совпадений",
+  "adminStatTotal": "Всего",
+  "adminStatPendingCount": "В ожидании",
+  "adminStatNotificationsCount": "Уведомления",
+  "adminStatActiveCount": "Активные",
+  "adminSectionPlatformSettings": "Настройки платформы",
+  "adminSectionNotificationSettings": "Настройки уведомлений",
+  "adminSettingMaintenanceTitle": "Режим обслуживания",
+  "adminSettingMaintenanceSub": "Отключить доступ для всех",
+  "adminSettingNewRegsTitle": "Новые регистрации",
+  "adminSettingNewRegsSub": "Разрешить новые регистрации",
+  "adminSettingFeaturedJobsTitle": "Избранные вакансии",
+  "adminSettingFeaturedJobsSub": "Показывать избранные вакансии на главной",
+  "adminSettingEmailNotifsTitle": "Email-уведомления",
+  "adminSettingEmailNotifsSub": "Отправлять email-оповещения",
+  "adminSettingPushNotifsTitle": "Push-уведомления",
+  "adminSettingPushNotifsSub": "Отправлять push-уведомления",
+  "adminActionSaveChanges": "Сохранить изменения",
+  "adminToastSettingsSaved": "Настройки сохранены",
+  "adminActionResolve": "Решить",
+  "adminActionDismiss": "Отклонить",
+  "adminActionBanUser": "Забанить",
+  "adminSearchUsersHint": "Поиск: имя, email, роль, место...",
+  "adminMiscPositive": "положительно",
+  "adminCountUsers": "{count} пользователей",
+  "adminCountNotifs": "{count} уведомлений",
+  "adminCountLogs": "{count} записей",
+  "adminCountItems": "{count} элементов",
+  "adminBadgeNRetried": "Повторы x{count}"
+}

@@ -1,0 +1,1863 @@
+{
+  "@@locale": "ar",
+  "appName": "Plagit",
+  "welcome": "مرحبًا",
+  "signIn": "تسجيل الدخول",
+  "signUp": "إنشاء حساب",
+  "createAccount": "إنشاء حساب",
+  "createBusinessAccount": "إنشاء حساب تجاري",
+  "alreadyHaveAccount": "هل لديك حساب بالفعل؟",
+  "email": "البريد الإلكتروني",
+  "password": "كلمة المرور",
+  "continueLabel": "متابعة",
+  "cancel": "إلغاء",
+  "save": "حفظ",
+  "done": "تم",
+  "retry": "إعادة المحاولة",
+  "search": "بحث",
+  "back": "رجوع",
+  "next": "التالي",
+  "apply": "تطبيق",
+  "clear": "مسح",
+  "clearAll": "مسح الكل",
+  "edit": "تعديل",
+  "delete": "حذف",
+  "confirm": "تأكيد",
+  "home": "الرئيسية",
+  "jobs": "الوظائف",
+  "messages": "الرسائل",
+  "profile": "الملف الشخصي",
+  "settings": "الإعدادات",
+  "language": "اللغة",
+  "logout": "تسجيل الخروج",
+  "categoryAndRole": "الفئة والدور",
+  "selectCategory": "اختر الفئة",
+  "subcategory": "الفئة الفرعية",
+  "role": "الدور",
+  "recentSearches": "عمليات البحث الأخيرة",
+  "noResultsFor": "لا توجد نتائج لـ \"{query}\"",
+  "mostPopular": "الأكثر شيوعًا",
+  "allCategories": "كل الفئات",
+  "selectVenueTypeAndRole": "اختر نوع المكان والدور المطلوب",
+  "selectCategoryAndRole": "اختر الفئة والدور",
+  "businessDetails": "تفاصيل العمل",
+  "yourDetails": "بياناتك",
+  "companyName": "اسم الشركة",
+  "contactPerson": "شخص الاتصال",
+  "location": "الموقع",
+  "website": "الموقع الإلكتروني",
+  "fullName": "الاسم الكامل",
+  "yearsExperience": "سنوات الخبرة",
+  "languagesSpoken": "اللغات",
+  "jobType": "نوع الوظيفة",
+  "jobTypeFullTime": "دوام كامل",
+  "jobTypePartTime": "دوام جزئي",
+  "jobTypeTemporary": "مؤقت",
+  "jobTypeFreelance": "عمل حر",
+  "openToInternational": "مفتوح للمرشحين الدوليين",
+  "passwordHint": "كلمة المرور (٨ أحرف على الأقل)",
+  "termsOfServiceNote": "بإنشاء حساب فإنك توافق على الشروط وسياسة الخصوصية.",
+  "networkError": "خطأ في الشبكة",
+  "somethingWentWrong": "حدث خطأ ما",
+  "loading": "جارٍ التحميل…",
+  "errorGeneric": "حدث خطأ غير متوقع. حاول مرة أخرى.",
+  "joinAsCandidate": "انضم كمرشح",
+  "joinAsBusiness": "انضم كشركة",
+  "findYourNextRole": "اعثر على وظيفتك التالية في مجال الضيافة",
+  "candidateLoginSubtitle": "تواصل مع أفضل أصحاب العمل في لندن ودبي وأكثر.",
+  "businessLoginSubtitle": "تواصل مع أفضل المواهب في مجال الضيافة ونمِّ فريقك.",
+  "rememberMe": "تذكرني",
+  "forgotPassword": "هل نسيت كلمة المرور؟",
+  "lookingForStaff": "تبحث عن موظفين؟ ",
+  "lookingForJob": "تبحث عن وظيفة؟ ",
+  "switchToBusiness": "التبديل إلى الشركة",
+  "switchToCandidate": "التبديل إلى المرشح",
+  "createYourProfile": "أنشئ ملفك الشخصي وابدأ في استقطاب أفضل أصحاب العمل.",
+  "createBusinessProfile": "أنشئ ملف عملك وابدأ في توظيف أفضل المواهب في الضيافة.",
+  "locationCityCountry": "الموقع (المدينة، الدولة)",
+  "termsAgreement": "بإنشاء حساب فإنك توافق على شروط الخدمة وسياسة الخصوصية.",
+  "searchHospitalityHint": "ابحث عن فئة أو فئة فرعية أو دور…",
+  "mostCommonRoles": "الأدوار الأكثر شيوعًا",
+  "allRoles": "كل الأدوار",
+  "suggestionCount": "{count,plural, =1{اقتراح واحد}other{{count} اقتراحات}}",
+  "subcategoriesCount": "{count,plural, =1{فئة فرعية واحدة}other{{count} فئات فرعية}}",
+  "rolesCount": "{count,plural, =1{دور واحد}other{{count} أدوار}}",
+  "kindCategory": "فئة",
+  "kindSubcategory": "فئة فرعية",
+  "kindRole": "دور",
+  "resetPassword": "إعادة تعيين كلمة المرور",
+  "forgotPasswordSubtitle": "أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين.",
+  "sendResetLink": "إرسال رابط الإعادة",
+  "resetEmailSent": "إذا كان هناك حساب لهذا البريد، فقد تم إرسال رابط إعادة التعيين.",
+  "profileSetupTitle": "أكمل ملفك الشخصي",
+  "profileSetupSubtitle": "الملف المكتمل يتم اكتشافه أسرع.",
+  "uploadPhoto": "تحميل صورة",
+  "uploadCV": "تحميل السيرة الذاتية",
+  "skipForNow": "تخطَّ الآن",
+  "finish": "إنهاء",
+  "noInternet": "لا يوجد اتصال بالإنترنت. تحقق من الشبكة.",
+  "tryAgain": "حاول مرة أخرى",
+  "emptyJobs": "لا توجد وظائف بعد",
+  "emptyApplications": "لا توجد طلبات بعد",
+  "emptyMessages": "لا توجد رسائل بعد",
+  "emptyNotifications": "لا يوجد جديد",
+  "onboardingRoleTitle": "ما الدور الذي تبحث عنه؟",
+  "onboardingRoleSubtitle": "اختر كل ما ينطبق",
+  "onboardingExperienceTitle": "كم سنة خبرة لديك؟",
+  "onboardingLocationTitle": "أين مقرك؟",
+  "onboardingLocationHint": "أدخل المدينة أو الرمز البريدي",
+  "useMyCurrentLocation": "استخدم موقعي الحالي",
+  "onboardingAvailabilityTitle": "عماذا تبحث؟",
+  "finishSetup": "إنهاء الإعداد",
+  "goodMorning": "صباح الخير",
+  "goodAfternoon": "مساء الخير",
+  "goodEvening": "مساء الخير",
+  "findJobs": "ابحث عن وظائف",
+  "applications": "الطلبات",
+  "community": "المجتمع",
+  "recommendedForYou": "موصى به لك",
+  "seeAll": "عرض الكل",
+  "searchJobsHint": "ابحث عن وظائف أو أدوار أو مواقع…",
+  "searchJobs": "ابحث عن وظائف",
+  "postedJob": "منشور",
+  "applyNow": "قدّم الآن",
+  "applied": "تم التقديم",
+  "saveJob": "حفظ",
+  "saved": "محفوظ",
+  "jobDescription": "وصف الوظيفة",
+  "requirements": "المتطلبات",
+  "benefits": "المزايا",
+  "salary": "الراتب",
+  "contract": "العقد",
+  "schedule": "الجدول",
+  "viewCompany": "عرض الشركة",
+  "interview": "مقابلة",
+  "interviews": "المقابلات",
+  "notifications": "الإشعارات",
+  "matches": "المطابقات",
+  "quickPlug": "Quick Plug",
+  "discover": "اكتشف",
+  "shortlist": "القائمة المختارة",
+  "message": "رسالة",
+  "messageCandidate": "راسل",
+  "nextInterview": "المقابلة التالية",
+  "loadingDashboard": "جارٍ تحميل لوحة التحكم…",
+  "tryAgainCta": "حاول مرة أخرى",
+  "careerDashboard": "لوحة المهنة",
+  "yourNextInterview": "مقابلتك التالية\nمجدولة",
+  "yourCareerTakingOff": "مسيرتك\nفي تصاعد",
+  "yourCareerOnTheMove": "مسيرتك\nفي تقدّم",
+  "yourJourneyStartsHere": "رحلتك\nتبدأ هنا",
+  "applyFirstJob": "قدّم على أول وظيفة للبدء",
+  "interviewComingUp": "مقابلة قادمة",
+  "unlockPlagitPremium": "افتح Plagit Premium",
+  "premiumSubtitle": "تميّز أمام أفضل الأماكن — مطابقة أسرع",
+  "premiumActive": "Premium مفعّل",
+  "premiumActiveSubtitle": "الأولوية مفعّلة · إدارة الخطة",
+  "noJobsFound": "لا توجد وظائف تطابق بحثك",
+  "noApplicationsYet": "لا توجد طلبات بعد",
+  "startApplying": "استكشف الوظائف للتقديم",
+  "noMessagesYet": "لا توجد رسائل بعد",
+  "allCaughtUp": "لا يوجد جديد",
+  "noNotificationsYet": "لا توجد إشعارات بعد",
+  "about": "نبذة",
+  "experience": "الخبرة",
+  "skills": "المهارات",
+  "languages": "اللغات",
+  "availability": "التوفر",
+  "verified": "موثّق",
+  "totalViews": "إجمالي المشاهدات",
+  "verifiedVenuePrefix": "موثّق",
+  "notVerified": "غير موثّق",
+  "pendingReview": "قيد المراجعة",
+  "viewProfile": "عرض الملف",
+  "editProfile": "تعديل الملف",
+  "share": "مشاركة",
+  "report": "إبلاغ",
+  "block": "حظر",
+  "typeMessage": "اكتب رسالة…",
+  "send": "إرسال",
+  "today": "اليوم",
+  "yesterday": "أمس",
+  "now": "الآن",
+  "minutesAgo": "{count,plural, =1{قبل دقيقة}other{قبل {count} دقائق}}",
+  "hoursAgo": "{count,plural, =1{قبل ساعة}other{قبل {count} ساعات}}",
+  "daysAgo": "{count,plural, =1{قبل يوم}other{قبل {count} أيام}}",
+  "filters": "المرشحات",
+  "refineSearch": "تحسين البحث",
+  "distance": "المسافة",
+  "applyFilters": "تطبيق المرشحات",
+  "reset": "إعادة تعيين",
+  "noResultsTitle": "لا توجد نتائج لـ \"{query}\"",
+  "noResultsSubtitle": "جرّب كلمة مختلفة أو امسح البحث.",
+  "recentSearchesEmptyTitle": "لا توجد عمليات بحث حديثة",
+  "recentSearchesEmptyHint": "ستظهر عمليات بحثك الأخيرة هنا",
+  "allJobs": "كل الوظائف",
+  "nearby": "قريب منك",
+  "saved2": "المحفوظة",
+  "remote": "عن بُعد",
+  "inPerson": "حضوري",
+  "aboutTheJob": "حول الوظيفة",
+  "aboutCompany": "حول الشركة",
+  "applyForJob": "قدّم على هذه الوظيفة",
+  "unsaveJob": "إلغاء الحفظ",
+  "noJobsNearby": "لا توجد وظائف قريبة",
+  "noSavedJobs": "لا توجد وظائف محفوظة",
+  "adjustFilters": "عدّل المرشحات لعرض المزيد",
+  "fullTime": "دوام كامل",
+  "partTime": "دوام جزئي",
+  "temporary": "مؤقت",
+  "freelance": "عمل حر",
+  "postedAgo": "نُشر {time}",
+  "kmAway": "على بُعد {km} كم",
+  "jobDetails": "تفاصيل الوظيفة",
+  "aboutThisRole": "عن هذا الدور",
+  "aboutTheBusiness": "عن الشركة",
+  "urgentHiring": "توظيف عاجل",
+  "distanceRadius": "نطاق المسافة",
+  "contractType": "نوع العقد",
+  "shiftType": "نوع الوردية",
+  "all": "الكل",
+  "casual": "عرضي",
+  "seasonal": "موسمي",
+  "morning": "صباحًا",
+  "afternoon": "ظهرًا",
+  "evening": "مساءً",
+  "night": "ليلًا",
+  "startDate": "تاريخ البدء",
+  "shiftHours": "ساعات الوردية",
+  "category": "الفئة",
+  "venueType": "نوع المكان",
+  "employment": "نوع التوظيف",
+  "pay": "الأجر",
+  "duration": "المدة",
+  "weeklyHours": "ساعات أسبوعية",
+  "businessLocation": "موقع العمل",
+  "jobViews": "المشاهدات",
+  "positions": "{count,plural, =1{منصب واحد}other{{count} مناصب}}",
+  "monthsCount": "{count,plural, =1{شهر واحد}other{{count} أشهر}}",
+  "myApplications": "طلباتي",
+  "active": "نشطة",
+  "interviewStatus": "مقابلة",
+  "rejected": "مرفوضة",
+  "offer": "عرض",
+  "appliedOn": "تم التقديم {date}",
+  "viewJob": "عرض الوظيفة",
+  "withdraw": "سحب الطلب",
+  "applicationStatus": "حالة الطلب",
+  "noConversations": "لا توجد محادثات بعد",
+  "startConversation": "رد على وظيفة لبدء المحادثة",
+  "online": "متصل",
+  "offline": "غير متصل",
+  "lastSeen": "آخر ظهور {time}",
+  "newNotification": "جديد",
+  "markAllRead": "تحديد الكل كمقروء",
+  "yourProfile": "ملفك الشخصي",
+  "completionPercent": "{percent}% مكتمل",
+  "personalDetails": "البيانات الشخصية",
+  "phone": "الهاتف",
+  "bio": "نبذة",
+  "addPhoto": "إضافة صورة",
+  "addCV": "إضافة سيرة ذاتية",
+  "saveChanges": "حفظ التغييرات",
+  "logoutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
+  "subscription": "الاشتراك",
+  "support": "الدعم",
+  "privacy": "الخصوصية",
+  "terms": "الشروط",
+  "applicationDetails": "تفاصيل الطلب",
+  "timeline": "الجدول الزمني",
+  "submitted": "تم الإرسال",
+  "underReview": "قيد المراجعة",
+  "interviewScheduled": "تم تحديد المقابلة",
+  "offerExtended": "تم تقديم العرض",
+  "withdrawApp": "سحب الطلب",
+  "withdrawConfirm": "هل أنت متأكد من سحب هذا الطلب؟",
+  "applicationWithdrawn": "تم سحب الطلب",
+  "statusApplied": "مُقدَّم",
+  "statusInReview": "قيد المراجعة",
+  "statusInterview": "مقابلة",
+  "statusHired": "تم التوظيف",
+  "statusClosed": "مغلق",
+  "statusRejected": "مرفوض",
+  "statusOffer": "عرض",
+  "messagesSearch": "ابحث في الرسائل…",
+  "noMessagesTitle": "لا توجد رسائل بعد",
+  "noMessagesSubtitle": "رد على وظيفة لبدء المحادثة",
+  "youOnline": "أنت متصل",
+  "noNotificationsTitle": "لا توجد إشعارات بعد",
+  "noNotificationsSubtitle": "سنخبرك عند حدوث جديد",
+  "today2": "اليوم",
+  "earlier": "سابقًا",
+  "completeYourProfile": "أكمل ملفك الشخصي",
+  "profileCompletion": "اكتمال الملف",
+  "personalInfo": "البيانات الشخصية",
+  "professional": "مهني",
+  "preferences": "التفضيلات",
+  "documents": "المستندات",
+  "myCV": "سيرتي الذاتية",
+  "premium": "Premium",
+  "addLanguages": "إضافة لغات",
+  "addExperience": "إضافة خبرة",
+  "addAvailability": "إضافة توفر",
+  "matchesTitle": "مطابقاتك",
+  "noMatchesTitle": "لا توجد مطابقات بعد",
+  "noMatchesSubtitle": "استمر في التقديم — ستظهر مطابقاتك هنا",
+  "interestedBusinesses": "الشركات المهتمة",
+  "accept": "قبول",
+  "decline": "رفض",
+  "newMatch": "مطابقة جديدة",
+  "quickPlugTitle": "Quick Plug",
+  "quickPlugEmpty": "لا توجد شركات جديدة الآن",
+  "quickPlugSubtitle": "تحقق لاحقًا للفرص الجديدة",
+  "uploadYourCV": "حمّل سيرتك الذاتية",
+  "cvSubtitle": "أضف سيرة ذاتية للتقديم بشكل أسرع",
+  "chooseFile": "اختر ملفًا",
+  "removeCV": "إزالة السيرة",
+  "noCVUploaded": "لم يتم تحميل سيرة ذاتية",
+  "discoverCompanies": "اكتشف الشركات",
+  "exploreSubtitle": "استكشف أفضل شركات الضيافة",
+  "follow": "متابعة",
+  "following": "متابَع",
+  "view": "عرض",
+  "selectLanguages": "اختر اللغات",
+  "selectedCount": "{count} محددة",
+  "allLanguages": "كل اللغات",
+  "uploadCVBig": "حمّل سيرتك الذاتية لملء الملف تلقائيًا وتوفير الوقت.",
+  "supportedFormats": "الصيغ المدعومة: PDF و DOC و DOCX",
+  "fillManually": "أدخل يدويًا",
+  "fillManuallySubtitle": "أدخل بياناتك وأكمل ملفك خطوة بخطوة.",
+  "photoUploadSoon": "تحميل الصورة قريبًا — استخدم صورة احترافية مؤقتًا.",
+  "yourCV": "سيرتك الذاتية",
+  "aboutYou": "عنك",
+  "optional": "اختياري",
+  "completeProfile": "إكمال الملف",
+  "openToRelocation": "مستعد للانتقال",
+  "matchLabel": "مطابقة",
+  "accepted": "مقبول",
+  "deny": "رفض",
+  "featured": "مميّز",
+  "reviewYourProfile": "راجع ملفك",
+  "nothingSavedYet": "لن يُحفظ شيء قبل التأكيد.",
+  "editAnyField": "يمكنك تعديل أي حقل قبل الحفظ.",
+  "saveToProfile": "حفظ في الملف",
+  "findCompanies": "ابحث عن شركات",
+  "mapView": "عرض الخريطة",
+  "mapComingSoon": "عرض الخريطة قريبًا.",
+  "noCompaniesFound": "لا توجد شركات",
+  "tryWiderRadius": "جرّب نطاقًا أوسع أو فئة مختلفة.",
+  "verifiedOnly": "الموثّقة فقط",
+  "resetFilters": "إعادة تعيين المرشحات",
+  "available": "متاح",
+  "lookingFor": "يبحث عن: {role}",
+  "boostMyProfile": "عزّز ملفي",
+  "openToRelocationTravel": "مستعد للانتقال / السفر",
+  "tellEmployersAboutYourself": "أخبر أصحاب العمل عن نفسك…",
+  "profileUpdated": "تم تحديث الملف",
+  "contractPreference": "تفضيل العقد",
+  "restorePurchases": "استعادة المشتريات",
+  "languagePickerSoon": "محدّد اللغة قريبًا",
+  "selectCategoryRoleShort": "اختر الفئة والدور",
+  "cvUploadSoon": "تحميل السيرة الذاتية قريبًا",
+  "restorePurchasesSoon": "استعادة المشتريات قريبًا",
+  "photoUploadShort": "تحميل الصورة قريبًا",
+  "hireBestTalent": "وظّف أفضل المواهب في الضيافة",
+  "businessLoginSub": "انشر الوظائف وتواصل مع مرشحين موثّقين.",
+  "lookingForWork": "تبحث عن عمل؟ ",
+  "postJob": "نشر وظيفة",
+  "editJob": "تعديل الوظيفة",
+  "jobTitle": "عنوان الوظيفة",
+  "jobDescription2": "وصف الوظيفة",
+  "publish": "نشر",
+  "saveDraft": "حفظ كمسودة",
+  "applicantsTitle": "المتقدمون",
+  "newApplicants": "متقدمون جدد",
+  "noApplicantsYet": "لا يوجد متقدمون بعد",
+  "noApplicantsSubtitle": "سيظهر المتقدمون هنا بعد التقديم.",
+  "scheduleInterview": "جدولة مقابلة",
+  "sendInvite": "إرسال دعوة",
+  "interviewSent": "تم إرسال دعوة المقابلة",
+  "rejectCandidate": "رفض",
+  "shortlistCandidate": "إضافة للقائمة المختارة",
+  "hiringDashboard": "لوحة التوظيف",
+  "yourPipelineActive": "خطّ التوظيف\nنشط",
+  "postJobToStart": "انشر وظيفة لبدء التوظيف",
+  "reviewApplicants": "راجع {count} متقدمين جدد",
+  "replyMessages": "رد على {count} رسائل غير مقروءة",
+  "interviews2": "المقابلات",
+  "businessProfile": "ملف الشركة",
+  "venueGallery": "معرض المكان",
+  "addPhotos": "إضافة صور",
+  "businessName": "اسم الشركة",
+  "venueTypeLabel": "نوع المكان",
+  "selectedItems": "{count} محددة",
+  "hiringProgress": "تقدّم التوظيف",
+  "unlockBusinessPremium": "افتح Business Premium",
+  "businessPremiumSubtitle": "وصول أولوية لأفضل المرشحين",
+  "scheduleFromApplicants": "جدولة من المتقدمين",
+  "recentApplicants": "المتقدمون الجدد",
+  "viewAll": "عرض الكل ›",
+  "recentActivity": "النشاط الأخير",
+  "candidatePipeline": "خط المرشحين",
+  "allApplicants": "جميع المتقدمين",
+  "searchCandidates": "ابحث عن مرشحين أو وظائف أو مقابلات...",
+  "thisWeek": "هذا الأسبوع",
+  "thisMonth": "هذا الشهر",
+  "allTime": "كل الأوقات",
+  "post": "نشر",
+  "candidates": "المرشحون",
+  "applicantDetail": "تفاصيل المتقدم",
+  "candidateProfile": "ملف المرشح",
+  "shortlistTitle": "القائمة المختارة",
+  "noShortlistedCandidates": "لا يوجد مرشحون في القائمة بعد",
+  "shortlistEmpty": "سيظهر هنا المرشحون الذين تختارهم",
+  "removeFromShortlist": "إزالة من القائمة",
+  "viewMessages": "عرض الرسائل",
+  "manageJobs": "إدارة الوظائف",
+  "yourJobs": "وظائفك",
+  "noJobsPosted": "لم تنشر أي وظائف بعد",
+  "noJobsPostedSubtitle": "انشر وظيفتك الأولى للبدء",
+  "draftJobs": "مسودات",
+  "activeJobs": "نشطة",
+  "expiredJobs": "منتهية",
+  "closedJobs": "مغلقة",
+  "createJob": "إنشاء وظيفة",
+  "jobDetailsTitle": "تفاصيل الوظيفة",
+  "salaryRange": "نطاق الراتب",
+  "currency": "العملة",
+  "monthly": "شهري",
+  "annual": "سنوي",
+  "hourly": "بالساعة",
+  "minSalary": "الحد الأدنى",
+  "maxSalary": "الحد الأقصى",
+  "perks": "المزايا",
+  "addPerk": "إضافة ميزة",
+  "remove": "إزالة",
+  "preview": "معاينة",
+  "publishJob": "نشر الوظيفة",
+  "jobPublished": "تم نشر الوظيفة",
+  "jobUpdated": "تم تحديث الوظيفة",
+  "jobSavedDraft": "تم الحفظ كمسودة",
+  "fillRequired": "يرجى ملء الحقول المطلوبة",
+  "jobUrgent": "وضع علامة عاجل",
+  "addAtLeastOne": "أضف متطلبًا واحدًا على الأقل",
+  "createUpdate": "إنشاء تحديث",
+  "shareCompanyNews": "شارك أخبار الشركة",
+  "addStory": "إضافة قصة",
+  "showWorkplace": "اعرض مكان عملك",
+  "viewShortlist": "عرض القائمة المختارة",
+  "yourSavedCandidates": "المرشحون المحفوظون",
+  "inviteCandidate": "دعوة مرشح",
+  "reachOutDirectly": "تواصل مباشرة",
+  "activeJobsCount": "{count,plural, =1{وظيفة نشطة واحدة}other{{count} وظائف نشطة}}",
+  "employmentType": "نوع العقد",
+  "requiredRole": "الدور المطلوب",
+  "selectCategoryRole2": "اختر الفئة والدور",
+  "hiresNeeded": "عدد التعيينات المطلوبة",
+  "compensation": "التعويض",
+  "useSalaryRange": "استخدم نطاق الراتب",
+  "contractDuration": "مدة العقد",
+  "limitReached": "تم الوصول للحد الأقصى",
+  "upgradePlan": "ترقية الخطة",
+  "usingXofY": "تستخدم {used} من {total} من المنشورات.",
+  "businessInterviewsTitle": "المقابلات",
+  "noInterviewsYet": "لا توجد مقابلات مجدولة",
+  "scheduleFirstInterview": "حدّد موعد مقابلتك الأولى",
+  "sendInterviewInvite": "إرسال دعوة مقابلة",
+  "interviewSentTitle": "تم إرسال الدعوة!",
+  "interviewSentSubtitle": "تم إشعار المرشح.",
+  "scheduleInterviewTitle": "جدولة مقابلة",
+  "interviewType": "نوع المقابلة",
+  "inPersonInterview": "حضوري",
+  "videoCallInterview": "مكالمة فيديو",
+  "phoneCallInterview": "مكالمة هاتفية",
+  "interviewDate": "التاريخ",
+  "interviewTime": "الوقت",
+  "interviewLocation": "المكان",
+  "interviewNotes": "ملاحظات",
+  "optionalLabel": "اختياري",
+  "sendInviteCta": "إرسال الدعوة",
+  "messagesCountLabel": "{count,plural, =1{رسالة واحدة}other{{count} رسائل}}",
+  "noNewMessages": "لا توجد رسائل جديدة",
+  "subscriptionTitle": "الاشتراك",
+  "currentPlan": "الخطة الحالية",
+  "manage": "إدارة",
+  "upgrade": "ترقية",
+  "renewalDate": "تاريخ التجديد",
+  "nearbyTalent": "المواهب القريبة",
+  "searchNearby": "ابحث قريبًا",
+  "communityTitle": "المجتمع",
+  "createPost": "إنشاء منشور",
+  "insights": "الإحصاءات",
+  "viewsLabel": "المشاهدات",
+  "applicationsLabel": "الطلبات",
+  "conversionRate": "معدل التحويل",
+  "topPerformingJob": "أفضل وظيفة",
+  "viewAllSimple": "عرض الكل",
+  "viewAllApplicantsForJob": "عرض جميع المتقدمين لهذه الوظيفة",
+  "noUpcomingInterviews": "لا توجد مقابلات قادمة",
+  "noActivityYet": "لا يوجد نشاط بعد",
+  "noResultsFound": "لا توجد نتائج",
+  "renewsAutomatically": "يتجدد تلقائيًا",
+  "plagitBusinessPlans": "خطط Plagit للأعمال",
+  "scaleYourHiringSubtitle": "وسّع نطاق التوظيف بالخطة المناسبة لأعمالك.",
+  "yearly": "سنوي",
+  "saveWithAnnualBilling": "وفّر أكثر مع الفوترة السنوية",
+  "chooseYourPlanSubtitle": "اختر الخطة التي تناسب احتياجاتك.",
+  "continueWithPlan": "المتابعة مع {plan}",
+  "@continueWithPlan": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionAutoRenewNote": "يتجدد الاشتراك تلقائيًا. يمكنك الإلغاء في أي وقت من الإعدادات.",
+  "purchaseFlowComingSoon": "الشراء متاح قريبًا",
+  "applicant": "المتقدم",
+  "applicantNotFound": "المتقدم غير موجود",
+  "cvViewerComingSoon": "عارض السيرة الذاتية متاح قريبًا",
+  "viewCV": "عرض السيرة الذاتية",
+  "application": "الطلب",
+  "messagingComingSoon": "المراسلة متاحة قريبًا",
+  "interviewConfirmed": "تم تأكيد المقابلة",
+  "interviewMarkedCompleted": "تم وضع علامة مكتملة على المقابلة",
+  "cancelInterviewConfirm": "هل أنت متأكد من إلغاء هذه المقابلة؟",
+  "yesCancel": "نعم، إلغاء",
+  "interviewNotFound": "المقابلة غير موجودة",
+  "openingMeetingLink": "جارٍ فتح رابط الاجتماع...",
+  "rescheduleComingSoon": "ميزة إعادة الجدولة متاحة قريبًا",
+  "notesFeatureComingSoon": "ميزة الملاحظات متاحة قريبًا",
+  "candidateMarkedHired": "تم وضع علامة موظف على المرشح!",
+  "feedbackComingSoon": "ميزة التقييم متاحة قريبًا",
+  "googleMapsComingSoon": "تكامل خرائط جوجل متاح قريبًا",
+  "noCandidatesNearby": "لا يوجد مرشحون قريبون",
+  "tryExpandingRadius": "جرّب توسيع نطاق البحث.",
+  "candidate": "المرشح",
+  "forOpenPosition": "لمنصب شاغر",
+  "dateAndTimeUpper": "التاريخ والوقت",
+  "interviewTypeUpper": "نوع المقابلة",
+  "timezoneUpper": "المنطقة الزمنية",
+  "highlights": "أبرز النقاط",
+  "cvNotAvailable": "السيرة الذاتية غير متاحة",
+  "cvWillAppearHere": "ستظهر هنا بعد التحميل",
+  "seenEveryone": "لقد شاهدت الجميع",
+  "checkBackForCandidates": "عد لاحقًا للاطلاع على مرشحين جدد.",
+  "dailyLimitReached": "تم الوصول إلى الحد اليومي",
+  "upgradeForUnlimitedSwipes": "قم بالترقية للحصول على تمريرات غير محدودة.",
+  "distanceUpper": "المسافة",
+  "inviteToInterview": "دعوة للمقابلة",
+  "details": "التفاصيل",
+  "shortlistedSuccessfully": "تمت الإضافة إلى القائمة المختصرة",
+  "tabDashboard": "لوحة التحكم",
+  "tabCandidates": "المرشحون",
+  "tabActivity": "النشاط",
+  "statusPosted": "منشور",
+  "statusApplicants": "المتقدمون",
+  "statusInterviewsShort": "المقابلات",
+  "statusHiredShort": "تم التوظيف",
+  "jobLiveVisible": "إعلان وظيفتك متاح ومرئي",
+  "postJobShort": "نشر وظيفة",
+  "messagesTitle": "الرسائل",
+  "online2": "متصل الآن",
+  "candidateUpper": "المرشح",
+  "searchConversationsHint": "ابحث في المحادثات والمرشحين والأدوار…",
+  "filterUnread": "غير مقروء",
+  "filterAll": "الكل",
+  "whenCandidatesMessage": "عندما يراسلك المرشحون، ستظهر المحادثات هنا.",
+  "trySwitchingFilter": "جرّب تغيير الفلتر.",
+  "reply": "رد",
+  "selectItems": "تحديد العناصر",
+  "countSelected": "{count} محدد",
+  "@countSelected": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "selectAll": "تحديد الكل",
+  "deleteConversation": "حذف المحادثة؟",
+  "deleteAllConversations": "حذف كل المحادثات؟",
+  "deleteSelectedNote": "ستُزال المحادثات المحددة من صندوق الوارد. يحتفظ المرشح بنسخته.",
+  "deleteAll": "حذف الكل",
+  "selectConversations": "تحديد المحادثات",
+  "feedTab": "التغذية",
+  "myPostsTab": "منشوراتي",
+  "savedTab": "المحفوظة",
+  "postingAs": "تنشر باسم {name}",
+  "@postingAs": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "noPostsYet": "لم تنشر بعد",
+  "nothingHereYet": "لا شيء هنا حتى الآن",
+  "shareVenueUpdate": "شارك تحديثًا من موقعك لبدء بناء حضورك في المجتمع.",
+  "communityPostsAppearHere": "ستظهر منشورات المجتمع هنا.",
+  "createFirstPost": "إنشاء أول منشور",
+  "yourPostUpper": "منشورك",
+  "businessLabel": "شركة",
+  "profileNotAvailable": "الملف الشخصي غير متاح",
+  "companyProfile": "الملف الشخصي للشركة",
+  "premiumVenue": "موقع مميز",
+  "businessDetailsTitle": "تفاصيل الشركة",
+  "businessNameLabel": "اسم الشركة",
+  "categoryLabel": "الفئة",
+  "locationLabel": "الموقع",
+  "verificationLabel": "التحقق",
+  "pendingLabel": "قيد الانتظار",
+  "notSet": "غير محدد",
+  "contactLabel": "التواصل",
+  "emailLabel": "البريد الإلكتروني",
+  "phoneLabel": "الهاتف",
+  "editProfileTitle": "تعديل الملف الشخصي",
+  "companyNameField": "اسم الشركة",
+  "phoneField": "الهاتف",
+  "locationField": "الموقع",
+  "signOut": "تسجيل الخروج",
+  "signOutTitle": "تسجيل الخروج؟",
+  "signOutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
+  "activeCountLabel": "{count,plural, =1{وظيفة نشطة}other{{count} نشطة}}",
+  "@activeCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newThisWeekLabel": "{count,plural, =1{جديد هذا الأسبوع}other{{count} جديدة هذا الأسبوع}}",
+  "@newThisWeekLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "jobStatusActive": "نشطة",
+  "jobStatusPaused": "متوقفة",
+  "jobStatusClosed": "مغلقة",
+  "jobStatusDraft": "مسودة",
+  "contractCasual": "عرضي",
+  "planBasic": "أساسي",
+  "planPro": "احترافي",
+  "planPremium": "بريميوم",
+  "bestForMaxVisibility": "الأفضل لأقصى ظهور",
+  "saveDollarsPerYear": "وفر {currency}{amount}/سنة",
+  "@saveDollarsPerYear": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      },
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "planBasicFeature1": "حتى 3 وظائف",
+  "planBasicFeature2": "عرض ملفات المتقدمين",
+  "planBasicFeature3": "بحث أساسي عن المرشحين",
+  "planBasicFeature4": "دعم عبر البريد",
+  "planProFeature1": "حتى 10 وظائف",
+  "planProFeature2": "بحث متقدم عن المرشحين",
+  "planProFeature3": "فرز متقدمين بالأولوية",
+  "planProFeature4": "الوصول إلى Quick Plug",
+  "planProFeature5": "دعم عبر الدردشة",
+  "planPremiumFeature1": "وظائف غير محدودة",
+  "planPremiumFeature2": "إعلانات مميزة",
+  "planPremiumFeature3": "تحليلات متقدمة",
+  "planPremiumFeature4": "Quick Plug غير محدود",
+  "planPremiumFeature5": "مطابقة ذات أولوية",
+  "planPremiumFeature6": "مدير حساب مخصص",
+  "currentSelectionCheck": "الاختيار الحالي ✓",
+  "selectPlanName": "اختر {plan}",
+  "@selectPlanName": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "perYear": "/سنة",
+  "perMonth": "/شهر",
+  "jobTitleHintExample": "مثال: شيف رئيسي",
+  "locationHintExample": "مثال: دبي، الإمارات",
+  "annualSalaryLabel": "الراتب السنوي ({currency})",
+  "@annualSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyPayLabel": "الراتب الشهري ({currency})",
+  "@monthlyPayLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "hourlyRateLabel": "الأجر بالساعة ({currency})",
+  "@hourlyRateLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "minSalaryLabel": "الأدنى ({currency})",
+  "@minSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "maxSalaryLabel": "الأعلى ({currency})",
+  "@maxSalaryLabel": {
+    "placeholders": {
+      "currency": {
+        "type": "String"
+      }
+    }
+  },
+  "hoursPerWeekLabel": "ساعات / أسبوع",
+  "expectedHoursWeekLabel": "الساعات المتوقعة / أسبوع (اختياري)",
+  "bonusTipsLabel": "مكافآت / إكراميات (اختياري)",
+  "bonusTipsHint": "مثال: إكراميات ورسوم خدمة",
+  "housingIncludedLabel": "السكن مشمول",
+  "travelIncludedLabel": "السفر مشمول",
+  "overtimeAvailableLabel": "العمل الإضافي متاح",
+  "flexibleScheduleLabel": "جدول مرن",
+  "weekendShiftsLabel": "مناوبات نهاية الأسبوع",
+  "describeRoleHint": "صِف الدور والمسؤوليات وما يميز هذه الوظيفة...",
+  "requirementsHint": "المهارات والخبرة والشهادات المطلوبة...",
+  "previewPrefix": "معاينة: {text}",
+  "@previewPrefix": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "monthsShort": "{count} شهر",
+  "@monthsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "roleAll": "الكل",
+  "roleChef": "شيف",
+  "roleWaiter": "نادل",
+  "roleBartender": "بارمان",
+  "roleHost": "مضيف",
+  "roleManager": "مدير",
+  "roleReception": "استقبال",
+  "roleKitchenPorter": "عامل مطبخ",
+  "roleRelocate": "انتقال",
+  "experience02Years": "0-2 سنة",
+  "experience35Years": "3-5 سنوات",
+  "experience5PlusYears": "+5 سنوات",
+  "roleUpper": "الدور",
+  "experienceUpper": "الخبرة",
+  "cvLabel": "السيرة الذاتية",
+  "addShort": "إضافة",
+  "photosCount": "{count,plural, =1{صورة واحدة}other{{count} صور}}",
+  "@photosCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "candidatesFoundCount": "{count,plural, =1{تم العثور على مرشح}other{تم العثور على {count} مرشحين}}",
+  "@candidatesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "maxKmLabel": "حتى 50 كم",
+  "shortlistAction": "القائمة المختصرة",
+  "messageAction": "رسالة",
+  "interviewAction": "مقابلة",
+  "viewAction": "عرض",
+  "rejectAction": "رفض",
+  "basedIn": "مقره في",
+  "verificationPending": "التحقق قيد الانتظار",
+  "refreshAction": "تحديث",
+  "upgradeAction": "الترقية",
+  "searchJobsByTitleHint": "ابحث عن وظائف بالعنوان أو الدور أو الموقع…",
+  "xShortlisted": "تمت إضافة {name} إلى القائمة المختصرة",
+  "@xShortlisted": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "xRejected": "تم رفض {name}",
+  "@xRejected": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "rejectConfirmName": "هل أنت متأكد من رفض {name}؟",
+  "@rejectConfirmName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "appliedToRoleOn": "تقدم إلى {role} في {date}",
+  "@appliedToRoleOn": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "appliedDatePrefix": "تقدم {date}",
+  "@appliedDatePrefix": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "salaryExpectationTitle": "الراتب المتوقع",
+  "previousEmployer": "صاحب العمل السابق",
+  "earlierVenue": "موقع سابق",
+  "presentLabel": "حاليًا",
+  "skillCustomerService": "خدمة العملاء",
+  "skillTeamwork": "العمل الجماعي",
+  "skillCommunication": "التواصل",
+  "stepApplied": "تقدم",
+  "stepViewed": "تمت المشاهدة",
+  "stepShortlisted": "في القائمة المختصرة",
+  "stepInterviewScheduled": "تم جدولة المقابلة",
+  "stepRejected": "مرفوض",
+  "stepUnderReview": "قيد المراجعة",
+  "stepPendingReview": "بانتظار المراجعة",
+  "sortNewest": "الأحدث",
+  "sortMostExperienced": "الأكثر خبرة",
+  "sortBestMatch": "أفضل تطابق",
+  "filterApplied": "تقدم",
+  "filterUnderReview": "قيد المراجعة",
+  "filterShortlisted": "القائمة المختصرة",
+  "filterInterview": "مقابلة",
+  "filterHired": "تم التوظيف",
+  "filterRejected": "مرفوض",
+  "confirmed": "مؤكد",
+  "pending": "قيد الانتظار",
+  "completed": "مكتمل",
+  "cancelled": "ملغى",
+  "videoLabel": "فيديو",
+  "viewDetails": "عرض التفاصيل",
+  "interviewDetails": "تفاصيل المقابلة",
+  "interviewConfirmedHeadline": "تم تأكيد المقابلة",
+  "interviewConfirmedSubline": "كل شيء جاهز. سنذكرك قبل الموعد.",
+  "dateLabel": "التاريخ",
+  "timeLabel": "الوقت",
+  "formatLabel": "النمط",
+  "joinMeeting": "انضم",
+  "viewJobAction": "عرض الوظيفة",
+  "addToCalendar": "أضف إلى التقويم",
+  "needsYourAttention": "يحتاج إلى انتباهك",
+  "reviewAction": "راجع",
+  "applicationsCount": "{count, plural, =1{طلب واحد} other{{count} طلبات}}",
+  "@applicationsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sortMostRecent": "الأحدث",
+  "interviewScheduledLabel": "مقابلة مجدولة",
+  "editAction": "تعديل",
+  "currentPlanLabel": "الخطة الحالية",
+  "freePlan": "الخطة المجانية",
+  "profileStrength": "قوة الملف الشخصي",
+  "detailsLabel": "التفاصيل",
+  "basedInLabel": "الإقامة",
+  "verificationLabel2": "التحقق",
+  "contactLabel2": "جهات الاتصال",
+  "notSetLabel": "غير محدد",
+  "chipAll": "الكل",
+  "chipFullTime": "دوام كامل",
+  "chipPartTime": "دوام جزئي",
+  "chipTemporary": "مؤقت",
+  "chipCasual": "عرضي",
+  "sortBestMatchLabel": "أفضل تطابق",
+  "sortAZ": "أ-ي",
+  "sortBy": "ترتيب حسب",
+  "featuredBadge": "مميز",
+  "urgentBadge": "عاجل",
+  "salaryOnRequest": "الراتب عند الطلب",
+  "upgradeToPremium": "الترقية إلى بريميوم",
+  "urgentJobsOnly": "الوظائف العاجلة فقط",
+  "showOnlyUrgentListings": "عرض القوائم العاجلة فقط",
+  "verifiedBusinessesOnly": "الشركات الموثقة فقط",
+  "showOnlyVerifiedBusinesses": "عرض الشركات الموثقة فقط",
+  "split": "متفرق",
+  "payUpper": "الأجر",
+  "typeUpper": "النوع",
+  "whereUpper": "المكان",
+  "payLabel": "الأجر",
+  "typeLabel": "النوع",
+  "whereLabel": "المكان",
+  "whereYouWillWork": "مكان العمل",
+  "mapPreviewDirections": "معاينة الخريطة · افتح للاتجاهات الكاملة",
+  "directionsAction": "الاتجاهات",
+  "communityTabForYou": "مقترح لك",
+  "communityTabFollowing": "المتابَعون",
+  "communityTabNearby": "قريب",
+  "communityTabSaved": "المحفوظ",
+  "viewProfileAction": "عرض الملف الشخصي",
+  "copyLinkAction": "نسخ الرابط",
+  "savePostAction": "حفظ المنشور",
+  "unsavePostAction": "إلغاء حفظ المنشور",
+  "hideThisPost": "إخفاء هذا المنشور",
+  "reportPost": "الإبلاغ عن المنشور",
+  "cancelAction": "إلغاء",
+  "newPostTitle": "منشور جديد",
+  "youLabel": "أنت",
+  "postingToCommunityAsBusiness": "النشر في المجتمع بصفتك شركة",
+  "postingToCommunityAsPro": "النشر في المجتمع بصفتك محترف ضيافة",
+  "whatsOnYourMind": "بماذا تفكر؟",
+  "publishAction": "نشر",
+  "attachmentPhoto": "صورة",
+  "attachmentVideo": "فيديو",
+  "attachmentLocation": "الموقع",
+  "boostMyProfileCta": "عزز ملفي الشخصي",
+  "unlockYourFullPotential": "أطلق إمكاناتك الكاملة",
+  "annualPlan": "سنوي",
+  "monthlyPlan": "شهري",
+  "bestValueBadge": "أفضل قيمة",
+  "whatsIncluded": "ما المتضمن",
+  "continueWithAnnual": "تابع مع السنوي",
+  "continueWithMonthly": "تابع مع الشهري",
+  "maybeLater": "ربما لاحقاً",
+  "restorePurchasesLabel": "استعادة المشتريات",
+  "subscriptionAutoRenewsNote": "يتم تجديد الاشتراك تلقائياً. يمكنك إلغاؤه في أي وقت من الإعدادات.",
+  "appStatusPillApplied": "مقدم",
+  "appStatusPillUnderReview": "قيد المراجعة",
+  "appStatusPillShortlisted": "في القائمة المختصرة",
+  "appStatusPillInterviewInvited": "دعوة للمقابلة",
+  "appStatusPillInterviewScheduled": "مقابلة مجدولة",
+  "appStatusPillHired": "تم التوظيف",
+  "appStatusPillRejected": "مرفوض",
+  "appStatusPillWithdrawn": "مسحوب",
+  "jobActionPause": "إيقاف الوظيفة مؤقتًا",
+  "jobActionResume": "استئناف الوظيفة",
+  "jobActionClose": "إغلاق الوظيفة",
+  "statusConfirmedLower": "مؤكد",
+  "postInsightsTitle": "إحصاءات المنشور",
+  "postInsightsSubtitle": "من يشاهد المحتوى الخاص بك",
+  "recentViewers": "المشاهدون الأخيرون",
+  "lockedBadge": "مقفل",
+  "viewerBreakdown": "تفصيل المشاهدين",
+  "viewersByRole": "المشاهدون حسب الدور",
+  "topLocations": "أبرز المواقع",
+  "businesses": "الشركات",
+  "saveToCollectionTitle": "الحفظ في المجموعة",
+  "chooseCategory": "اختر فئة",
+  "removeFromCollection": "إزالة من المجموعة",
+  "newApplicationTemplate": "طلب جديد — {role}",
+  "@newApplicationTemplate": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "categoryRestaurants": "مطاعم",
+  "categoryCookingVideos": "فيديوهات الطبخ",
+  "categoryJobsTips": "نصائح العمل",
+  "categoryHospitalityNews": "أخبار الضيافة",
+  "categoryRecipes": "وصفات",
+  "categoryOther": "أخرى",
+  "premiumHeroTagline": "ظهور أكبر، تنبيهات ذات أولوية، وفلاتر متقدمة مصممة لمحترفي الضيافة الجادين.",
+  "benefitAdvancedFilters": "فلاتر بحث متقدمة",
+  "benefitPriorityNotifications": "إشعارات وظائف ذات أولوية",
+  "benefitProfileVisibility": "زيادة ظهور الملف الشخصي",
+  "benefitPremiumBadge": "شارة الملف الشخصي المميز",
+  "benefitEarlyAccess": "وصول مبكر إلى الوظائف الجديدة",
+  "unlockCandidatePremium": "افتح Candidate Premium",
+  "getStartedAction": "ابدأ الآن",
+  "findYourFirstJob": "اعثر على وظيفتك الأولى",
+  "browseHospitalityRolesNearby": "تصفّح المئات من وظائف الضيافة بالقرب منك",
+  "seeWhoViewedYourPostTitle": "شاهد من اطّلع على منشورك",
+  "upgradeToPremiumCta": "الترقية إلى Premium",
+  "upgradeToPremiumSubtitle": "قم بالترقية إلى Premium لرؤية الشركات الموثّقة والمسؤولين عن التوظيف وقادة الضيافة الذين شاهدوا محتواك.",
+  "verifiedBusinessViewers": "مشاهدو الأعمال الموثّقون",
+  "recruiterHiringManagerActivity": "نشاط المجنّدين ومديري التوظيف",
+  "cityLevelReachBreakdown": "تفاصيل الوصول حسب المدينة",
+  "liveApplicationsCount": "{count, plural, zero{لا توجد نشطة} one{طلب نشط واحد} two{طلبان نشطان} few{{count} طلبات نشطة} many{{count} طلبًا نشطًا} other{{count} نشط}}",
+  "nearbyJobsCount": "{count, plural, zero{لا يوجد قريب} one{واحد قريب} two{اثنان قريبان} few{{count} قريبة} many{{count} قريبًا} other{{count} قريب}}",
+  "jobsNearYouCount": "{count, plural, zero{لا توجد وظائف قريبة منك} one{وظيفة قريبة منك} two{وظيفتان قريبتان منك} few{{count} وظائف قريبة منك} many{{count} وظيفة قريبة منك} other{{count} وظيفة قريبة منك}}",
+  "applicationsUnderReviewCount": "{count, plural, zero{لا توجد طلبات قيد المراجعة} one{طلب قيد المراجعة} two{طلبان قيد المراجعة} few{{count} طلبات قيد المراجعة} many{{count} طلبًا قيد المراجعة} other{{count} طلب قيد المراجعة}}",
+  "interviewsScheduledCount": "{count, plural, zero{لا توجد مقابلات مجدولة} one{مقابلة مجدولة} two{مقابلتان مجدولتان} few{{count} مقابلات مجدولة} many{{count} مقابلة مجدولة} other{{count} مقابلة مجدولة}}",
+  "unreadMessagesCount": "{count, plural, zero{لا توجد رسائل غير مقروءة} one{رسالة واحدة غير مقروءة} two{رسالتان غير مقروءتان} few{{count} رسائل غير مقروءة} many{{count} رسالة غير مقروءة} other{{count} رسالة غير مقروءة}}",
+  "unreadMessagesFromEmployersCount": "{count, plural, zero{لا توجد رسائل غير مقروءة من أصحاب العمل} one{رسالة واحدة غير مقروءة من أصحاب العمل} two{رسالتان غير مقروءتان من أصحاب العمل} few{{count} رسائل غير مقروءة من أصحاب العمل} many{{count} رسالة غير مقروءة من أصحاب العمل} other{{count} رسالة غير مقروءة من أصحاب العمل}}",
+  "stepsLeftCount": "{count, plural, zero{لا توجد خطوات متبقية} one{خطوة واحدة متبقية} two{خطوتان متبقيتان} few{{count} خطوات متبقية} many{{count} خطوة متبقية} other{{count} خطوة متبقية}}",
+  "profileCompleteGreatWork": "اكتمل الملف الشخصي — عمل رائع",
+  "yearsCount": "{count, plural, zero{لا سنوات} one{سنة واحدة} two{سنتان} few{{count} سنوات} many{{count} سنة} other{{count} سنة}}",
+  "perHour": "/ساعة",
+  "hoursPerWeekShort": "{count, plural, zero{بلا ساعات/أسبوع} one{ساعة/أسبوع} two{ساعتان/أسبوع} few{{count} ساعات/أسبوع} many{{count} ساعة/أسبوع} other{{count} ساعة/أسبوع}}",
+  "forMonthsCount": "{count, plural, zero{لا شهر} one{لشهر واحد} two{لشهرين} few{لـ {count} أشهر} many{لـ {count} شهرًا} other{لـ {count} شهر}}",
+  "interviewsCount": "{count, plural, zero{لا مقابلات} one{مقابلة واحدة} two{مقابلتان} few{{count} مقابلات} many{{count} مقابلة} other{{count} مقابلة}}",
+  "quickActionFindJobs": "ابحث عن وظائف",
+  "quickActionMyApplications": "طلباتي",
+  "quickActionUpdateProfile": "تحديث الملف الشخصي",
+  "quickActionCreatePost": "إنشاء منشور",
+  "quickActionViewInterviews": "عرض المقابلات",
+  "confirmSubscriptionTitle": "تأكيد الاشتراك",
+  "confirmAndSubscribeCta": "تأكيد والاشتراك",
+  "timelineLabel": "الجدول الزمني",
+  "interviewLabel": "مقابلة",
+  "payOnRequest": "الأجر عند الطلب",
+  "rateOnRequest": "السعر عند الطلب",
+  "quickActionFindJobsSubtitle": "اكتشف أدوارًا بالقرب منك",
+  "quickActionMyApplicationsSubtitle": "تابع كل طلب",
+  "quickActionUpdateProfileSubtitle": "حسّن ظهورك ودرجة المطابقة",
+  "quickActionCreatePostSubtitle": "شارك عملك مع المجتمع",
+  "quickActionViewInterviewsSubtitle": "استعدّ لما هو قادم",
+  "offerLabel": "عرض",
+  "hiringForTemplate": "يوظّف لـ {role}",
+  "@hiringForTemplate": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "tapToOpenInMaps": "اضغط للفتح في الخرائط",
+  "alreadyAppliedToJob": "لقد تقدّمت بالفعل لهذه الوظيفة.",
+  "changePhoto": "تغيير الصورة",
+  "changeAvatar": "تغيير الصورة الرمزية",
+  "addPhotoAction": "إضافة صورة",
+  "nationalityLabel": "الجنسية",
+  "targetRoleLabel": "الدور المستهدف",
+  "salaryExpectationLabel": "الراتب المتوقع",
+  "addLanguageCta": "+ إضافة لغة",
+  "experienceLabel": "الخبرة",
+  "nameLabel": "الاسم",
+  "zeroHours": "ساعات صفرية",
+  "checkInterviewDetailsLine": "راجع تفاصيل المقابلة",
+  "interviewInvitedSubline": "صاحب العمل يريد إجراء مقابلة معك — أكد الموعد",
+  "shortlistedSubline": "لقد دخلت القائمة المختصرة — انتظر الخطوة التالية",
+  "underReviewSubline": "صاحب العمل يراجع ملفك",
+  "hiredHeadline": "تم التعيين",
+  "hiredSubline": "تهانينا! لقد تلقيت عرضًا",
+  "applicationSubmittedHeadline": "تم تقديم الطلب",
+  "applicationSubmittedSubline": "صاحب العمل سيراجع طلبك",
+  "withdrawnHeadline": "تم الانسحاب",
+  "withdrawnSubline": "لقد سحبت هذا الطلب",
+  "notSelectedHeadline": "لم يتم الاختيار",
+  "notSelectedSubline": "شكراً لاهتمامك",
+  "jobsFoundCount": "{count, plural, zero{لم يتم العثور على وظائف} one{تم العثور على وظيفة واحدة} two{تم العثور على وظيفتين} few{تم العثور على {count} وظائف} many{تم العثور على {count} وظيفة} other{تم العثور على {count} وظيفة}}",
+  "@jobsFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsTotalCount": "{count, plural, zero{لا شيء في المجموع} one{1 في المجموع} two{2 في المجموع} few{{count} في المجموع} many{{count} في المجموع} other{{count} في المجموع}}",
+  "@applicationsTotalCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsInReviewCount": "{count, plural, zero{لا شيء قيد المراجعة} one{1 قيد المراجعة} two{2 قيد المراجعة} few{{count} قيد المراجعة} many{{count} قيد المراجعة} other{{count} قيد المراجعة}}",
+  "@applicationsInReviewCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicationsLiveCount": "{count, plural, zero{لا شيء نشط} one{1 نشطة} two{2 نشطتان} few{{count} نشطة} many{{count} نشطة} other{{count} نشطة}}",
+  "@applicationsLiveCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewsPendingConfirmTime": "{count, plural, zero{لا توجد مقابلات معلقة.} one{مقابلة معلقة — أكد موعدًا.} two{مقابلتان معلقتان — أكد موعدًا.} few{{count} مقابلات معلقة — أكد موعدًا.} many{{count} مقابلة معلقة — أكد موعدًا.} other{{count} مقابلة معلقة — أكد موعدًا.}}",
+  "@interviewsPendingConfirmTime": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "notifInterviewConfirmedTitle": "تم تأكيد المقابلة — {name}",
+  "@notifInterviewConfirmedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInterviewRequestTitle": "طلب مقابلة — {name}",
+  "@notifInterviewRequestTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApplicationUpdateTitle": "تحديث الطلب — {name}",
+  "@notifApplicationUpdateTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifOfferReceivedTitle": "عرض مستلم — {name}",
+  "@notifOfferReceivedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifMessageFromTitle": "رسالة من — {name}",
+  "@notifMessageFromTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifInterviewReminderTitle": "تذكير بالمقابلة — {name}",
+  "@notifInterviewReminderTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifProfileViewedTitle": "تمت مشاهدة الملف الشخصي — {name}",
+  "@notifProfileViewedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifNewJobMatchTitle": "تطابق وظيفي جديد — {name}",
+  "@notifNewJobMatchTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifApplicationViewedTitle": "تمت مشاهدة الطلب من قبل — {name}",
+  "@notifApplicationViewedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifShortlistedTitle": "في القائمة المختصرة لدى — {name}",
+  "@notifShortlistedTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "notifCompleteProfile": "أكمل ملفك الشخصي لمطابقات أفضل",
+  "notifCompleteBusinessProfile": "أكمل ملف شركتك لرؤية أفضل",
+  "notifNewJobViews": "وظيفتك {role} لديها {count} مشاهدات جديدة",
+  "@notifNewJobViews": {
+    "placeholders": {
+      "role": {
+        "type": "String"
+      },
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "notifAppliedForRole": "{name} تقدم لوظيفة {role}",
+  "@notifAppliedForRole": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "notifNewApplicationNameRole": "طلب جديد: {name} لوظيفة {role}",
+  "@notifNewApplicationNameRole": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "role": {
+        "type": "String"
+      }
+    }
+  },
+  "chatTyping": "يكتب...",
+  "chatStatusSeen": "تمت المشاهدة",
+  "chatStatusDelivered": "تم التسليم",
+  "entryTagline": "منصة التوظيف لمحترفي الضيافة.",
+  "entryFindWork": "ابحث عن عمل",
+  "entryFindWorkSubtitle": "تصفّح الوظائف واحصل على عمل لدى أفضل الأماكن",
+  "entryHireStaff": "وظّف موظفين",
+  "entryHireStaffSubtitle": "انشر وظائف واعثر على أفضل مواهب الضيافة",
+  "entryFindCompanies": "ابحث عن شركات",
+  "entryFindCompaniesSubtitle": "اكتشف أماكن الضيافة ومزوّدي الخدمات",
+  "servicesEntryTitle": "البحث عن شركات",
+  "servicesHospitalityServices": "خدمات الضيافة",
+  "servicesEntrySubtitle": "سجّل شركة خدماتك أو ابحث عن مزوّدي الضيافة بالقرب منك",
+  "servicesRegisterCardTitle": "التسجيل كشركة",
+  "servicesRegisterCardSubtitle": "اعرض خدمتك في مجال الضيافة ليكتشفك العملاء",
+  "servicesLookingCardTitle": "أبحث عن شركة",
+  "servicesLookingCardSubtitle": "ابحث عن مزوّدي خدمات الضيافة بالقرب منك",
+  "registerBusinessTitle": "سجّل شركتك",
+  "enterCompanyName": "أدخل اسم الشركة",
+  "subcategoryOptional": "الفئة الفرعية (اختياري)",
+  "subcategoryHintFloristDj": "مثال: بائع أزهار، خدمات دي جي",
+  "searchCompaniesHint": "ابحث عن شركات...",
+  "browseCategories": "تصفّح الفئات",
+  "companiesFoundCount": "{count, plural, zero{لا توجد شركات} one{شركة واحدة} two{شركتان} few{{count} شركات} many{{count} شركة} other{{count} شركة}}",
+  "@companiesFoundCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "serviceCategoryFoodBeverage": "موردو الطعام والمشروبات",
+  "serviceCategoryEventServices": "خدمات الفعاليات",
+  "serviceCategoryDecorDesign": "الديكور والتصميم",
+  "serviceCategoryEntertainment": "الترفيه",
+  "serviceCategoryEquipmentOps": "المعدات والعمليات",
+  "serviceCategoryCleaningMaintenance": "التنظيف والصيانة",
+  "distanceMiles": "{value} ميل",
+  "@distanceMiles": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "distanceKilometers": "{value} كم",
+  "@distanceKilometers": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "postDetailTitle": "منشور",
+  "likeAction": "إعجاب",
+  "commentAction": "علّق",
+  "saveActionLabel": "حفظ",
+  "commentsTitle": "التعليقات",
+  "addCommentHint": "أضف تعليقًا…",
+  "likesCount": "{count,plural, zero{لا إعجابات}one{إعجاب واحد}two{إعجابان}few{{count} إعجابات}many{{count} إعجابًا}other{{count} إعجاب}}",
+  "@likesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "commentsCount": "{count,plural, zero{لا تعليقات}one{تعليق واحد}two{تعليقان}few{{count} تعليقات}many{{count} تعليقًا}other{{count} تعليق}}",
+  "@commentsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savesCount": "{count,plural, zero{لا حفظات}one{حفظ واحد}two{حفظان}few{{count} حفظات}many{{count} حفظًا}other{{count} حفظ}}",
+  "@savesCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoMinutesShort": "{count}د",
+  "@timeAgoMinutesShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoHoursShort": "{count}س",
+  "@timeAgoHoursShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoDaysShort": "{count}ي",
+  "@timeAgoDaysShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "timeAgoNow": "الآن",
+  "activityTitle": "النشاط",
+  "activityLikedPost": "أعجبه منشورك",
+  "activityCommented": "علّق على منشورك",
+  "activityStartedFollowing": "بدأ بمتابعتك",
+  "activityMentioned": "أشار إليك",
+  "activitySystemUpdate": "أرسل لك تحديثًا",
+  "noActivityYetDesc": "عندما يعجب الناس بمنشورك أو يعلّقون أو يتابعونك، سيظهر هنا.",
+  "activeStatus": "نشط",
+  "activeBadge": "نشط",
+  "nextRenewalLabel": "التجديد التالي",
+  "startedLabel": "بدأ",
+  "statusLabel": "الحالة",
+  "billingAndCancellation": "الفواتير والإلغاء",
+  "billingAndCancellationCopy": "يتم تحرير فاتورة اشتراكك عبر حساب App Store / Google Play. يمكنك الإلغاء في أي وقت من إعدادات جهازك — وستحتفظ بالوصول إلى Premium حتى تاريخ التجديد.",
+  "premiumIsActive": "Premium نشط",
+  "premiumThanksCopy": "شكرًا لدعمك Plagit. لديك وصول كامل إلى جميع ميزات Premium.",
+  "manageSubscription": "إدارة الاشتراك",
+  "candidatePremiumPlanName": "Candidate Premium",
+  "renewsOnDate": "يتجدد في {date}",
+  "@renewsOnDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "fullViewerAccessLine": "وصول كامل للمشاهدين · جميع الإحصاءات متاحة",
+  "premiumActiveBadge": "Premium نشط",
+  "fullInsightsUnlocked": "الإحصاءات الكاملة وتفاصيل المشاهدين متاحة.",
+  "noViewersInCategory": "لا يوجد مشاهدون في هذه الفئة بعد",
+  "onlyVerifiedViewersShown": "يتم عرض المشاهدين الموثّقين الذين لديهم ملفات عامة فقط.",
+  "notEnoughDataYet": "لا توجد بيانات كافية بعد.",
+  "noViewInsightsYet": "لا توجد إحصاءات مشاهدات بعد",
+  "noViewInsightsDesc": "ستظهر الإحصاءات عندما يحصل منشورك على المزيد من المشاهدات.",
+  "suspiciousEngagementDetected": "تم رصد تفاعل مريب",
+  "patternReviewRequired": "مطلوب مراجعة النمط",
+  "adminInsightsFooter": "عرض المشرف — نفس الإحصاءات التي يراها المؤلف بالإضافة إلى علامات الإشراف. البيانات مجمعة فقط ولا يتم الكشف عن هوية أي مشاهد فردي.",
+  "viewerKindBusiness": "شركة",
+  "viewerKindCandidate": "مرشح",
+  "viewerKindRecruiter": "مسؤول توظيف",
+  "viewerKindHiringManager": "مدير التوظيف",
+  "viewerKindBusinessesPlural": "شركات",
+  "viewerKindCandidatesPlural": "مرشحون",
+  "viewerKindRecruitersPlural": "مسؤولو التوظيف",
+  "viewerKindHiringManagersPlural": "مديرو التوظيف",
+  "searchPeoplePostsVenuesHint": "ابحث عن أشخاص ومنشورات وأماكن…",
+  "searchCommunityTitle": "البحث في المجتمع",
+  "roleSommelier": "سقّاء نبيذ",
+  "candidatePremiumActivated": "أصبحت الآن Candidate Premium",
+  "purchasesRestoredPremium": "تم استرجاع المشتريات — أصبحت الآن Candidate Premium",
+  "nothingToRestore": "لا شيء لاستعادته",
+  "noValidSubscriptionPremiumRemoved": "لم يتم العثور على اشتراك صالح — تمت إزالة الوصول إلى Premium",
+  "restoreFailedWithError": "فشل الاسترجاع. {error}",
+  "@restoreFailedWithError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionTitleAnnual": "Candidate Premium · سنوي",
+  "subscriptionTitleMonthly": "Candidate Premium · شهري",
+  "pricePerYearSlash": "{price} / سنة",
+  "@pricePerYearSlash": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "pricePerMonthSlash": "{price} / شهر",
+  "@pricePerMonthSlash": {
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
+  },
+  "nearbyJobsTitle": "وظائف قريبة",
+  "@nearbyJobsTitle": {},
+  "expandRadius": "توسيع النطاق",
+  "@expandRadius": {},
+  "noJobsInRadius": "لا توجد وظائف في هذا النطاق",
+  "@noJobsInRadius": {},
+  "jobsWithinRadius": "{count, plural, =1{وظيفة واحدة ضمن {radius} ميل} other{{count} وظائف ضمن {radius} ميل}}",
+  "@jobsWithinRadius": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "radius": {
+        "type": "int"
+      }
+    }
+  },
+  "interviewAcceptedSnack": "تم قبول المقابلة!",
+  "@interviewAcceptedSnack": {},
+  "declineInterviewTitle": "رفض المقابلة",
+  "@declineInterviewTitle": {},
+  "declineInterviewConfirm": "هل أنت متأكد من رفض هذه المقابلة؟",
+  "@declineInterviewConfirm": {},
+  "addedToCalendar": "تمت الإضافة إلى التقويم",
+  "@addedToCalendar": {},
+  "removeCompanyTitle": "إزالة؟",
+  "@removeCompanyTitle": {},
+  "removeCompanyConfirm": "هل أنت متأكد من إزالة هذه الشركة من قائمة المحفوظات؟",
+  "@removeCompanyConfirm": {},
+  "signOutAllRolesConfirm": "هل أنت متأكد من تسجيل الخروج من كل الأدوار؟",
+  "@signOutAllRolesConfirm": {},
+  "tapToViewAllConversations": "اضغط لعرض كل المحادثات",
+  "@tapToViewAllConversations": {},
+  "savedJobsTitle": "الوظائف المحفوظة",
+  "@savedJobsTitle": {},
+  "savedJobsCount": "{count, plural, =1{وظيفة محفوظة واحدة} other{{count} وظائف محفوظة}}",
+  "@savedJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "removeFromSavedTitle": "إزالة من المحفوظات؟",
+  "@removeFromSavedTitle": {},
+  "removeFromSavedConfirm": "ستتم إزالة هذه الوظيفة من قائمة محفوظاتك.",
+  "@removeFromSavedConfirm": {},
+  "noSavedJobsSubtitle": "تصفح الوظائف واحفظ ما يعجبك",
+  "@noSavedJobsSubtitle": {},
+  "browseJobsAction": "تصفح الوظائف",
+  "@browseJobsAction": {},
+  "matchingJobsCount": "{count, plural, =1{وظيفة مطابقة واحدة} other{{count} وظائف مطابقة}}",
+  "@matchingJobsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "savedPostsTitle": "المنشورات المحفوظة",
+  "@savedPostsTitle": {},
+  "searchSavedPostsHint": "ابحث في المنشورات المحفوظة…",
+  "@searchSavedPostsHint": {},
+  "skipAction": "تخطٍّ",
+  "submitAction": "إرسال",
+  "doneAction": "تم",
+  "resetYourPasswordTitle": "إعادة تعيين كلمة المرور",
+  "enterEmailForResetCode": "أدخل بريدك الإلكتروني لتلقي رمز إعادة التعيين",
+  "sendResetCode": "إرسال رمز إعادة التعيين",
+  "enterResetCode": "أدخل رمز إعادة التعيين",
+  "resendCode": "إعادة إرسال الرمز",
+  "passwordResetComplete": "اكتملت إعادة تعيين كلمة المرور",
+  "backToSignIn": "العودة إلى تسجيل الدخول",
+  "passwordChanged": "تم تغيير كلمة المرور",
+  "passwordUpdatedShort": "تم تحديث كلمة المرور بنجاح.",
+  "passwordUpdatedRelogin": "تم تحديث كلمة المرور. يُرجى تسجيل الدخول مرة أخرى بكلمة المرور الجديدة.",
+  "updatePassword": "تحديث كلمة المرور",
+  "changePasswordTitle": "تغيير كلمة المرور",
+  "passwordRequirements": "متطلبات كلمة المرور",
+  "newPasswordHint": "كلمة مرور جديدة (8 أحرف على الأقل)",
+  "confirmPasswordField": "تأكيد كلمة المرور",
+  "enterEmailField": "أدخل البريد الإلكتروني",
+  "enterPasswordField": "أدخل كلمة المرور",
+  "welcomeBack": "مرحبًا بعودتك!",
+  "selectHowToUse": "اختر كيف تريد استخدام Plagit اليوم",
+  "continueAsCandidate": "المتابعة كمرشح",
+  "continueAsBusiness": "المتابعة كشركة",
+  "signInToPlagit": "تسجيل الدخول إلى Plagit",
+  "enterCredentials": "أدخل بيانات الاعتماد للمتابعة",
+  "adminPortal": "بوابة المسؤول",
+  "plagitAdmin": "Plagit Admin",
+  "signInToAdminAccount": "سجّل الدخول إلى حساب المسؤول",
+  "admin": "المسؤول",
+  "searchJobsRolesRestaurantsHint": "ابحث عن وظائف وأدوار ومطاعم...",
+  "exploreNearbyJobs": "استكشف الوظائف القريبة",
+  "findOpportunitiesOnMap": "اعثر على الفرص على الخريطة من حولك",
+  "featuredJobs": "وظائف مميزة",
+  "jobsNearYou": "وظائف قريبة منك",
+  "jobsMatchingRoleType": "وظائف تطابق دورك ونوع العمل",
+  "availableNow": "متاح الآن",
+  "noNearbyJobsYet": "لا توجد وظائف قريبة بعد",
+  "tryIncreasingRadius": "حاول زيادة النطاق أو تغيير الفلاتر",
+  "checkBackForOpportunities": "عد قريبًا للاطلاع على فرص جديدة",
+  "noNotifications": "لا توجد إشعارات",
+  "okAction": "حسنًا",
+  "onlineNow": "متصل الآن",
+  "businessUpper": "شركة",
+  "waitingForBusinessFirstMessage": "في انتظار أن ترسل الشركة أول رسالة",
+  "whenEmployersMessageYou": "عندما يراسلك أصحاب العمل، ستظهر الرسائل هنا.",
+  "replyToCandidate": "الرد على المرشح…",
+  "quickFeedback": "ملاحظات سريعة",
+  "helpImproveMatches": "ساعدنا في تحسين نتائج التطابق",
+  "thanksForFeedback": "شكرًا على ملاحظاتك!",
+  "accountSettings": "إعدادات الحساب",
+  "notificationSettings": "إعدادات الإشعارات",
+  "privacyAndSecurity": "الخصوصية والأمان",
+  "helpAndSupport": "المساعدة والدعم",
+  "activeRoleUpper": "الدور النشط",
+  "meetingLink": "رابط الاجتماع",
+  "joinMeeting2": "الانضمام إلى الاجتماع",
+  "notes": "ملاحظات",
+  "completeBusinessProfileTitle": "أكمل ملف شركتك",
+  "businessDescription": "وصف الشركة",
+  "finishSetupAction": "إنهاء الإعداد",
+  "describeBusinessHintLong": "صِف شركتك وثقافتها وما يجعلها مكانًا رائعًا للعمل... (يُوصى بـ 150 حرفًا على الأقل)",
+  "describeBusinessHintShort": "صِف شركتك...",
+  "writeShortIntroAboutYourself": "اكتب مقدمة قصيرة عن نفسك...",
+  "createBusinessAccountTitle": "إنشاء حساب شركة",
+  "businessDetailsSection": "تفاصيل الشركة",
+  "openToInternationalCandidates": "منفتح على مرشحين دوليين",
+  "createAccountShort": "إنشاء حساب",
+  "yourDetailsSection": "بياناتك",
+  "jobTypeField": "نوع الوظيفة",
+  "communityFeed": "خلاصة المجتمع",
+  "postPublished": "تم نشر المنشور",
+  "postHidden": "تم إخفاء المنشور",
+  "postReportedReview": "تم الإبلاغ عن المنشور — سيراجعه المسؤول",
+  "postNotFound": "المنشور غير موجود",
+  "goBack": "العودة",
+  "linkCopied": "تم نسخ الرابط",
+  "removedFromSaved": "تمت الإزالة من المحفوظات",
+  "noPostsFound": "لم يتم العثور على منشورات",
+  "tipsStoriesAdvice": "نصائح وقصص ومشورة من محترفي الضيافة",
+  "searchTalentPostsRolesHint": "ابحث عن مواهب ومنشورات وأدوار…",
+  "videoAttachmentsComingSoon": "مرفقات الفيديو قريبًا",
+  "locationTaggingComingSoon": "وسم الموقع قريبًا",
+  "fullImageViewerComingSoon": "عارض الصور الكامل قريبًا",
+  "shareComingSoon": "المشاركة قريبًا",
+  "findServices": "اعثر على خدمات",
+  "findHospitalityServices": "اعثر على خدمات الضيافة",
+  "browseServices": "تصفّح الخدمات",
+  "searchServicesCompaniesLocationsHint": "ابحث عن خدمات وشركات ومواقع...",
+  "searchCompaniesServicesLocationsHint": "ابحث عن شركات وخدمات ومواقع...",
+  "nearbyCompanies": "شركات قريبة",
+  "nearYou": "بالقرب منك",
+  "listLabel": "قائمة",
+  "mapViewLabel": "عرض الخريطة",
+  "noServicesFound": "لم يتم العثور على خدمات",
+  "noCompaniesFoundNearby": "لا توجد شركات قريبة",
+  "noSavedCompanies": "لا توجد شركات محفوظة",
+  "savedCompaniesTitle": "الشركات المحفوظة",
+  "saveCompaniesForLater": "احفظ الشركات التي تعجبك لإيجادها لاحقًا",
+  "latestUpdates": "آخر التحديثات",
+  "noPromotions": "لا توجد عروض",
+  "companyHasNoPromotions": "لا توجد عروض نشطة لهذه الشركة.",
+  "companyHasNoUpdates": "لم تنشر هذه الشركة أي تحديثات.",
+  "promotionsAndOffers": "العروض والخصومات",
+  "promotionNotFound": "العرض غير موجود",
+  "promotionDetails": "تفاصيل العرض",
+  "termsAndConditions": "الشروط والأحكام",
+  "relatedPosts": "منشورات ذات صلة",
+  "viewOffer": "عرض العرض",
+  "offerBadge": "عرض",
+  "requestQuote": "طلب عرض سعر",
+  "sendRequest": "إرسال الطلب",
+  "quoteRequestSent": "تم إرسال طلب عرض السعر!",
+  "inquiry": "استفسار",
+  "dateNeeded": "التاريخ المطلوب",
+  "serviceType": "نوع الخدمة",
+  "serviceArea": "منطقة الخدمة",
+  "servicesOffered": "الخدمات المقدّمة",
+  "servicesLabel": "الخدمات",
+  "servicePlans": "خطط الخدمة",
+  "growYourServiceBusiness": "نمِّ أعمالك في الخدمات",
+  "getDiscoveredPremium": "اظهر لمزيد من العملاء مع إعلان مميز.",
+  "unlockPremium": "افتح Premium",
+  "getMoreVisibility": "احصل على رؤية أكبر ونتائج تطابق أفضل",
+  "plagitPremiumUpper": "PLAGIT PREMIUM",
+  "premiumOnly": "للمشتركين في Premium فقط",
+  "savePercent17": "وفّر 17%",
+  "registerBusinessCta": "تسجيل الشركة",
+  "registrationSubmitted": "تم إرسال التسجيل",
+  "serviceDescription": "وصف الخدمة",
+  "describeServicesHint": "صِف خدماتك وخبرتك وما يميّزك...",
+  "websiteOptional": "الموقع الإلكتروني (اختياري)",
+  "viewCompanyProfileCta": "عرض ملف الشركة",
+  "contactCompany": "التواصل مع الشركة",
+  "aboutUs": "من نحن",
+  "address": "العنوان",
+  "city": "المدينة",
+  "yourLocation": "موقعك",
+  "enterYourCity": "أدخل مدينتك",
+  "clearFilters": "مسح الفلاتر",
+  "tryDifferentSearchTerm": "جرّب كلمة بحث مختلفة",
+  "tryDifferentOrAdjust": "جرّب كلمة بحث أو فئة أو فلاتر مختلفة.",
+  "noPostsYetCompany": "لا توجد منشورات بعد",
+  "requestQuoteFromCompany": "اطلب عرض أسعار من {companyName}",
+  "@requestQuoteFromCompany": {
+    "placeholders": {
+      "companyName": {
+        "type": "String"
+      }
+    }
+  },
+  "validUntilDate": "صالح حتى {validUntil}",
+  "@validUntilDate": {
+    "placeholders": {
+      "validUntil": {
+        "type": "String"
+      }
+    }
+  },
+  "employerCheckingProfile": "صاحب عمل يتحقق من ملفك الشخصي الآن",
+  "profileStrengthPercent": "ملفك الشخصي مكتمل بنسبة {percent}٪",
+  "@profileStrengthPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "profileGetsMoreViews": "الملف المكتمل يحصل على 3× مشاهدات أكثر",
+  "applicationUpdate": "تحديث الطلب",
+  "findJobsAndApply": "ابحث عن وظائف وتقدم",
+  "manageJobsAndHiring": "إدارة الوظائف والتوظيف",
+  "managePlatform": "إدارة المنصة",
+  "findHospitalityCompanies": "ابحث عن شركات الضيافة",
+  "candidateMessages": "رسائل المرشحين",
+  "businessMessages": "رسائل الأعمال",
+  "serviceInquiries": "استفسارات الخدمة",
+  "acceptInterview": "قبول المقابلة",
+  "adminMenuDashboard": "لوحة التحكم",
+  "adminMenuUsers": "المستخدمون",
+  "adminMenuCandidates": "المرشحون",
+  "adminMenuBusinesses": "الشركات",
+  "adminMenuJobs": "الوظائف",
+  "adminMenuApplications": "الطلبات",
+  "adminMenuBookings": "الحجوزات",
+  "adminMenuPayments": "المدفوعات",
+  "adminMenuMessages": "الرسائل",
+  "adminMenuNotifications": "الإشعارات",
+  "adminMenuReports": "التقارير",
+  "adminMenuAnalytics": "التحليلات",
+  "adminMenuSettings": "الإعدادات",
+  "adminMenuSupport": "الدعم",
+  "adminMenuModeration": "الإشراف",
+  "adminMenuRoles": "الأدوار",
+  "adminMenuInvoices": "الفواتير",
+  "adminMenuLogs": "السجلات",
+  "adminMenuIntegrations": "التكاملات",
+  "adminMenuLogout": "تسجيل الخروج",
+  "adminActionApprove": "موافقة",
+  "adminActionReject": "رفض",
+  "adminActionSuspend": "تعليق",
+  "adminActionActivate": "تفعيل",
+  "adminActionDelete": "حذف",
+  "adminActionExport": "تصدير",
+  "adminSectionOverview": "نظرة عامة",
+  "adminSectionManagement": "الإدارة",
+  "adminSectionFinance": "المالية",
+  "adminSectionOperations": "العمليات",
+  "adminSectionSystem": "النظام",
+  "adminStatTotalUsers": "إجمالي المستخدمين",
+  "adminStatActiveJobs": "الوظائف النشطة",
+  "adminStatPendingApprovals": "موافقات معلقة",
+  "adminStatRevenue": "الإيرادات",
+  "adminStatBookingsToday": "حجوزات اليوم",
+  "adminStatNewSignups": "تسجيلات جديدة",
+  "adminStatConversionRate": "معدل التحويل",
+  "adminMiscWelcome": "مرحباً بعودتك",
+  "adminMiscLoading": "جارٍ التحميل…",
+  "adminMiscNoData": "لا توجد بيانات",
+  "adminMiscSearchPlaceholder": "بحث…",
+  "adminMenuContent": "المحتوى",
+  "adminMenuMore": "المزيد",
+  "adminMenuVerifications": "التحقق",
+  "adminMenuSubscriptions": "الاشتراكات",
+  "adminMenuCommunity": "المجتمع",
+  "adminMenuInterviews": "المقابلات",
+  "adminMenuMatches": "التطابقات",
+  "adminMenuFeaturedContent": "محتوى مميز",
+  "adminMenuAuditLog": "سجل التدقيق",
+  "adminMenuChangePassword": "تغيير كلمة المرور",
+  "adminSectionPeople": "الأشخاص",
+  "adminSectionHiring": "عمليات التوظيف",
+  "adminSectionContentComm": "المحتوى والتواصل",
+  "adminSectionRevenue": "الأعمال والإيرادات",
+  "adminSectionToolsContent": "الأدوات والمحتوى",
+  "adminSectionQuickActions": "إجراءات سريعة",
+  "adminSectionNeedsAttention": "يتطلب الانتباه",
+  "adminStatActiveBusinesses": "الشركات النشطة",
+  "adminStatApplicationsToday": "الطلبات اليوم",
+  "adminStatInterviewsToday": "المقابلات اليوم",
+  "adminStatFlaggedContent": "محتوى مُبلَّغ",
+  "adminStatActiveSubs": "الاشتراكات النشطة",
+  "adminActionFlagged": "مُبلَّغ",
+  "adminActionFeatured": "مميز",
+  "adminActionReviewFlagged": "مراجعة المحتوى المبلَّغ",
+  "adminActionTodayInterviews": "مقابلات اليوم",
+  "adminActionOpenReports": "بلاغات مفتوحة",
+  "adminActionManageSubscriptions": "إدارة الاشتراكات",
+  "adminActionAnalyticsDashboard": "لوحة التحليلات",
+  "adminActionSendNotification": "إرسال إشعار",
+  "adminActionCreateCommunityPost": "إنشاء منشور مجتمعي",
+  "adminActionRetry": "إعادة المحاولة",
+  "adminMiscGreetingMorning": "صباح الخير",
+  "adminMiscGreetingAfternoon": "مساء الخير",
+  "adminMiscGreetingEvening": "مساء الخير",
+  "adminMiscAllClear": "كل شيء على ما يرام — لا شيء يتطلب الانتباه.",
+  "adminSubtitleAllUsers": "جميع مستخدمي المنصة",
+  "adminSubtitleCandidates": "ملفات الباحثين عن عمل",
+  "adminSubtitleBusinesses": "حسابات أصحاب العمل",
+  "adminSubtitleJobs": "إعلانات وظائف نشطة",
+  "adminSubtitleApplications": "الطلبات المقدمة",
+  "adminSubtitleInterviews": "المقابلات المجدولة",
+  "adminSubtitleMatches": "تطابقات الدور ونوع الوظيفة",
+  "adminSubtitleVerifications": "مراجعة التحقق المعلق",
+  "adminSubtitleReports": "الإبلاغات والإشراف",
+  "adminSubtitleSupport": "مشاكل دعم مفتوحة",
+  "adminSubtitleMessages": "محادثات المستخدمين",
+  "adminSubtitleNotifications": "تنبيهات الدفع والتطبيق",
+  "adminSubtitleCommunity": "المنشورات والنقاشات",
+  "adminSubtitleFeaturedContent": "المحتوى المميز",
+  "adminSubtitleSubscriptions": "الخطط والفواتير",
+  "adminSubtitleAuditLog": "سجلات نشاط المسؤول",
+  "adminSubtitleAnalytics": "مقاييس المنصة",
+  "adminSubtitleSettings": "إعدادات المنصة",
+  "adminSubtitleUsersPage": "إدارة حسابات المنصة",
+  "adminSubtitleContentPage": "الوظائف والطلبات والمقابلات",
+  "adminSubtitleModerationPage": "التحقق والإبلاغات والدعم",
+  "adminSubtitleMorePage": "الإعدادات والتحليلات والحساب",
+  "adminSubtitleAnalyticsHero": "مؤشرات الأداء والاتجاهات وصحة المنصة",
+  "adminBadgeUrgent": "عاجل",
+  "adminBadgeReview": "مراجعة",
+  "adminBadgeAction": "إجراء",
+  "adminMenuAllUsers": "جميع المستخدمين",
+  "adminMiscSuperAdmin": "المسؤول الأعلى",
+  "adminBadgeNToday": "{count} اليوم",
+  "adminBadgeNOpen": "{count} مفتوحة",
+  "adminBadgeNActive": "{count} نشطة",
+  "adminBadgeNUnread": "{count} غير مقروءة",
+  "adminBadgeNPending": "{count} معلقة",
+  "adminBadgeNPosts": "{count} منشورات",
+  "adminBadgeNFeatured": "{count} مميزة",
+  "adminStatusActive": "نشط",
+  "adminStatusPaused": "متوقف",
+  "adminStatusClosed": "مغلق",
+  "adminStatusDraft": "مسودة",
+  "adminStatusFlagged": "موسوم",
+  "adminStatusSuspended": "موقوف",
+  "adminStatusPending": "معلق",
+  "adminStatusConfirmed": "مؤكد",
+  "adminStatusCompleted": "مكتمل",
+  "adminStatusCancelled": "ملغى",
+  "adminStatusAccepted": "مقبول",
+  "adminStatusDenied": "مرفوض",
+  "adminStatusExpired": "منتهي",
+  "adminStatusResolved": "محلول",
+  "adminStatusScheduled": "مجدول",
+  "adminStatusBanned": "محظور",
+  "adminStatusVerified": "موثق",
+  "adminStatusFailed": "فشل",
+  "adminStatusSuccess": "نجاح",
+  "adminStatusDelivered": "تم التسليم",
+  "adminFilterAll": "الكل",
+  "adminFilterToday": "اليوم",
+  "adminFilterUnread": "غير مقروء",
+  "adminFilterRead": "مقروء",
+  "adminFilterCandidates": "المرشحون",
+  "adminFilterBusinesses": "الأعمال",
+  "adminFilterAdmins": "المسؤولون",
+  "adminFilterCandidate": "مرشح",
+  "adminFilterBusiness": "نشاط",
+  "adminFilterSystem": "النظام",
+  "adminFilterPinned": "مثبت",
+  "adminFilterEmployers": "أصحاب العمل",
+  "adminFilterBanners": "لافتات",
+  "adminFilterBilling": "الفواتير",
+  "adminFilterFeaturedEmployer": "صاحب عمل مميز",
+  "adminFilterFeaturedJob": "وظيفة مميزة",
+  "adminFilterHomeBanner": "لافتة الصفحة الرئيسية",
+  "adminEmptyAdjustFilters": "حاول تعديل عوامل التصفية.",
+  "adminEmptyJobsTitle": "لا توجد وظائف",
+  "adminEmptyJobsSub": "لا توجد وظائف مطابقة.",
+  "adminEmptyUsersTitle": "لا يوجد مستخدمون",
+  "adminEmptyMessagesTitle": "لا توجد رسائل",
+  "adminEmptyMessagesSub": "لا توجد محادثات لعرضها.",
+  "adminEmptyReportsTitle": "لا توجد تقارير",
+  "adminEmptyReportsSub": "لا توجد تقارير مستخدم للمراجعة.",
+  "adminEmptyBusinessesTitle": "لا توجد أعمال",
+  "adminEmptyBusinessesSub": "لا توجد أعمال مطابقة.",
+  "adminEmptyNotifsTitle": "لا توجد إشعارات",
+  "adminEmptySubsTitle": "لا توجد اشتراكات",
+  "adminEmptySubsSub": "لا توجد اشتراكات مطابقة.",
+  "adminEmptyLogsTitle": "لا توجد سجلات",
+  "adminEmptyContentTitle": "لا يوجد محتوى",
+  "adminEmptyInterviewsTitle": "لا توجد مقابلات",
+  "adminEmptyInterviewsSub": "لا توجد مقابلات مطابقة.",
+  "adminEmptyFeedback": "ستظهر بيانات التعليقات هنا",
+  "adminEmptyMatchNotifs": "ستظهر إشعارات المطابقة هنا",
+  "adminTitleMatchManagement": "إدارة المطابقات",
+  "adminTitleAdminLogs": "سجلات المسؤول",
+  "adminTitleContentFeatured": "المحتوى / المميز",
+  "adminTabFeedback": "التعليقات",
+  "adminTabStats": "الإحصائيات",
+  "adminSortNewest": "الأحدث",
+  "adminSortPriority": "الأولوية",
+  "adminStatTotalMatches": "إجمالي المطابقات",
+  "adminStatAccepted": "المقبولة",
+  "adminStatDenied": "المرفوضة",
+  "adminStatFeedbackCount": "التعليقات",
+  "adminStatMatchQuality": "درجة جودة المطابقة",
+  "adminStatTotal": "الإجمالي",
+  "adminStatPendingCount": "معلق",
+  "adminStatNotificationsCount": "الإشعارات",
+  "adminStatActiveCount": "النشطة",
+  "adminSectionPlatformSettings": "إعدادات المنصة",
+  "adminSectionNotificationSettings": "إعدادات الإشعارات",
+  "adminSettingMaintenanceTitle": "وضع الصيانة",
+  "adminSettingMaintenanceSub": "تعطيل الوصول لجميع المستخدمين",
+  "adminSettingNewRegsTitle": "التسجيلات الجديدة",
+  "adminSettingNewRegsSub": "السماح بتسجيل مستخدمين جدد",
+  "adminSettingFeaturedJobsTitle": "الوظائف المميزة",
+  "adminSettingFeaturedJobsSub": "عرض الوظائف المميزة في الرئيسية",
+  "adminSettingEmailNotifsTitle": "إشعارات البريد الإلكتروني",
+  "adminSettingEmailNotifsSub": "إرسال تنبيهات بريدية",
+  "adminSettingPushNotifsTitle": "إشعارات الدفع",
+  "adminSettingPushNotifsSub": "إرسال إشعارات الدفع",
+  "adminActionSaveChanges": "حفظ التغييرات",
+  "adminToastSettingsSaved": "تم حفظ الإعدادات",
+  "adminActionResolve": "حل",
+  "adminActionDismiss": "تجاهل",
+  "adminActionBanUser": "حظر المستخدم",
+  "adminSearchUsersHint": "ابحث بالاسم أو البريد أو الدور أو الموقع...",
+  "adminMiscPositive": "إيجابي",
+  "adminCountUsers": "{count} مستخدم",
+  "adminCountNotifs": "{count} إشعار",
+  "adminCountLogs": "{count} سجل",
+  "adminCountItems": "{count} عنصر",
+  "adminBadgeNRetried": "أعيدت المحاولة x{count}"
+}
