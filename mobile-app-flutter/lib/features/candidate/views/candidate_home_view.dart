@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/views/home/worker_home_view.dart';
 import 'package:plagit/features/candidate/views/candidate_jobs_tab.dart';
-import 'package:plagit/features/candidate/views/candidate_applications_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_quick_plug_view.dart';
 import 'package:plagit/features/candidate/views/candidate_profile_tab.dart';
 
@@ -16,10 +15,14 @@ class CandidateHomeView extends StatefulWidget {
 class _CandidateHomeViewState extends State<CandidateHomeView> {
   int _currentIndex = 0;
 
+  static const _homeIndex = 0;
+  static const _jobsIndex = 1;
+  static const _quickPlugIndex = 2;
+  static const _profileIndex = 3;
+
   final List<Widget> _tabs = const [
     WorkerHomeView(),
     CandidateJobsTab(),
-    CandidateApplicationsTab(),
     CandidateQuickPlugView(),
     CandidateProfileTab(),
   ];
@@ -28,76 +31,92 @@ class _CandidateHomeViewState extends State<CandidateHomeView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _tabs),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
+      bottomNavigationBar: Material(
+        color: Colors.white,
+        elevation: 8,
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: 64,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 6, bottom: 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildTab(icon: Icons.home_outlined, activeIcon: Icons.home, label: 'Home', index: _homeIndex),
+                  _buildTab(icon: Icons.work_outline, activeIcon: Icons.work, label: 'Jobs', index: _jobsIndex),
+                  _buildCenterAction(),
+                  _buildTab(icon: Icons.bolt_outlined, activeIcon: Icons.bolt, label: 'Quick Plug', index: _quickPlugIndex, isPurple: true),
+                  _buildTab(icon: Icons.person_outline, activeIcon: Icons.person, label: 'Profile', index: _profileIndex),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTab({
+    required IconData icon,
+    required IconData activeIcon,
+    required String label,
+    required int index,
+    bool isPurple = false,
+  }) {
+    final active = _currentIndex == index;
+    final color = isPurple
+        ? (active ? AppColors.purple : AppColors.purple.withValues(alpha: 0.5))
+        : (active ? AppColors.teal : AppColors.tertiary);
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => setState(() => _currentIndex = index),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(active ? activeIcon : icon, size: 22, color: color),
+            const SizedBox(height: 3),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w400,
+                color: color,
+              ),
             ),
           ],
         ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 6, bottom: 2),
-            child: Row(
-              children: List.generate(5, (i) {
-                final active = _currentIndex == i;
-                final isPurple = i == 3;
-                const icons = [
-                  [Icons.home_outlined, Icons.home],
-                  [Icons.work_outline, Icons.work],
-                  [Icons.description_outlined, Icons.description],
-                  [Icons.bolt_outlined, Icons.bolt],
-                  [Icons.person_outline, Icons.person],
-                ];
-                const labels = [
-                  'Home',
-                  'Jobs',
-                  'Applied',
-                  'Quick Plug',
-                  'Profile',
-                ];
-                final color = isPurple
-                    ? (active
-                        ? AppColors.purple
-                        : AppColors.purple.withValues(alpha: 0.5))
-                    : (active ? AppColors.teal : AppColors.tertiary);
+      ),
+    );
+  }
 
-                return Expanded(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => setState(() => _currentIndex = i),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            active ? icons[i][1] : icons[i][0],
-                            size: 22,
-                            color: color,
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            labels[i],
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight:
-                                  active ? FontWeight.w700 : FontWeight.w400,
-                              color: color,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }),
+  Widget _buildCenterAction() {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => setState(() => _currentIndex = _quickPlugIndex),
+        child: Center(
+          child: Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [AppColors.teal, AppColors.darkTeal],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.teal.withValues(alpha: 0.35),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                ),
+              ],
             ),
+            child: const Icon(Icons.add, size: 24, color: Colors.white),
           ),
         ),
       ),

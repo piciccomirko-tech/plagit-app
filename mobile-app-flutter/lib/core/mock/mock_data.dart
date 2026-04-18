@@ -21,6 +21,7 @@ class MockData {
     'id': '1',
     'name': 'Elena Rossi',
     'initials': 'ER',
+    'photo_url': 'avatar:waiter:female:1',
     'email': 'candidate@test.com',
     'phone': '+44 7700 900123',
     'location': 'London, UK',
