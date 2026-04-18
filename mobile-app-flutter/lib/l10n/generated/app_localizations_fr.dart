@@ -5652,54 +5652,16 @@ class AppLocalizationsFr extends AppLocalizations {
   String get adminStatRejected => 'Rejetés';
 
   @override
-  String rePrefix(String context) {
-    return 'Re : $context';
-  }
-
-  @override
-  String conversationCount(int count) {
+  String quickPlugNewBadge(int count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count conversations',
-      one: '1 conversation',
+      other: '$count nouveaux',
+      one: '1 nouveau',
     );
     return '$_temp0';
   }
 
   @override
-  String unreadCount(int count) {
-    return '$count non lus';
-  }
-
-  @override
-  String removeChatBody(String company) {
-    return 'Supprimer votre discussion avec $company ? Seule votre copie est supprimée — l\'autre partie conserve la sienne.';
-  }
-
-  @override
-  String deleteConversationsCount(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Supprimer $count conversations ?',
-      one: 'Supprimer 1 conversation ?',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get selectedChatsBody =>
-      'Les discussions sélectionnées seront supprimées de votre boîte de réception. L\'autre partie conserve sa copie.';
-
-  @override
-  String clearInboxBody(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: '$count conversations',
-      one: '1 conversation',
-    );
-    return 'Cela videra votre boîte de réception ($_temp0). Cette action ne peut pas être annulée de votre côté.';
-  }
+  String get orLabel => 'ou';
 }
