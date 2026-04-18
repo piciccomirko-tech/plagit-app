@@ -5142,4 +5142,215 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'No hay empleos publicados';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'Detalle de suscripción';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'Suscripción no encontrada';
+
+  @override
+  String get adminSectionPlanDetails => 'Detalles del plan';
+
+  @override
+  String get adminFieldPrice => 'Precio';
+
+  @override
+  String get adminFieldStartDate => 'Fecha de inicio';
+
+  @override
+  String get adminFieldRenewalDate => 'Fecha de renovación';
+
+  @override
+  String get adminSectionAdminOverride => 'Anulación admin';
+
+  @override
+  String get adminPlanCandidatePremium => 'Candidato Premium';
+
+  @override
+  String get adminPlanBusinessPro => 'Business Pro';
+
+  @override
+  String get adminPlanBusinessPremium => 'Business Premium';
+
+  @override
+  String get adminPlanFree => 'Gratis';
+
+  @override
+  String get adminFieldNewRenewalDate => 'Nueva fecha de renovación';
+
+  @override
+  String get adminPlaceholderDateExample => 'ej. 15 jun 2026';
+
+  @override
+  String get adminFieldReason => 'Motivo';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'Motivo de la anulación...';
+
+  @override
+  String get adminActionApplyOverride => 'Aplicar anulación';
+
+  @override
+  String get adminSectionHistory => 'Historial';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'Suscripción creada';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'Pago procesado';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'Sin notas de admin.';
+
+  @override
+  String get adminSectionAuditDetail => 'Detalle de auditoría';
+
+  @override
+  String get adminEmptyEntryNotFound => 'Entrada no encontrada';
+
+  @override
+  String get adminFieldAdmin => 'Admin';
+
+  @override
+  String get adminFieldAction => 'Acción';
+
+  @override
+  String get adminFieldTimestamp => 'Marca de tiempo';
+
+  @override
+  String get adminFieldTarget => 'Objetivo';
+
+  @override
+  String get adminFieldType => 'Tipo';
+
+  @override
+  String get adminSectionChanges => 'Cambios';
+
+  @override
+  String get adminFieldIpAddress => 'Dirección IP';
+
+  @override
+  String get adminAuditUnverified => 'No verificado';
+
+  @override
+  String get adminAuditStandard => 'Estándar';
+
+  @override
+  String get adminAuditFeatured => 'Destacado';
+
+  @override
+  String get adminAuditPreviousStatus => 'Estado anterior';
+
+  @override
+  String get adminAuditOverridden => 'Anulado';
+
+  @override
+  String get adminAuditPrevious => 'Anterior';
+
+  @override
+  String get adminAuditUpdated => 'Actualizado';
+
+  @override
+  String get adminStatusWithdrawn => 'Retirada';
+
+  @override
+  String get adminStatusNoShow => 'Ausente';
+
+  @override
+  String get adminStatusInProgress => 'En curso';
+
+  @override
+  String get adminStatusReviewed => 'Revisada';
+
+  @override
+  String get adminStatusDecision => 'Decisión';
+
+  @override
+  String get adminSectionApplicationDetail => 'Detalle de candidatura';
+
+  @override
+  String get adminSectionInterviewDetail => 'Detalle de entrevista';
+
+  @override
+  String get adminSectionTimeline => 'Cronología';
+
+  @override
+  String get adminSectionAdminNotes => 'Notas de admin';
+
+  @override
+  String get adminSectionActions => 'Acciones';
+
+  @override
+  String get adminFieldCandidate => 'Candidato';
+
+  @override
+  String get adminFieldJob => 'Empleo';
+
+  @override
+  String get adminFieldBusiness => 'Empresa';
+
+  @override
+  String get adminFieldDate => 'Fecha';
+
+  @override
+  String get adminFieldTime => 'Hora';
+
+  @override
+  String get adminFieldFormat => 'Formato';
+
+  @override
+  String get adminBadgeFlaggedForReview =>
+      'Marcado para revisión del moderador';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Seleccionar estado';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Confirmar anulación';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return '¿Cambiar el estado a \"$status\"?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Motivo:';
+
+  @override
+  String get adminMiscNoneProvided => 'No se indicó';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied =>
+      'Anulación de estado aplicada';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Nota guardada';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Nota añadida';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Marcado como ausente';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Entrevista cancelada';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Entrevista completada';
+
+  @override
+  String get adminActionSaveNote => 'Guardar nota';
+
+  @override
+  String get adminActionAddNote => 'Añadir nota';
+
+  @override
+  String get adminActionComplete => 'Completar';
+
+  @override
+  String get adminActionMarkNoShow => 'Marcar ausente';
+
+  @override
+  String get adminEmptyNoNotes => 'Aún no hay notas.';
 }

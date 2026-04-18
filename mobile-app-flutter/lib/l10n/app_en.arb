@@ -3320,5 +3320,286 @@
   "adminEmptyNoJobsPosted": "No jobs posted",
   "@adminEmptyNoJobsPosted": {
     "description": "adminEmptyNoJobsPosted"
+  },
+  "adminSectionSubscriptionDetail": "Subscription Detail",
+  "@adminSectionSubscriptionDetail": {
+    "description": "adminSectionSubscriptionDetail"
+  },
+  "adminEmptySubscriptionNotFound": "Subscription not found",
+  "@adminEmptySubscriptionNotFound": {
+    "description": "adminEmptySubscriptionNotFound"
+  },
+  "adminSectionPlanDetails": "Plan Details",
+  "@adminSectionPlanDetails": {
+    "description": "adminSectionPlanDetails"
+  },
+  "adminFieldPrice": "Price",
+  "@adminFieldPrice": {
+    "description": "adminFieldPrice"
+  },
+  "adminFieldStartDate": "Start Date",
+  "@adminFieldStartDate": {
+    "description": "adminFieldStartDate"
+  },
+  "adminFieldRenewalDate": "Renewal Date",
+  "@adminFieldRenewalDate": {
+    "description": "adminFieldRenewalDate"
+  },
+  "adminSectionAdminOverride": "Admin Override",
+  "@adminSectionAdminOverride": {
+    "description": "adminSectionAdminOverride"
+  },
+  "adminPlanCandidatePremium": "Candidate Premium",
+  "@adminPlanCandidatePremium": {
+    "description": "adminPlanCandidatePremium"
+  },
+  "adminPlanBusinessPro": "Business Pro",
+  "@adminPlanBusinessPro": {
+    "description": "adminPlanBusinessPro"
+  },
+  "adminPlanBusinessPremium": "Business Premium",
+  "@adminPlanBusinessPremium": {
+    "description": "adminPlanBusinessPremium"
+  },
+  "adminPlanFree": "Free",
+  "@adminPlanFree": {
+    "description": "adminPlanFree"
+  },
+  "adminFieldNewRenewalDate": "New Renewal Date",
+  "@adminFieldNewRenewalDate": {
+    "description": "adminFieldNewRenewalDate"
+  },
+  "adminPlaceholderDateExample": "e.g. Jun 15, 2026",
+  "@adminPlaceholderDateExample": {
+    "description": "adminPlaceholderDateExample"
+  },
+  "adminFieldReason": "Reason",
+  "@adminFieldReason": {
+    "description": "adminFieldReason"
+  },
+  "adminPlaceholderReasonOverride": "Reason for override...",
+  "@adminPlaceholderReasonOverride": {
+    "description": "adminPlaceholderReasonOverride"
+  },
+  "adminActionApplyOverride": "Apply Override",
+  "@adminActionApplyOverride": {
+    "description": "adminActionApplyOverride"
+  },
+  "adminSectionHistory": "History",
+  "@adminSectionHistory": {
+    "description": "adminSectionHistory"
+  },
+  "adminTimelineSubscriptionCreated": "Subscription created",
+  "@adminTimelineSubscriptionCreated": {
+    "description": "adminTimelineSubscriptionCreated"
+  },
+  "adminTimelinePaymentProcessed": "Payment processed",
+  "@adminTimelinePaymentProcessed": {
+    "description": "adminTimelinePaymentProcessed"
+  },
+  "adminEmptyNoAdminNotes": "No admin notes yet.",
+  "@adminEmptyNoAdminNotes": {
+    "description": "adminEmptyNoAdminNotes"
+  },
+  "adminSectionAuditDetail": "Audit Detail",
+  "@adminSectionAuditDetail": {
+    "description": "adminSectionAuditDetail"
+  },
+  "adminEmptyEntryNotFound": "Entry not found",
+  "@adminEmptyEntryNotFound": {
+    "description": "adminEmptyEntryNotFound"
+  },
+  "adminFieldAdmin": "Admin",
+  "@adminFieldAdmin": {
+    "description": "adminFieldAdmin"
+  },
+  "adminFieldAction": "Action",
+  "@adminFieldAction": {
+    "description": "adminFieldAction"
+  },
+  "adminFieldTimestamp": "Timestamp",
+  "@adminFieldTimestamp": {
+    "description": "adminFieldTimestamp"
+  },
+  "adminFieldTarget": "Target",
+  "@adminFieldTarget": {
+    "description": "adminFieldTarget"
+  },
+  "adminFieldType": "Type",
+  "@adminFieldType": {
+    "description": "adminFieldType"
+  },
+  "adminSectionChanges": "Changes",
+  "@adminSectionChanges": {
+    "description": "adminSectionChanges"
+  },
+  "adminFieldIpAddress": "IP Address",
+  "@adminFieldIpAddress": {
+    "description": "adminFieldIpAddress"
+  },
+  "adminAuditUnverified": "Unverified",
+  "@adminAuditUnverified": {
+    "description": "adminAuditUnverified"
+  },
+  "adminAuditStandard": "Standard",
+  "@adminAuditStandard": {
+    "description": "adminAuditStandard"
+  },
+  "adminAuditFeatured": "Featured",
+  "@adminAuditFeatured": {
+    "description": "adminAuditFeatured"
+  },
+  "adminAuditPreviousStatus": "Previous Status",
+  "@adminAuditPreviousStatus": {
+    "description": "adminAuditPreviousStatus"
+  },
+  "adminAuditOverridden": "Overridden",
+  "@adminAuditOverridden": {
+    "description": "adminAuditOverridden"
+  },
+  "adminAuditPrevious": "Previous",
+  "@adminAuditPrevious": {
+    "description": "adminAuditPrevious"
+  },
+  "adminAuditUpdated": "Updated",
+  "@adminAuditUpdated": {
+    "description": "adminAuditUpdated"
+  },
+  "adminStatusWithdrawn": "Withdrawn",
+  "@adminStatusWithdrawn": {
+    "description": "adminStatusWithdrawn"
+  },
+  "adminStatusNoShow": "No-Show",
+  "@adminStatusNoShow": {
+    "description": "adminStatusNoShow"
+  },
+  "adminStatusInProgress": "In Progress",
+  "@adminStatusInProgress": {
+    "description": "adminStatusInProgress"
+  },
+  "adminStatusReviewed": "Reviewed",
+  "@adminStatusReviewed": {
+    "description": "adminStatusReviewed"
+  },
+  "adminStatusDecision": "Decision",
+  "@adminStatusDecision": {
+    "description": "adminStatusDecision"
+  },
+  "adminSectionApplicationDetail": "Application Detail",
+  "@adminSectionApplicationDetail": {
+    "description": "adminSectionApplicationDetail"
+  },
+  "adminSectionInterviewDetail": "Interview Detail",
+  "@adminSectionInterviewDetail": {
+    "description": "adminSectionInterviewDetail"
+  },
+  "adminSectionTimeline": "Timeline",
+  "@adminSectionTimeline": {
+    "description": "adminSectionTimeline"
+  },
+  "adminSectionAdminNotes": "Admin Notes",
+  "@adminSectionAdminNotes": {
+    "description": "adminSectionAdminNotes"
+  },
+  "adminSectionActions": "Actions",
+  "@adminSectionActions": {
+    "description": "adminSectionActions"
+  },
+  "adminFieldCandidate": "Candidate",
+  "@adminFieldCandidate": {
+    "description": "adminFieldCandidate"
+  },
+  "adminFieldJob": "Job",
+  "@adminFieldJob": {
+    "description": "adminFieldJob"
+  },
+  "adminFieldBusiness": "Business",
+  "@adminFieldBusiness": {
+    "description": "adminFieldBusiness"
+  },
+  "adminFieldDate": "Date",
+  "@adminFieldDate": {
+    "description": "adminFieldDate"
+  },
+  "adminFieldTime": "Time",
+  "@adminFieldTime": {
+    "description": "adminFieldTime"
+  },
+  "adminFieldFormat": "Format",
+  "@adminFieldFormat": {
+    "description": "adminFieldFormat"
+  },
+  "adminBadgeFlaggedForReview": "Flagged for moderator review",
+  "@adminBadgeFlaggedForReview": {
+    "description": "adminBadgeFlaggedForReview"
+  },
+  "adminPlaceholderSelectStatus": "Select status",
+  "@adminPlaceholderSelectStatus": {
+    "description": "adminPlaceholderSelectStatus"
+  },
+  "adminDialogConfirmOverrideTitle": "Confirm Override",
+  "@adminDialogConfirmOverrideTitle": {
+    "description": "adminDialogConfirmOverrideTitle"
+  },
+  "adminDialogConfirmOverrideQuestion": "Change status to \"{status}\"?",
+  "@adminDialogConfirmOverrideQuestion": {
+    "description": "adminDialogConfirmOverrideQuestion",
+    "placeholders": {
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "adminDialogReasonPrefix": "Reason:",
+  "@adminDialogReasonPrefix": {
+    "description": "adminDialogReasonPrefix"
+  },
+  "adminMiscNoneProvided": "None provided",
+  "@adminMiscNoneProvided": {
+    "description": "adminMiscNoneProvided"
+  },
+  "adminSnackbarStatusOverrideApplied": "Status override applied",
+  "@adminSnackbarStatusOverrideApplied": {
+    "description": "adminSnackbarStatusOverrideApplied"
+  },
+  "adminSnackbarNoteSaved": "Note saved",
+  "@adminSnackbarNoteSaved": {
+    "description": "adminSnackbarNoteSaved"
+  },
+  "adminSnackbarNoteAdded": "Note added",
+  "@adminSnackbarNoteAdded": {
+    "description": "adminSnackbarNoteAdded"
+  },
+  "adminSnackbarMarkedNoShow": "Marked as No-Show",
+  "@adminSnackbarMarkedNoShow": {
+    "description": "adminSnackbarMarkedNoShow"
+  },
+  "adminSnackbarInterviewCancelled": "Interview cancelled",
+  "@adminSnackbarInterviewCancelled": {
+    "description": "adminSnackbarInterviewCancelled"
+  },
+  "adminSnackbarInterviewCompleted": "Interview completed",
+  "@adminSnackbarInterviewCompleted": {
+    "description": "adminSnackbarInterviewCompleted"
+  },
+  "adminActionSaveNote": "Save Note",
+  "@adminActionSaveNote": {
+    "description": "adminActionSaveNote"
+  },
+  "adminActionAddNote": "Add Note",
+  "@adminActionAddNote": {
+    "description": "adminActionAddNote"
+  },
+  "adminActionComplete": "Complete",
+  "@adminActionComplete": {
+    "description": "adminActionComplete"
+  },
+  "adminActionMarkNoShow": "Mark No-Show",
+  "@adminActionMarkNoShow": {
+    "description": "adminActionMarkNoShow"
+  },
+  "adminEmptyNoNotes": "No notes yet.",
+  "@adminEmptyNoNotes": {
+    "description": "adminEmptyNoNotes"
   }
 }

@@ -5088,4 +5088,213 @@ class AppLocalizationsTr extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => 'No jobs posted';
+
+  @override
+  String get adminSectionSubscriptionDetail => 'Subscription Detail';
+
+  @override
+  String get adminEmptySubscriptionNotFound => 'Subscription not found';
+
+  @override
+  String get adminSectionPlanDetails => 'Plan Details';
+
+  @override
+  String get adminFieldPrice => 'Price';
+
+  @override
+  String get adminFieldStartDate => 'Start Date';
+
+  @override
+  String get adminFieldRenewalDate => 'Renewal Date';
+
+  @override
+  String get adminSectionAdminOverride => 'Admin Override';
+
+  @override
+  String get adminPlanCandidatePremium => 'Candidate Premium';
+
+  @override
+  String get adminPlanBusinessPro => 'Business Pro';
+
+  @override
+  String get adminPlanBusinessPremium => 'Business Premium';
+
+  @override
+  String get adminPlanFree => 'Free';
+
+  @override
+  String get adminFieldNewRenewalDate => 'New Renewal Date';
+
+  @override
+  String get adminPlaceholderDateExample => 'e.g. Jun 15, 2026';
+
+  @override
+  String get adminFieldReason => 'Reason';
+
+  @override
+  String get adminPlaceholderReasonOverride => 'Reason for override...';
+
+  @override
+  String get adminActionApplyOverride => 'Apply Override';
+
+  @override
+  String get adminSectionHistory => 'History';
+
+  @override
+  String get adminTimelineSubscriptionCreated => 'Subscription created';
+
+  @override
+  String get adminTimelinePaymentProcessed => 'Payment processed';
+
+  @override
+  String get adminEmptyNoAdminNotes => 'No admin notes yet.';
+
+  @override
+  String get adminSectionAuditDetail => 'Audit Detail';
+
+  @override
+  String get adminEmptyEntryNotFound => 'Entry not found';
+
+  @override
+  String get adminFieldAdmin => 'Admin';
+
+  @override
+  String get adminFieldAction => 'Action';
+
+  @override
+  String get adminFieldTimestamp => 'Timestamp';
+
+  @override
+  String get adminFieldTarget => 'Target';
+
+  @override
+  String get adminFieldType => 'Type';
+
+  @override
+  String get adminSectionChanges => 'Changes';
+
+  @override
+  String get adminFieldIpAddress => 'IP Address';
+
+  @override
+  String get adminAuditUnverified => 'Unverified';
+
+  @override
+  String get adminAuditStandard => 'Standard';
+
+  @override
+  String get adminAuditFeatured => 'Featured';
+
+  @override
+  String get adminAuditPreviousStatus => 'Previous Status';
+
+  @override
+  String get adminAuditOverridden => 'Overridden';
+
+  @override
+  String get adminAuditPrevious => 'Previous';
+
+  @override
+  String get adminAuditUpdated => 'Updated';
+
+  @override
+  String get adminStatusWithdrawn => 'Withdrawn';
+
+  @override
+  String get adminStatusNoShow => 'No-Show';
+
+  @override
+  String get adminStatusInProgress => 'In Progress';
+
+  @override
+  String get adminStatusReviewed => 'Reviewed';
+
+  @override
+  String get adminStatusDecision => 'Decision';
+
+  @override
+  String get adminSectionApplicationDetail => 'Application Detail';
+
+  @override
+  String get adminSectionInterviewDetail => 'Interview Detail';
+
+  @override
+  String get adminSectionTimeline => 'Timeline';
+
+  @override
+  String get adminSectionAdminNotes => 'Admin Notes';
+
+  @override
+  String get adminSectionActions => 'Actions';
+
+  @override
+  String get adminFieldCandidate => 'Candidate';
+
+  @override
+  String get adminFieldJob => 'Job';
+
+  @override
+  String get adminFieldBusiness => 'Business';
+
+  @override
+  String get adminFieldDate => 'Date';
+
+  @override
+  String get adminFieldTime => 'Time';
+
+  @override
+  String get adminFieldFormat => 'Format';
+
+  @override
+  String get adminBadgeFlaggedForReview => 'Flagged for moderator review';
+
+  @override
+  String get adminPlaceholderSelectStatus => 'Select status';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => 'Confirm Override';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return 'Change status to \"$status\"?';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => 'Reason:';
+
+  @override
+  String get adminMiscNoneProvided => 'None provided';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied => 'Status override applied';
+
+  @override
+  String get adminSnackbarNoteSaved => 'Note saved';
+
+  @override
+  String get adminSnackbarNoteAdded => 'Note added';
+
+  @override
+  String get adminSnackbarMarkedNoShow => 'Marked as No-Show';
+
+  @override
+  String get adminSnackbarInterviewCancelled => 'Interview cancelled';
+
+  @override
+  String get adminSnackbarInterviewCompleted => 'Interview completed';
+
+  @override
+  String get adminActionSaveNote => 'Save Note';
+
+  @override
+  String get adminActionAddNote => 'Add Note';
+
+  @override
+  String get adminActionComplete => 'Complete';
+
+  @override
+  String get adminActionMarkNoShow => 'Mark No-Show';
+
+  @override
+  String get adminEmptyNoNotes => 'No notes yet.';
 }

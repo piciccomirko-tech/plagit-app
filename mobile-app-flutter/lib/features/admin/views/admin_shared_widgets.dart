@@ -208,6 +208,13 @@ String aStatusLabel(AppLocalizations l, String status) {
     case 'in review':
     case 'inreview': return l.adminStatusInReview;
     case 'waiting': return l.adminStatusWaiting;
+    case 'withdrawn': return l.adminStatusWithdrawn;
+    case 'no-show':
+    case 'noshow': return l.adminStatusNoShow;
+    case 'in progress':
+    case 'inprogress': return l.adminStatusInProgress;
+    case 'reviewed': return l.adminStatusReviewed;
+    case 'decision': return l.adminStatusDecision;
     default: return status;
   }
 }

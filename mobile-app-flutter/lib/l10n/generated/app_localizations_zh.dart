@@ -4965,4 +4965,213 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminEmptyNoJobsPosted => '暂无发布的职位';
+
+  @override
+  String get adminSectionSubscriptionDetail => '订阅详情';
+
+  @override
+  String get adminEmptySubscriptionNotFound => '未找到订阅';
+
+  @override
+  String get adminSectionPlanDetails => '套餐详情';
+
+  @override
+  String get adminFieldPrice => '价格';
+
+  @override
+  String get adminFieldStartDate => '开始日期';
+
+  @override
+  String get adminFieldRenewalDate => '续订日期';
+
+  @override
+  String get adminSectionAdminOverride => '管理员覆盖';
+
+  @override
+  String get adminPlanCandidatePremium => '候选人高级版';
+
+  @override
+  String get adminPlanBusinessPro => '商业专业版';
+
+  @override
+  String get adminPlanBusinessPremium => '商业高级版';
+
+  @override
+  String get adminPlanFree => '免费';
+
+  @override
+  String get adminFieldNewRenewalDate => '新续订日期';
+
+  @override
+  String get adminPlaceholderDateExample => '例如：2026年6月15日';
+
+  @override
+  String get adminFieldReason => '原因';
+
+  @override
+  String get adminPlaceholderReasonOverride => '覆盖原因...';
+
+  @override
+  String get adminActionApplyOverride => '应用覆盖';
+
+  @override
+  String get adminSectionHistory => '历史';
+
+  @override
+  String get adminTimelineSubscriptionCreated => '订阅已创建';
+
+  @override
+  String get adminTimelinePaymentProcessed => '付款已处理';
+
+  @override
+  String get adminEmptyNoAdminNotes => '暂无管理员备注。';
+
+  @override
+  String get adminSectionAuditDetail => '审计详情';
+
+  @override
+  String get adminEmptyEntryNotFound => '未找到条目';
+
+  @override
+  String get adminFieldAdmin => '管理员';
+
+  @override
+  String get adminFieldAction => '操作';
+
+  @override
+  String get adminFieldTimestamp => '时间戳';
+
+  @override
+  String get adminFieldTarget => '目标';
+
+  @override
+  String get adminFieldType => '类型';
+
+  @override
+  String get adminSectionChanges => '变更';
+
+  @override
+  String get adminFieldIpAddress => 'IP 地址';
+
+  @override
+  String get adminAuditUnverified => '未验证';
+
+  @override
+  String get adminAuditStandard => '标准';
+
+  @override
+  String get adminAuditFeatured => '精选';
+
+  @override
+  String get adminAuditPreviousStatus => '先前状态';
+
+  @override
+  String get adminAuditOverridden => '已覆盖';
+
+  @override
+  String get adminAuditPrevious => '先前';
+
+  @override
+  String get adminAuditUpdated => '已更新';
+
+  @override
+  String get adminStatusWithdrawn => '已撤回';
+
+  @override
+  String get adminStatusNoShow => '未出席';
+
+  @override
+  String get adminStatusInProgress => '进行中';
+
+  @override
+  String get adminStatusReviewed => '已审核';
+
+  @override
+  String get adminStatusDecision => '决定';
+
+  @override
+  String get adminSectionApplicationDetail => '申请详情';
+
+  @override
+  String get adminSectionInterviewDetail => '面试详情';
+
+  @override
+  String get adminSectionTimeline => '时间线';
+
+  @override
+  String get adminSectionAdminNotes => '管理员备注';
+
+  @override
+  String get adminSectionActions => '操作';
+
+  @override
+  String get adminFieldCandidate => '候选人';
+
+  @override
+  String get adminFieldJob => '职位';
+
+  @override
+  String get adminFieldBusiness => '商家';
+
+  @override
+  String get adminFieldDate => '日期';
+
+  @override
+  String get adminFieldTime => '时间';
+
+  @override
+  String get adminFieldFormat => '形式';
+
+  @override
+  String get adminBadgeFlaggedForReview => '已标记供审核员审查';
+
+  @override
+  String get adminPlaceholderSelectStatus => '选择状态';
+
+  @override
+  String get adminDialogConfirmOverrideTitle => '确认覆盖';
+
+  @override
+  String adminDialogConfirmOverrideQuestion(String status) {
+    return '将状态更改为\"$status\"？';
+  }
+
+  @override
+  String get adminDialogReasonPrefix => '原因：';
+
+  @override
+  String get adminMiscNoneProvided => '未提供';
+
+  @override
+  String get adminSnackbarStatusOverrideApplied => '已应用状态覆盖';
+
+  @override
+  String get adminSnackbarNoteSaved => '备注已保存';
+
+  @override
+  String get adminSnackbarNoteAdded => '已添加备注';
+
+  @override
+  String get adminSnackbarMarkedNoShow => '已标记为未出席';
+
+  @override
+  String get adminSnackbarInterviewCancelled => '面试已取消';
+
+  @override
+  String get adminSnackbarInterviewCompleted => '面试已完成';
+
+  @override
+  String get adminActionSaveNote => '保存备注';
+
+  @override
+  String get adminActionAddNote => '添加备注';
+
+  @override
+  String get adminActionComplete => '完成';
+
+  @override
+  String get adminActionMarkNoShow => '标记未出席';
+
+  @override
+  String get adminEmptyNoNotes => '暂无备注。';
 }
