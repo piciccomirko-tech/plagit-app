@@ -17,7 +17,7 @@ class BusinessNotificationsView extends StatefulWidget {
 }
 
 class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
-  static final RegExp _compactRelativeTimePattern = RegExp(
+  static final RegExp _relativeNotificationTimePattern = RegExp(
     r'^(\d+)\s*(m|min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days)\s*ago$',
     caseSensitive: false,
   );
@@ -30,129 +30,48 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
 
     final lower = normalized.toLowerCase();
     if (lower == 'today') {
-      return _localizedToday();
+      return _languageCode() == 'it'
+          ? 'Oggi'
+          : _languageCode() == 'ar'
+              ? 'اليوم'
+              : 'Today';
     }
     if (lower == 'yesterday') {
-      return _localizedYesterday();
-    }
-    if (lower == 'now' || lower == 'just now') {
-      return _localizedNow();
-    }
-
-    final compactMatch = _compactRelativeTimePattern.firstMatch(lower);
-    if (compactMatch != null) {
-      final count = int.tryParse(compactMatch.group(1) ?? '');
-      final unit = compactMatch.group(2) ?? '';
-      if (count == null) {
-        return rawTime;
-      }
-      if (unit.startsWith('m')) {
-        return _localizedMinutesAgo(count);
-      }
-      if (unit.startsWith('h')) {
-        return _localizedHoursAgo(count);
-      }
-      if (unit.startsWith('d')) {
-        return count == 1 ? _localizedYesterday() : _localizedDaysAgo(count);
-      }
+      return _languageCode() == 'it'
+          ? 'Ieri'
+          : _languageCode() == 'ar'
+              ? 'أمس'
+              : 'Yesterday';
     }
 
-    final parsedDate = DateTime.tryParse(normalized);
-    if (parsedDate == null) {
+    final match = _relativeNotificationTimePattern.firstMatch(lower);
+    if (match == null) {
       return rawTime;
     }
 
-    final localDate = parsedDate.toLocal();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final notificationDay =
-        DateTime(localDate.year, localDate.month, localDate.day);
-    final dayDiff = today.difference(notificationDay).inDays;
+    final count = int.tryParse(match.group(1) ?? '');
+    final unit = match.group(2) ?? '';
+    if (count == null) {
+      return rawTime;
+    }
 
-    if (dayDiff <= 0) {
-      final diff = now.difference(localDate);
-      if (diff.inMinutes < 1) {
-        return _localizedNow();
-      }
-      if (diff.inHours < 1) {
-        return _localizedMinutesAgo(diff.inMinutes);
-      }
-      return _localizedHoursAgo(diff.inHours);
+    if (_languageCode() == 'it') {
+      if (unit.startsWith('m')) return '$count min fa';
+      if (unit.startsWith('h')) return '$count h fa';
+      if (unit.startsWith('d')) return count == 1 ? 'Ieri' : '$count g fa';
     }
-    if (dayDiff == 1) {
-      return _localizedYesterday();
+
+    if (_languageCode() == 'ar') {
+      if (unit.startsWith('m')) return count == 1 ? 'قبل دقيقة' : 'قبل $count دقائق';
+      if (unit.startsWith('h')) return count == 1 ? 'قبل ساعة' : 'قبل $count ساعات';
+      if (unit.startsWith('d')) return count == 1 ? 'أمس' : 'قبل $count أيام';
     }
-    return _localizedDaysAgo(dayDiff);
+
+    return rawTime;
   }
 
   String _languageCode() =>
       Localizations.localeOf(context).languageCode.toLowerCase();
-
-  String _localizedToday() {
-    switch (_languageCode()) {
-      case 'it':
-        return 'Oggi';
-      case 'ar':
-        return 'اليوم';
-      default:
-        return 'Today';
-    }
-  }
-
-  String _localizedYesterday() {
-    switch (_languageCode()) {
-      case 'it':
-        return 'Ieri';
-      case 'ar':
-        return 'أمس';
-      default:
-        return 'Yesterday';
-    }
-  }
-
-  String _localizedNow() {
-    switch (_languageCode()) {
-      case 'it':
-        return 'ora';
-      case 'ar':
-        return 'الآن';
-      default:
-        return 'now';
-    }
-  }
-
-  String _localizedMinutesAgo(int count) {
-    switch (_languageCode()) {
-      case 'it':
-        return '$count min fa';
-      case 'ar':
-        return count == 1 ? 'قبل دقيقة' : 'قبل $count دقائق';
-      default:
-        return '${count}m ago';
-    }
-  }
-
-  String _localizedHoursAgo(int count) {
-    switch (_languageCode()) {
-      case 'it':
-        return '$count h fa';
-      case 'ar':
-        return count == 1 ? 'قبل ساعة' : 'قبل $count ساعات';
-      default:
-        return '${count}h ago';
-    }
-  }
-
-  String _localizedDaysAgo(int count) {
-    switch (_languageCode()) {
-      case 'it':
-        return '$count g fa';
-      case 'ar':
-        return count == 1 ? 'قبل يوم' : 'قبل $count أيام';
-      default:
-        return '${count}d ago';
-    }
-  }
   String _selectedFilter = 'All';
   final List<String> _filters = ['All', 'Unread'];
 
