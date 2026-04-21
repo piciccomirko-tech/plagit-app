@@ -182,7 +182,20 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
             ),
           ],
           const Spacer(),
-          const SizedBox(width: 36, height: 36),
+          unreadCount > 0
+              ? GestureDetector(
+                  onTap: () =>
+                      context.read<BusinessNotificationsProvider>().markAllRead(),
+                  child: const Text(
+                    'Mark all read',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.teal,
+                    ),
+                  ),
+                )
+              : const SizedBox(width: 36, height: 36),
         ],
       ),
     );
@@ -267,15 +280,28 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     final filtered = _applyFilter(provider.notifications);
 
     if (filtered.isEmpty) {
-      return _emptyState();
+      return RefreshIndicator(
+        onRefresh: () => context.read<BusinessNotificationsProvider>().load(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 120),
+            _EmptyStateHost(),
+          ],
+        ),
+      );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
-      itemCount: filtered.length,
-      itemBuilder: (_, i) => Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-        child: _notificationRow(filtered[i]),
+    return RefreshIndicator(
+      onRefresh: () => context.read<BusinessNotificationsProvider>().load(),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
+        itemCount: filtered.length,
+        itemBuilder: (_, i) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: _notificationRow(filtered[i]),
+        ),
       ),
     );
   }
@@ -351,7 +377,13 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     context.push(destinationRoute);
   }
 
-  Widget _emptyState() {
+}
+
+class _EmptyStateHost extends StatelessWidget {
+  const _EmptyStateHost();
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
