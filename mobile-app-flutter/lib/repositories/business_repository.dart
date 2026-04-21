@@ -150,7 +150,8 @@ class BusinessRepository {
   Future<List<BusinessConversation>> fetchConversations() async {
     if (_isMock) return BusinessConversation.mockAll();
     final resp = await _api.get('/business/conversations');
-    final list = resp['data'] as List<dynamic>? ?? [];
+    final payload = resp['data'] ?? resp['conversations'] ?? resp;
+    final list = payload is List<dynamic> ? payload : <dynamic>[];
     return list.map((e) => BusinessConversation.fromJson(e as Map<String, dynamic>)).toList();
   }
 

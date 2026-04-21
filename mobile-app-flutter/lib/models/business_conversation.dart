@@ -33,14 +33,36 @@ class BusinessConversation {
   // -- JSON serialisation --
 
   factory BusinessConversation.fromJson(Map<String, dynamic> json) {
+    final candidateName =
+        json['candidateName'] as String? ??
+        json['candidate_name'] as String? ??
+        '';
+    final candidateInitials =
+        json['candidateInitials'] as String? ??
+        json['candidate_initials'] as String? ??
+        _deriveInitials(candidateName);
     return BusinessConversation(
       id: json['id']?.toString() ?? '',
-      candidateName: json['candidateName'] as String? ?? '',
-      candidateInitials: json['candidateInitials'] as String? ?? '',
-      jobContext: json['jobContext'] as String? ?? '',
-      lastMessage: json['lastMessage'] as String? ?? '',
-      time: json['time'] as String? ?? '',
-      unread: json['unread'] as int? ?? 0,
+      candidateName: candidateName,
+      candidateInitials: candidateInitials,
+      jobContext:
+          json['jobContext'] as String? ??
+          json['job_context'] as String? ??
+          json['jobTitle'] as String? ??
+          json['job_title'] as String? ??
+          '',
+      lastMessage:
+          json['lastMessage'] as String? ??
+          json['last_message'] as String? ??
+          '',
+      time:
+          json['time'] as String? ??
+          json['updated_at'] as String? ??
+          '',
+      unread:
+          (json['unread_count'] as num?)?.toInt() ??
+          (json['unread'] as num?)?.toInt() ??
+          0,
     );
   }
 
@@ -61,4 +83,15 @@ class BusinessConversation {
       MockData.businessConversations
           .map((c) => BusinessConversation.fromJson(c))
           .toList();
+
+  static String _deriveInitials(String name) {
+    final parts = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .take(2)
+        .toList();
+    if (parts.isEmpty) return '';
+    return parts.map((part) => part[0].toUpperCase()).join();
+  }
 }
