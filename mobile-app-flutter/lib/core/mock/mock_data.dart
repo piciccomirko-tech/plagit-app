@@ -550,6 +550,7 @@ class MockData {
   static const businessConversations = [
     {
       'id': 'bc1',
+      'candidateId': 'ba1',
       'candidateName': 'Alex Chen',
       'candidateInitials': 'AC',
       'jobContext': 'Waiter position',
@@ -559,6 +560,7 @@ class MockData {
     },
     {
       'id': 'bc2',
+      'candidateId': 'ba6',
       'candidateName': 'Yuki Tanaka',
       'candidateInitials': 'YT',
       'jobContext': 'Waiter - Interview',
@@ -568,6 +570,7 @@ class MockData {
     },
     {
       'id': 'bc3',
+      'candidateId': 'ba2',
       'candidateName': 'Maria Santos',
       'candidateInitials': 'MS',
       'jobContext': 'Waiter position',

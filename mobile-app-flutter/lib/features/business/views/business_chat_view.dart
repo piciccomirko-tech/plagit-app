@@ -116,6 +116,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
   @override
   Widget build(BuildContext context) {
     final candidateName = _conversation?.candidateName ?? 'Chat';
+    final candidateId = _conversation?.candidateId ?? '';
     final jobContext = _conversation?.jobContext ?? '';
 
     return Scaffold(
@@ -168,7 +169,9 @@ class _BusinessChatViewState extends State<BusinessChatView> {
             child: Row(
               children: [
                 OutlinedButton(
-                  onPressed: () => context.push('/business/applicant/ba1'),
+                  onPressed: candidateId.isEmpty
+                      ? null
+                      : () => context.push('/business/candidate/$candidateId'),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.teal,
                     side: const BorderSide(color: AppColors.teal),
@@ -182,7 +185,14 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton(
-                  onPressed: () => context.push('/business/schedule-interview'),
+                  onPressed: () => context.push(
+                    '/business/schedule-interview',
+                    extra: {
+                      'candidateId': candidateId,
+                      'candidateName': candidateName,
+                      'jobTitle': jobContext,
+                    },
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.purple,
                     side: const BorderSide(color: AppColors.purple),

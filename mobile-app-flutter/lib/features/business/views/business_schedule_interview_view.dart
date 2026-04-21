@@ -5,7 +5,16 @@ import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Schedule interview form — all mock, no API calls.
 class BusinessScheduleInterviewView extends StatefulWidget {
-  const BusinessScheduleInterviewView({super.key});
+  final String candidateId;
+  final String candidateName;
+  final String jobTitle;
+
+  const BusinessScheduleInterviewView({
+    super.key,
+    this.candidateId = '',
+    this.candidateName = 'Yuki Tanaka',
+    this.jobTitle = 'Waiter',
+  });
 
   @override
   State<BusinessScheduleInterviewView> createState() =>
@@ -18,8 +27,6 @@ class _BusinessScheduleInterviewViewState
   final _linkCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
 
-  final String _candidateName = 'Yuki Tanaka';
-  final String _jobTitle = 'Waiter';
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String _format = 'In Person';
@@ -121,10 +128,12 @@ class _BusinessScheduleInterviewViewState
                 border: Border.all(color: AppColors.border),
               ),
               child: Text(
-                _candidateName.isNotEmpty ? _candidateName : 'Select candidate',
+                widget.candidateName.isNotEmpty
+                    ? widget.candidateName
+                    : 'Select candidate',
                 style: TextStyle(
                   fontSize: 15,
-                  color: _candidateName.isNotEmpty
+                  color: widget.candidateName.isNotEmpty
                       ? AppColors.charcoal
                       : AppColors.tertiary,
                 ),
@@ -147,7 +156,7 @@ class _BusinessScheduleInterviewViewState
                 border: Border.all(color: AppColors.border),
               ),
               child: Text(
-                _jobTitle,
+                widget.jobTitle,
                 style: const TextStyle(fontSize: 15, color: AppColors.charcoal),
               ),
             ),

@@ -214,7 +214,17 @@ class AppRouter {
       GoRoute(path: '/business/chat/:id', builder: (context, state) => BusinessChatView(conversationId: state.pathParameters['id']!)),
       GoRoute(path: '/business/messages', builder: (context, state) => const BusinessMessagesView()),
       GoRoute(path: '/business/interviews', builder: (context, state) => const BusinessInterviewsView()),
-      GoRoute(path: '/business/schedule-interview', builder: (context, state) => const BusinessScheduleInterviewView()),
+      GoRoute(
+        path: '/business/schedule-interview',
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return BusinessScheduleInterviewView(
+            candidateId: extra?['candidateId']?.toString() ?? '',
+            candidateName: extra?['candidateName']?.toString() ?? 'Yuki Tanaka',
+            jobTitle: extra?['jobTitle']?.toString() ?? 'Waiter',
+          );
+        },
+      ),
       GoRoute(path: '/business/candidate/:id', builder: (context, state) => BusinessCandidateProfileView(candidateId: state.pathParameters['id']!)),
       GoRoute(path: '/business/insights', builder: (context, state) => const BusinessInsightsView()),
       GoRoute(path: '/business/interview/:id', builder: (context, state) => BusinessInterviewDetailView(interviewId: state.pathParameters['id']!)),

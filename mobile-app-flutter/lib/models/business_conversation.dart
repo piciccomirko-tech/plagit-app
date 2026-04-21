@@ -13,6 +13,7 @@ import 'package:plagit/core/mock/mock_data.dart';
 /// A conversation thread between a business and a candidate.
 class BusinessConversation {
   final String id;
+  final String candidateId;
   final String candidateName;
   final String candidateInitials;
   final String jobContext;
@@ -22,6 +23,7 @@ class BusinessConversation {
 
   const BusinessConversation({
     required this.id,
+    this.candidateId = '',
     required this.candidateName,
     required this.candidateInitials,
     required this.jobContext,
@@ -43,6 +45,10 @@ class BusinessConversation {
         _deriveInitials(candidateName);
     return BusinessConversation(
       id: json['id']?.toString() ?? '',
+      candidateId:
+          json['candidateId'] as String? ??
+          json['candidate_id'] as String? ??
+          '',
       candidateName: candidateName,
       candidateInitials: candidateInitials,
       jobContext:
@@ -68,6 +74,7 @@ class BusinessConversation {
 
   Map<String, dynamic> toJson() => {
         'id': id,
+        'candidateId': candidateId,
         'candidateName': candidateName,
         'candidateInitials': candidateInitials,
         'jobContext': jobContext,
