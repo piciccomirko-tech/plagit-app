@@ -17,6 +17,24 @@ class BusinessNotificationsView extends StatefulWidget {
 }
 
 class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
+  String _a11yBackLabel() =>
+      _languageCode() == 'it' ? 'Indietro' : _languageCode() == 'ar' ? 'رجوع' : 'Back';
+
+  String _a11yFilterLabel(String filter) {
+    if (filter == 'Unread') {
+      return _languageCode() == 'it'
+          ? 'Filtro: Non letti'
+          : _languageCode() == 'ar'
+              ? 'عامل التصفية: غير مقروء'
+              : 'Filter: Unread';
+    }
+    return _languageCode() == 'it'
+        ? 'Filtro: Tutti'
+        : _languageCode() == 'ar'
+            ? 'عامل التصفية: الكل'
+            : 'Filter: All';
+  }
+
   static final RegExp _relativeNotificationTimePattern = RegExp(
     r'^(\d+)\s*(m|min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days)\s*ago$',
     caseSensitive: false,
@@ -129,12 +147,19 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
           horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const SizedBox(
-                width: 36,
-                height: 36,
-                child: BackChevron(size: 22, color: AppColors.charcoal)),
+          Semantics(
+            button: true,
+            label: _a11yBackLabel(),
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: const ExcludeSemantics(
+                child: SizedBox(
+                  width: 36,
+                  height: 36,
+                  child: BackChevron(size: 22, color: AppColors.charcoal),
+                ),
+              ),
+            ),
           ),
           const Spacer(),
           const Text('Notifications',
@@ -173,24 +198,31 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
             final active = _selectedFilter == f;
             return Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedFilter = f),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: active ? AppColors.teal : AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
-                    border: active
-                        ? null
-                        : Border.all(color: AppColors.border, width: 0.5),
+              child: Semantics(
+                button: true,
+                selected: active,
+                label: _a11yFilterLabel(f),
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedFilter = f),
+                  child: ExcludeSemantics(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: active ? AppColors.teal : AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppRadius.full),
+                        border: active
+                            ? null
+                            : Border.all(color: AppColors.border, width: 0.5),
+                      ),
+                      child: Text(f,
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color:
+                                  active ? Colors.white : AppColors.secondary)),
+                    ),
                   ),
-                  child: Text(f,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color:
-                              active ? Colors.white : AppColors.secondary)),
                 ),
               ),
             );
