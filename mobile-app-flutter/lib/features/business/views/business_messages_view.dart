@@ -170,22 +170,20 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
 
   List<BusinessConversation> _applyFilters(List<BusinessConversation> all) {
     var list = all;
-    // Filter
-    switch (_filter) {
-      case 'Unread':
-        list = list.where((c) => c.unread > 0).toList();
-      case 'Interviews':
-        list = list
-            .where((c) => c.jobContext.toLowerCase().contains('interview'))
-            .toList();
-      case 'Jobs':
-        list = list
-            .where(
-              (c) =>
-                  c.jobContext.toLowerCase().contains('position') ||
-                  c.jobContext.toLowerCase().contains('job'),
-            )
-            .toList();
+    if (_filter == 'Unread') {
+      list = list.where((c) => c.unread > 0).toList();
+    } else if (_filter == 'Interviews') {
+      list = list
+          .where((c) => c.jobContext.toLowerCase().contains('interview'))
+          .toList();
+    } else if (_filter == 'Jobs') {
+      list = list
+          .where(
+            (c) =>
+                c.jobContext.toLowerCase().contains('position') ||
+                c.jobContext.toLowerCase().contains('job'),
+          )
+          .toList();
     }
     // Sort: unread first, then interview-related, then by time
     list.sort((a, b) {
