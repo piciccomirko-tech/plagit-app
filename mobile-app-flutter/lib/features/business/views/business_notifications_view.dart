@@ -17,6 +17,142 @@ class BusinessNotificationsView extends StatefulWidget {
 }
 
 class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
+  static final RegExp _compactRelativeTimePattern = RegExp(
+    r'^(\d+)\s*(m|min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days)\s*ago$',
+    caseSensitive: false,
+  );
+
+  String _localizedNotificationTime(String rawTime) {
+    final normalized = rawTime.trim();
+    if (normalized.isEmpty) {
+      return rawTime;
+    }
+
+    final lower = normalized.toLowerCase();
+    if (lower == 'today') {
+      return _localizedToday();
+    }
+    if (lower == 'yesterday') {
+      return _localizedYesterday();
+    }
+    if (lower == 'now' || lower == 'just now') {
+      return _localizedNow();
+    }
+
+    final compactMatch = _compactRelativeTimePattern.firstMatch(lower);
+    if (compactMatch != null) {
+      final count = int.tryParse(compactMatch.group(1) ?? '');
+      final unit = compactMatch.group(2) ?? '';
+      if (count == null) {
+        return rawTime;
+      }
+      if (unit.startsWith('m')) {
+        return _localizedMinutesAgo(count);
+      }
+      if (unit.startsWith('h')) {
+        return _localizedHoursAgo(count);
+      }
+      if (unit.startsWith('d')) {
+        return count == 1 ? _localizedYesterday() : _localizedDaysAgo(count);
+      }
+    }
+
+    final parsedDate = DateTime.tryParse(normalized);
+    if (parsedDate == null) {
+      return rawTime;
+    }
+
+    final localDate = parsedDate.toLocal();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final notificationDay =
+        DateTime(localDate.year, localDate.month, localDate.day);
+    final dayDiff = today.difference(notificationDay).inDays;
+
+    if (dayDiff <= 0) {
+      final diff = now.difference(localDate);
+      if (diff.inMinutes < 1) {
+        return _localizedNow();
+      }
+      if (diff.inHours < 1) {
+        return _localizedMinutesAgo(diff.inMinutes);
+      }
+      return _localizedHoursAgo(diff.inHours);
+    }
+    if (dayDiff == 1) {
+      return _localizedYesterday();
+    }
+    return _localizedDaysAgo(dayDiff);
+  }
+
+  String _languageCode() =>
+      Localizations.localeOf(context).languageCode.toLowerCase();
+
+  String _localizedToday() {
+    switch (_languageCode()) {
+      case 'it':
+        return 'Oggi';
+      case 'ar':
+        return 'اليوم';
+      default:
+        return 'Today';
+    }
+  }
+
+  String _localizedYesterday() {
+    switch (_languageCode()) {
+      case 'it':
+        return 'Ieri';
+      case 'ar':
+        return 'أمس';
+      default:
+        return 'Yesterday';
+    }
+  }
+
+  String _localizedNow() {
+    switch (_languageCode()) {
+      case 'it':
+        return 'ora';
+      case 'ar':
+        return 'الآن';
+      default:
+        return 'now';
+    }
+  }
+
+  String _localizedMinutesAgo(int count) {
+    switch (_languageCode()) {
+      case 'it':
+        return '$count min fa';
+      case 'ar':
+        return count == 1 ? 'قبل دقيقة' : 'قبل $count دقائق';
+      default:
+        return '${count}m ago';
+    }
+  }
+
+  String _localizedHoursAgo(int count) {
+    switch (_languageCode()) {
+      case 'it':
+        return '$count h fa';
+      case 'ar':
+        return count == 1 ? 'قبل ساعة' : 'قبل $count ساعات';
+      default:
+        return '${count}h ago';
+    }
+  }
+
+  String _localizedDaysAgo(int count) {
+    switch (_languageCode()) {
+      case 'it':
+        return '$count g fa';
+      case 'ar':
+        return count == 1 ? 'قبل يوم' : 'قبل $count أيام';
+      default:
+        return '${count}d ago';
+    }
+  }
   String _selectedFilter = 'All';
   final List<String> _filters = ['All', 'Unread'];
 
@@ -230,7 +366,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
                               isRead ? FontWeight.w400 : FontWeight.w500,
                           color: AppColors.charcoal)),
                   const SizedBox(height: AppSpacing.xs),
-                  Text(n.time,
+                  Text(_localizedNotificationTime(n.time),
                       style: const TextStyle(
                           fontSize: 11, color: AppColors.tertiary)),
                 ],
