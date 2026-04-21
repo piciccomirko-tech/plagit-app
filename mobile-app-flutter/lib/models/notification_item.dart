@@ -13,6 +13,7 @@ class NotificationItem {
   final String title;
   final String time;
   final String type; // 'jobs' | 'applications' | 'messages'
+  final String? destinationRoute;
   bool read;
   final String icon;
 
@@ -21,6 +22,7 @@ class NotificationItem {
     required this.title,
     required this.time,
     required this.type,
+    this.destinationRoute,
     this.read = false,
     required this.icon,
   });
@@ -33,6 +35,8 @@ class NotificationItem {
       title: json['title'] as String? ?? '',
       time: json['created_at'] as String? ?? json['time'] as String? ?? '',
       type: json['notification_type'] as String? ?? json['type'] as String? ?? 'in_app',
+      destinationRoute: json['destination_route'] as String? ??
+          json['destinationRoute'] as String?,
       read: json['is_read'] as bool? ?? json['read'] as bool? ?? false,
       icon: json['icon'] as String? ?? json['linked_entity'] as String? ?? 'notifications',
     );
@@ -43,17 +47,19 @@ class NotificationItem {
         'title': title,
         'time': time,
         'type': type,
+        'destination_route': destinationRoute,
         'read': read,
         'icon': icon,
       };
 
   /// Returns a copy with optional field overrides.
-  NotificationItem copyWith({bool? read}) {
+  NotificationItem copyWith({bool? read, String? destinationRoute}) {
     return NotificationItem(
       id: id,
       title: title,
       time: time,
       type: type,
+      destinationRoute: destinationRoute ?? this.destinationRoute,
       read: read ?? this.read,
       icon: icon,
     );

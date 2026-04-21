@@ -196,11 +196,7 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
   Widget _notificationRow(NotificationItem n) {
     final isRead = n.read;
     return GestureDetector(
-      onTap: () {
-        if (!isRead) {
-          context.read<BusinessNotificationsProvider>().markRead(n.id);
-        }
-      },
+      onTap: () => _handleNotificationTap(n, isRead),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
@@ -253,6 +249,19 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
         ),
       ),
     );
+  }
+
+  void _handleNotificationTap(NotificationItem notification, bool isRead) {
+    if (!isRead) {
+      context.read<BusinessNotificationsProvider>().markRead(notification.id);
+    }
+
+    final destinationRoute = notification.destinationRoute;
+    if (destinationRoute == null || destinationRoute.isEmpty) {
+      return;
+    }
+
+    context.push(destinationRoute);
   }
 
   Widget _emptyState() {

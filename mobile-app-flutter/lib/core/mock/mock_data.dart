@@ -644,12 +644,12 @@ class MockData {
   ];
 
   static const businessNotifications = [
-    {'id': 'bn1', 'title': 'New application: Alex Chen for Waiter', 'time': '1h ago', 'type': 'applicants', 'read': false, 'icon': 'person_add'},
-    {'id': 'bn2', 'title': 'Interview confirmed: Yuki Tanaka', 'time': '3h ago', 'type': 'interviews', 'read': false, 'icon': 'event_available'},
-    {'id': 'bn3', 'title': 'New message from Maria Santos', 'time': '5h ago', 'type': 'messages', 'read': false, 'icon': 'chat'},
-    {'id': 'bn4', 'title': 'Your Waiter job has 3 new views', 'time': '1d ago', 'type': 'jobs', 'read': true, 'icon': 'visibility'},
-    {'id': 'bn5', 'title': 'Sofia Rossi applied for Host/Hostess', 'time': '3h ago', 'type': 'applicants', 'read': false, 'icon': 'person_add'},
-    {'id': 'bn6', 'title': 'Complete your business profile for better visibility', 'time': '2d ago', 'type': 'jobs', 'read': true, 'icon': 'business'},
+    {'id': 'bn1', 'title': 'New application: Alex Chen for Waiter', 'time': '1h ago', 'type': 'applicants', 'destination_route': '/business/applicants', 'read': false, 'icon': 'person_add'},
+    {'id': 'bn2', 'title': 'Interview confirmed: Yuki Tanaka', 'time': '3h ago', 'type': 'interviews', 'destination_route': '/business/interviews', 'read': false, 'icon': 'event_available'},
+    {'id': 'bn3', 'title': 'New message from Maria Santos', 'time': '5h ago', 'type': 'messages', 'destination_route': '/business/messages', 'read': false, 'icon': 'chat'},
+    {'id': 'bn4', 'title': 'Your Waiter job has 3 new views', 'time': '1d ago', 'type': 'jobs', 'destination_route': '/business/jobs', 'read': true, 'icon': 'visibility'},
+    {'id': 'bn5', 'title': 'Sofia Rossi applied for Host/Hostess', 'time': '3h ago', 'type': 'applicants', 'destination_route': '/business/applicants', 'read': false, 'icon': 'person_add'},
+    {'id': 'bn6', 'title': 'Complete your business profile for better visibility', 'time': '2d ago', 'type': 'jobs', 'destination_route': '/business/home', 'read': true, 'icon': 'business'},
   ];
 
   static const businessTypes = [
