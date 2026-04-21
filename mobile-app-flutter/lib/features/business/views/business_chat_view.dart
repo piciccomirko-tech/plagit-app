@@ -23,6 +23,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
   List<ChatMessage> _messages = [];
   BusinessConversation? _conversation;
   bool _canSend = false;
+  bool _sending = false;
   bool _loading = true;
   String? _error;
 
@@ -67,17 +68,35 @@ class _BusinessChatViewState extends State<BusinessChatView> {
     }
   }
 
-  void _send() {
+  Future<void> _send() async {
     final text = _inputCtrl.text.trim();
-    if (text.isEmpty) return;
-    setState(() {
-      _messages.insert(0, ChatMessage(
-        sender: 'business',
-        text: text,
-        time: 'Just now',
-      ));
-    });
-    _inputCtrl.clear();
+    if (text.isEmpty || _sending) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _sending = true);
+    try {
+      final repo = BusinessRepository();
+      await repo.sendMessage(widget.conversationId, text);
+      if (!mounted) return;
+      setState(() {
+        _messages.insert(0, ChatMessage(
+          sender: 'business',
+          text: text,
+          time: 'Just now',
+        ));
+        _error = null;
+      });
+      _inputCtrl.clear();
+      await context.read<BusinessMessagesProvider>().load();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _sending = false);
+      }
+    }
     if (_scrollCtrl.hasClients) {
       _scrollCtrl.animateTo(
         0,
@@ -287,7 +306,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                     child: TextField(
                       controller: _inputCtrl,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (_) => _send(),
+                      onSubmitted: (_) => _sending ? null : _send(),
                       decoration: InputDecoration(
                         hintText: 'Type a message...',
                         hintStyle: const TextStyle(
@@ -309,12 +328,12 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(
-                    onTap: _canSend ? _send : null,
+                    onTap: (_canSend && !_sending) ? _send : null,
                     child: Container(
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: _canSend
+                        color: (_canSend && !_sending)
                             ? AppColors.teal
                             : AppColors.teal.withValues(alpha: 0.4),
                         shape: BoxShape.circle,
