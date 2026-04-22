@@ -116,20 +116,31 @@ class BusinessRepository {
         applicants = applicants.where((a) => a.jobId == jobId).toList();
       }
 
-      // Filter by status
       if (statusFilter != null && statusFilter != 'All') {
-        final status = ApplicantStatus.fromString(statusFilter);
-        applicants = applicants.where((a) => a.status == status).toList();
+        applicants = applicants
+            .where((a) => ApplicantStatus.matchesFilter(a.status, statusFilter))
+            .toList();
       }
 
       return applicants;
     }
     final params = <String, String>{};
     if (jobId != null) params['jobId'] = jobId;
-    if (statusFilter != null && statusFilter != 'All') params['status'] = statusFilter;
-    final resp = await _api.get('/business/applicants', queryParams: params.isNotEmpty ? params : null);
-    final list = resp['data'] as List<dynamic>? ?? [];
-    return list.map((e) => Applicant.fromJson(e as Map<String, dynamic>)).toList();
+    final resp = await _api.get(
+      '/business/applicants',
+      queryParams: params.isNotEmpty ? params : null,
+    );
+    final payload =
+        resp['data'] ?? resp['applicants'] ?? (resp is List<dynamic> ? resp : null);
+    var applicants = (payload is List<dynamic> ? payload : const <dynamic>[])
+        .map((e) => Applicant.fromJson(e as Map<String, dynamic>))
+        .toList();
+    if (statusFilter != null && statusFilter != 'All') {
+      applicants = applicants
+          .where((a) => ApplicantStatus.matchesFilter(a.status, statusFilter))
+          .toList();
+    }
+    return applicants;
   }
 
   Future<Applicant> fetchApplicantDetail(String applicantId) async {
@@ -140,7 +151,12 @@ class BusinessRepository {
       );
     }
     final resp = await _api.get('/business/applicants/$applicantId');
-    return Applicant.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
+    final payload =
+        resp['data'] ??
+        resp['applicant'] ??
+        resp['profile'] ??
+        resp;
+    return Applicant.fromJson(payload as Map<String, dynamic>);
   }
 
   // ======================================
