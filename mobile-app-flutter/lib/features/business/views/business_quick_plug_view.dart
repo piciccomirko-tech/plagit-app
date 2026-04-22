@@ -328,16 +328,21 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
   }
 
   void _syncPlanState(BusinessSubscription subscription) {
+    final canUseQuickPlug = EntitlementService.canUseQuickPlug(subscription);
+    final dailyLimit = EntitlementService.dailySwipeLimit(subscription);
     final planKey =
-        '${subscription.plan.name}:${subscription.dailySwipeLimit}:${subscription.canUseQuickPlug}';
+        '${subscription.plan.name}:$dailyLimit:$canUseQuickPlug';
     if (_syncedPlanKey == planKey) return;
     _syncedPlanKey = planKey;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final provider = context.read<BusinessQuickPlugProvider>();
-      provider.setDailyLimit(EntitlementService.dailySwipeLimit(subscription));
-      if (EntitlementService.canUseQuickPlug(subscription)) {
+      provider.syncEntitlements(
+        canUseQuickPlug: canUseQuickPlug,
+        dailyLimit: dailyLimit,
+      );
+      if (canUseQuickPlug) {
         provider.load();
       }
     });

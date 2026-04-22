@@ -388,6 +388,7 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
   bool _loading = true;
   String? _error;
   bool _showUpgrade = false;
+  bool _canUseQuickPlug = true;
   final BusinessRepository _repo;
 
   /// The daily swipe limit — injected from subscription state.
@@ -403,10 +404,37 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
   bool get loading => _loading;
   String? get error => _error;
   bool get showUpgrade => _showUpgrade;
+  bool get canUseQuickPlug => _canUseQuickPlug;
   int get swipesRemaining => (_dailyLimit - _swipesUsed).clamp(0, _dailyLimit);
   bool get hasCards => _currentIndex < _deck.length;
   QuickPlugCandidate? get currentCard =>
       hasCards ? _deck[_currentIndex] : null;
+
+  /// Sync access and swipe entitlements from the current subscription.
+  void syncEntitlements({
+    required bool canUseQuickPlug,
+    required int dailyLimit,
+  }) {
+    final changed =
+        _canUseQuickPlug != canUseQuickPlug || _dailyLimit != dailyLimit;
+    _canUseQuickPlug = canUseQuickPlug;
+    _dailyLimit = dailyLimit;
+
+    if (!_canUseQuickPlug) {
+      _deck = [];
+      _currentIndex = 0;
+      _swipesUsed = 0;
+      _loading = false;
+      _error = null;
+      _showUpgrade = false;
+    } else {
+      _showUpgrade = _swipesUsed >= _dailyLimit;
+    }
+
+    if (changed) {
+      notifyListeners();
+    }
+  }
 
   /// Set the daily swipe limit (call when subscription changes).
   void setDailyLimit(int limit) {
@@ -416,6 +444,17 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
   }
 
   Future<void> load() async {
+    if (!_canUseQuickPlug) {
+      _deck = [];
+      _currentIndex = 0;
+      _swipesUsed = 0;
+      _loading = false;
+      _error = null;
+      _showUpgrade = false;
+      notifyListeners();
+      return;
+    }
+
     _loading = true;
     _error = null;
     _currentIndex = 0;
@@ -435,6 +474,10 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
 
   /// Swipe on the current candidate.
   Future<void> swipe(bool interested) async {
+    if (!_canUseQuickPlug) {
+      return;
+    }
+
     if (!hasCards) return;
 
     if (_swipesUsed >= _dailyLimit) {
