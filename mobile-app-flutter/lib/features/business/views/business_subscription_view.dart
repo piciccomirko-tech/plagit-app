@@ -71,16 +71,22 @@ extension _BusinessSubscriptionL10n on AppLocalizations {
         ar: 'وفّر 30٪',
       );
 
-  String get freeTrialStartedLocal => _local(
-        en: 'Free trial started',
-        it: 'Prova gratuita avviata',
-        ar: 'تم بدء الفترة التجريبية المجانية',
+  String get billingComingSoonLocal => _local(
+        en: 'Billing coming soon',
+        it: 'Fatturazione in arrivo',
+        ar: 'الفوترة قريباً',
       );
 
-  String get startFreeTrialLocal => _local(
-        en: 'Start Free Trial',
-        it: 'Inizia prova gratuita',
-        ar: 'ابدأ الفترة التجريبية المجانية',
+  String get billingPreviewOnlyLocal => _local(
+        en: 'Plan pricing is shown as a preview only right now.',
+        it: 'I prezzi dei piani sono mostrati solo come anteprima per ora.',
+        ar: 'أسعار الخطط معروضة حالياً كمعاينة فقط.',
+      );
+
+  String get billingUnavailableInAppLocal => _local(
+        en: 'Business billing is not available in-app yet.',
+        it: 'La fatturazione business non è ancora disponibile in-app.',
+        ar: 'فواتير الأعمال غير متاحة داخل التطبيق بعد.',
       );
 
   String planActiveSuffixLocal(String planName) => _local(
@@ -99,6 +105,18 @@ extension _BusinessSubscriptionL10n on AppLocalizations {
         en: 'Your business plan is active',
         it: 'Il tuo piano business è attivo',
         ar: 'خطتك التجارية نشطة',
+      );
+
+  String get manageSubscriptionSoonLocal => _local(
+        en: 'Subscription management coming soon',
+        it: 'Gestione abbonamento in arrivo',
+        ar: 'إدارة الاشتراك قريباً',
+      );
+
+  String get manageSubscriptionUnavailableLocal => _local(
+        en: 'Plan changes and billing management are not available in-app yet.',
+        it: 'Modifiche piano e gestione fatturazione non sono ancora disponibili in-app.',
+        ar: 'تغييرات الخطة وإدارة الفوترة غير متاحة داخل التطبيق بعد.',
       );
 }
 
@@ -208,6 +226,13 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
 
             const SizedBox(height: 32),
 
+            Text(
+              l.billingPreviewOnlyLocal,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: AppColors.secondary),
+            ),
+            const SizedBox(height: 16),
+
             // ── Start Free Trial ──
             SizedBox(
               width: double.infinity,
@@ -216,11 +241,10 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(l.freeTrialStartedLocal),
+                      content: Text(l.billingUnavailableInAppLocal),
                       duration: const Duration(seconds: 2),
                     ),
                   );
-                  context.pop();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.teal,
@@ -231,7 +255,7 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
                   ),
                 ),
                 child: Text(
-                  l.startFreeTrialLocal,
+                  l.billingComingSoonLocal,
                   style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -289,13 +313,26 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
               width: double.infinity,
               height: 50,
               child: OutlinedButton(
-                onPressed: () {},
+                onPressed: null,
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.teal),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: Text(l.manageSubscription, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.teal)),
+                child: Text(
+                  l.manageSubscriptionSoonLocal,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.teal,
+                  ),
+                ),
               ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              l.manageSubscriptionUnavailableLocal,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 13, color: AppColors.secondary),
             ),
           ],
         ),
