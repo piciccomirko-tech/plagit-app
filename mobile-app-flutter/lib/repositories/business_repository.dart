@@ -18,6 +18,7 @@ import 'package:plagit/models/business_home_data.dart';
 import 'package:plagit/models/business_insights.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/models/business_job.dart';
+import 'package:plagit/models/business_match_candidate.dart';
 import 'package:plagit/models/business_nearby_talent_candidate.dart';
 import 'package:plagit/models/business_profile.dart';
 import 'package:plagit/models/business_subscription.dart';
@@ -70,6 +71,24 @@ class BusinessRepository {
     final home = await fetchHome();
     return home.recommendedCandidates
         .map(BusinessNearbyTalentCandidate.fromQuickPlugCandidate)
+        .toList();
+  }
+
+  Future<List<BusinessMatchCandidate>> fetchMatches({
+    required String jobId,
+  }) async {
+    final applicants = await fetchApplicants(jobId: jobId);
+    const supportedStatuses = {
+      ApplicantStatus.shortlisted,
+      ApplicantStatus.underReview,
+      ApplicantStatus.interviewInvited,
+      ApplicantStatus.interviewScheduled,
+      ApplicantStatus.hired,
+    };
+
+    return applicants
+        .where((applicant) => supportedStatuses.contains(applicant.status))
+        .map(BusinessMatchCandidate.fromApplicant)
         .toList();
   }
 
