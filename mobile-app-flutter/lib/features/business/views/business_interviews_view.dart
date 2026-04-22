@@ -44,15 +44,19 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
     }
   }
 
+  bool _isUpcomingStatus(String status) =>
+      status == 'Confirmed' || status == 'Invited';
+
+  bool _isPastStatus(String status) =>
+      status == 'Completed' || status == 'No Show' || status == 'Cancelled';
+
   List<BusinessInterview> _applyLocalFilter(
       List<BusinessInterview> all, String filter) {
     switch (filter) {
       case 'Upcoming':
-        return all
-            .where((i) => i.status == 'Confirmed' || i.status == 'Invited')
-            .toList();
+        return all.where((i) => _isUpcomingStatus(i.status)).toList();
       case 'Past':
-        return all.where((i) => i.status == 'Completed').toList();
+        return all.where((i) => _isPastStatus(i.status)).toList();
       default:
         return all;
     }
