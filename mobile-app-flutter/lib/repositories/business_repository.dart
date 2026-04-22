@@ -15,6 +15,7 @@ import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/models/business_candidate_profile.dart';
 import 'package:plagit/models/business_home_data.dart';
+import 'package:plagit/models/business_insights.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/models/business_job.dart';
 import 'package:plagit/models/business_profile.dart';
@@ -57,6 +58,11 @@ class BusinessRepository {
     if (_isMock) return BusinessHomeData.mock();
     final resp = await _api.get('/business/home');
     return BusinessHomeData.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
+  }
+
+  Future<BusinessInsights> fetchInsights() async {
+    final home = await fetchHome();
+    return BusinessInsights.fromHomeData(home);
   }
 
   // ======================================
