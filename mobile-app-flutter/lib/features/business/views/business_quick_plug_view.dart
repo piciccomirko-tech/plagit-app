@@ -9,27 +9,104 @@ import 'package:plagit/models/quick_plug_candidate.dart';
 import 'package:plagit/providers/business_providers.dart';
 
 extension _QuickPlugL10n on AppLocalizations {
-  String get superInterestedNotified {
+  String get interestSent {
     switch (localeName) {
       case 'it':
-        return 'Candidato avvisato del tuo super interesse';
+        return 'Interesse inviato';
       case 'ar':
-        return 'تم إشعار المرشح باهتمامك الكبير';
+        return 'تم إرسال الاهتمام';
       default:
-        return 'Candidate notified of your super interest';
+        return 'Interest sent';
     }
   }
 
   String get retryAction => retry;
 
-  String get filtersComingSoon {
+  String get filtersUnavailable {
     switch (localeName) {
       case 'it':
-        return 'Filtri disponibili presto';
+        return 'I filtri Quick Plug non sono ancora disponibili';
       case 'ar':
-        return 'عوامل التصفية قريبًا';
+        return 'فلاتر Quick Plug غير متاحة بعد';
       default:
-        return 'Filters coming soon';
+        return 'Quick Plug filters are not available yet';
+    }
+  }
+
+  String get quickPlugNoMoreCandidatesTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Nessun altro candidato disponibile per ora';
+      case 'ar':
+        return 'لا يوجد مرشحون آخرون متاحون الآن';
+      default:
+        return 'No more candidates available right now';
+    }
+  }
+
+  String get quickPlugNoMoreCandidatesBody {
+    switch (localeName) {
+      case 'it':
+        return 'Hai già rivisto tutte le card disponibili nel deck attuale.';
+      case 'ar':
+        return 'لقد راجعت بالفعل كل البطاقات المتاحة في المجموعة الحالية.';
+      default:
+        return 'You have already reviewed every card in the current deck.';
+    }
+  }
+
+  String get quickPlugReloadDeck {
+    switch (localeName) {
+      case 'it':
+        return 'Ricarica deck';
+      case 'ar':
+        return 'إعادة تحميل المجموعة';
+      default:
+        return 'Reload deck';
+    }
+  }
+
+  String get quickPlugViewPlans {
+    switch (localeName) {
+      case 'it':
+        return 'Vedi piani';
+      case 'ar':
+        return 'عرض الخطط';
+      default:
+        return 'View plans';
+    }
+  }
+
+  String get quickPlugSwipeLimitReached {
+    switch (localeName) {
+      case 'it':
+        return 'Limite giornaliero di swipe raggiunto';
+      case 'ar':
+        return 'تم الوصول إلى الحد اليومي للتمريرات';
+      default:
+        return 'Daily swipe limit reached';
+    }
+  }
+
+  String quickPlugUpgradeHint(String planName) {
+    switch (localeName) {
+      case 'it':
+        return 'Piano $planName: aggiorna il piano per sbloccare Quick Plug.';
+      case 'ar':
+        return 'خطة $planName: قم بالترقية لفتح Quick Plug.';
+      default:
+        return '$planName plan: upgrade your plan to unlock Quick Plug.';
+    }
+  }
+
+  String quickPlugPlanLimitLine(String planName, int dailyLimit) {
+    switch (localeName) {
+      case 'it':
+        return '$planName: $dailyLimit swipe al giorno disponibili';
+      case 'ar':
+        return '$planName: $dailyLimit تمريرات متاحة يومياً';
+      default:
+        return '$planName: $dailyLimit swipes available per day';
     }
   }
 }
@@ -100,7 +177,11 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
           ScaffoldMessenger.of(context).clearSnackBars();
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(interested ? 'Added to shortlist!' : 'Passed'),
+              content: Text(
+                interested
+                    ? AppLocalizations.of(context).interestSent
+                    : 'Passed',
+              ),
               duration: const Duration(milliseconds: 1200),
               behavior: SnackBarBehavior.floating,
               backgroundColor:
@@ -158,7 +239,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
         messenger.clearSnackBars();
         messenger.showSnackBar(
           SnackBar(
-            content: Text(l.superInterestedNotified),
+            content: Text(l.interestSent),
             duration: const Duration(milliseconds: 1500),
             behavior: SnackBarBehavior.floating,
             backgroundColor: AppColors.gold,
@@ -311,7 +392,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context).filtersComingSoon),
+                  content: Text(AppLocalizations.of(context).filtersUnavailable),
                   behavior: SnackBarBehavior.floating,
                   duration: const Duration(milliseconds: 1200),
                 ),
@@ -369,8 +450,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               child: const Icon(Icons.check_circle, size: 60, color: AppColors.teal),
             ),
             const SizedBox(height: 16),
-            const Text(
-              "You've seen all candidates!",
+            Text(
+              AppLocalizations.of(context).quickPlugNoMoreCandidatesTitle,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -379,8 +460,9 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             ),
             const SizedBox(height: 8),
             Text(
-              'Check back later for new profiles',
+              AppLocalizations.of(context).quickPlugNoMoreCandidatesBody,
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             GestureDetector(
@@ -393,8 +475,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                   borderRadius: BorderRadius.circular(100),
                   border: Border.all(color: AppColors.teal, width: 1.5),
                 ),
-                child: const Text(
-                  'Adjust Filters',
+                child: Text(
+                  AppLocalizations.of(context).quickPlugReloadDeck,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -429,7 +511,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             ),
             const SizedBox(height: 8),
             Text(
-              '${subscription.plan.displayName} plan: upgrade to unlock candidate swipes.',
+              AppLocalizations.of(context)
+                  .quickPlugUpgradeHint(subscription.plan.displayName),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
             ),
@@ -443,8 +526,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                   color: AppColors.teal,
                   borderRadius: BorderRadius.circular(100),
                 ),
-                child: const Text(
-                  'Upgrade to Premium',
+                child: Text(
+                  AppLocalizations.of(context).quickPlugViewPlans,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
@@ -464,9 +547,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     BusinessSubscription subscription,
     int dailyLimit,
   ) {
-    final planLine = dailyLimit >= 999
-        ? '${subscription.plan.displayName} plan: daily swipes available now.'
-        : '${subscription.plan.displayName} plan: $dailyLimit swipes per day';
+    final planLine = AppLocalizations.of(context)
+        .quickPlugPlanLimitLine(subscription.plan.displayName, dailyLimit);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -475,8 +557,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
           children: [
             const Icon(Icons.lock, size: 48, color: AppColors.amber),
             const SizedBox(height: 16),
-            const Text(
-              'Daily limit reached',
+            Text(
+              AppLocalizations.of(context).quickPlugSwipeLimitReached,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -498,27 +580,13 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                   color: AppColors.teal,
                   borderRadius: BorderRadius.circular(100),
                 ),
-                child: const Text(
-                  'Upgrade to Premium',
+                child: Text(
+                  AppLocalizations.of(context).quickPlugViewPlans,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            GestureDetector(
-              onTap: () {
-                // Reload to dismiss upgrade state
-                context.read<BusinessQuickPlugProvider>().load();
-              },
-              child: Text(
-                'Maybe later',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade500,
                 ),
               ),
             ),
@@ -591,7 +659,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                   child: const Icon(Icons.close, size: 28, color: AppColors.red),
                 ),
               ),
-              // Super interested
+              // Same submit path as interested; visual emphasis only for now.
               GestureDetector(
                 onTap: _handleSuperInterested,
                 child: Container(
@@ -735,11 +803,13 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             const SizedBox(height: 4),
 
             // Role + experience
-            Text(
-              '${candidate.role} \u00B7 ${candidate.experience}',
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey.shade500,
+              Text(
+                candidate.experience.isNotEmpty
+                    ? '${candidate.role} \u00B7 ${candidate.experience}'
+                    : candidate.role,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: Colors.grey.shade500,
               ),
             ),
             const SizedBox(height: 4),
