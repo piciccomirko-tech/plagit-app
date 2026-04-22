@@ -140,6 +140,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   bool _fetchingJob = false;
   bool _attemptedJobFetch = false;
   String? _jobFetchError;
+  BusinessApplicantsProvider? _applicantsProvider;
   String? _previousApplicantsJobId;
   String _previousApplicantsFilter = 'All';
 
@@ -157,10 +158,11 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Ensure both providers are loaded
       final jobsProv = context.read<BusinessJobsProvider>();
-      if (jobsProv.jobs.isEmpty && !jobsProv.loading) {
+      if (jobsProv.jobs.isEmpty) {
         jobsProv.load();
       }
       final appProv = context.read<BusinessApplicantsProvider>();
+      _applicantsProvider = appProv;
       _previousApplicantsJobId = appProv.jobId;
       _previousApplicantsFilter = appProv.filter;
       final needsApplicantContext =
@@ -175,7 +177,11 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
 
   @override
   void dispose() {
-    final appProv = context.read<BusinessApplicantsProvider>();
+    final appProv = _applicantsProvider;
+    if (appProv == null) {
+      super.dispose();
+      return;
+    }
     final shouldRestore =
         appProv.jobId != _previousApplicantsJobId ||
         appProv.filter != _previousApplicantsFilter;
