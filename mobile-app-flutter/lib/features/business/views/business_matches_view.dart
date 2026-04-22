@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_match_candidate.dart';
 import 'package:plagit/repositories/business_repository.dart';
 
@@ -10,6 +11,26 @@ extension _BusinessMatchesL10n on AppLocalizations {
   String get yourMatchesTitle => matchesTitle;
   String get retryAction => retry;
   String get noMatchesYet => noMatchesTitle;
+  String get businessMatchesEmptySubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'I candidati attivi per questo lavoro appariranno qui.';
+      case 'ar':
+        return 'سيظهر هنا المرشحون النشطون لهذه الوظيفة.';
+      default:
+        return 'Active candidates for this job will appear here.';
+    }
+  }
+
+  String businessMatchesSummary(int count, String jobTitle) {
+    final label = switch (localeName) {
+      'it' => count == 1 ? '1 candidato attivo' : '$count candidati attivi',
+      'ar' => count == 1 ? 'مرشح نشط واحد' : '$count مرشحين نشطين',
+      _ => count == 1 ? '1 active candidate' : '$count active candidates',
+    };
+    if (jobTitle.trim().isEmpty) return label;
+    return '$label — $jobTitle';
+  }
 }
 
 /// Business Matches screen — candidates matching a specific job.
@@ -155,7 +176,7 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
               padding:
                   const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
               child: Text(
-                  'Matches will appear here when candidates match your job requirements.',
+                  AppLocalizations.of(context).businessMatchesEmptySubtitle,
                   textAlign: TextAlign.center,
                   style: TextStyle(
                       fontSize: 14, color: AppColors.secondary)),
@@ -172,7 +193,8 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
             child: Text(
-                '${_visible.length} matching candidates \u2014 ${widget.jobTitle}',
+                AppLocalizations.of(context)
+                    .businessMatchesSummary(_visible.length, widget.jobTitle),
                 style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -228,25 +250,7 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
                     ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sm, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.online.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(AppRadius.full),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.verified,
-                          size: 12, color: AppColors.online),
-                      const SizedBox(width: AppSpacing.xs),
-                      Text(AppLocalizations.of(context).matchLabel,
-                          style: TextStyle(
-                              fontSize: 11, color: AppColors.online)),
-                    ],
-                  ),
-                ),
+                _statusBadge(c.status),
               ],
             ),
             const SizedBox(height: AppSpacing.md),
@@ -316,6 +320,28 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
     );
   }
 
+  Widget _statusBadge(ApplicantStatus status) {
+    final color = _statusColor(status);
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: 4,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppRadius.full),
+      ),
+      child: Text(
+        status.localizedLabel(AppLocalizations.of(context)),
+        style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+          color: color,
+        ),
+      ),
+    );
+  }
+
   Widget _actionChip(
       String label, IconData icon, Color color, bool filled, VoidCallback onTap) {
     return GestureDetector(
@@ -373,5 +399,16 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
         candidate.candidateId.isNotEmpty ? candidate.candidateId : candidate.name;
     final hash = seed.codeUnits.fold<int>(0, (sum, code) => sum + code);
     return (hash % 360) / 360;
+  }
+
+  Color _statusColor(ApplicantStatus status) {
+    return switch (status) {
+      ApplicantStatus.shortlisted => AppColors.teal,
+      ApplicantStatus.underReview => AppColors.indigo,
+      ApplicantStatus.interviewInvited ||
+      ApplicantStatus.interviewScheduled => AppColors.amber,
+      ApplicantStatus.hired => AppColors.online,
+      _ => AppColors.secondary,
+    };
   }
 }
