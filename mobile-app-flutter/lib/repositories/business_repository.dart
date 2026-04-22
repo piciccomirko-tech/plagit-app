@@ -291,7 +291,11 @@ class BusinessRepository {
   Future<BusinessSubscription> fetchSubscription() async {
     if (_isMock) return BusinessSubscription.mock();
     final resp = await _api.get('/business/subscription');
-    final data = resp['data'] as Map<String, dynamic>? ?? {};
+    final data =
+        resp['data'] ??
+        resp['subscription'] ??
+        resp['plan'] ??
+        resp;
     return BusinessSubscription.fromJson(data);
   }
 

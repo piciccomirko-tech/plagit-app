@@ -27,12 +27,20 @@ enum BusinessSubscriptionPlan {
 
   /// Parse a string into the enum value. Falls back to [free].
   static BusinessSubscriptionPlan fromString(String s) {
-    final lower = s.toLowerCase().replaceAll(' ', '');
+    final lower = s
+        .toLowerCase()
+        .replaceAll(RegExp(r'[\s_-]+'), '');
     return switch (lower) {
       'free' => free,
       'basic' => basic,
       'pro' => pro,
       'premium' => premium,
+      'businessfree' => free,
+      'businessbasic' => basic,
+      'businesspro' => pro,
+      'businesspremium' => premium,
+      'starter' => basic,
+      'trial' => basic,
       _ => free,
     };
   }
@@ -77,11 +85,62 @@ class BusinessSubscription {
   // -- JSON serialisation --
 
   factory BusinessSubscription.fromJson(Map<String, dynamic> json) {
+    String? stringOf(List<String> keys) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value == null) continue;
+        final text = value.toString().trim();
+        if (text.isNotEmpty) return text;
+      }
+      return null;
+    }
+
+    String? nestedString(List<String> keys, List<String> nestedKeys) {
+      for (final key in keys) {
+        final value = json[key];
+        if (value is! Map<String, dynamic>) continue;
+        for (final nestedKey in nestedKeys) {
+          final nestedValue = value[nestedKey];
+          if (nestedValue == null) continue;
+          final text = nestedValue.toString().trim();
+          if (text.isNotEmpty) return text;
+        }
+      }
+      return null;
+    }
+
+    final planName =
+        stringOf(const ['plan', 'tier', 'subscriptionPlan', 'subscription_plan']) ??
+        nestedString(
+          const ['subscription', 'subscription_data', 'planData', 'plan_data'],
+          const ['plan', 'tier', 'name', 'slug', 'id'],
+        ) ??
+        'free';
+
     return BusinessSubscription(
-      plan: BusinessSubscriptionPlan.fromString(
-          json['plan'] as String? ?? 'free'),
-      startDate: json['startDate'] as String?,
-      renewalDate: json['renewalDate'] as String?,
+      plan: BusinessSubscriptionPlan.fromString(planName),
+      startDate: stringOf(
+        const [
+          'startDate',
+          'start_date',
+          'startedAt',
+          'started_at',
+          'subscriptionStart',
+          'subscription_start',
+        ],
+      ),
+      renewalDate: stringOf(
+        const [
+          'renewalDate',
+          'renewal_date',
+          'renewsAt',
+          'renews_at',
+          'expiresAt',
+          'expires_at',
+          'currentPeriodEnd',
+          'current_period_end',
+        ],
+      ),
     );
   }
 
