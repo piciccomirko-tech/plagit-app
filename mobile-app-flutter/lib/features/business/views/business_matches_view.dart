@@ -11,6 +11,28 @@ extension _BusinessMatchesL10n on AppLocalizations {
   String get yourMatchesTitle => matchesTitle;
   String get retryAction => retry;
   String get noMatchesYet => noMatchesTitle;
+  String get businessMatchesViewAction {
+    switch (localeName) {
+      case 'it':
+        return 'Vedi';
+      case 'ar':
+        return 'عرض';
+      default:
+        return 'View';
+    }
+  }
+
+  String get businessMatchesHideAction {
+    switch (localeName) {
+      case 'it':
+        return 'Nascondi';
+      case 'ar':
+        return 'إخفاء';
+      default:
+        return 'Hide';
+    }
+  }
+
   String get businessMatchesEmptySubtitle {
     switch (localeName) {
       case 'it':
@@ -280,7 +302,7 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
             Row(
               children: [
                 _actionChip(
-                  'View',
+                  AppLocalizations.of(context).businessMatchesViewAction,
                   Icons.person,
                   AppColors.teal,
                   true,
@@ -288,7 +310,7 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
                 ),
                 const SizedBox(width: AppSpacing.md),
                 _actionChip(
-                  'Hide',
+                  AppLocalizations.of(context).businessMatchesHideAction,
                   Icons.visibility_off,
                   AppColors.urgent,
                   false,
