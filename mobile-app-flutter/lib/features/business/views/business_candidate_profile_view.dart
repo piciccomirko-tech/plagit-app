@@ -54,14 +54,19 @@ extension _BusinessCandidateProfileL10nX on AppLocalizations {
 /// View candidate profile — mirrors BusinessRealCandidateProfileView.swift.
 class BusinessCandidateProfileView extends StatefulWidget {
   final String candidateId;
-  const BusinessCandidateProfileView({super.key, required this.candidateId});
+  final BusinessRepository? repo;
+  const BusinessCandidateProfileView({
+    super.key,
+    required this.candidateId,
+    this.repo,
+  });
 
   @override
   State<BusinessCandidateProfileView> createState() => _BusinessCandidateProfileViewState();
 }
 
 class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileView> {
-  final _repo = BusinessRepository();
+  late final BusinessRepository _repo;
   BusinessCandidateProfile? _candidate;
   bool _loading = true;
   String? _error;
@@ -69,6 +74,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
   @override
   void initState() {
     super.initState();
+    _repo = widget.repo ?? BusinessRepository();
     _load();
   }
 
