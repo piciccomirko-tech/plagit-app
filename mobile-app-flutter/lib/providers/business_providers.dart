@@ -223,6 +223,15 @@ class BusinessApplicantsProvider extends ChangeNotifier {
     await load();
   }
 
+  /// Restore context synchronously during teardown without triggering
+  /// a fresh load/notify cycle on a provider that may be disposing.
+  void restoreContext({String? jobId, String? filter}) {
+    _jobId = jobId;
+    if (filter != null) {
+      _filter = filter;
+    }
+  }
+
   Future<void> shortlist(String applicantId) async {
     await _repo.shortlistApplicant(applicantId);
     await load();

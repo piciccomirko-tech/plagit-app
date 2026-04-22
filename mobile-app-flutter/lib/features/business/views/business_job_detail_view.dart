@@ -186,7 +186,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
         appProv.jobId != _previousApplicantsJobId ||
         appProv.filter != _previousApplicantsFilter;
     if (shouldRestore) {
-      appProv.setContext(
+      appProv.restoreContext(
         jobId: _previousApplicantsJobId,
         filter: _previousApplicantsFilter,
       );
