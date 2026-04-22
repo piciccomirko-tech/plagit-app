@@ -118,6 +118,24 @@ extension _BusinessSubscriptionL10n on AppLocalizations {
         it: 'Modifiche piano e gestione fatturazione non sono ancora disponibili in-app.',
         ar: 'تغييرات الخطة وإدارة الفوترة غير متاحة داخل التطبيق بعد.',
       );
+
+  String monthlyPriceLocal(String amount) => _local(
+        en: '$amount/month',
+        it: '$amount/mese',
+        ar: '$amount/شهرياً',
+      );
+
+  String yearlyPriceLocal(String amount) => _local(
+        en: '$amount/year',
+        it: '$amount/anno',
+        ar: '$amount/سنوياً',
+      );
+
+  String approxMonthlyPriceLocal(String amount) => _local(
+        en: '(~$amount/month)',
+        it: '(~$amount/mese)',
+        ar: '(~$amount/شهرياً)',
+      );
 }
 
 /// Business Subscription / Paywall screen — 3 pricing tiers.
@@ -202,7 +220,7 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             _pricingCard(
               index: 0,
               name: l.planBasic,
-              price: '\u00A329.99/month',
+              price: l.monthlyPriceLocal('\u00A329.99'),
               badge: null,
               badgeColor: Colors.transparent,
             ),
@@ -210,7 +228,7 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             _pricingCard(
               index: 1,
               name: l.planPro,
-              price: '\u00A359.99/month',
+              price: l.monthlyPriceLocal('\u00A359.99'),
               badge: l.mostPopular,
               badgeColor: AppColors.amber,
             ),
@@ -218,8 +236,8 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             _pricingCard(
               index: 2,
               name: l.planPremium,
-              price: '\u00A3499/year',
-              subPrice: '(~\u00A341.58/month)',
+              price: l.yearlyPriceLocal('\u00A3499'),
+              subPrice: l.approxMonthlyPriceLocal('\u00A341.58'),
               badge: l.savePercent30Local,
               badgeColor: AppColors.green,
             ),
