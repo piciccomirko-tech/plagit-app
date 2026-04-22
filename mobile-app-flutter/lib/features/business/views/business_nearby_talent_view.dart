@@ -21,8 +21,9 @@ extension _BusinessNearbyTalentL10n on AppLocalizations {
   }
 }
 
-/// Business Nearby Talent screen with list view, radius & role filters.
-/// Mirrors BusinessNearbyTalentView.swift (list mode only, no native map).
+/// Business Nearby Talent screen with list view and role filters.
+/// Mirrors BusinessNearbyTalentView.swift with only the currently supported
+/// Nearby Talent data and filters.
 class BusinessNearbyTalentView extends StatefulWidget {
   const BusinessNearbyTalentView({super.key});
 
@@ -35,11 +36,9 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   final BusinessRepository _repo = BusinessRepository();
   bool _loading = true;
   String? _error;
-  double _selectedRadius = 10;
   String _selectedRole = 'All';
   final Set<String> _shortlisted = {};
 
-  final List<double> _radii = [3, 5, 10, 15, 20];
   List<BusinessNearbyTalentCandidate> _candidates = const [];
 
   @override
@@ -95,8 +94,6 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
         child: Column(
           children: [
             _topBar(),
-            _radiusRow(),
-            const SizedBox(height: AppSpacing.xs),
             _roleChips(),
             const SizedBox(height: AppSpacing.sm),
             _summaryRow(),
@@ -130,44 +127,6 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
           const Spacer(),
           const SizedBox(width: 36, height: 36),
         ],
-      ),
-    );
-  }
-
-  // ── Radius selector ──
-  Widget _radiusRow() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: _radii.map((r) {
-            final active = _selectedRadius == r;
-            return Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.sm),
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedRadius = r),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md + 2, vertical: AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: active ? AppColors.teal : AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
-                    border: active
-                        ? null
-                        : Border.all(
-                            color: AppColors.border, width: 0.5),
-                  ),
-                  child: Text('${r.toInt()} km',
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: active ? Colors.white : AppColors.secondary)),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
       ),
     );
   }
@@ -231,9 +190,6 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
                   fontWeight: FontWeight.w500,
                   color: AppColors.charcoal)),
           if (_selectedRole != 'All') ...[
-            Text(' \u00b7 ', style: TextStyle(color: AppColors.tertiary)),
-            Text(AppLocalizations.of(context).allRolesLabel,
-                style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
             Text(' \u00b7 ', style: TextStyle(color: AppColors.tertiary)),
             Text(_selectedRole,
                 style: const TextStyle(fontSize: 11, color: AppColors.teal)),
@@ -306,7 +262,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
             children: [
               Text(
                   _selectedRole != 'All'
-                      ? 'No ${_selectedRole.toLowerCase()}s nearby'
+                      ? 'No ${_selectedRole.toLowerCase()} candidates found'
                       : 'No candidates found',
                   style: const TextStyle(
                       fontSize: 16,
