@@ -25,6 +25,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   bool _fetchingJob = false;
   bool _attemptedJobFetch = false;
   String? _jobFetchError;
+  String? _previousApplicantsJobId;
+  String _previousApplicantsFilter = 'All';
 
   static const _applicantFilters = [
     'All',
@@ -44,10 +46,31 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
         jobsProv.load();
       }
       final appProv = context.read<BusinessApplicantsProvider>();
-      if (appProv.applicants.isEmpty && !appProv.loading) {
+      _previousApplicantsJobId = appProv.jobId;
+      _previousApplicantsFilter = appProv.filter;
+      final needsApplicantContext =
+          appProv.jobId != widget.jobId || appProv.filter != _applicantFilter;
+      if (needsApplicantContext) {
+        appProv.setContext(jobId: widget.jobId, filter: _applicantFilter);
+      } else if (appProv.applicants.isEmpty && !appProv.loading) {
         appProv.load();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    final appProv = context.read<BusinessApplicantsProvider>();
+    final shouldRestore =
+        appProv.jobId != _previousApplicantsJobId ||
+        appProv.filter != _previousApplicantsFilter;
+    if (shouldRestore) {
+      appProv.setContext(
+        jobId: _previousApplicantsJobId,
+        filter: _previousApplicantsFilter,
+      );
+    }
+    super.dispose();
   }
 
   /// Find the job from the jobs provider by ID.
@@ -94,26 +117,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
 
   /// Filter applicants for this job from the applicants provider.
   List<Applicant> _jobApplicants(BusinessApplicantsProvider provider) {
-    var list = provider.applicants
-        .where((a) => a.jobId == widget.jobId)
-        .toList();
-    if (_applicantFilter != 'All') {
-      if (_applicantFilter == 'Interview') {
-        list = list
-            .where((a) =>
-                a.status == ApplicantStatus.interviewScheduled)
-            .toList();
-      } else {
-        list = list.where((a) => a.status.displayName == _applicantFilter).toList();
-      }
-    }
-    return list;
-  }
-
-  int _totalApplicantsForJob(BusinessApplicantsProvider provider) {
-    return provider.applicants
-        .where((a) => a.jobId == widget.jobId)
-        .length;
+    return provider.applicants;
   }
 
   @override
@@ -258,7 +262,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
       );
     }
 
-    final totalApplicants = _totalApplicantsForJob(applicantsProvider);
+    final totalApplicants = job.applicants;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -520,7 +524,13 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
               final f = _applicantFilters[i];
               final active = f == _applicantFilter;
               return GestureDetector(
-                onTap: () => setState(() => _applicantFilter = f),
+                onTap: () {
+                  setState(() => _applicantFilter = f);
+                  context.read<BusinessApplicantsProvider>().setContext(
+                    jobId: widget.jobId,
+                    filter: f,
+                  );
+                },
                 child: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                   decoration: BoxDecoration(
@@ -546,7 +556,50 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
 
         // ── List ──
         Expanded(
-          child: applicants.isEmpty
+          child: provider.loading
+              ? const Center(
+                  child: CircularProgressIndicator(color: AppColors.teal),
+                )
+              : provider.error != null
+              ? Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        size: 40,
+                        color: AppColors.red,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        provider.error!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.secondary,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () => context
+                            .read<BusinessApplicantsProvider>()
+                            .setContext(
+                              jobId: widget.jobId,
+                              filter: _applicantFilter,
+                            ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.teal,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
+              : applicants.isEmpty
               ? const Center(
                   child: Text('No applicants', style: TextStyle(color: AppColors.secondary)),
                 )

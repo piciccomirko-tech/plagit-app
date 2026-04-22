@@ -215,6 +215,14 @@ class BusinessApplicantsProvider extends ChangeNotifier {
     load();
   }
 
+  Future<void> setContext({String? jobId, String? filter}) async {
+    _jobId = jobId;
+    if (filter != null) {
+      _filter = filter;
+    }
+    await load();
+  }
+
   Future<void> shortlist(String applicantId) async {
     await _repo.shortlistApplicant(applicantId);
     await load();
