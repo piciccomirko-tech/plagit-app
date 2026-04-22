@@ -37,7 +37,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   bool _loading = true;
   String? _error;
   String _selectedRole = 'All';
-  final Set<String> _shortlisted = {};
+  final Set<String> _markedCandidates = {};
 
   List<BusinessNearbyTalentCandidate> _candidates = const [];
 
@@ -299,7 +299,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   // ── Candidate Card ──
   Widget _candidateCard(BusinessNearbyTalentCandidate c) {
     final id = c.id;
-    final isShort = _shortlisted.contains(id);
+    final isMarked = _markedCandidates.contains(id);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
@@ -391,23 +391,31 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
           // Actions
           Row(
             children: [
-              _smallAction('View', Icons.person, AppColors.teal, () {}),
+              _smallAction(
+                'View',
+                Icons.person,
+                AppColors.teal,
+                () => context.push('/business/candidate/$id'),
+              ),
               const SizedBox(width: AppSpacing.sm),
               _smallAction(
-                  isShort ? 'Shortlisted' : 'Shortlist',
-                  isShort ? Icons.star : Icons.star_border,
-                  isShort ? AppColors.amber : AppColors.secondary, () {
+                  isMarked ? 'Marked' : 'Mark',
+                  isMarked ? Icons.bookmark : Icons.bookmark_border,
+                  isMarked ? AppColors.amber : AppColors.secondary, () {
                 setState(() {
-                  if (isShort) {
-                    _shortlisted.remove(id);
+                  if (isMarked) {
+                    _markedCandidates.remove(id);
                   } else {
-                    _shortlisted.add(id);
+                    _markedCandidates.add(id);
                   }
                 });
               }),
               const SizedBox(width: AppSpacing.sm),
               _smallAction(
-                  'Message', Icons.chat_bubble_outline, AppColors.indigo, () {}),
+                  'Open Messages',
+                  Icons.chat_bubble_outline,
+                  AppColors.indigo,
+                  () => context.push('/business/messages')),
             ],
           ),
         ],
