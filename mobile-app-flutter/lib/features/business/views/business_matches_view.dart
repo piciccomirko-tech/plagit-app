@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/business_match_candidate.dart';
+import 'package:plagit/repositories/business_repository.dart';
+
+extension _BusinessMatchesL10n on AppLocalizations {
+  String get yourMatchesTitle => matchesTitle;
+  String get retryAction => retry;
+  String get noMatchesYet => noMatchesTitle;
+}
 
 /// Business Matches screen — candidates matching a specific job.
 /// Mirrors BusinessMatchesView.swift with mock data.
@@ -19,8 +28,9 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
   bool _loading = true;
   String? _error;
   final Set<String> _dismissed = {};
+  final BusinessRepository _repo = BusinessRepository();
 
-  final List<Map<String, dynamic>> _matches = [];
+  final List<BusinessMatchCandidate> _matches = [];
 
   @override
   void initState() {
@@ -33,60 +43,26 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
       _loading = true;
       _error = null;
     });
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    setState(() {
-      _matches
-        ..clear()
-        ..addAll(_mockMatches());
-      _loading = false;
-    });
+    try {
+      final matches = await _repo.fetchMatches(jobId: widget.jobId);
+      if (!mounted) return;
+      setState(() {
+        _matches
+          ..clear()
+          ..addAll(matches);
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
   }
 
-  List<Map<String, dynamic>> _mockMatches() => [
-        {
-          'id': 'm1',
-          'name': 'Marco Rossi',
-          'initials': 'MR',
-          'hue': 0.55,
-          'role': 'Senior Chef',
-          'jobType': 'Full-time',
-          'location': 'London',
-          'distanceKm': 3.2,
-          'experience': '8 years',
-          'isVerified': true,
-          'availableToRelocate': false,
-        },
-        {
-          'id': 'm2',
-          'name': 'Sophie Chen',
-          'initials': 'SC',
-          'hue': 0.75,
-          'role': 'Sous Chef',
-          'jobType': 'Full-time',
-          'location': 'Manchester',
-          'distanceKm': 5.1,
-          'experience': '5 years',
-          'isVerified': false,
-          'availableToRelocate': true,
-        },
-        {
-          'id': 'm3',
-          'name': 'Ahmed Hassan',
-          'initials': 'AH',
-          'hue': 0.35,
-          'role': 'Head Chef',
-          'jobType': 'Part-time',
-          'location': 'Birmingham',
-          'distanceKm': 8.7,
-          'experience': '12 years',
-          'isVerified': true,
-          'availableToRelocate': false,
-        },
-      ];
-
-  List<Map<String, dynamic>> get _visible =>
-      _matches.where((c) => !_dismissed.contains(c['id'])).toList();
+  List<BusinessMatchCandidate> get _visible =>
+      _matches.where((c) => !_dismissed.contains(c.applicantId)).toList();
 
   void _deny(String id) {
     setState(() => _dismissed.add(id));
@@ -121,8 +97,8 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
                 child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
-          const Text('Your Matches',
-              style: TextStyle(
+          Text(AppLocalizations.of(context).yourMatchesTitle,
+              style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.charcoal)),
@@ -152,8 +128,8 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
             const SizedBox(height: AppSpacing.md),
             GestureDetector(
               onTap: _load,
-              child: const Text('Retry',
-                  style: TextStyle(
+              child: Text(AppLocalizations.of(context).retryAction,
+                  style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: AppColors.teal)),
@@ -169,8 +145,8 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
           children: [
             Icon(Icons.people_outline, size: 36, color: AppColors.tertiary),
             const SizedBox(height: AppSpacing.lg),
-            const Text('No matches yet',
-                style: TextStyle(
+            Text(AppLocalizations.of(context).noMatchesYet,
+                style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: AppColors.charcoal)),
@@ -209,8 +185,8 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
     );
   }
 
-  Widget _candidateCard(Map<String, dynamic> c) {
-    final id = c['id'] as String;
+  Widget _candidateCard(BusinessMatchCandidate c) {
+    final id = c.applicantId;
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xl, vertical: AppSpacing.sm),
@@ -232,21 +208,21 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
             // Header
             Row(
               children: [
-                _avatar(c['initials'] ?? '--', c['hue'] ?? 0.5, 48),
+                _avatar(c.initials, _avatarHue(c), 48),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(c['name'] ?? '',
+                      Text(c.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
                               color: AppColors.charcoal)),
-                      if (c['role'] != null)
-                        Text(c['role'],
+                      if (c.role.isNotEmpty)
+                        Text(c.role,
                             style: const TextStyle(
                                 fontSize: 12, color: AppColors.secondary)),
                     ],
@@ -265,7 +241,7 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
                       Icon(Icons.verified,
                           size: 12, color: AppColors.online),
                       const SizedBox(width: AppSpacing.xs),
-                      Text('Match',
+                      Text(AppLocalizations.of(context).matchLabel,
                           style: TextStyle(
                               fontSize: 11, color: AppColors.online)),
                     ],
@@ -280,25 +256,16 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
               spacing: AppSpacing.sm,
               runSpacing: AppSpacing.sm,
               children: [
-                if (c['role'] != null)
-                  _tagPill(c['role'], Icons.work, AppColors.indigo),
-                if (c['jobType'] != null)
-                  _tagPill(c['jobType'], Icons.access_time, AppColors.teal),
-                if (c['location'] != null)
-                  _tagPill(c['location'], Icons.place, AppColors.secondary),
-                if (c['distanceKm'] != null)
-                  _tagPill(
-                      '${(c['distanceKm'] as double).toStringAsFixed(1)} km',
-                      Icons.near_me,
-                      AppColors.amber),
-                if (c['availableToRelocate'] == true)
-                  _tagPill('Relocate', Icons.public, AppColors.indigo),
+                if (c.role.isNotEmpty)
+                  _tagPill(c.role, Icons.work, AppColors.indigo),
+                if (c.location.isNotEmpty)
+                  _tagPill(c.location, Icons.place, AppColors.secondary),
               ],
             ),
 
-            if (c['experience'] != null) ...[
+            if (c.experience.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
-              Text(c['experience'],
+              Text(c.experience,
                   style:
                       const TextStyle(fontSize: 12, color: AppColors.secondary)),
             ],
@@ -399,5 +366,12 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
               fontWeight: FontWeight.w700,
               color: Colors.white)),
     );
+  }
+
+  double _avatarHue(BusinessMatchCandidate candidate) {
+    final seed =
+        candidate.candidateId.isNotEmpty ? candidate.candidateId : candidate.name;
+    final hash = seed.codeUnits.fold<int>(0, (sum, code) => sum + code);
+    return (hash % 360) / 360;
   }
 }
