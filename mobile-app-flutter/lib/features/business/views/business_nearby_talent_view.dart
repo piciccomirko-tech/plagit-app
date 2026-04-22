@@ -2,6 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/business_nearby_talent_candidate.dart';
+import 'package:plagit/repositories/business_repository.dart';
+
+extension _BusinessNearbyTalentL10n on AppLocalizations {
+  String get nearbyTalentTitle => nearbyTalent;
+  String get retryAction => retry;
+  String get allRolesLabel {
+    switch (localeName) {
+      case 'it':
+        return 'Tutti i ruoli';
+      case 'ar':
+        return 'كل الأدوار';
+      default:
+        return 'All roles';
+    }
+  }
+}
 
 /// Business Nearby Talent screen with list view, radius & role filters.
 /// Mirrors BusinessNearbyTalentView.swift (list mode only, no native map).
@@ -14,6 +32,7 @@ class BusinessNearbyTalentView extends StatefulWidget {
 }
 
 class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
+  final BusinessRepository _repo = BusinessRepository();
   bool _loading = true;
   String? _error;
   double _selectedRadius = 10;
@@ -21,18 +40,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   final Set<String> _shortlisted = {};
 
   final List<double> _radii = [3, 5, 10, 15, 20];
-  final List<String> _roles = [
-    'All',
-    'Chef',
-    'Waiter',
-    'Bartender',
-    'Manager',
-    'Reception',
-    'Kitchen Porter',
-    'Relocate'
-  ];
-
-  List<Map<String, dynamic>> _candidates = [];
+  List<BusinessNearbyTalentCandidate> _candidates = const [];
 
   @override
   void initState() {
@@ -45,88 +53,37 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
       _loading = true;
       _error = null;
     });
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-    setState(() {
-      _candidates = _mockCandidates();
-      _loading = false;
-    });
+    try {
+      final candidates = await _repo.fetchNearbyTalent();
+      if (!mounted) return;
+      setState(() {
+        _candidates = candidates;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
   }
 
-  List<Map<String, dynamic>> _mockCandidates() => [
-        {
-          'id': 'n1',
-          'name': 'Luca Bianchi',
-          'initials': 'LB',
-          'hue': 0.15,
-          'role': 'Chef',
-          'experience': '6 years',
-          'location': 'Soho, London',
-          'distanceKm': 1.2,
-          'isVerified': true,
-          'jobType': 'Full-time',
-        },
-        {
-          'id': 'n2',
-          'name': 'Emma Wilson',
-          'initials': 'EW',
-          'hue': 0.65,
-          'role': 'Waiter',
-          'experience': '3 years',
-          'location': 'Camden, London',
-          'distanceKm': 3.8,
-          'isVerified': false,
-          'jobType': 'Part-time',
-        },
-        {
-          'id': 'n3',
-          'name': 'Kenji Tanaka',
-          'initials': 'KT',
-          'hue': 0.45,
-          'role': 'Bartender',
-          'experience': '5 years',
-          'location': 'Shoreditch, London',
-          'distanceKm': 4.5,
-          'isVerified': true,
-          'jobType': 'Full-time',
-        },
-        {
-          'id': 'n4',
-          'name': 'Priya Sharma',
-          'initials': 'PS',
-          'hue': 0.85,
-          'role': 'Manager',
-          'experience': '10 years',
-          'location': 'Westminster, London',
-          'distanceKm': 7.2,
-          'isVerified': true,
-          'jobType': 'Full-time',
-        },
-        {
-          'id': 'n5',
-          'name': 'Carlos Ruiz',
-          'initials': 'CR',
-          'hue': 0.30,
-          'role': 'Kitchen Porter',
-          'experience': '2 years',
-          'location': 'Brixton, London',
-          'distanceKm': 9.1,
-          'isVerified': false,
-          'jobType': 'Flexible',
-        },
-      ];
+  List<String> get _roles {
+    final roles = _candidates
+        .map((c) => c.role.trim())
+        .where((role) => role.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    return ['All', ...roles];
+  }
 
-  List<Map<String, dynamic>> get _displayed {
+  List<BusinessNearbyTalentCandidate> get _displayed {
     var list = _candidates;
-    if (_selectedRole == 'Relocate') {
-      return list; // mock: show all for relocate
-    }
     if (_selectedRole != 'All') {
-      list = list.where((c) => c['role'] == _selectedRole).toList();
+      list = list.where((c) => c.role == _selectedRole).toList();
     }
-    list = list
-        .where((c) => (c['distanceKm'] as double) <= _selectedRadius)
-        .toList();
     return list;
   }
 
@@ -165,8 +122,8 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
                 child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
-          const Text('Nearby Talent',
-              style: TextStyle(
+          Text(AppLocalizations.of(context).nearbyTalentTitle,
+              style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.charcoal)),
@@ -223,7 +180,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
         itemCount: _roles.length,
-        separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.sm),
+        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
         itemBuilder: (_, i) {
           final r = _roles[i];
           final active = _selectedRole == r;
@@ -273,10 +230,10 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: AppColors.charcoal)),
-          Text(' \u00b7 ', style: TextStyle(color: AppColors.tertiary)),
-          Text('${_selectedRadius.toInt()} km',
-              style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
           if (_selectedRole != 'All') ...[
+            Text(' \u00b7 ', style: TextStyle(color: AppColors.tertiary)),
+            Text(AppLocalizations.of(context).allRolesLabel,
+                style: const TextStyle(fontSize: 11, color: AppColors.tertiary)),
             Text(' \u00b7 ', style: TextStyle(color: AppColors.tertiary)),
             Text(_selectedRole,
                 style: const TextStyle(fontSize: 11, color: AppColors.teal)),
@@ -305,8 +262,8 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
                     const TextStyle(fontSize: 12, color: AppColors.secondary)),
             GestureDetector(
                 onTap: _load,
-                child: const Text('Retry',
-                    style: TextStyle(
+                child: Text(AppLocalizations.of(context).retryAction,
+                    style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: AppColors.teal))),
@@ -356,57 +313,26 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
                       fontWeight: FontWeight.w600,
                       color: AppColors.charcoal)),
               const SizedBox(height: 4),
-              Text('within ${_selectedRadius.toInt()} km',
-                  style: const TextStyle(
-                      fontSize: 12, color: AppColors.tertiary)),
-              const SizedBox(height: AppSpacing.md),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (_selectedRadius < 20)
-                    GestureDetector(
-                      onTap: () => setState(() =>
-                          _selectedRadius = (_selectedRadius + 5).clamp(1, 20)),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.lg,
-                            vertical: AppSpacing.sm + 2),
-                        decoration: BoxDecoration(
-                          color: AppColors.teal,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
-                        ),
-                        child: Text(
-                            'Expand to ${(_selectedRadius + 5).clamp(1, 20).toInt()} km',
-                            style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white)),
-                      ),
+              if (_selectedRole != 'All') ...[
+                const SizedBox(height: AppSpacing.md),
+                GestureDetector(
+                  onTap: () => setState(() => _selectedRole = 'All'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.md,
+                        vertical: AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(AppRadius.full),
                     ),
-                  if (_selectedRole != 'All') ...[
-                    const SizedBox(width: AppSpacing.sm),
-                    GestureDetector(
-                      onTap: () => setState(() => _selectedRole = 'All'),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                            vertical: AppSpacing.sm),
-                        decoration: BoxDecoration(
-                          color: AppColors.surface,
-                          borderRadius:
-                              BorderRadius.circular(AppRadius.full),
-                        ),
-                        child: const Text('All roles',
-                            style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.tertiary)),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
+                    child: Text(AppLocalizations.of(context).allRolesLabel,
+                        style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.tertiary)),
+                  ),
+                ),
+              ],
             ],
           ),
         ),
@@ -415,8 +341,8 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   }
 
   // ── Candidate Card ──
-  Widget _candidateCard(Map<String, dynamic> c) {
-    final id = c['id'] as String;
+  Widget _candidateCard(BusinessNearbyTalentCandidate c) {
+    final id = c.id;
     final isShort = _shortlisted.contains(id);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
@@ -436,33 +362,33 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
           // Header
           Row(
             children: [
-              _avatar(c['initials'] ?? '--', c['hue'] ?? 0.5, 48),
+              _avatar(c.initials, _avatarHue(c), 48),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(c['name'] ?? '',
+                    Text(c.name,
                         style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
                             color: AppColors.charcoal)),
-                    if (c['role'] != null)
-                      Text(c['role'],
+                    if (c.role.isNotEmpty)
+                      Text(c.role,
                           style: const TextStyle(
                               fontSize: 12, color: AppColors.secondary)),
                     Row(
                       children: [
-                        if (c['experience'] != null)
-                          Text(c['experience'],
+                        if (c.experience.isNotEmpty)
+                          Text(c.experience,
                               style: const TextStyle(
                                   fontSize: 11, color: AppColors.tertiary)),
-                        if (c['location'] != null) ...[
+                        if (c.location.isNotEmpty) ...[
                           const SizedBox(width: AppSpacing.sm),
                           Icon(Icons.place, size: 8, color: AppColors.tertiary),
                           const SizedBox(width: 3),
                           Flexible(
-                            child: Text(c['location'],
+                            child: Text(c.location,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
@@ -474,20 +400,36 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
                   ],
                 ),
               ),
-              Column(
-                children: [
-                  Text(
-                      (c['distanceKm'] as double?)?.toStringAsFixed(1) ?? '0.0',
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.teal)),
-                  const Text('km',
-                      style: TextStyle(fontSize: 11, color: AppColors.tertiary)),
-                ],
-              ),
+              if (c.verified)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.online.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(AppRadius.full),
+                  ),
+                  child: const Icon(
+                    Icons.verified_rounded,
+                    size: 16,
+                    color: AppColors.online,
+                  ),
+                ),
             ],
           ),
+          if (c.summary.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              c.summary,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 12,
+                color: AppColors.secondary,
+              ),
+            ),
+          ],
           const SizedBox(height: AppSpacing.md),
 
           // Actions
@@ -568,5 +510,11 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
               fontWeight: FontWeight.w700,
               color: Colors.white)),
     );
+  }
+
+  double _avatarHue(BusinessNearbyTalentCandidate candidate) {
+    final seed = candidate.id.isNotEmpty ? candidate.id : candidate.name;
+    final hash = seed.codeUnits.fold<int>(0, (sum, code) => sum + code);
+    return (hash % 360) / 360;
   }
 }
