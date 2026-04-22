@@ -2,7 +2,52 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
-import 'package:plagit/services/business_service.dart';
+import 'package:plagit/models/business_candidate_profile.dart';
+import 'package:plagit/repositories/business_repository.dart';
+
+extension _BusinessCandidateProfileL10nX on AppLocalizations {
+  String _local({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    if (localeName.startsWith('it')) return it;
+    if (localeName.startsWith('ar')) return ar;
+    return en;
+  }
+
+  String get candidateProfileTitle => _local(
+    en: 'Candidate Profile',
+    it: 'Profilo candidato',
+    ar: 'ملف المرشح',
+  );
+
+  String get retryAction => retry;
+
+  String get languagesLabel => _local(
+    en: 'Languages',
+    it: 'Lingue',
+    ar: 'اللغات',
+  );
+
+  String get jobTypeLabel => _local(
+    en: 'Job Type',
+    it: 'Tipo di lavoro',
+    ar: 'نوع الوظيفة',
+  );
+
+  String get aboutSection => _local(
+    en: 'About',
+    it: 'Chi sono',
+    ar: 'نبذة',
+  );
+
+  String get skillsSection => _local(
+    en: 'Skills',
+    it: 'Competenze',
+    ar: 'المهارات',
+  );
+}
 
 /// View candidate profile — mirrors BusinessRealCandidateProfileView.swift.
 class BusinessCandidateProfileView extends StatefulWidget {
@@ -14,8 +59,8 @@ class BusinessCandidateProfileView extends StatefulWidget {
 }
 
 class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileView> {
-  final _service = BusinessService();
-  Map<String, dynamic>? _candidate;
+  final _repo = BusinessRepository();
+  BusinessCandidateProfile? _candidate;
   bool _loading = true;
   String? _error;
 
@@ -28,8 +73,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
   Future<void> _load() async {
     setState(() { _loading = true; _error = null; });
     try {
-      final data = await _service.getCandidateProfile(widget.candidateId);
-      final candidate = (data['candidate'] ?? data['profile'] ?? data) as Map<String, dynamic>;
+      final candidate = await _repo.fetchCandidateProfile(widget.candidateId);
       if (mounted) setState(() { _candidate = candidate; _loading = false; });
     } catch (e) {
       if (mounted) setState(() { _error = e.toString(); _loading = false; });
@@ -46,7 +90,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
             padding: const EdgeInsets.fromLTRB(8, 8, 20, 8),
             child: Row(children: [
               IconButton(icon: const Icon(Icons.chevron_left, size: 28), onPressed: () => context.pop()),
-              const Text('Candidate Profile', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+              Text(l.candidateProfileTitle, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
             ]),
           ),
           const Divider(height: 1, color: AppColors.divider),
@@ -56,7 +100,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                 : _error != null
                     ? Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
                         Text(_error!, style: const TextStyle(color: AppColors.urgent)),
-                        TextButton(onPressed: _load, child: const Text('Retry')),
+                        TextButton(onPressed: _load, child: Text(l.retryAction)),
                       ]))
                     : ListView(padding: const EdgeInsets.all(20), children: [
                         // ── Avatar + name ──
@@ -66,36 +110,45 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                               radius: 44,
                               backgroundColor: AppColors.indigo.withValues(alpha: 0.12),
                               child: Text(
-                                (_candidate?['name']?.toString() ?? 'C').substring(0, 1).toUpperCase(),
+                                (_candidate?.initials.isNotEmpty == true
+                                        ? _candidate!.initials[0]
+                                        : 'C')
+                                    .toUpperCase(),
                                 style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold, color: AppColors.indigo),
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Text(_candidate?['name']?.toString() ?? '', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
-                            if (_candidate?['role'] != null)
-                              Text(_candidate!['role'].toString(), style: const TextStyle(fontSize: 15, color: AppColors.indigo)),
+                            Text(_candidate?.name ?? '', style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+                            if (_candidate?.role != null && _candidate!.role!.isNotEmpty)
+                              Text(_candidate!.role!, style: const TextStyle(fontSize: 15, color: AppColors.indigo)),
                           ]),
                         ),
                         const SizedBox(height: 24),
 
                         // ── Info fields ──
-                        _InfoRow(icon: Icons.location_on_outlined, label: 'Location', value: _candidate?['location']?.toString()),
-                        _InfoRow(icon: Icons.access_time_outlined, label: 'Experience', value: _candidate?['experience']?.toString()),
-                        _InfoRow(icon: Icons.language_outlined, label: 'Languages', value: _candidate?['languages']?.toString()),
-                        _InfoRow(icon: Icons.work_outline, label: 'Job Type', value: _candidate?['jobType']?.toString() ?? _candidate?['job_type']?.toString()),
+                        _InfoRow(icon: Icons.location_on_outlined, label: l.locationLabel, value: _candidate?.location),
+                        _InfoRow(icon: Icons.access_time_outlined, label: l.experienceLabel, value: _candidate?.experience),
+                        _InfoRow(
+                          icon: Icons.language_outlined,
+                          label: l.languagesLabel,
+                          value: _candidate == null || _candidate!.languages.isEmpty
+                              ? null
+                              : _candidate!.languages.join(', '),
+                        ),
+                        _InfoRow(icon: Icons.work_outline, label: l.jobTypeLabel, value: _candidate?.jobType),
 
-                        if (_candidate?['bio'] != null && _candidate!['bio'].toString().isNotEmpty) ...[
+                        if (_candidate?.bio != null && _candidate!.bio!.isNotEmpty) ...[
                           const SizedBox(height: 16),
-                          const Text('About', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                          Text(l.aboutSection, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
                           const SizedBox(height: 8),
-                          Text(_candidate!['bio'].toString(), style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.5)),
+                          Text(_candidate!.bio!, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.5)),
                         ],
 
-                        if (_candidate?['skills'] != null) ...[
+                        if (_candidate != null && _candidate!.skills.isNotEmpty) ...[
                           const SizedBox(height: 16),
-                          const Text('Skills', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+                          Text(l.skillsSection, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
                           const SizedBox(height: 8),
-                          Wrap(spacing: 8, runSpacing: 6, children: (_candidate!['skills'] as List).map((s) => Container(
+                          Wrap(spacing: 8, runSpacing: 6, children: _candidate!.skills.map((s) => Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(color: AppColors.indigo.withValues(alpha: 0.08), borderRadius: BorderRadius.circular(AppRadius.full)),
                             child: Text(s.toString(), style: const TextStyle(fontSize: 13, color: AppColors.indigo)),
@@ -112,7 +165,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                               child: OutlinedButton.icon(
                                 onPressed: () => context.push('/business/chat/${widget.candidateId}'),
                                 icon: const Icon(Icons.chat_outlined, size: 18),
-                                label: const Text('Message'),
+                                label: Text(l.messageAction),
                                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.indigo, side: const BorderSide(color: AppColors.indigo)),
                               ),
                             ),
@@ -124,11 +177,8 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                               child: ElevatedButton.icon(
                                 onPressed: () => context.push('/business/schedule-interview', extra: {
                                   'candidateId': widget.candidateId,
-                                  'candidateName': _candidate?['name']?.toString() ?? '',
-                                  'jobTitle': _candidate?['jobTitle']?.toString() ??
-                                      _candidate?['job_title']?.toString() ??
-                                      _candidate?['role']?.toString() ??
-                                      '',
+                                  'candidateName': _candidate?.name ?? '',
+                                  'jobTitle': _candidate?.jobType ?? _candidate?.role ?? '',
                                 }),
                                 icon: const Icon(Icons.event_outlined, size: 18),
                                 label: Text(l.interviewAction),
