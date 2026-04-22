@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 class PostJobView extends StatefulWidget {
   const PostJobView({super.key});
@@ -13,6 +15,8 @@ class PostJobView extends StatefulWidget {
 class _PostJobViewState extends State<PostJobView> {
   int _step = 0;
   bool _published = false;
+  bool _submitting = false;
+  String? _submitError;
 
   // Step 1
   final _titleCtrl = TextEditingController();
@@ -69,7 +73,80 @@ class _PostJobViewState extends State<PostJobView> {
     _featured = false;
     _step = 0;
     _published = false;
+    _submitting = false;
+    _submitError = null;
     setState(() {});
+  }
+
+  List<String> _splitMultilineValues(String raw) {
+    return raw
+        .split(RegExp(r'[\n,]+'))
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+  }
+
+  Map<String, dynamic> _buildPostJobPayload() {
+    final requirements = _splitMultilineValues(_reqCtrl.text);
+    final benefits = _splitMultilineValues(_benefitsCtrl.text);
+    final salaryValue = _salaryCtrl.text.trim();
+    final salaryLabel = salaryValue.isEmpty
+        ? ''
+        : '$salaryValue ${_salaryPeriod == 'per hour' ? '/hr' : _salaryPeriod}';
+
+    return {
+      'title': _titleCtrl.text.trim(),
+      'job_title': _titleCtrl.text.trim(),
+      'category': _category,
+      'positions': _positions,
+      'location': _locationCtrl.text.trim(),
+      'salary': salaryLabel,
+      'salary_range': salaryLabel,
+      'contract': _contractType,
+      'contract_type': _contractType,
+      'shiftTypes': _shiftTypes.toList(),
+      'startDate': _startDate,
+      'description': _descCtrl.text.trim(),
+      'requirements': requirements,
+      'job_requirements': requirements,
+      'benefits': benefits,
+      'job_benefits': benefits,
+      'urgent': _urgent,
+      'is_urgent': _urgent,
+      'featured': _featured,
+      'is_featured': _featured,
+      'status': 'Active',
+    };
+  }
+
+  Future<void> _publishJob() async {
+    if (_submitting) return;
+    setState(() {
+      _submitting = true;
+      _submitError = null;
+    });
+
+    try {
+      await context.read<BusinessJobsProvider>().postJob(_buildPostJobPayload());
+      if (!mounted) return;
+      setState(() {
+        _published = true;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _submitError = e.toString();
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _submitting = false;
+        });
+      }
+    }
   }
 
   @override
@@ -344,10 +421,17 @@ class _PostJobViewState extends State<PostJobView> {
           ),
         ),
         const SizedBox(height: 32),
+        if (_submitError != null) ...[
+          Text(
+            _submitError!,
+            style: const TextStyle(fontSize: 13, color: AppColors.red),
+          ),
+          const SizedBox(height: 12),
+        ],
         _primaryButton(
           'Publish Job',
-          enabled: descLen >= 50,
-          onPressed: () => setState(() => _published = true),
+          enabled: descLen >= 50 && !_submitting,
+          onPressed: _publishJob,
         ),
       ],
     );
@@ -374,7 +458,7 @@ class _PostJobViewState extends State<PostJobView> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () => context.pop(),
+                onPressed: () => context.go('/business/jobs'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.teal,
                   foregroundColor: Colors.white,
