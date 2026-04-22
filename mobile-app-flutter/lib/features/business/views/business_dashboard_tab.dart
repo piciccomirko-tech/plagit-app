@@ -63,6 +63,24 @@ extension _BusinessDashboardL10nX on AppLocalizations {
         it: 'Prossimamente',
         ar: 'قريباً',
       );
+
+  String get searchRecentApplicantsHint => _local(
+        en: 'Search recent applicants',
+        it: 'Cerca tra i candidati recenti',
+        ar: 'ابحث في المتقدمين الجدد',
+      );
+
+  String get noMatchingApplicants => _local(
+        en: 'No matching applicants',
+        it: 'Nessun candidato corrispondente',
+        ar: 'لا يوجد متقدمون مطابقون',
+      );
+
+  String get searchLooksAtRecentApplicants => _local(
+        en: 'This search currently looks only through recent applicants.',
+        it: 'Questa ricerca al momento controlla solo i candidati recenti.',
+        ar: 'هذا البحث يبحث حالياً فقط ضمن المتقدمين الجدد.',
+      );
 }
 
 
@@ -810,6 +828,11 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
 
   Widget _buildSearchOverlay(BusinessHomeData data) {
     final q = _searchQuery.toLowerCase();
+    final recentSearches = data.recentApplicants
+        .map((a) => a.name)
+        .where((name) => name.trim().isNotEmpty)
+        .take(3)
+        .toList();
     final results = q.isEmpty ? <Applicant>[] : data.recentApplicants.where((a) =>
       a.name.toLowerCase().contains(q) || a.role.toLowerCase().contains(q) || a.location.toLowerCase().contains(q),
     ).toList();
@@ -843,7 +866,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                 autofocus: true,
                 onChanged: (v) => setState(() => _searchQuery = v),
                 style: const TextStyle(fontSize: 15, color: _charcoal),
-                decoration: InputDecoration(hintText: AppLocalizations.of(context).searchCandidates, hintStyle: const TextStyle(fontSize: 15, color: _tertiary), border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 14)),
+                decoration: InputDecoration(hintText: AppLocalizations.of(context).searchRecentApplicantsHint, hintStyle: const TextStyle(fontSize: 15, color: _tertiary), border: InputBorder.none, contentPadding: const EdgeInsets.symmetric(vertical: 14)),
               )),
               if (_searchQuery.isNotEmpty) GestureDetector(onTap: () => setState(() { _searchQuery = ''; _searchCtrl.clear(); }), child: const Icon(Icons.close, size: 16, color: _tertiary)),
             ]),
@@ -856,11 +879,54 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
         // Results or recent
         if (_searchQuery.isEmpty) ...[
           Padding(padding: const EdgeInsets.fromLTRB(20, 24, 20, 12), child: Text(AppLocalizations.of(context).recentSearches, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: _secondary))),
-          _recentSearchRow('Chef London'),
-          _recentSearchRow('Bartender'),
-          _recentSearchRow('Senior Waiter'),
+          if (recentSearches.isEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).recentSearchesEmptyTitle,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: _charcoal,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    AppLocalizations.of(context).recentSearchesEmptyHint,
+                    style: const TextStyle(fontSize: 13, color: _secondary),
+                  ),
+                ],
+              ),
+            )
+          else
+            ...recentSearches.map(_recentSearchRow),
         ] else if (results.isEmpty)
-          Expanded(child: Center(child: Text(AppLocalizations.of(context).noResultsFound, style: const TextStyle(fontSize: 15, color: _tertiary))))
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).noMatchingApplicants,
+                      style: const TextStyle(fontSize: 15, color: _tertiary),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      AppLocalizations.of(context).searchLooksAtRecentApplicants,
+                      style: const TextStyle(fontSize: 13, color: _secondary),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
         else
           Expanded(child: ListView.builder(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
