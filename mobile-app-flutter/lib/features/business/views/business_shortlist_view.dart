@@ -22,11 +22,11 @@ extension _BusinessShortlistL10n on AppLocalizations {
   String get noShortlistedSubtext {
     switch (localeName) {
       case 'it':
-        return 'Preseleziona candidati da Vicino a te, Candidati o risultati di ricerca.';
+        return 'I candidati preselezionati dal funnel candidati appariranno qui.';
       case 'ar':
-        return 'اختر مرشحين من القريبين أو المتقدمين أو نتائج البحث.';
+        return 'سيظهر هنا المرشحون المدرجون في القائمة المختصرة من مسار المتقدمين.';
       default:
-        return 'Shortlist candidates from Nearby, Applicants, or search results.';
+        return 'Candidates shortlisted from the applicants pipeline will appear here.';
     }
   }
 }
@@ -197,12 +197,21 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
                 children: [
                   Row(
                     children: [
-                      Text(c.name,
-                          style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.charcoal)),
-                      // Flag placeholder
+                      Expanded(
+                        child: Text(c.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.charcoal)),
+                      ),
+                      if (c.verified)
+                        const Icon(
+                          Icons.verified_rounded,
+                          size: 16,
+                          color: AppColors.online,
+                        ),
                     ],
                   ),
                   if (c.role.isNotEmpty) ...[
@@ -210,6 +219,12 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
                     Text(c.role,
                         style: const TextStyle(
                             fontSize: 12, color: AppColors.secondary)),
+                  ],
+                  if ((c.jobTitle ?? '').trim().isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(c.jobTitle!,
+                        style: const TextStyle(
+                            fontSize: 11, color: AppColors.teal)),
                   ],
                   Row(
                     children: [
