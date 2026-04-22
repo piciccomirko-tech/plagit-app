@@ -8,6 +8,193 @@ import 'package:plagit/repositories/business_repository.dart';
 
 extension _BusinessInsightsL10n on AppLocalizations {
   String get insightsTitleLocal => insights;
+
+  String get insightsEmptyTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Nessun insight disponibile';
+      case 'ar':
+        return 'لا توجد إحصاءات متاحة بعد';
+      default:
+        return 'No insights available yet';
+    }
+  }
+
+  String get insightsEmptyBody {
+    switch (localeName) {
+      case 'it':
+        return 'Gli insight appariranno quando offerte e candidati inizieranno a generare attivita.';
+      case 'ar':
+        return 'ستظهر الإحصاءات عندما تبدأ الوظائف والمرشحون في توليد النشاط.';
+      default:
+        return 'Insights will appear once your jobs and applicants start generating activity.';
+    }
+  }
+
+  String get insightsActiveJobsTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Lavori attivi';
+      case 'ar':
+        return 'الوظائف النشطة';
+      default:
+        return 'Active Jobs';
+    }
+  }
+
+  String get insightsActiveJobsSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Annunci attualmente attivi';
+      case 'ar':
+        return 'الإعلانات النشطة حاليا';
+      default:
+        return 'Currently live listings';
+    }
+  }
+
+  String get insightsApplicantsTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Candidati';
+      case 'ar':
+        return 'المتقدمون';
+      default:
+        return 'Applicants';
+    }
+  }
+
+  String get insightsApplicantsSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Su tutti i lavori correnti';
+      case 'ar':
+        return 'عبر جميع الوظائف الحالية';
+      default:
+        return 'Across all current jobs';
+    }
+  }
+
+  String get insightsInterviewsTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Colloqui';
+      case 'ar':
+        return 'المقابلات';
+      default:
+        return 'Interviews';
+    }
+  }
+
+  String get insightsInterviewsSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Colloqui attualmente tracciati';
+      case 'ar':
+        return 'المقابلات المتتبعة حاليا';
+      default:
+        return 'Currently tracked interviews';
+    }
+  }
+
+  String get insightsHiresTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Assunzioni';
+      case 'ar':
+        return 'التوظيفات';
+      default:
+        return 'Hires';
+    }
+  }
+
+  String get insightsHiresSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Assunzioni registrate finora';
+      case 'ar':
+        return 'التوظيفات المسجلة حتى الآن';
+      default:
+        return 'Recorded hires so far';
+    }
+  }
+
+  String get insightsJobViewsTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Visualizzazioni lavori';
+      case 'ar':
+        return 'مشاهدات الوظائف';
+      default:
+        return 'Job Views';
+    }
+  }
+
+  String get insightsJobViewsSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Visualizzazioni combinate sui lavori attivi';
+      case 'ar':
+        return 'إجمالي المشاهدات على الوظائف النشطة';
+      default:
+        return 'Combined views on active jobs';
+    }
+  }
+
+  String get insightsJobSavesTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Salvataggi lavori';
+      case 'ar':
+        return 'حفظ الوظائف';
+      default:
+        return 'Job Saves';
+    }
+  }
+
+  String get insightsJobSavesSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Salvataggi combinati sui lavori attivi';
+      case 'ar':
+        return 'إجمالي الحفظ على الوظائف النشطة';
+      default:
+        return 'Combined saves on active jobs';
+    }
+  }
+
+  String get insightsTopCurrentJobTitle {
+    switch (localeName) {
+      case 'it':
+        return 'Miglior lavoro attuale';
+      case 'ar':
+        return 'أفضل وظيفة حالية';
+      default:
+        return 'Top current job';
+    }
+  }
+
+  String get insightsTopCurrentJobSubtitle {
+    switch (localeName) {
+      case 'it':
+        return 'Ordinato per candidati, visualizzazioni e salvataggi';
+      case 'ar':
+        return 'مرتب حسب المتقدمين والمشاهدات وعمليات الحفظ';
+      default:
+        return 'Ranked by applicants, views and saves';
+    }
+  }
+
+  String insightsTopJobStats(int applicants, int views, int saves) {
+    switch (localeName) {
+      case 'it':
+        return '$applicants candidati · $views visualizzazioni · $saves salvataggi';
+      case 'ar':
+        return '$applicants متقدمون · $views مشاهدات · $saves حفظ';
+      default:
+        return '$applicants applicants · $views views · $saves saves';
+    }
+  }
 }
 
 /// Business Insights / Analytics screen.
@@ -112,6 +299,7 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
   }
 
   Widget _buildBody() {
+    final l = AppLocalizations.of(context);
     if (_loading) {
       return const Center(
         child: CircularProgressIndicator(color: AppColors.teal),
@@ -177,8 +365,8 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
                 color: AppColors.secondary,
               ),
               const SizedBox(height: AppSpacing.lg),
-              const Text(
-                'No insights available yet',
+              Text(
+                l.insightsEmptyTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -186,8 +374,8 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              const Text(
-                'Insights will appear once your jobs and applicants start generating activity.',
+              Text(
+                l.insightsEmptyBody,
                 textAlign: TextAlign.center,
                 style: TextStyle(fontSize: 14, color: AppColors.secondary),
               ),
@@ -202,49 +390,49 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
       child: Column(
         children: [
           _insightCard(
-            title: 'Active Jobs',
+            title: l.insightsActiveJobsTitle,
             number: insights.activeJobsCount.toString(),
-            change: 'Currently live listings',
+            change: l.insightsActiveJobsSubtitle,
             icon: Icons.work_rounded,
             color: AppColors.teal,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
-            title: 'Applicants',
+            title: l.insightsApplicantsTitle,
             number: insights.totalApplicants.toString(),
-            change: 'Across all current jobs',
+            change: l.insightsApplicantsSubtitle,
             icon: Icons.people_outline,
             color: AppColors.amber,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
-            title: 'Interviews',
+            title: l.insightsInterviewsTitle,
             number: insights.interviewCount.toString(),
-            change: 'Currently tracked interviews',
+            change: l.insightsInterviewsSubtitle,
             icon: Icons.calendar_today_outlined,
             color: AppColors.online,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
-            title: 'Hires',
+            title: l.insightsHiresTitle,
             number: insights.hiredCount.toString(),
-            change: 'Recorded hires so far',
+            change: l.insightsHiresSubtitle,
             icon: Icons.person_add_alt_1_outlined,
             color: AppColors.online,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
-            title: 'Job Views',
+            title: l.insightsJobViewsTitle,
             number: insights.totalJobViews.toString(),
-            change: 'Combined views on active jobs',
+            change: l.insightsJobViewsSubtitle,
             icon: Icons.visibility_outlined,
             color: AppColors.indigo,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
-            title: 'Job Saves',
+            title: l.insightsJobSavesTitle,
             number: insights.totalJobSaves.toString(),
-            change: 'Combined saves on active jobs',
+            change: l.insightsJobSavesSubtitle,
             icon: Icons.bookmark_border,
             color: AppColors.teal,
           ),
@@ -257,6 +445,7 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
   }
 
   Widget _topJobCard(BusinessInsightsTopJob topJob) {
+    final l = AppLocalizations.of(context);
     final initials = topJob.title.isEmpty
         ? '--'
         : topJob.title
@@ -285,7 +474,7 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Top current job',
+              l.insightsTopCurrentJobTitle,
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
@@ -293,8 +482,8 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
               ),
             ),
             const SizedBox(height: 4),
-            const Text(
-              'Ranked by applicants, views and saves',
+            Text(
+              l.insightsTopCurrentJobSubtitle,
               style: TextStyle(
                 fontSize: 12,
                 color: AppColors.secondary,
@@ -342,7 +531,11 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${topJob.applicants} applicants · ${topJob.views} views · ${topJob.saves} saves',
+                        l.insightsTopJobStats(
+                          topJob.applicants,
+                          topJob.views,
+                          topJob.saves,
+                        ),
                         style: const TextStyle(
                           fontSize: 12,
                           color: AppColors.secondary,
