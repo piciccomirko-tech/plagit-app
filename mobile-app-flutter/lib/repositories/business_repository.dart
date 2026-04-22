@@ -265,8 +265,12 @@ class BusinessRepository {
   Future<List<QuickPlugCandidate>> fetchQuickPlugDeck() async {
     if (_isMock) return QuickPlugCandidate.mockAll();
     final resp = await _api.get('/business/quickplug/deck');
-    final list = resp['data'] as List<dynamic>? ?? [];
-    return list.map((e) => QuickPlugCandidate.fromJson(e as Map<String, dynamic>)).toList();
+    final raw = resp['data'] ?? resp['deck'] ?? resp['candidates'] ?? resp;
+    final list = raw is List<dynamic> ? raw : const <dynamic>[];
+    return list
+        .whereType<Map<String, dynamic>>()
+        .map(QuickPlugCandidate.fromJson)
+        .toList();
   }
 
   Future<void> swipeCandidate(String candidateId, bool interested) async {
