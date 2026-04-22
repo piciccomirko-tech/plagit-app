@@ -2,7 +2,105 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/business_subscription.dart';
 import 'package:plagit/providers/business_providers.dart';
+
+extension _BusinessSubscriptionL10n on AppLocalizations {
+  String _local({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    if (localeName.startsWith('it')) return it;
+    if (localeName.startsWith('ar')) return ar;
+    return en;
+  }
+
+  String get businessPremiumTitleLocal => _local(
+        en: 'Business Premium',
+        it: 'Business Premium',
+        ar: 'الأعمال المميزة',
+      );
+
+  String get hireFasterWithPremiumLocal => _local(
+        en: 'Hire faster with premium tools',
+        it: 'Assumi più velocemente con strumenti premium',
+        ar: 'وظّف أسرع مع الأدوات المميزة',
+      );
+
+  String get unlockPowerfulRecruitingLocal => _local(
+        en: 'Unlock powerful recruiting tools for your business',
+        it: 'Sblocca strumenti di recruiting avanzati per il tuo business',
+        ar: 'افتح أدوات توظيف قوية لعملك',
+      );
+
+  String get benefitQuickPlugLocal => _local(
+        en: 'Quick Plug — swipe to match top talent',
+        it: 'Quick Plug — scorri per trovare i migliori talenti',
+        ar: 'Quick Plug — اسحب للتوافق مع أفضل المواهب',
+      );
+
+  String get benefitFeaturedJobsLocal => _local(
+        en: 'Featured job listings',
+        it: 'Annunci in evidenza',
+        ar: 'إعلانات وظائف مميزة',
+      );
+
+  String get benefitApplicantInsightsLocal => _local(
+        en: 'Applicant insights',
+        it: 'Insight sui candidati',
+        ar: 'رؤى المتقدمين',
+      );
+
+  String get benefitUnlimitedJobsLocal => _local(
+        en: 'Unlimited job postings',
+        it: 'Annunci di lavoro illimitati',
+        ar: 'وظائف غير محدودة',
+      );
+
+  String get benefitPriorityVisibilityLocal => _local(
+        en: 'Priority visibility',
+        it: 'Visibilità prioritaria',
+        ar: 'أولوية في الظهور',
+      );
+
+  String get savePercent30Local => _local(
+        en: 'Save 30%',
+        it: 'Risparmia il 30%',
+        ar: 'وفّر 30٪',
+      );
+
+  String get freeTrialStartedLocal => _local(
+        en: 'Free trial started',
+        it: 'Prova gratuita avviata',
+        ar: 'تم بدء الفترة التجريبية المجانية',
+      );
+
+  String get startFreeTrialLocal => _local(
+        en: 'Start Free Trial',
+        it: 'Inizia prova gratuita',
+        ar: 'ابدأ الفترة التجريبية المجانية',
+      );
+
+  String planActiveSuffixLocal(String planName) => _local(
+        en: '$planName plan active',
+        it: 'Piano $planName attivo',
+        ar: 'خطة $planName نشطة',
+      );
+
+  String planRenewsOnLocal(String renewalDate) => _local(
+        en: 'Renews on $renewalDate',
+        it: 'Si rinnova il $renewalDate',
+        ar: 'يتجدد في $renewalDate',
+      );
+
+  String get premiumPlanIsActiveLocal => _local(
+        en: 'Your business plan is active',
+        it: 'Il tuo piano business è attivo',
+        ar: 'خطتك التجارية نشطة',
+      );
+}
 
 /// Business Subscription / Paywall screen — 3 pricing tiers.
 class BusinessSubscriptionView extends StatefulWidget {
@@ -18,8 +116,10 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final sub = context.watch<BusinessAuthProvider>().subscription;
-    final isPremium = sub.plan.isPremium;
+    final hasActivePaidPlan =
+        sub.plan == BusinessSubscriptionPlan.pro || sub.plan.isPremium;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -31,16 +131,18 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
           onPressed: () => context.pop(),
         ),
         centerTitle: true,
-        title: const Text(
-          'Business Premium',
-          style: TextStyle(
+        title: Text(
+          l.businessPremiumTitleLocal,
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: AppColors.charcoal,
           ),
         ),
       ),
-      body: isPremium ? _buildManageSubscription(sub) : SingleChildScrollView(
+      body: hasActivePaidPlan
+          ? _buildManageSubscription(sub, l)
+          : SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
@@ -51,37 +153,37 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
               color: AppColors.gold,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Hire faster with premium tools',
+            Text(
+              l.hireFasterWithPremiumLocal,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppColors.charcoal,
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Unlock powerful recruiting features',
+            Text(
+              l.unlockPowerfulRecruitingLocal,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: AppColors.secondary),
+              style: const TextStyle(fontSize: 14, color: AppColors.secondary),
             ),
             const SizedBox(height: 32),
 
             // ── Benefits List ──
-            _benefitRow(Icons.bolt, AppColors.purple, 'Quick Plug \u2014 swipe to discover candidates'),
-            _benefitRow(Icons.star, AppColors.amber, 'Featured Jobs \u2014 appear at top of search'),
-            _benefitRow(Icons.bar_chart, AppColors.teal, 'Applicant Insights \u2014 see views and rankings'),
-            _benefitRow(Icons.tune, const Color(0xFF3B82F6), 'Advanced Filters \u2014 find exact match'),
-            _benefitRow(Icons.all_inclusive, AppColors.green, 'Unlimited Jobs \u2014 post as many as needed'),
-            _benefitRow(Icons.visibility, AppColors.teal, 'Priority Visibility \u2014 your jobs shown first'),
+            _benefitRow(Icons.bolt, AppColors.purple, l.benefitQuickPlugLocal),
+            _benefitRow(Icons.star, AppColors.amber, l.benefitFeaturedJobsLocal),
+            _benefitRow(Icons.bar_chart, AppColors.teal, l.benefitApplicantInsightsLocal),
+            _benefitRow(Icons.tune, const Color(0xFF3B82F6), l.benefitAdvancedFilters),
+            _benefitRow(Icons.all_inclusive, AppColors.green, l.benefitUnlimitedJobsLocal),
+            _benefitRow(Icons.visibility, AppColors.teal, l.benefitPriorityVisibilityLocal),
 
             const SizedBox(height: 32),
 
             // ── Pricing Cards ──
             _pricingCard(
               index: 0,
-              name: 'Basic',
+              name: l.planBasic,
               price: '\u00A329.99/month',
               badge: null,
               badgeColor: Colors.transparent,
@@ -89,18 +191,18 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             const SizedBox(height: 12),
             _pricingCard(
               index: 1,
-              name: 'Pro',
+              name: l.planPro,
               price: '\u00A359.99/month',
-              badge: 'Most Popular',
+              badge: l.mostPopular,
               badgeColor: AppColors.amber,
             ),
             const SizedBox(height: 12),
             _pricingCard(
               index: 2,
-              name: 'Premium',
+              name: l.planPremium,
               price: '\u00A3499/year',
               subPrice: '(~\u00A341.58/month)',
-              badge: 'Save 30%',
+              badge: l.savePercent30Local,
               badgeColor: AppColors.green,
             ),
 
@@ -113,9 +215,9 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
               child: ElevatedButton(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Free trial started!'),
-                      duration: Duration(seconds: 2),
+                    SnackBar(
+                      content: Text(l.freeTrialStartedLocal),
+                      duration: const Duration(seconds: 2),
                     ),
                   );
                   context.pop();
@@ -128,9 +230,9 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Text(
-                  'Start Free Trial',
-                  style: TextStyle(
+                child: Text(
+                  l.startFreeTrialLocal,
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -142,9 +244,9 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             // ── Maybe Later ──
             TextButton(
               onPressed: () => context.pop(),
-              child: const Text(
-                'Maybe later',
-                style: TextStyle(
+              child: Text(
+                l.maybeLater,
+                style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.secondary,
                 ),
@@ -158,8 +260,11 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
     );
   }
 
-  // ── Already premium ──
-  Widget _buildManageSubscription(dynamic sub) {
+  // ── Already on an active paid business plan ──
+  Widget _buildManageSubscription(
+    BusinessSubscription sub,
+    AppLocalizations l,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -169,14 +274,14 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
             const Icon(Icons.workspace_premium, size: 60, color: AppColors.gold),
             const SizedBox(height: 16),
             Text(
-              '${sub.plan.displayName} Plan Active',
+              l.planActiveSuffixLocal(sub.plan.displayName),
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal),
             ),
             const SizedBox(height: 8),
             Text(
               sub.renewalDate != null
-                  ? 'Your plan renews on ${sub.renewalDate}'
-                  : 'Your premium plan is active',
+                  ? l.planRenewsOnLocal(sub.renewalDate!)
+                  : l.premiumPlanIsActiveLocal,
               style: const TextStyle(fontSize: 14, color: AppColors.secondary),
             ),
             const SizedBox(height: 32),
@@ -189,7 +294,7 @@ class _BusinessSubscriptionViewState extends State<BusinessSubscriptionView> {
                   side: const BorderSide(color: AppColors.teal),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                 ),
-                child: const Text('Manage Subscription', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.teal)),
+                child: Text(l.manageSubscription, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.teal)),
               ),
             ),
           ],
