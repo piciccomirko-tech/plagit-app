@@ -47,6 +47,161 @@ class _PostJobViewState extends State<PostJobView> {
   static const _shiftOptions = ['Days', 'Evenings', 'Nights', 'Weekends', 'Flexible'];
   static const _salaryPeriods = ['per hour', 'per day', 'per week', 'per month'];
 
+  String _localText(
+    BuildContext context, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _postJobTitle(BuildContext context) =>
+      _localText(context, en: 'Post a Job', it: 'Pubblica un lavoro', ar: 'نشر وظيفة');
+
+  String _saveDraftLabel(BuildContext context) =>
+      _localText(context, en: 'Save Draft', it: 'Salva bozza', ar: 'حفظ كمسودة');
+
+  String _jobTitleLabel(BuildContext context) =>
+      _localText(context, en: 'Job Title', it: 'Titolo lavoro', ar: 'عنوان الوظيفة');
+
+  String _jobTitleHint(BuildContext context) =>
+      _localText(context, en: 'e.g. Senior Waiter', it: 'es. Cameriere senior', ar: 'مثال: نادل أول');
+
+  String _categoryLabel(BuildContext context) =>
+      _localText(context, en: 'Category', it: 'Categoria', ar: 'الفئة');
+
+  String _locationLabel(BuildContext context) =>
+      _localText(context, en: 'Location', it: 'Località', ar: 'الموقع');
+
+  String _locationHint(BuildContext context) =>
+      _localText(context, en: 'e.g. Mayfair, London', it: 'es. Mayfair, Londra', ar: 'مثال: مايفير، لندن');
+
+  String _positionsLabel(BuildContext context) =>
+      _localText(context, en: 'Number of Positions', it: 'Numero di posizioni', ar: 'عدد الوظائف');
+
+  String _nextLabel(BuildContext context) =>
+      _localText(context, en: 'Next', it: 'Avanti', ar: 'التالي');
+
+  String _salaryLabel(BuildContext context) =>
+      _localText(context, en: 'Salary', it: 'Salario', ar: 'الراتب');
+
+  String _salaryHint(BuildContext context) =>
+      _localText(context, en: 'e.g. £14', it: 'es. £14', ar: 'مثال: £14');
+
+  String _contractTypeLabel(BuildContext context) =>
+      _localText(context, en: 'Contract Type', it: 'Tipo di contratto', ar: 'نوع العقد');
+
+  String _shiftTypeLabel(BuildContext context) =>
+      _localText(context, en: 'Shift Type', it: 'Tipo di turno', ar: 'نوع الوردية');
+
+  String _startDateLabel(BuildContext context) =>
+      _localText(context, en: 'Start Date', it: 'Data di inizio', ar: 'تاريخ البدء');
+
+  String _asapLabel(BuildContext context) =>
+      _localText(context, en: 'ASAP', it: 'Appena possibile', ar: 'في أقرب وقت');
+
+  String _specificDateLabel(BuildContext context) =>
+      _localText(context, en: 'Specific Date', it: 'Data specifica', ar: 'تاريخ محدد');
+
+  String _descriptionLabel(BuildContext context) =>
+      _localText(context, en: 'Job Description', it: 'Descrizione lavoro', ar: 'وصف الوظيفة');
+
+  String _descriptionHint(BuildContext context) => _localText(
+        context,
+        en: 'Describe the role, responsibilities, and what makes this opportunity special...',
+        it: 'Descrivi il ruolo, le responsabilità e cosa rende speciale questa opportunità...',
+        ar: 'صف الدور والمسؤوليات وما الذي يجعل هذه الفرصة مميزة...',
+      );
+
+  String _charCountLabel(BuildContext context, int count) => _localText(
+        context,
+        en: '$count / 50 min',
+        it: '$count / 50 min',
+        ar: '$count / 50 حد أدنى',
+      );
+
+  String _requirementsLabel(BuildContext context) =>
+      _localText(context, en: 'Requirements', it: 'Requisiti', ar: 'المتطلبات');
+
+  String _requirementsHint(BuildContext context) =>
+      _localText(context, en: 'List key requirements...', it: 'Elenca i requisiti principali...', ar: 'اذكر المتطلبات الأساسية...');
+
+  String _benefitsLabel(BuildContext context) =>
+      _localText(context, en: 'Benefits', it: 'Vantaggi', ar: 'المزايا');
+
+  String _benefitsHint(BuildContext context) =>
+      _localText(context, en: 'List benefits offered...', it: 'Elenca i benefit offerti...', ar: 'اذكر المزايا المقدمة...');
+
+  String _markUrgentLabel(BuildContext context) =>
+      _localText(context, en: 'Mark as Urgent', it: 'Segna come urgente', ar: 'تحديد كعاجلة');
+
+  String _featuredJobLabel(BuildContext context) =>
+      _localText(context, en: 'Featured Job', it: 'Lavoro in evidenza', ar: 'وظيفة مميزة');
+
+  String _premiumLabel(BuildContext context) =>
+      _localText(context, en: 'Premium', it: 'Premium', ar: 'مميز');
+
+  String _publishJobLabel(BuildContext context) =>
+      _localText(context, en: 'Publish Job', it: 'Pubblica lavoro', ar: 'نشر الوظيفة');
+
+  String _jobPublishedHeadline(BuildContext context) =>
+      _localText(context, en: 'Job Published!', it: 'Lavoro pubblicato!', ar: 'تم نشر الوظيفة!');
+
+  String _jobPublishedSubtext(BuildContext context) => _localText(
+        context,
+        en: 'Your job is now live and visible to candidates',
+        it: 'Il tuo lavoro è ora online e visibile ai candidati',
+        ar: 'وظيفتك أصبحت الآن منشورة ومرئية للمتقدمين',
+      );
+
+  String _viewJobLabel(BuildContext context) =>
+      _localText(context, en: 'View Job', it: 'Vedi lavoro', ar: 'عرض الوظيفة');
+
+  String _postAnotherLabel(BuildContext context) =>
+      _localText(context, en: 'Post Another', it: 'Pubblicane un altro', ar: 'نشر وظيفة أخرى');
+
+  String _categoryText(BuildContext context, String id) => switch (id) {
+        'Waiter' => _localText(context, en: 'Waiter', it: 'Cameriere', ar: 'نادل'),
+        'Bartender' => _localText(context, en: 'Bartender', it: 'Bartender', ar: 'ساقي'),
+        'Chef' => _localText(context, en: 'Chef', it: 'Chef', ar: 'طاه'),
+        'Host' => _localText(context, en: 'Host', it: 'Host', ar: 'مضيف'),
+        'Manager' => _localText(context, en: 'Manager', it: 'Manager', ar: 'مدير'),
+        'Barista' => _localText(context, en: 'Barista', it: 'Barista', ar: 'باريستا'),
+        'Sommelier' => _localText(context, en: 'Sommelier', it: 'Sommelier', ar: 'سوملييه'),
+        'Kitchen Porter' => _localText(context, en: 'Kitchen Porter', it: 'Aiuto cucina', ar: 'مساعد مطبخ'),
+        'Runner' => _localText(context, en: 'Runner', it: 'Runner', ar: 'مساعد خدمة'),
+        _ => id,
+      };
+
+  String _contractText(BuildContext context, String id) => switch (id) {
+        'Full-time' => _localText(context, en: 'Full-time', it: 'Tempo pieno', ar: 'دوام كامل'),
+        'Part-time' => _localText(context, en: 'Part-time', it: 'Part-time', ar: 'دوام جزئي'),
+        'Zero Hours' => _localText(context, en: 'Zero Hours', it: 'Zero ore', ar: 'ساعات صفرية'),
+        'Temporary' => _localText(context, en: 'Temporary', it: 'Temporaneo', ar: 'مؤقت'),
+        _ => id,
+      };
+
+  String _shiftText(BuildContext context, String id) => switch (id) {
+        'Days' => _localText(context, en: 'Days', it: 'Giorni', ar: 'نهاري'),
+        'Evenings' => _localText(context, en: 'Evenings', it: 'Sere', ar: 'مسائي'),
+        'Nights' => _localText(context, en: 'Nights', it: 'Notti', ar: 'ليلي'),
+        'Weekends' => _localText(context, en: 'Weekends', it: 'Weekend', ar: 'عطلات نهاية الأسبوع'),
+        'Flexible' => _localText(context, en: 'Flexible', it: 'Flessibile', ar: 'مرن'),
+        _ => id,
+      };
+
+  String _salaryPeriodText(BuildContext context, String id) => switch (id) {
+        'per hour' => _localText(context, en: 'per hour', it: "all'ora", ar: 'بالساعة'),
+        'per day' => _localText(context, en: 'per day', it: 'al giorno', ar: 'باليوم'),
+        'per week' => _localText(context, en: 'per week', it: 'a settimana', ar: 'بالأسبوع'),
+        'per month' => _localText(context, en: 'per month', it: 'al mese', ar: 'بالشهر'),
+        _ => id,
+      };
+
   @override
   void initState() {
     super.initState();
@@ -179,13 +334,13 @@ class _PostJobViewState extends State<PostJobView> {
             }
           },
         ),
-        title: const Text('Post a Job', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+        title: Text(_postJobTitle(context), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         centerTitle: true,
         actions: [
           if (!_published)
             TextButton(
               onPressed: () {},
-              child: const Text('Save Draft', style: TextStyle(color: AppColors.secondary, fontSize: 14)),
+              child: Text(_saveDraftLabel(context), style: const TextStyle(color: AppColors.secondary, fontSize: 14)),
             ),
         ],
       ),
@@ -240,24 +395,24 @@ class _PostJobViewState extends State<PostJobView> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _label('Job Title'),
-        _textField(_titleCtrl, 'e.g. Senior Waiter'),
+        _label(_jobTitleLabel(context)),
+        _textField(_titleCtrl, _jobTitleHint(context)),
         const SizedBox(height: 16),
-        _label('Category'),
+        _label(_categoryLabel(context)),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: _categories.map((cat) => _chip(
-            cat,
+            _categoryText(context, cat),
             selected: _category == cat,
             onTap: () => setState(() => _category = cat),
           )).toList(),
         ),
         const SizedBox(height: 16),
-        _label('Location'),
-        _textField(_locationCtrl, 'e.g. Mayfair, London'),
+        _label(_locationLabel(context)),
+        _textField(_locationCtrl, _locationHint(context)),
         const SizedBox(height: 16),
-        _label('Number of Positions'),
+        _label(_positionsLabel(context)),
         Row(
           children: [
             _counterButton(Icons.remove, () {
@@ -274,7 +429,7 @@ class _PostJobViewState extends State<PostJobView> {
         ),
         const SizedBox(height: 32),
         _primaryButton(
-          'Next',
+          _nextLabel(context),
           enabled: _titleCtrl.text.trim().isNotEmpty,
           onPressed: () => setState(() => _step = 1),
         ),
@@ -287,35 +442,35 @@ class _PostJobViewState extends State<PostJobView> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _label('Salary'),
+        _label(_salaryLabel(context)),
         Row(
           children: [
-            Expanded(child: _textField(_salaryCtrl, 'e.g. \u00A314', keyboard: TextInputType.number)),
+            Expanded(child: _textField(_salaryCtrl, _salaryHint(context), keyboard: TextInputType.number)),
             const SizedBox(width: 12),
             ..._salaryPeriods.map((p) => Padding(
               padding: const EdgeInsets.only(right: 6),
-              child: _chip(p, selected: _salaryPeriod == p, onTap: () => setState(() => _salaryPeriod = p), small: true),
+              child: _chip(_salaryPeriodText(context, p), selected: _salaryPeriod == p, onTap: () => setState(() => _salaryPeriod = p), small: true),
             )),
           ],
         ),
         const SizedBox(height: 16),
-        _label('Contract Type'),
+        _label(_contractTypeLabel(context)),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: _contractTypes.map((ct) => _chip(
-            ct,
+            _contractText(context, ct),
             selected: _contractType == ct,
             onTap: () => setState(() => _contractType = ct),
           )).toList(),
         ),
         const SizedBox(height: 16),
-        _label('Shift Type'),
+        _label(_shiftTypeLabel(context)),
         Wrap(
           spacing: 8,
           runSpacing: 8,
           children: _shiftOptions.map((s) => _chip(
-            s,
+            _shiftText(context, s),
             selected: _shiftTypes.contains(s),
             onTap: () => setState(() {
               if (_shiftTypes.contains(s)) {
@@ -327,12 +482,12 @@ class _PostJobViewState extends State<PostJobView> {
           )).toList(),
         ),
         const SizedBox(height: 16),
-        _label('Start Date'),
+        _label(_startDateLabel(context)),
         Row(
           children: [
-            _chip('ASAP', selected: _startDate == 'ASAP', onTap: () => setState(() => _startDate = 'ASAP')),
+            _chip(_asapLabel(context), selected: _startDate == 'ASAP', onTap: () => setState(() => _startDate = 'ASAP')),
             const SizedBox(width: 8),
-            _chip('Specific Date', selected: _startDate != 'ASAP', onTap: () async {
+            _chip(_specificDateLabel(context), selected: _startDate != 'ASAP', onTap: () async {
               final date = await showDatePicker(
                 context: context,
                 initialDate: DateTime.now().add(const Duration(days: 7)),
@@ -351,7 +506,7 @@ class _PostJobViewState extends State<PostJobView> {
         ),
         const SizedBox(height: 32),
         _primaryButton(
-          'Next',
+          _nextLabel(context),
           enabled: true,
           onPressed: () => setState(() => _step = 2),
         ),
@@ -365,14 +520,14 @@ class _PostJobViewState extends State<PostJobView> {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        _label('Job Description'),
-        _textArea(_descCtrl, 'Describe the role, responsibilities, and what makes this opportunity special...'),
+        _label(_descriptionLabel(context)),
+        _textArea(_descCtrl, _descriptionHint(context)),
         Align(
           alignment: Alignment.centerRight,
           child: Padding(
             padding: const EdgeInsets.only(top: 4),
             child: Text(
-              '$descLen / 50 min',
+              _charCountLabel(context, descLen),
               style: TextStyle(
                 fontSize: 11,
                 color: descLen >= 50 ? AppColors.green : AppColors.secondary,
@@ -381,13 +536,13 @@ class _PostJobViewState extends State<PostJobView> {
           ),
         ),
         const SizedBox(height: 16),
-        _label('Requirements'),
-        _textArea(_reqCtrl, 'List key requirements...'),
+        _label(_requirementsLabel(context)),
+        _textArea(_reqCtrl, _requirementsHint(context)),
         const SizedBox(height: 16),
-        _label('Benefits'),
-        _textArea(_benefitsCtrl, 'List benefits offered...'),
+        _label(_benefitsLabel(context)),
+        _textArea(_benefitsCtrl, _benefitsHint(context)),
         const SizedBox(height: 16),
-        _toggleRow('Mark as Urgent', _urgent, (v) => setState(() => _urgent = v), activeColor: AppColors.amber),
+        _toggleRow(_markUrgentLabel(context), _urgent, (v) => setState(() => _urgent = v), activeColor: AppColors.amber),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -398,8 +553,8 @@ class _PostJobViewState extends State<PostJobView> {
           ),
           child: Row(
             children: [
-              const Expanded(
-                child: Text('Featured Job', style: TextStyle(fontSize: 15, color: AppColors.charcoal)),
+              Expanded(
+                child: Text(_featuredJobLabel(context), style: const TextStyle(fontSize: 15, color: AppColors.charcoal)),
               ),
               const Icon(Icons.lock_outline, size: 16, color: AppColors.tertiary),
               const SizedBox(width: 6),
@@ -409,7 +564,7 @@ class _PostJobViewState extends State<PostJobView> {
                   color: AppColors.amber.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(100),
                 ),
-                child: const Text('Premium', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.amber)),
+                child: Text(_premiumLabel(context), style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.amber)),
               ),
               const SizedBox(width: 8),
               Switch.adaptive(
@@ -429,7 +584,7 @@ class _PostJobViewState extends State<PostJobView> {
           const SizedBox(height: 12),
         ],
         _primaryButton(
-          'Publish Job',
+          _publishJobLabel(context),
           enabled: descLen >= 50 && !_submitting,
           onPressed: _publishJob,
         ),
@@ -447,11 +602,11 @@ class _PostJobViewState extends State<PostJobView> {
           children: [
             const Icon(Icons.check_circle, size: 60, color: AppColors.green),
             const SizedBox(height: 16),
-            const Text('Job Published!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+            Text(_jobPublishedHeadline(context), style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
             const SizedBox(height: 8),
-            const Text(
-              'Your job is now live and visible to candidates',
-              style: TextStyle(fontSize: 14, color: AppColors.secondary),
+            Text(
+              _jobPublishedSubtext(context),
+              style: const TextStyle(fontSize: 14, color: AppColors.secondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
@@ -465,7 +620,7 @@ class _PostJobViewState extends State<PostJobView> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('View Job', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                child: Text(_viewJobLabel(context), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
               ),
             ),
             const SizedBox(height: 12),
@@ -479,7 +634,7 @@ class _PostJobViewState extends State<PostJobView> {
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                child: const Text('Post Another', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                child: Text(_postAnotherLabel(context), style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
               ),
             ),
           ],

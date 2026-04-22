@@ -36,6 +36,79 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
     'Rejected',
   ];
 
+  String _localText(
+    BuildContext context, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _jobDetailsTitle(BuildContext context) =>
+      _localText(context, en: 'Job Details', it: 'Dettagli lavoro', ar: 'تفاصيل الوظيفة');
+
+  String _retryLabel(BuildContext context) =>
+      _localText(context, en: 'Retry', it: 'Riprova', ar: 'إعادة المحاولة');
+
+  String _jobNotFoundLabel(BuildContext context) =>
+      _localText(context, en: 'Job not found', it: 'Lavoro non trovato', ar: 'الوظيفة غير موجودة');
+
+  String _urgentLabel(BuildContext context) =>
+      _localText(context, en: 'Urgent', it: 'Urgente', ar: 'عاجل');
+
+  String _featuredLabel(BuildContext context) =>
+      _localText(context, en: 'Featured', it: 'In evidenza', ar: 'مميزة');
+
+  String _detailsTabLabel(BuildContext context) =>
+      _localText(context, en: 'Details', it: 'Dettagli', ar: 'التفاصيل');
+
+  String _applicantsTabLabel(BuildContext context, int count) => _localText(
+        context,
+        en: 'Applicants ($count)',
+        it: 'Candidati ($count)',
+        ar: 'المتقدمون ($count)',
+      );
+
+  String _pauseJobLabel(BuildContext context) =>
+      _localText(context, en: 'Pause Job', it: 'Metti in pausa', ar: 'إيقاف الوظيفة مؤقتا');
+
+  String _closeJobLabel(BuildContext context) =>
+      _localText(context, en: 'Close Job', it: 'Chiudi lavoro', ar: 'إغلاق الوظيفة');
+
+  String _descriptionLabel(BuildContext context) =>
+      _localText(context, en: 'Description', it: 'Descrizione', ar: 'الوصف');
+
+  String _requirementsLabel(BuildContext context) =>
+      _localText(context, en: 'Requirements', it: 'Requisiti', ar: 'المتطلبات');
+
+  String _benefitsLabel(BuildContext context) =>
+      _localText(context, en: 'Benefits', it: 'Vantaggi', ar: 'المزايا');
+
+  String _postedLabel(BuildContext context) =>
+      _localText(context, en: 'Posted', it: 'Pubblicato', ar: 'تاريخ النشر');
+
+  String _viewsLabel(BuildContext context) =>
+      _localText(context, en: 'Views', it: 'Visualizzazioni', ar: 'المشاهدات');
+
+  String _savesLabel(BuildContext context) =>
+      _localText(context, en: 'Saves', it: 'Salvataggi', ar: 'عمليات الحفظ');
+
+  String _noApplicantsLabel(BuildContext context) =>
+      _localText(context, en: 'No applicants', it: 'Nessun candidato', ar: 'لا يوجد متقدمون');
+
+  String _applicantFilterLabel(BuildContext context, String id) => switch (id) {
+        'All' => _localText(context, en: 'All', it: 'Tutti', ar: 'الكل'),
+        'Applied' => _localText(context, en: 'Applied', it: 'Candidati', ar: 'تم التقديم'),
+        'Shortlisted' => _localText(context, en: 'Shortlisted', it: 'Selezionati', ar: 'في القائمة المختصرة'),
+        'Interview' => _localText(context, en: 'Interview', it: 'Colloquio', ar: 'مقابلة'),
+        'Rejected' => _localText(context, en: 'Rejected', it: 'Rifiutati', ar: 'مرفوضون'),
+        _ => id,
+      };
+
   @override
   void initState() {
     super.initState();
@@ -146,8 +219,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text(
-            'Job Details',
+          title: Text(
+            _jobDetailsTitle(context),
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
         ),
@@ -190,7 +263,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Retry'),
+                child: Text(_retryLabel(context)),
               ),
             ],
           ),
@@ -208,8 +281,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text(
-            'Job Details',
+          title: Text(
+            _jobDetailsTitle(context),
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
         ),
@@ -232,7 +305,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Retry'),
+                child: Text(_retryLabel(context)),
               ),
             ],
           ),
@@ -251,13 +324,13 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text(
-            'Job Details',
+          title: Text(
+            _jobDetailsTitle(context),
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
         ),
-        body: const Center(
-          child: Text('Job not found', style: TextStyle(fontSize: 16, color: AppColors.secondary)),
+        body: Center(
+          child: Text(_jobNotFoundLabel(context), style: const TextStyle(fontSize: 16, color: AppColors.secondary)),
         ),
       );
     }
@@ -273,8 +346,8 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
           icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Job Details',
+        title: Text(
+          _jobDetailsTitle(context),
           style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
         ),
         actions: [
@@ -344,7 +417,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                             children: [
                               Icon(Icons.bolt, size: 14, color: AppColors.red),
                               SizedBox(width: 2),
-                              Text('Urgent', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.red)),
+                              Text(_urgentLabel(context), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.red)),
                             ],
                           ),
                         ),
@@ -361,7 +434,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                             children: [
                               Icon(Icons.star, size: 14, color: AppColors.gold),
                               SizedBox(width: 2),
-                              Text('Featured', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFB8860B))),
+                              Text(_featuredLabel(context), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFFB8860B))),
                             ],
                           ),
                         ),
@@ -373,13 +446,13 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                 Row(
                   children: [
                     _TabButton(
-                      label: 'Details',
+                      label: _detailsTabLabel(context),
                       selected: _tabIndex == 0,
                       onTap: () => setState(() => _tabIndex = 0),
                     ),
                     const SizedBox(width: 24),
                     _TabButton(
-                      label: 'Applicants ($totalApplicants)',
+                      label: _applicantsTabLabel(context, totalApplicants),
                       selected: _tabIndex == 1,
                       onTap: () => setState(() => _tabIndex = 1),
                     ),
@@ -414,7 +487,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: const Text('Pause Job', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(_pauseJobLabel(context), style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -427,7 +500,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: const Text('Close Job', style: TextStyle(fontWeight: FontWeight.w600)),
+                    child: Text(_closeJobLabel(context), style: const TextStyle(fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],
@@ -447,14 +520,14 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
       padding: const EdgeInsets.all(20),
       children: [
         // ── Description ──
-        const Text('Description', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+        Text(_descriptionLabel(context), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
         const SizedBox(height: 8),
         Text(description, style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.6)),
         const SizedBox(height: 16),
 
         // ── Requirements ──
         if (requirements.isNotEmpty) ...[
-          const Text('Requirements', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+          Text(_requirementsLabel(context), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
           const SizedBox(height: 8),
           ...requirements.map((r) => Padding(
                 padding: const EdgeInsets.only(bottom: 6),
@@ -471,7 +544,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
 
         // ── Benefits ──
         if (benefits.isNotEmpty) ...[
-          const Text('Benefits', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+          Text(_benefitsLabel(context), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
           const SizedBox(height: 8),
           ...benefits.map((b) => Padding(
                 padding: const EdgeInsets.only(bottom: 6),
@@ -496,11 +569,11 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
           ),
           child: Column(
             children: [
-              _InfoRow(label: 'Posted', value: job.posted),
+              _InfoRow(label: _postedLabel(context), value: job.posted),
               const Divider(height: 20, color: AppColors.divider),
-              _InfoRow(label: 'Views', value: '${job.views}'),
+              _InfoRow(label: _viewsLabel(context), value: '${job.views}'),
               const Divider(height: 20, color: AppColors.divider),
-              _InfoRow(label: 'Saves', value: '${job.saves}'),
+              _InfoRow(label: _savesLabel(context), value: '${job.saves}'),
             ],
           ),
         ),
@@ -540,7 +613,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                   ),
                   child: Center(
                     child: Text(
-                      f,
+                      _applicantFilterLabel(context, f),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -601,7 +674,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                 )
               : applicants.isEmpty
               ? const Center(
-                  child: Text('No applicants', style: TextStyle(color: AppColors.secondary)),
+                  child: Text(_noApplicantsLabel(context), style: const TextStyle(color: AppColors.secondary)),
                 )
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
