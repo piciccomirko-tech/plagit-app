@@ -189,7 +189,11 @@ class BusinessRepository {
     final params = <String, String>{};
     if (filter != null && filter != 'All') params['status'] = filter;
     final resp = await _api.get('/business/interviews', queryParams: params.isNotEmpty ? params : null);
-    final list = resp['data'] as List<dynamic>? ?? [];
+    final dynamic rawList =
+        resp['data'] ??
+        resp['interviews'] ??
+        (resp is List<dynamic> ? resp : null);
+    final list = rawList is List<dynamic> ? rawList : const <dynamic>[];
     return list.map((e) => BusinessInterview.fromJson(e as Map<String, dynamic>)).toList();
   }
 
