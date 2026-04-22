@@ -6,6 +6,7 @@ import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_job.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/repositories/business_repository.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Business job detail — Details + Applicants tabs, provider-backed.
@@ -20,6 +21,10 @@ class BusinessJobDetailView extends StatefulWidget {
 class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   int _tabIndex = 0;
   String _applicantFilter = 'All';
+  BusinessJob? _fetchedJob;
+  bool _fetchingJob = false;
+  bool _attemptedJobFetch = false;
+  String? _jobFetchError;
 
   static const _applicantFilters = [
     'All',
@@ -46,11 +51,44 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   }
 
   /// Find the job from the jobs provider by ID.
-  BusinessJob? _findJob(BusinessJobsProvider provider) {
+  BusinessJob? _findProviderJob(BusinessJobsProvider provider) {
+    for (final job in provider.jobs) {
+      if (job.id == widget.jobId) return job;
+    }
+    return null;
+  }
+
+  void _scheduleMissingJobFetch() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _fetchingJob || _attemptedJobFetch) return;
+      _fetchMissingJob();
+    });
+  }
+
+  Future<void> _fetchMissingJob() async {
+    if (_fetchingJob) return;
+    setState(() {
+      _fetchingJob = true;
+      _attemptedJobFetch = true;
+      _jobFetchError = null;
+    });
+
     try {
-      return provider.jobs.firstWhere((j) => j.id == widget.jobId);
-    } catch (_) {
-      return provider.jobs.isNotEmpty ? provider.jobs.first : null;
+      final job = await BusinessRepository().fetchJobDetail(widget.jobId);
+      if (!mounted) return;
+      setState(() {
+        _fetchedJob = job;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _jobFetchError = e.toString();
+      });
+    } finally {
+      if (!mounted) return;
+      setState(() {
+        _fetchingJob = false;
+      });
     }
   }
 
@@ -82,9 +120,19 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   Widget build(BuildContext context) {
     final jobsProvider = context.watch<BusinessJobsProvider>();
     final applicantsProvider = context.watch<BusinessApplicantsProvider>();
+    final providerJob = _findProviderJob(jobsProvider);
+    final job = providerJob ?? _fetchedJob;
+
+    if (!jobsProvider.loading &&
+        jobsProvider.error == null &&
+        job == null &&
+        !_fetchingJob &&
+        !_attemptedJobFetch) {
+      _scheduleMissingJobFetch();
+    }
 
     // ── Loading state ──
-    if (jobsProvider.loading) {
+    if (jobsProvider.loading || (job == null && _fetchingJob)) {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
@@ -146,8 +194,49 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
       );
     }
 
+    if (job == null && _jobFetchError != null) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const BackChevron(size: 28, color: AppColors.charcoal),
+            onPressed: () => context.pop(),
+          ),
+          title: const Text(
+            'Job Details',
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          ),
+        ),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.error_outline, size: 48, color: AppColors.red),
+              const SizedBox(height: 12),
+              Text(
+                _jobFetchError!,
+                style: const TextStyle(fontSize: 14, color: AppColors.secondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: _fetchMissingJob,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.teal,
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     // ── Content state ──
-    final job = _findJob(jobsProvider);
     if (job == null) {
       return Scaffold(
         backgroundColor: AppColors.background,
