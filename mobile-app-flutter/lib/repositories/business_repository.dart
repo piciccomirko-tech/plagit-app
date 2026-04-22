@@ -18,6 +18,7 @@ import 'package:plagit/models/business_home_data.dart';
 import 'package:plagit/models/business_insights.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/models/business_job.dart';
+import 'package:plagit/models/business_nearby_talent_candidate.dart';
 import 'package:plagit/models/business_profile.dart';
 import 'package:plagit/models/business_subscription.dart';
 import 'package:plagit/models/conversation.dart'; // reuse ChatMessage
@@ -63,6 +64,13 @@ class BusinessRepository {
   Future<BusinessInsights> fetchInsights() async {
     final home = await fetchHome();
     return BusinessInsights.fromHomeData(home);
+  }
+
+  Future<List<BusinessNearbyTalentCandidate>> fetchNearbyTalent() async {
+    final home = await fetchHome();
+    return home.recommendedCandidates
+        .map(BusinessNearbyTalentCandidate.fromQuickPlugCandidate)
+        .toList();
   }
 
   // ======================================
