@@ -13,6 +13,7 @@ import 'package:plagit/core/network/api_client.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_conversation.dart';
+import 'package:plagit/models/business_candidate_profile.dart';
 import 'package:plagit/models/business_home_data.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/models/business_job.dart';
@@ -160,6 +161,17 @@ class BusinessRepository {
         resp['profile'] ??
         resp;
     return Applicant.fromJson(payload as Map<String, dynamic>);
+  }
+
+  Future<BusinessCandidateProfile> fetchCandidateProfile(
+    String candidateId,
+  ) async {
+    if (_isMock) {
+      return BusinessCandidateProfile.mockForId(candidateId);
+    }
+    final resp = await _api.get('/business/candidates/$candidateId');
+    final payload = resp['data'] ?? resp['candidate'] ?? resp['profile'] ?? resp;
+    return BusinessCandidateProfile.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<void> shortlistApplicant(String applicantId) async {
