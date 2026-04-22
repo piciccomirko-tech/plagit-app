@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/services/business_service.dart';
 
 /// View candidate profile — mirrors BusinessRealCandidateProfileView.swift.
@@ -37,6 +38,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(children: [
@@ -120,9 +122,16 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                             child: SizedBox(
                               height: 48,
                               child: ElevatedButton.icon(
-                                onPressed: () => context.push('/business/schedule-interview', extra: {'candidateId': widget.candidateId}),
+                                onPressed: () => context.push('/business/schedule-interview', extra: {
+                                  'candidateId': widget.candidateId,
+                                  'candidateName': _candidate?['name']?.toString() ?? '',
+                                  'jobTitle': _candidate?['jobTitle']?.toString() ??
+                                      _candidate?['job_title']?.toString() ??
+                                      _candidate?['role']?.toString() ??
+                                      '',
+                                }),
                                 icon: const Icon(Icons.event_outlined, size: 18),
-                                label: const Text('Interview'),
+                                label: Text(l.interviewAction),
                                 style: ElevatedButton.styleFrom(backgroundColor: AppColors.indigo),
                               ),
                             ),

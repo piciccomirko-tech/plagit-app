@@ -187,7 +187,14 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                   label: 'Interview',
                   color: AppColors.purple,
                   filled: true,
-                  onTap: () => context.push('/business/schedule-interview'),
+                  onTap: () => context.push(
+                    '/business/schedule-interview',
+                    extra: {
+                      'candidateId': a.candidateId ?? a.id,
+                      'candidateName': a.name,
+                      'jobTitle': a.jobTitle ?? a.role,
+                    },
+                  ),
                 ),
               ),
               const SizedBox(width: 8),

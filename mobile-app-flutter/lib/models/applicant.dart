@@ -56,10 +56,12 @@ enum ApplicantStatus {
 /// A candidate who has applied to one of the business's jobs.
 class Applicant {
   final String id;
+  final String? candidateId;
   final String name;
   final String initials;
   final String role;
   final String jobId;
+  final String? jobTitle;
   final ApplicantStatus status;
   final String date;
   final String experience;
@@ -74,10 +76,12 @@ class Applicant {
 
   const Applicant({
     required this.id,
+    this.candidateId,
     required this.name,
     required this.initials,
     required this.role,
     required this.jobId,
+    this.jobTitle,
     this.status = ApplicantStatus.applied,
     required this.date,
     required this.experience,
@@ -96,10 +100,12 @@ class Applicant {
   factory Applicant.fromJson(Map<String, dynamic> json) {
     return Applicant(
       id: json['id'] as String? ?? '',
+      candidateId: json['candidateId'] as String? ?? json['candidate_id'] as String?,
       name: json['name'] as String? ?? '',
       initials: json['initials'] as String? ?? '',
       role: json['role'] as String? ?? '',
       jobId: json['jobId'] as String? ?? '',
+      jobTitle: json['jobTitle'] as String? ?? json['job_title'] as String?,
       status: ApplicantStatus.fromString(json['status'] as String? ?? 'Applied'),
       date: json['date'] as String? ?? '',
       experience: json['experience'] as String? ?? '',
