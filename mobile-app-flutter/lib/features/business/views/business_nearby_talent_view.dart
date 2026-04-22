@@ -113,7 +113,12 @@ extension _BusinessNearbyTalentL10n on AppLocalizations {
 /// Mirrors BusinessNearbyTalentView.swift with only the currently supported
 /// Nearby Talent data and filters.
 class BusinessNearbyTalentView extends StatefulWidget {
-  const BusinessNearbyTalentView({super.key});
+  const BusinessNearbyTalentView({
+    super.key,
+    this.repo,
+  });
+
+  final BusinessRepository? repo;
 
   @override
   State<BusinessNearbyTalentView> createState() =>
@@ -121,7 +126,7 @@ class BusinessNearbyTalentView extends StatefulWidget {
 }
 
 class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
-  final BusinessRepository _repo = BusinessRepository();
+  late final BusinessRepository _repo;
   bool _loading = true;
   String? _error;
   String _selectedRole = 'All';
@@ -132,6 +137,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   @override
   void initState() {
     super.initState();
+    _repo = widget.repo ?? BusinessRepository();
     _load();
   }
 
