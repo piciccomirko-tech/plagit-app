@@ -57,6 +57,12 @@ extension _BusinessDashboardL10nX on AppLocalizations {
         it: '$count nuovi candidati da rivedere',
         ar: '$count متقدمين جدد للمراجعة',
       );
+
+  String get comingSoonShort => _local(
+        en: 'Coming soon',
+        it: 'Prossimamente',
+        ar: 'قريباً',
+      );
 }
 
 
@@ -920,15 +926,46 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(20)),
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  _menuItem(CupertinoIcons.briefcase, AppLocalizations.of(context).postJobShort, AppLocalizations.of(context).hireBestTalent, () { setState(() => _showCreateMenu = false); context.push('/business/post-job'); }),
+                  _menuItem(
+                    CupertinoIcons.briefcase,
+                    AppLocalizations.of(context).postJobShort,
+                    AppLocalizations.of(context).hireBestTalent,
+                    onTap: () {
+                      setState(() => _showCreateMenu = false);
+                      context.push('/business/post-job');
+                    },
+                  ),
                   const SizedBox(height: 12),
-                  _menuItem(CupertinoIcons.pencil, AppLocalizations.of(context).createUpdate, AppLocalizations.of(context).shareCompanyNews, () => setState(() => _showCreateMenu = false)),
+                  _menuItem(
+                    CupertinoIcons.pencil,
+                    AppLocalizations.of(context).createUpdate,
+                    AppLocalizations.of(context).shareCompanyNews,
+                    enabled: false,
+                  ),
                   const SizedBox(height: 12),
-                  _menuItem(CupertinoIcons.camera, AppLocalizations.of(context).addStory, AppLocalizations.of(context).showWorkplace, () => setState(() => _showCreateMenu = false)),
+                  _menuItem(
+                    CupertinoIcons.camera,
+                    AppLocalizations.of(context).addStory,
+                    AppLocalizations.of(context).showWorkplace,
+                    enabled: false,
+                  ),
                   const SizedBox(height: 12),
-                  _menuItem(CupertinoIcons.star, AppLocalizations.of(context).viewShortlist, AppLocalizations.of(context).yourSavedCandidates, () { setState(() => _showCreateMenu = false); context.push('/business/shortlist'); }),
+                  _menuItem(
+                    CupertinoIcons.star,
+                    AppLocalizations.of(context).viewShortlist,
+                    AppLocalizations.of(context).yourSavedCandidates,
+                    onTap: () {
+                      setState(() => _showCreateMenu = false);
+                      context.push('/business/shortlist');
+                    },
+                  ),
                   const SizedBox(height: 12),
-                  _menuItem(CupertinoIcons.person_badge_plus, AppLocalizations.of(context).inviteCandidate, AppLocalizations.of(context).reachOutDirectly, () => setState(() => _showCreateMenu = false)),
+                  _menuItem(
+                    CupertinoIcons.person_badge_plus,
+                    AppLocalizations.of(context).inviteCandidate,
+                    AppLocalizations.of(context).reachOutDirectly,
+                    enabled: false,
+                  ),
                 ]),
               ),
             ),
@@ -938,17 +975,67 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
     );
   }
 
-  Widget _menuItem(IconData icon, String title, String subtitle, VoidCallback onTap) {
+  Widget _menuItem(
+    IconData icon,
+    String title,
+    String subtitle, {
+    VoidCallback? onTap,
+    bool enabled = true,
+  }) {
+    final l = AppLocalizations.of(context);
+    final titleColor =
+        enabled ? _charcoal : _charcoal.withValues(alpha: 0.6);
+    final subtitleColor =
+        enabled ? _secondary : _secondary.withValues(alpha: 0.7);
+    final iconBg = enabled ? _tealLight : _surface;
+    final iconColor = enabled ? _tealMain : _tertiary;
+
     return GestureDetector(
-      onTap: onTap,
+      onTap: enabled ? onTap : null,
       child: Row(children: [
-        Container(width: 40, height: 40, decoration: BoxDecoration(color: _tealLight, borderRadius: BorderRadius.circular(10)), child: Center(child: Icon(icon, size: 18, color: _tealMain))),
+        Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: iconBg,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(child: Icon(icon, size: 18, color: iconColor)),
+        ),
         const SizedBox(width: 14),
         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _charcoal)),
-          Text(subtitle, style: const TextStyle(fontSize: 13, color: _secondary)),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: titleColor,
+            ),
+          ),
+          Text(
+            subtitle,
+            style: TextStyle(fontSize: 13, color: subtitleColor),
+          ),
         ])),
-        const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
+        if (enabled)
+          const ForwardChevron(size: 28, color: Color(0xFFC7C7CC))
+        else
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: _surface,
+              borderRadius: BorderRadius.circular(100),
+              border: Border.all(color: _divider),
+            ),
+            child: Text(
+              l.comingSoonShort,
+              style: const TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: _tertiary,
+              ),
+            ),
+          ),
       ]),
     );
   }
