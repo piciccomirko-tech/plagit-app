@@ -501,14 +501,29 @@ class _PostJobViewState extends State<PostJobView> {
       padding: const EdgeInsets.all(20),
       children: [
         _label(l.salaryLabel),
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(child: _textField(_salaryCtrl, l.salaryHint, keyboard: TextInputType.number)),
-            const SizedBox(width: 12),
-            ..._salaryPeriods.map((p) => Padding(
-              padding: const EdgeInsets.only(right: 6),
-              child: _chip(_periodLabel(l, p), selected: _salaryPeriod == p, onTap: () => setState(() => _salaryPeriod = p), small: true),
-            )),
+            _textField(
+              _salaryCtrl,
+              l.salaryHint,
+              keyboard: TextInputType.number,
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: _salaryPeriods
+                  .map(
+                    (p) => _chip(
+                      _periodLabel(l, p),
+                      selected: _salaryPeriod == p,
+                      onTap: () => setState(() => _salaryPeriod = p),
+                      small: true,
+                    ),
+                  )
+                  .toList(),
+            ),
           ],
         ),
         const SizedBox(height: 16),
