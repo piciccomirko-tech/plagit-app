@@ -151,6 +151,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessHomeProvider>();
+    final subscription = context.watch<BusinessAuthProvider>().subscription;
 
     // Loading
     if (provider.loading) {
@@ -522,7 +523,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   // ══════════════════════════════════════
                   // g. PREMIUM BANNER
                   // ══════════════════════════════════════
-                  if (profile.subscription != 'premium')
+                  if (!subscription.plan.isPremium)
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                       child: GestureDetector(
