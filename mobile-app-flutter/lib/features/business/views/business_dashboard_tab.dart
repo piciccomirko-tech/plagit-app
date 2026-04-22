@@ -866,7 +866,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
 
-    return Positioned.fill(child: Container(
+    return Positioned.fill(child: Material(
       color: _bgMain,
       child: SafeArea(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Search bar + Cancel
@@ -893,87 +893,104 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
         ])),
 
         // Results or recent
-        if (_searchQuery.isEmpty) ...[
-          Padding(padding: const EdgeInsets.fromLTRB(20, 24, 20, 12), child: Text(AppLocalizations.of(context).recentSearches, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: _secondary))),
-          if (recentSearches.isEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLocalizations.of(context).recentSearchesEmptyTitle,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: _charcoal,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    AppLocalizations.of(context).recentSearchesEmptyHint,
-                    style: const TextStyle(fontSize: 13, color: _secondary),
-                  ),
-                ],
-              ),
-            )
-          else
-            ...recentSearches.map(_recentSearchRow),
-        ] else if (results.isEmpty)
-          Expanded(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+        Expanded(
+          child: _searchQuery.isEmpty
+              ? ListView(
+                  padding: const EdgeInsets.fromLTRB(0, 24, 0, 24),
                   children: [
-                    Text(
-                      AppLocalizations.of(context).noMatchingApplicants,
-                      style: const TextStyle(fontSize: 15, color: _tertiary),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                      child: Text(
+                        AppLocalizations.of(context).recentSearches,
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: _secondary,
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      AppLocalizations.of(context).searchLooksAtRecentApplicants,
-                      style: const TextStyle(fontSize: 13, color: _secondary),
-                      textAlign: TextAlign.center,
-                    ),
+                    if (recentSearches.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context).recentSearchesEmptyTitle,
+                              style: const TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: _charcoal,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Text(
+                              AppLocalizations.of(context).recentSearchesEmptyHint,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: _secondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      ...recentSearches.map(_recentSearchRow),
                   ],
-                ),
-              ),
-            ),
-          )
-        else
-          Expanded(child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-            itemCount: results.length,
-            itemBuilder: (context, i) {
-              final a = results[i];
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _showSearch = false;
-                    _searchQuery = '';
-                    _searchCtrl.clear();
-                  });
-                  context.push('/business/candidate/${_candidateRouteId(a)}');
-                },
-                child: Padding(padding: const EdgeInsets.only(bottom: 8), child: Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))]),
-                  child: Row(children: [
-                    _avatarCircle(a.initials, 36, 12),
-                    const SizedBox(width: 12),
-                    Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text(a.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _charcoal)),
-                      Text('${localizedJobRole(context, a.role)} · ${localizedCity(context, a.location)}', style: const TextStyle(fontSize: 13, color: _secondary)),
-                    ])),
-                    const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
-                  ]),
-                )),
-              );
-            },
-          )),
+                )
+              : results.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              AppLocalizations.of(context).noMatchingApplicants,
+                              style: const TextStyle(fontSize: 15, color: _tertiary),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              AppLocalizations.of(context).searchLooksAtRecentApplicants,
+                              style: const TextStyle(fontSize: 13, color: _secondary),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                      itemCount: results.length,
+                      itemBuilder: (context, i) {
+                        final a = results[i];
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _showSearch = false;
+                              _searchQuery = '';
+                              _searchCtrl.clear();
+                            });
+                            context.push('/business/candidate/${_candidateRouteId(a)}');
+                          },
+                          child: Padding(padding: const EdgeInsets.only(bottom: 8), child: Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))]),
+                            child: Row(children: [
+                              _avatarCircle(a.initials, 36, 12),
+                              const SizedBox(width: 12),
+                              Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                                Text(a.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: _charcoal)),
+                                Text('${localizedJobRole(context, a.role)} · ${localizedCity(context, a.location)}', style: const TextStyle(fontSize: 13, color: _secondary)),
+                              ])),
+                              const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
+                            ]),
+                          )),
+                        );
+                      },
+                    ),
+        ),
       ])),
     ));
   }
