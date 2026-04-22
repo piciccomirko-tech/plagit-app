@@ -21,6 +21,7 @@ import 'package:plagit/models/business_job.dart';
 import 'package:plagit/models/business_match_candidate.dart';
 import 'package:plagit/models/business_nearby_talent_candidate.dart';
 import 'package:plagit/models/business_profile.dart';
+import 'package:plagit/models/business_shortlist_candidate.dart';
 import 'package:plagit/models/business_subscription.dart';
 import 'package:plagit/models/conversation.dart'; // reuse ChatMessage
 import 'package:plagit/models/notification_item.dart';
@@ -89,6 +90,14 @@ class BusinessRepository {
     return applicants
         .where((applicant) => supportedStatuses.contains(applicant.status))
         .map(BusinessMatchCandidate.fromApplicant)
+        .toList();
+  }
+
+  Future<List<BusinessShortlistCandidate>> fetchShortlist() async {
+    final applicants = await fetchApplicants();
+    return applicants
+        .where((applicant) => applicant.status == ApplicantStatus.shortlisted)
+        .map(BusinessShortlistCandidate.fromApplicant)
         .toList();
   }
 
