@@ -5,6 +5,7 @@ import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/providers/business_providers.dart';
+import 'package:plagit/repositories/business_repository.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
 
 /// Applicant detail / candidate profile — uses typed Applicant model.
@@ -18,6 +19,10 @@ class BusinessApplicantDetailView extends StatefulWidget {
 
 class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailView> {
   bool _shortlisting = false;
+  Applicant? _fetchedApplicant;
+  bool _fetchingApplicant = false;
+  bool _attemptedFetch = false;
+  String? _applicantError;
 
   Color _avatarColor(String initials) {
     final hue = (initials.hashCode % 360).abs().toDouble();
@@ -43,6 +48,33 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
       );
     } finally {
       if (mounted) setState(() => _shortlisting = false);
+    }
+  }
+
+  Future<void> _fetchApplicantDetail() async {
+    if (_fetchingApplicant) return;
+    setState(() {
+      _attemptedFetch = true;
+      _fetchingApplicant = true;
+      _applicantError = null;
+    });
+    try {
+      final applicant = await BusinessRepository().fetchApplicantDetail(
+        widget.applicantId,
+      );
+      if (!mounted) return;
+      setState(() {
+        _fetchedApplicant = applicant;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _applicantError = e.toString();
+      });
+    } finally {
+      if (mounted) {
+        setState(() => _fetchingApplicant = false);
+      }
     }
   }
 
@@ -72,13 +104,12 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessApplicantsProvider>();
-    final Applicant? applicant = provider.applicants
+    final Applicant? providerApplicant = provider.applicants
         .where((a) => a.id == widget.applicantId)
         .firstOrNull;
+    final Applicant? applicant = providerApplicant ?? _fetchedApplicant;
 
-    // Not found state
     if (applicant == null) {
-      // Fallback: try first applicant or show not found
       if (provider.loading) {
         return Scaffold(
           backgroundColor: AppColors.background,
@@ -94,6 +125,68 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
           body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
         );
       }
+
+      if (!_attemptedFetch && !_fetchingApplicant) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) _fetchApplicantDetail();
+        });
+      }
+
+      if (_fetchingApplicant) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const BackChevron(size: 28, color: AppColors.charcoal),
+              onPressed: () => context.pop(),
+            ),
+            title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          ),
+          body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
+        );
+      }
+
+      if (_applicantError != null) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const BackChevron(size: 28, color: AppColors.charcoal),
+              onPressed: () => context.pop(),
+            ),
+            title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          ),
+          body: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _applicantError!,
+                  style: const TextStyle(color: AppColors.secondary),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: _fetchApplicantDetail,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.teal,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
