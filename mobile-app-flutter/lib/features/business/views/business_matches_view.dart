@@ -60,8 +60,12 @@ extension _BusinessMatchesL10n on AppLocalizations {
 class BusinessMatchesView extends StatefulWidget {
   final String jobId;
   final String jobTitle;
+  final BusinessRepository? repo;
   const BusinessMatchesView(
-      {super.key, required this.jobId, required this.jobTitle});
+      {super.key,
+      required this.jobId,
+      required this.jobTitle,
+      this.repo});
 
   @override
   State<BusinessMatchesView> createState() => _BusinessMatchesViewState();
@@ -71,13 +75,14 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
   bool _loading = true;
   String? _error;
   final Set<String> _dismissed = {};
-  final BusinessRepository _repo = BusinessRepository();
+  late final BusinessRepository _repo;
 
   final List<BusinessMatchCandidate> _matches = [];
 
   @override
   void initState() {
     super.initState();
+    _repo = widget.repo ?? BusinessRepository();
     _load();
   }
 
