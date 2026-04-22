@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/providers/business_providers.dart';
 
 /// Schedule interview form — all mock, no API calls.
 class BusinessScheduleInterviewView extends StatefulWidget {
@@ -30,8 +33,10 @@ class _BusinessScheduleInterviewViewState
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   String _format = 'In Person';
+  bool _submitting = false;
 
-  bool get _canSubmit => _selectedDate != null && _selectedTime != null;
+  bool get _canSubmit =>
+      !_submitting && _selectedDate != null && _selectedTime != null;
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
@@ -51,15 +56,66 @@ class _BusinessScheduleInterviewViewState
     if (picked != null) setState(() => _selectedTime = picked);
   }
 
-  void _submit() {
-    if (!_canSubmit) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Interview invite sent!'),
-        backgroundColor: AppColors.teal,
-      ),
+  DateTime _scheduledAt() {
+    final date = _selectedDate!;
+    final time = _selectedTime!;
+    return DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
     );
-    context.pop();
+  }
+
+  Future<void> _submit() async {
+    if (!_canSubmit) return;
+    setState(() => _submitting = true);
+    final scheduledAt = _scheduledAt();
+    final payload = <String, dynamic>{
+      'candidateId': widget.candidateId,
+      'candidateName': widget.candidateName,
+      'jobTitle': widget.jobTitle,
+      'date': _formatDate(scheduledAt),
+      'time': _formatTime(TimeOfDay.fromDateTime(scheduledAt)),
+      'format': _format,
+      'type': _format,
+      'interview_type': _format,
+      'scheduledAt': scheduledAt.toIso8601String(),
+      'scheduled_at': scheduledAt.toIso8601String(),
+      'status': 'Invited',
+      'notes': _notesCtrl.text.trim(),
+    };
+
+    final location = _locationCtrl.text.trim();
+    final link = _linkCtrl.text.trim();
+    if (location.isNotEmpty) payload['location'] = location;
+    if (link.isNotEmpty) {
+      payload['link'] = link;
+      payload['meeting_link'] = link;
+    }
+
+    try {
+      await context.read<BusinessInterviewsProvider>().scheduleInterview(payload);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).interviewSent),
+          backgroundColor: AppColors.teal,
+        ),
+      );
+      context.pop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
   }
 
   String _formatDate(DateTime d) {
@@ -394,10 +450,19 @@ class _BusinessScheduleInterviewViewState
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  'Send Interview Invite',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
+                child: _submitting
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        ),
+                      )
+                    : const Text(
+                        'Send Interview Invite',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                      ),
               ),
             ),
             const SizedBox(height: 32),
