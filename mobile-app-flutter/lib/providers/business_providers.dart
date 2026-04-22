@@ -444,13 +444,12 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
     }
 
     final candidate = _deck[_currentIndex];
+    await _repo.swipeCandidate(candidate.id, interested);
+
     _currentIndex++;
     _swipesUsed++;
     _showUpgrade = _swipesUsed >= _dailyLimit;
     notifyListeners();
-
-    // Fire-and-forget to backend.
-    _repo.swipeCandidate(candidate.id, interested);
   }
 }
 

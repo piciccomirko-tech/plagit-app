@@ -72,6 +72,10 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
   void _processSwipe(bool interested) {
     final provider = context.read<BusinessQuickPlugProvider>();
     if (_isAnimatingOut || !provider.hasCards) return;
+    if (provider.swipesUsed >= provider.dailyLimit) {
+      provider.swipe(interested);
+      return;
+    }
 
     _isAnimatingOut = true;
     final targetX = interested ? 500.0 : -500.0;
@@ -80,27 +84,44 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
       CurvedAnimation(parent: _animController, curve: Curves.easeOut),
     );
 
-    _animController.forward(from: 0).then((_) {
+    _animController.forward(from: 0).then((_) async {
       if (!mounted) return;
+      try {
+        await provider.swipe(interested);
 
-      provider.swipe(interested);
+        setState(() {
+          _dragX = 0;
+          _isAnimatingOut = false;
+        });
 
-      setState(() {
-        _dragX = 0;
-        _isAnimatingOut = false;
-      });
+        _animController.reset();
 
-      _animController.reset();
-
-      if (mounted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).clearSnackBars();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(interested ? 'Added to shortlist!' : 'Passed'),
+              duration: const Duration(milliseconds: 1200),
+              behavior: SnackBarBehavior.floating,
+              backgroundColor:
+                  interested ? AppColors.teal : AppColors.red,
+            ),
+          );
+        }
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _dragX = 0;
+          _isAnimatingOut = false;
+        });
+        _animController.reset();
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(interested ? 'Added to shortlist!' : 'Passed'),
-            duration: const Duration(milliseconds: 1200),
+            content: Text(e.toString()),
+            duration: const Duration(milliseconds: 1600),
             behavior: SnackBarBehavior.floating,
-            backgroundColor:
-                interested ? AppColors.teal : AppColors.red,
+            backgroundColor: AppColors.red,
           ),
         );
       }
@@ -109,34 +130,57 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
   void _handleSuperInterested() {
     final provider = context.read<BusinessQuickPlugProvider>();
+    final messenger = ScaffoldMessenger.of(context);
+    final l = AppLocalizations.of(context);
     if (_isAnimatingOut || !provider.hasCards) return;
-
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).superInterestedNotified),
-        duration: const Duration(milliseconds: 1500),
-        behavior: SnackBarBehavior.floating,
-        backgroundColor: AppColors.gold,
-      ),
-    );
+    if (provider.swipesUsed >= provider.dailyLimit) {
+      provider.swipe(true);
+      return;
+    }
 
     _isAnimatingOut = true;
     _animX = Tween<double>(begin: _dragX, end: 0.0).animate(
       CurvedAnimation(parent: _animController, curve: Curves.easeOut),
     );
 
-    _animController.forward(from: 0).then((_) {
+    _animController.forward(from: 0).then((_) async {
       if (!mounted) return;
+      try {
+        await provider.swipe(true);
 
-      provider.swipe(true);
+        setState(() {
+          _dragX = 0;
+          _isAnimatingOut = false;
+        });
 
-      setState(() {
-        _dragX = 0;
-        _isAnimatingOut = false;
-      });
-
-      _animController.reset();
+        _animController.reset();
+        if (!mounted) return;
+        messenger.clearSnackBars();
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(l.superInterestedNotified),
+            duration: const Duration(milliseconds: 1500),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.gold,
+          ),
+        );
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _dragX = 0;
+          _isAnimatingOut = false;
+        });
+        _animController.reset();
+        messenger.clearSnackBars();
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            duration: const Duration(milliseconds: 1600),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: AppColors.red,
+          ),
+        );
+      }
     });
   }
 
