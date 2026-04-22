@@ -11,6 +11,7 @@ import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/l10n/app_localizations.dart';
 
 const _tealMain = Color(0xFF00B5B0);
 const _bgMain = Color(0xFFF6F7F8);
@@ -62,6 +63,76 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
     });
   }
 
+  String _filterLabel(AppLocalizations l, String filter) {
+    switch (filter) {
+      case 'Unread':
+        return l.filterUnread;
+      case 'Interviews':
+        return l.interviews;
+      case 'Jobs':
+        return l.jobs;
+      default:
+        return l.filterAll;
+    }
+  }
+
+  String _searchMessagesTitle(BuildContext context) {
+    switch (Localizations.localeOf(context).languageCode) {
+      case 'it':
+        return 'Cerca messaggi';
+      case 'ar':
+        return 'ابحث في الرسائل';
+      default:
+        return 'Search Messages';
+    }
+  }
+
+  String _clearSelectionLabel(BuildContext context) {
+    switch (Localizations.localeOf(context).languageCode) {
+      case 'it':
+        return 'Deseleziona';
+      case 'ar':
+        return 'إلغاء التحديد';
+      default:
+        return 'Clear';
+    }
+  }
+
+  String _noConversationsTitle(BuildContext context, String filter) {
+    final code = Localizations.localeOf(context).languageCode;
+    switch (filter) {
+      case 'Unread':
+        switch (code) {
+          case 'it':
+            return 'Nessuna conversazione non letta';
+          case 'ar':
+            return 'لا توجد محادثات غير مقروءة';
+          default:
+            return 'No unread conversations';
+        }
+      case 'Interviews':
+        switch (code) {
+          case 'it':
+            return 'Nessuna conversazione di colloquio';
+          case 'ar':
+            return 'لا توجد محادثات مقابلة';
+          default:
+            return 'No interview conversations';
+        }
+      case 'Jobs':
+        switch (code) {
+          case 'it':
+            return 'Nessuna conversazione di lavoro';
+          case 'ar':
+            return 'لا توجد محادثات وظائف';
+          default:
+            return 'No job conversations';
+        }
+      default:
+        return AppLocalizations.of(context)!.noMessagesYet;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -71,12 +142,13 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   }
 
   void _openSearchScreen(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => SearchScreen(
           scope: RecentSearchScope.businessMessages,
-          title: 'Search Messages',
-          hintText: 'Search conversations, candidates, roles…',
+          title: _searchMessagesTitle(context),
+          hintText: l.searchConversationsHint,
           resultsBuilder: (ctx, query) {
             final convos = ctx.watch<BusinessMessagesProvider>().conversations;
             final q = query.toLowerCase();
@@ -134,7 +206,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                               ),
                               if (c.jobContext.isNotEmpty)
                                 Text(
-                                  'Re: ${c.jobContext}',
+                                  l.rePrefix(c.jobContext),
                                   style: const TextStyle(
                                     fontSize: 11,
                                     fontWeight: FontWeight.w600,
@@ -205,6 +277,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     final provider = context.watch<BusinessMessagesProvider>();
     final allConvos = provider.conversations;
     final convos = _applyFilters(allConvos);
@@ -259,7 +332,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            f,
+                            _filterLabel(l, f),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -327,8 +400,8 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                       GestureDetector(
                         onTap: () =>
                             context.read<BusinessMessagesProvider>().load(),
-                        child: const Text(
-                          'Retry',
+                        child: Text(
+                          l.retryAction,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -364,8 +437,8 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                         const SizedBox(height: 16),
                         Text(
                           _filter == 'All'
-                              ? 'No messages yet'
-                              : 'No ${_filter.toLowerCase()} conversations',
+                              ? l.noMessagesYet
+                              : _noConversationsTitle(context, _filter),
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -375,8 +448,8 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                         const SizedBox(height: 6),
                         Text(
                           _filter == 'All'
-                              ? 'When candidates message you, conversations will appear here.'
-                              : 'Try switching to a different filter.',
+                              ? l.whenCandidatesMessage
+                              : l.trySwitchingFilter,
                           style: const TextStyle(
                             fontSize: 13,
                             color: _secondary,
@@ -400,7 +473,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                       direction: _selecting
                           ? DismissDirection.none
                           : DismissDirection.endToStart,
-                      background: _buildSwipeBackground(),
+                      background: _buildSwipeBackground(context),
                       confirmDismiss: (_) => _confirmSingleDelete(c),
                       onDismissed: (_) {
                         context
@@ -419,6 +492,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   }
 
   Widget _conversationRow(BusinessConversation c, bool showDivider) {
+    final l = AppLocalizations.of(context)!;
     final isUnread = c.unread > 0;
     final isInterview = _isInterviewRelated(c);
     final words = c.candidateName.split(' ');
@@ -570,7 +644,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                           if (c.jobContext.isNotEmpty)
                             Flexible(
                               child: Text(
-                                'Re: ${c.jobContext}',
+                                l.rePrefix(c.jobContext),
                                 style: const TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w500,
@@ -591,8 +665,8 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                 color: _indigo.withValues(alpha: 0.10),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'Interview',
+                              child: Text(
+                                l.interviewLabel,
                                 style: TextStyle(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w600,
@@ -614,8 +688,8 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
                                 ).withValues(alpha: 0.10),
                                 borderRadius: BorderRadius.circular(4),
                               ),
-                              child: const Text(
-                                'Reply',
+                              child: Text(
+                                l.reply,
                                 style: TextStyle(
                                   fontSize: 9,
                                   fontWeight: FontWeight.w600,
@@ -674,8 +748,9 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
     int totalUnread,
     List<BusinessConversation> allConvos,
   ) {
+    final l = AppLocalizations.of(context)!;
     return AppBackTitleBar(
-      title: 'Messages',
+      title: l.messagesTitle,
       onBack: () => context.canPop() ? context.pop() : null,
       padding: EdgeInsets.zero,
       backBackgroundColor: _surface,
@@ -684,8 +759,8 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
       titleWidget: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Messages',
+          Text(
+            l.messagesTitle,
             style: TextStyle(
               fontSize: 17,
               fontWeight: FontWeight.w700,
@@ -695,7 +770,7 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
           ),
           if (totalUnread > 0)
             Text(
-              '$totalUnread unread',
+              l.unreadCount(totalUnread),
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -733,12 +808,13 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   }
 
   Widget _buildSelectionBar(List<BusinessConversation> allConvos) {
+    final l = AppLocalizations.of(context)!;
     final count = _selected.length;
     return AppSelectionBar(
       selectedCount: count,
       onCancel: _exitSelection,
       padding: EdgeInsets.zero,
-      title: count == 0 ? 'Select items' : '$count selected',
+      title: count == 0 ? l.selectItems : l.countSelected(count),
       titleStyle: const TextStyle(
         fontSize: 17,
         fontWeight: FontWeight.w700,
@@ -771,7 +847,9 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
               }
             }),
             child: Text(
-              _selected.length == allConvos.length ? 'Clear' : 'Select all',
+              _selected.length == allConvos.length
+                  ? _clearSelectionLabel(context)
+                  : l.selectAll,
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
@@ -798,19 +876,19 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   // DELETE FLOWS
   // ═══════════════════════════════════════════════════════════════
 
-  Widget _buildSwipeBackground() {
+  Widget _buildSwipeBackground(BuildContext context) {
     return Container(
       alignment: Alignment.centerRight,
       padding: const EdgeInsets.only(right: 24),
       color: _urgent,
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(CupertinoIcons.trash_fill, size: 18, color: Colors.white),
-          SizedBox(width: 6),
+          const Icon(CupertinoIcons.trash_fill, size: 18, color: Colors.white),
+          const SizedBox(width: 6),
           Text(
-            'Delete',
-            style: TextStyle(
+            AppLocalizations.of(context)!.delete,
+            style: const TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
               color: Colors.white,
@@ -825,34 +903,37 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   Future<bool> _confirmSingleDelete(BusinessConversation c) async {
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Delete conversation?',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: _charcoal,
-          ),
-        ),
-        content: Text(
-          'Remove your chat with ${c.candidateName}? Only your copy is deleted — the candidate keeps theirs.',
-          style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w700),
+      builder: (ctx) {
+        final l = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            l.deleteConversation,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: _charcoal,
             ),
           ),
-        ],
-      ),
+          content: Text(
+            l.removeChatBody(c.candidateName),
+            style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.cancelAction, style: const TextStyle(color: _secondary)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                l.delete,
+                style: const TextStyle(color: _urgent, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        );
+      },
     );
     return ok == true;
   }
@@ -861,34 +942,37 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
     final count = _selected.length;
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          'Delete $count conversation${count == 1 ? '' : 's'}?',
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: _charcoal,
-          ),
-        ),
-        content: const Text(
-          'Selected chats will be removed from your inbox. The candidate still keeps their copy.',
-          style: TextStyle(fontSize: 14, color: _secondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w700),
+      builder: (ctx) {
+        final l = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            l.deleteConversationsCount(count),
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: _charcoal,
             ),
           ),
-        ],
-      ),
+          content: Text(
+            l.deleteSelectedNote,
+            style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.cancelAction, style: const TextStyle(color: _secondary)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                l.delete,
+                style: const TextStyle(color: _urgent, fontWeight: FontWeight.w700),
+              ),
+            ),
+          ],
+        );
+      },
     );
     if (ok != true || !mounted) return;
     context.read<BusinessMessagesProvider>().deleteConversations(_selected);
@@ -898,34 +982,37 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
   Future<void> _confirmDeleteAll(List<BusinessConversation> allConvos) async {
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Delete all conversations?',
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: _charcoal,
-          ),
-        ),
-        content: Text(
-          'This will clear your entire inbox (${allConvos.length} conversation${allConvos.length == 1 ? '' : 's'}). This cannot be undone from your side.',
-          style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text(
-              'Delete all',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w800),
+      builder: (ctx) {
+        final l = AppLocalizations.of(ctx)!;
+        return AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          title: Text(
+            l.deleteAllConversations,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: _charcoal,
             ),
           ),
-        ],
-      ),
+          content: Text(
+            l.clearInboxBody(allConvos.length),
+            style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(l.cancelAction, style: const TextStyle(color: _secondary)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(
+                l.deleteAll,
+                style: const TextStyle(color: _urgent, fontWeight: FontWeight.w800),
+              ),
+            ),
+          ],
+        );
+      },
     );
     if (ok != true || !mounted) return;
     context.read<BusinessMessagesProvider>().deleteAllConversations();
@@ -935,71 +1022,74 @@ class _BusinessMessagesViewState extends State<BusinessMessagesView> {
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: _cardBg,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD1D1D6),
-                  borderRadius: BorderRadius.circular(2),
+      builder: (ctx) {
+        final l = AppLocalizations.of(ctx)!;
+        return Container(
+          decoration: const BoxDecoration(
+            color: _cardBg,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 36,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFD1D1D6),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 8),
-              _BusinessMenuItem(
-                icon: CupertinoIcons.checkmark_circle,
-                label: 'Select conversations',
-                onTap: () {
-                  Navigator.pop(ctx);
-                  setState(() => _selecting = true);
-                },
-              ),
-              _BusinessMenuItem(
-                icon: CupertinoIcons.trash_fill,
-                label: 'Delete all',
-                color: _urgent,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _confirmDeleteAll(allConvos);
-                },
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(ctx),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _surface,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: _charcoal,
+                const SizedBox(height: 8),
+                _BusinessMenuItem(
+                  icon: CupertinoIcons.checkmark_circle,
+                  label: l.selectConversations,
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    setState(() => _selecting = true);
+                  },
+                ),
+                _BusinessMenuItem(
+                  icon: CupertinoIcons.trash_fill,
+                  label: l.deleteAll,
+                  color: _urgent,
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _confirmDeleteAll(allConvos);
+                  },
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(ctx),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      decoration: BoxDecoration(
+                        color: _surface,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        l.cancelAction,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: _charcoal,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

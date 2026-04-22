@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/l10n/app_localizations.dart';
 import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/models/conversation.dart'; // ChatMessage
 import 'package:plagit/providers/business_providers.dart';
@@ -68,6 +69,17 @@ class _BusinessChatViewState extends State<BusinessChatView> {
     }
   }
 
+  String _justNowLabel(BuildContext context) {
+    switch (Localizations.localeOf(context).languageCode) {
+      case 'it':
+        return 'Proprio ora';
+      case 'ar':
+        return 'الآن';
+      default:
+        return 'Just now';
+    }
+  }
+
   Future<void> _send() async {
     final text = _inputCtrl.text.trim();
     if (text.isEmpty || _sending) return;
@@ -81,7 +93,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
         _messages.insert(0, ChatMessage(
           sender: 'business',
           text: text,
-          time: 'Just now',
+          time: _justNowLabel(context),
         ));
         _error = null;
       });
@@ -115,7 +127,8 @@ class _BusinessChatViewState extends State<BusinessChatView> {
 
   @override
   Widget build(BuildContext context) {
-    final candidateName = _conversation?.candidateName ?? 'Chat';
+    final l = AppLocalizations.of(context)!;
+    final candidateName = _conversation?.candidateName ?? l.messagesTitle;
     final candidateId = _conversation?.candidateId ?? '';
     final jobContext = _conversation?.jobContext ?? '';
 
@@ -181,7 +194,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('View Profile', style: TextStyle(fontSize: 13)),
+                  child: Text(l.viewProfileAction, style: const TextStyle(fontSize: 13)),
                 ),
                 const SizedBox(width: 8),
                 OutlinedButton(
@@ -202,7 +215,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text('Invite to Interview', style: TextStyle(fontSize: 13)),
+                  child: Text(l.interviewAction, style: const TextStyle(fontSize: 13)),
                 ),
               ],
             ),
@@ -221,7 +234,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                             const SizedBox(height: 12),
                             GestureDetector(
                               onTap: _loadMessages,
-                              child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+                              child: Text(l.retryAction, style: const TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
                             ),
                           ],
                         ),
@@ -318,7 +331,7 @@ class _BusinessChatViewState extends State<BusinessChatView> {
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => _sending ? null : _send(),
                       decoration: InputDecoration(
-                        hintText: 'Type a message...',
+                        hintText: l.typeMessage,
                         hintStyle: const TextStyle(
                           fontSize: 14,
                           color: AppColors.tertiary,
