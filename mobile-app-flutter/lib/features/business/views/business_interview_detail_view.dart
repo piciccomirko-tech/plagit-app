@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
@@ -20,6 +21,7 @@ class BusinessInterviewDetailView extends StatefulWidget {
 class _BusinessInterviewDetailViewState
     extends State<BusinessInterviewDetailView> {
   String? _localStatusOverride;
+  bool _completing = false;
 
   String _effectiveStatus(BusinessInterview iv) =>
       _localStatusOverride ?? iv.status;
@@ -39,14 +41,32 @@ class _BusinessInterviewDetailViewState
     );
   }
 
-  void _markCompleted() {
-    setState(() => _localStatusOverride = 'Completed');
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Interview marked as completed'),
-        backgroundColor: AppColors.green,
-      ),
-    );
+  Future<void> _markCompleted() async {
+    if (_completing) return;
+    setState(() => _completing = true);
+    try {
+      await context.read<BusinessInterviewsProvider>().markInterviewComplete(
+        widget.interviewId,
+      );
+      if (!mounted) return;
+      setState(() => _localStatusOverride = 'Completed');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).interviewMarkedCompleted),
+          backgroundColor: AppColors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+          backgroundColor: AppColors.red,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _completing = false);
+    }
   }
 
   void _cancelInterview() {
@@ -409,7 +429,7 @@ class _BusinessInterviewDetailViewState
                 width: double.infinity,
                 height: 48,
                 child: OutlinedButton(
-                  onPressed: _markCompleted,
+                  onPressed: _completing ? null : _markCompleted,
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.teal,
                     side: const BorderSide(color: AppColors.teal),

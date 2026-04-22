@@ -376,6 +376,11 @@ class BusinessInterviewsProvider extends ChangeNotifier {
     // Reload to reflect the new interview.
     await load();
   }
+
+  Future<void> markInterviewComplete(String interviewId) async {
+    await _repo.markInterviewComplete(interviewId);
+    await load();
+  }
 }
 
 // ================================================================

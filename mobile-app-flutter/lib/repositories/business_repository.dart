@@ -205,6 +205,17 @@ class BusinessRepository {
     await _api.post('/business/interviews', body: data);
   }
 
+  Future<void> markInterviewComplete(String interviewId) async {
+    if (_isMock) {
+      await Future.delayed(const Duration(milliseconds: 500));
+      return;
+    }
+    await _api.patch(
+      '/business/interviews/$interviewId/status',
+      body: {'status': 'completed'},
+    );
+  }
+
   // ======================================
   // -- QuickPlug --
   // ======================================
