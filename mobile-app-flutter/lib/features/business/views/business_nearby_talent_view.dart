@@ -19,6 +19,94 @@ extension _BusinessNearbyTalentL10n on AppLocalizations {
         return 'All roles';
     }
   }
+
+  String get nearbyTalentNoResults {
+    switch (localeName) {
+      case 'it':
+        return 'Nessun risultato';
+      case 'ar':
+        return 'لا توجد نتائج';
+      default:
+        return 'No results';
+    }
+  }
+
+  String nearbyTalentCandidatesFound(int count) {
+    switch (localeName) {
+      case 'it':
+        return count == 1 ? '1 candidato trovato' : '$count candidati trovati';
+      case 'ar':
+        return count == 1 ? 'تم العثور على مرشح واحد' : 'تم العثور على $count مرشحين';
+      default:
+        return count == 1 ? '1 candidate found' : '$count candidates found';
+    }
+  }
+
+  String get nearbyTalentNoCandidates {
+    switch (localeName) {
+      case 'it':
+        return 'Nessun candidato trovato';
+      case 'ar':
+        return 'لم يتم العثور على مرشحين';
+      default:
+        return 'No candidates found';
+    }
+  }
+
+  String nearbyTalentNoRoleCandidates(String role) {
+    switch (localeName) {
+      case 'it':
+        return 'Nessun candidato $role trovato';
+      case 'ar':
+        return 'لم يتم العثور على مرشحين لوظيفة $role';
+      default:
+        return 'No $role candidates found';
+    }
+  }
+
+  String get nearbyTalentViewAction {
+    switch (localeName) {
+      case 'it':
+        return 'Vedi';
+      case 'ar':
+        return 'عرض';
+      default:
+        return 'View';
+    }
+  }
+
+  String get nearbyTalentMarkAction {
+    switch (localeName) {
+      case 'it':
+        return 'Segna';
+      case 'ar':
+        return 'تحديد';
+      default:
+        return 'Mark';
+    }
+  }
+
+  String get nearbyTalentMarkedAction {
+    switch (localeName) {
+      case 'it':
+        return 'Segnato';
+      case 'ar':
+        return 'تم التحديد';
+      default:
+        return 'Marked';
+    }
+  }
+
+  String get nearbyTalentOpenMessagesAction {
+    switch (localeName) {
+      case 'it':
+        return 'Apri messaggi';
+      case 'ar':
+        return 'افتح الرسائل';
+      default:
+        return 'Open Messages';
+    }
+  }
 }
 
 /// Business Nearby Talent screen with list view and role filters.
@@ -168,6 +256,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
 
   // ── Summary ──
   Widget _summaryRow() {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Row(
@@ -183,8 +272,8 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
           const SizedBox(width: AppSpacing.xs),
           Text(
               _displayed.isEmpty
-                  ? 'No results'
-                  : '${_displayed.length} candidate${_displayed.length == 1 ? '' : 's'} found',
+                  ? l.nearbyTalentNoResults
+                  : l.nearbyTalentCandidatesFound(_displayed.length),
               style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
@@ -242,6 +331,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
   }
 
   Widget _emptyState() {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
@@ -262,8 +352,10 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
             children: [
               Text(
                   _selectedRole != 'All'
-                      ? 'No ${_selectedRole.toLowerCase()} candidates found'
-                      : 'No candidates found',
+                      ? l.nearbyTalentNoRoleCandidates(
+                          _selectedRole.toLowerCase(),
+                        )
+                      : l.nearbyTalentNoCandidates,
                   style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -298,6 +390,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
 
   // ── Candidate Card ──
   Widget _candidateCard(BusinessNearbyTalentCandidate c) {
+    final l = AppLocalizations.of(context);
     final id = c.id;
     final isMarked = _markedCandidates.contains(id);
     return Container(
@@ -392,14 +485,16 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
           Row(
             children: [
               _smallAction(
-                'View',
+                l.nearbyTalentViewAction,
                 Icons.person,
                 AppColors.teal,
                 () => context.push('/business/candidate/$id'),
               ),
               const SizedBox(width: AppSpacing.sm),
               _smallAction(
-                  isMarked ? 'Marked' : 'Mark',
+                  isMarked
+                      ? l.nearbyTalentMarkedAction
+                      : l.nearbyTalentMarkAction,
                   isMarked ? Icons.bookmark : Icons.bookmark_border,
                   isMarked ? AppColors.amber : AppColors.secondary, () {
                 setState(() {
@@ -412,7 +507,7 @@ class _BusinessNearbyTalentViewState extends State<BusinessNearbyTalentView> {
               }),
               const SizedBox(width: AppSpacing.sm),
               _smallAction(
-                  'Open Messages',
+                  l.nearbyTalentOpenMessagesAction,
                   Icons.chat_bubble_outline,
                   AppColors.indigo,
                   () => context.push('/business/messages')),
