@@ -84,7 +84,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
 
   Future<void> _openCandidateMessages() async {
     final provider = context.read<BusinessMessagesProvider>();
-    if (provider.conversations.isEmpty && !provider.loading) {
+    if (provider.conversations.isEmpty) {
       try {
         await provider.load();
       } catch (_) {
