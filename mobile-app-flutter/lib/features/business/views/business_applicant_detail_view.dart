@@ -78,6 +78,31 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
     }
   }
 
+  Future<void> _openApplicantMessages(Applicant applicant) async {
+    final provider = context.read<BusinessMessagesProvider>();
+    if (provider.conversations.isEmpty && !provider.loading) {
+      try {
+        await provider.load();
+      } catch (_) {
+        // Fall back to the messages area below.
+      }
+    }
+    if (!mounted) return;
+    final conversation = provider.conversations
+        .where(
+          (c) =>
+              (applicant.candidateId?.isNotEmpty == true &&
+                  c.candidateId == applicant.candidateId) ||
+              c.candidateName.toLowerCase() == applicant.name.toLowerCase(),
+        )
+        .firstOrNull;
+    if (conversation != null) {
+      context.push('/business/chat/${conversation.id}');
+      return;
+    }
+    context.push('/business/messages');
+  }
+
   void _confirmReject(String name) {
     showDialog(
       context: context,
@@ -291,7 +316,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                   label: 'Message',
                   color: AppColors.teal,
                   filled: false,
-                  onTap: () {},
+                  onTap: () => _openApplicantMessages(a),
                 ),
               ),
               const SizedBox(width: 8),

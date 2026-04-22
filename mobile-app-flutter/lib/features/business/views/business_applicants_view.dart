@@ -141,6 +141,31 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
     }
   }
 
+  Future<void> _openApplicantMessages(Applicant applicant) async {
+    final provider = context.read<BusinessMessagesProvider>();
+    if (provider.conversations.isEmpty && !provider.loading) {
+      try {
+        await provider.load();
+      } catch (_) {
+        // Fall back to the messages area below.
+      }
+    }
+    if (!mounted) return;
+    final conversation = provider.conversations
+        .where(
+          (c) =>
+              (applicant.candidateId?.isNotEmpty == true &&
+                  c.candidateId == applicant.candidateId) ||
+              c.candidateName.toLowerCase() == applicant.name.toLowerCase(),
+        )
+        .firstOrNull;
+    if (conversation != null) {
+      context.push('/business/chat/${conversation.id}');
+      return;
+    }
+    context.push('/business/messages');
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessApplicantsProvider>();
@@ -323,6 +348,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
                           shortlisting:
                               _shortlistingIds.contains(filtered[i].id),
                           onShortlist: () => _shortlistApplicant(filtered[i]),
+                          onMessage: () => _openApplicantMessages(filtered[i]),
                         ),
                   ),
           ),
@@ -352,10 +378,12 @@ class _ApplicantCard extends StatelessWidget {
   final Applicant applicant;
   final bool shortlisting;
   final Future<void> Function() onShortlist;
+  final Future<void> Function() onMessage;
   const _ApplicantCard({
     required this.applicant,
     required this.shortlisting,
     required this.onShortlist,
+    required this.onMessage,
   });
 
   Color _avatarColor(String initials) {
@@ -466,11 +494,7 @@ class _ApplicantCard extends StatelessWidget {
                 _ActionButton(
                   label: '\uD83D\uDCAC Message',
                   color: AppColors.secondary,
-                  onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(AppLocalizations.of(context).messagingComingSoon), duration: const Duration(seconds: 1)),
-                    );
-                  },
+                  onTap: onMessage,
                 ),
               ],
             ),
