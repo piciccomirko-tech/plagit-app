@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/providers/business_providers.dart';
 
@@ -50,8 +51,69 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
     return list
         .where((a) =>
             a.name.toLowerCase().contains(q) ||
-            a.role.toLowerCase().contains(q))
+            a.role.toLowerCase().contains(q) ||
+            (a.jobTitle?.toLowerCase().contains(q) ?? false))
         .toList();
+  }
+
+  List<Applicant> _applySort(List<Applicant> list) {
+    final sorted = List<Applicant>.from(list);
+    switch (_selectedSort) {
+      case 'Most Experienced':
+        sorted.sort(
+          (a, b) => _experienceScore(b.experience).compareTo(
+            _experienceScore(a.experience),
+          ),
+        );
+        break;
+      case 'Best Match':
+        sorted.sort((a, b) {
+          final match = _matchScore(b).compareTo(_matchScore(a));
+          if (match != 0) return match;
+          return _experienceScore(b.experience).compareTo(
+            _experienceScore(a.experience),
+          );
+        });
+        break;
+      case 'Newest':
+      default:
+        sorted.sort((a, b) => _recencyScore(a.date).compareTo(_recencyScore(b.date)));
+        break;
+    }
+    return sorted;
+  }
+
+  int _experienceScore(String raw) {
+    final match = RegExp(r'(\d+)').firstMatch(raw);
+    return int.tryParse(match?.group(1) ?? '') ?? 0;
+  }
+
+  int _recencyScore(String raw) {
+    final value = raw.trim().toLowerCase();
+    final match = RegExp(r'(\d+)').firstMatch(value);
+    final amount = int.tryParse(match?.group(1) ?? '') ?? 0;
+    if (value.contains('hr')) return amount;
+    if (value.contains('hour')) return amount;
+    if (value.contains('day')) return amount * 24;
+    if (value.contains('week')) return amount * 24 * 7;
+    if (value.contains('month')) return amount * 24 * 30;
+    return 1 << 30;
+  }
+
+  int _matchScore(Applicant applicant) {
+    final statusScore = switch (applicant.status) {
+      ApplicantStatus.interviewScheduled => 5,
+      ApplicantStatus.interviewInvited => 4,
+      ApplicantStatus.shortlisted => 3,
+      ApplicantStatus.underReview => 2,
+      ApplicantStatus.applied => 1,
+      ApplicantStatus.hired => 0,
+      ApplicantStatus.rejected => -1,
+      ApplicantStatus.withdrawn => -2,
+    };
+    return statusScore * 100 +
+        (applicant.verified ? 10 : 0) +
+        _experienceScore(applicant.experience);
   }
 
   @override
@@ -91,7 +153,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context).retry),
               ),
             ],
           ),
@@ -101,7 +163,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
 
     // ── Content state ──
     final selectedFilter = provider.filter;
-    final filtered = _applySearch(provider.applicants);
+    final filtered = _applySort(_applySearch(provider.applicants));
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -145,7 +207,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: _filters.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, index) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final f = _filters[i];
                 final active = f == selectedFilter;
@@ -321,7 +383,7 @@ class _ApplicantCard extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        'Applying for: ${applicant.role}',
+                        'Applying for: ${applicant.jobTitle ?? applicant.role}',
                         style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                       ),
                       Text(
@@ -373,7 +435,7 @@ class _ApplicantCard extends StatelessWidget {
                   color: AppColors.secondary,
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Messaging coming soon'), duration: Duration(seconds: 1)),
+                      SnackBar(content: Text(AppLocalizations.of(context).messagingComingSoon), duration: const Duration(seconds: 1)),
                     );
                   },
                 ),
