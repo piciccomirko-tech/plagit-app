@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_job.dart';
 import 'package:plagit/providers/business_providers.dart';
 
@@ -17,6 +18,67 @@ class BusinessJobsView extends StatefulWidget {
 class _BusinessJobsViewState extends State<BusinessJobsView> {
   static const _filters = ['All', 'Active', 'Draft', 'Paused', 'Closed'];
 
+  String _localText(
+    BuildContext context, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _filterLabel(AppLocalizations l, String id) => switch (id) {
+        'All' => l.filterAll,
+        'Active' => _localText(
+          context,
+          en: 'Active',
+          it: 'Attive',
+          ar: 'نشطة',
+        ),
+        'Draft' => _localText(
+          context,
+          en: 'Draft',
+          it: 'Bozze',
+          ar: 'مسودات',
+        ),
+        'Paused' => _localText(
+          context,
+          en: 'Paused',
+          it: 'In pausa',
+          ar: 'متوقفة',
+        ),
+        'Closed' => _localText(
+          context,
+          en: 'Closed',
+          it: 'Chiuse',
+          ar: 'مغلقة',
+        ),
+        _ => id,
+      };
+
+  String _retryLabel(BuildContext context) =>
+      _localText(context, en: 'Retry', it: 'Riprova', ar: 'إعادة المحاولة');
+
+  String _jobsCountLabel(BuildContext context, int count) => _localText(
+        context,
+        en: '$count jobs',
+        it: '$count lavori',
+        ar: '$count وظائف',
+      );
+
+  String _noJobsForFilterLabel(BuildContext context, String filter) => _localText(
+        context,
+        en: 'No jobs for $filter',
+        it: 'Nessun lavoro per $filter',
+        ar: 'لا توجد وظائف ضمن $filter',
+      );
+
+  String _myJobsTitle(BuildContext context) =>
+      _localText(context, en: 'My Jobs', it: 'I miei lavori', ar: 'وظائفي');
+
   @override
   void initState() {
     super.initState();
@@ -28,6 +90,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessJobsProvider>();
+    final l = AppLocalizations.of(context);
 
     // ── Loading state ──
     if (provider.loading) {
@@ -62,7 +125,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: const Text('Retry'),
+                child: Text(_retryLabel(context)),
               ),
             ],
           ),
@@ -87,7 +150,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: _filters.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, index) => const SizedBox(width: 8),
               itemBuilder: (_, i) {
                 final f = _filters[i];
                 final active = f == selectedFilter;
@@ -102,7 +165,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
                     ),
                     child: Center(
                       child: Text(
-                        f,
+                        _filterLabel(l, f),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -120,7 +183,7 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              '${jobs.length} jobs',
+              _jobsCountLabel(context, jobs.length),
               style: const TextStyle(fontSize: 13, color: AppColors.secondary),
             ),
           ),
@@ -136,7 +199,10 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
                         Icon(Icons.work_off_outlined, size: 56, color: AppColors.tertiary),
                         const SizedBox(height: 12),
                         Text(
-                          'No $selectedFilter jobs',
+                          _noJobsForFilterLabel(
+                            context,
+                            _filterLabel(l, selectedFilter),
+                          ),
                           style: const TextStyle(fontSize: 16, color: AppColors.secondary),
                         ),
                       ],
@@ -158,9 +224,9 @@ class _BusinessJobsViewState extends State<BusinessJobsView> {
       backgroundColor: Colors.white,
       elevation: 0,
       centerTitle: false,
-      title: const Text(
-        'My Jobs',
-        style: TextStyle(
+      title: Text(
+        _myJobsTitle(context),
+        style: const TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
           color: AppColors.charcoal,
@@ -180,8 +246,56 @@ class _JobCard extends StatelessWidget {
   final BusinessJob job;
   const _JobCard({required this.job});
 
+  String _localText(
+    BuildContext context, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _applicantsCountLabel(BuildContext context, int count) => _localText(
+        context,
+        en: '$count applicants',
+        it: '$count candidati',
+        ar: '$count متقدمين',
+      );
+
+  String _jobMenuLabel(BuildContext context, String key) => switch (key) {
+        'edit' => _localText(
+          context,
+          en: 'Edit',
+          it: 'Modifica',
+          ar: 'تعديل',
+        ),
+        'pause' => _localText(
+          context,
+          en: 'Pause',
+          it: 'Metti in pausa',
+          ar: 'إيقاف مؤقت',
+        ),
+        'close' => _localText(
+          context,
+          en: 'Close',
+          it: 'Chiudi',
+          ar: 'إغلاق',
+        ),
+        'duplicate' => _localText(
+          context,
+          en: 'Duplicate',
+          it: 'Duplica',
+          ar: 'تكرار',
+        ),
+        _ => key,
+      };
+
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return GestureDetector(
       onTap: () => context.push('/business/job/${job.id}'),
       child: Container(
@@ -208,7 +322,10 @@ class _JobCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                StatusBadge(status: job.status.displayName),
+                StatusBadge(
+                  status: job.status.displayName,
+                  label: job.status.localizedLabel(l),
+                ),
                 if (job.urgent) ...[
                   const SizedBox(width: 6),
                   Container(
@@ -217,9 +334,9 @@ class _JobCard extends StatelessWidget {
                       color: AppColors.red.withValues(alpha: 0.10),
                       borderRadius: BorderRadius.circular(100),
                     ),
-                    child: const Text(
-                      'Urgent',
-                      style: TextStyle(
+                    child: Text(
+                      l.urgentBadge,
+                      style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         color: AppColors.red,
@@ -262,7 +379,7 @@ class _JobCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
-                    '${job.applicants} applicants',
+                    _applicantsCountLabel(context, job.applicants),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -272,18 +389,30 @@ class _JobCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  'Posted ${job.posted}',
+                  l.postedAgo(job.posted),
                   style: const TextStyle(fontSize: 11, color: AppColors.secondary),
                 ),
                 const Spacer(),
                 PopupMenuButton<String>(
                   icon: const Icon(Icons.more_vert, size: 20, color: AppColors.secondary),
                   onSelected: (v) {},
-                  itemBuilder: (_) => const [
-                    PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    PopupMenuItem(value: 'pause', child: Text('Pause')),
-                    PopupMenuItem(value: 'close', child: Text('Close')),
-                    PopupMenuItem(value: 'duplicate', child: Text('Duplicate')),
+                  itemBuilder: (_) => [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Text(_jobMenuLabel(context, 'edit')),
+                    ),
+                    PopupMenuItem(
+                      value: 'pause',
+                      child: Text(_jobMenuLabel(context, 'pause')),
+                    ),
+                    PopupMenuItem(
+                      value: 'close',
+                      child: Text(_jobMenuLabel(context, 'close')),
+                    ),
+                    PopupMenuItem(
+                      value: 'duplicate',
+                      child: Text(_jobMenuLabel(context, 'duplicate')),
+                    ),
                   ],
                 ),
               ],
