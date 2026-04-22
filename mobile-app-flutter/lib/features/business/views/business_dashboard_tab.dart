@@ -29,6 +29,36 @@ const _green = Color(0xFF2ECC70);
 const _amber = Color(0xFFF59E33);
 const _indigo = Color(0xFF6676F0);
 
+extension _BusinessDashboardL10nX on AppLocalizations {
+  String _local({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    if (localeName.startsWith('it')) return it;
+    if (localeName.startsWith('ar')) return ar;
+    return en;
+  }
+
+  String activeJobsShort(int count) => _local(
+        en: '$count active jobs',
+        it: '$count lavori attivi',
+        ar: '$count وظائف نشطة',
+      );
+
+  String newThisWeekCount(int count) => _local(
+        en: '+$count this week',
+        it: '+$count questa settimana',
+        ar: '+$count هذا الأسبوع',
+      );
+
+  String newApplicantsToReview(int count) => _local(
+        en: '$count new applicants to review',
+        it: '$count nuovi candidati da rivedere',
+        ar: '$count متقدمين جدد للمراجعة',
+      );
+}
+
 
 BoxShadow get _subtleShadow => BoxShadow(
       color: Colors.black.withValues(alpha: 0.06),
@@ -74,6 +104,9 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
     final t = AppLocalizations.of(context);
     return h < 12 ? t.goodMorning : h < 17 ? t.goodAfternoon : t.goodEvening;
   }
+
+  String _candidateRouteId(Applicant applicant) =>
+      applicant.candidateId ?? applicant.id;
 
   @override
   Widget build(BuildContext context) {
@@ -260,13 +293,13 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                             FadeTransition(opacity: _pulseCtrl.drive(Tween(begin: 0.4, end: 1.0)),
                               child: Container(width: 5, height: 5, decoration: const BoxDecoration(color: _green, shape: BoxShape.circle))),
                             const SizedBox(width: 6),
-                            Text('${data.activeJobs.length} active', style: const TextStyle(fontSize: 11, color: _green)),
+                            Text(AppLocalizations.of(context).activeJobsShort(data.activeJobs.length), style: const TextStyle(fontSize: 11, color: _green)),
                             const SizedBox(width: 14),
                           ],
                           if (data.totalApplicants > 0) ...[
                             const Icon(CupertinoIcons.arrow_up, size: 10, color: _tealMain),
                             const SizedBox(width: 4),
-                            Text('${data.totalApplicants} new this week', style: const TextStyle(fontSize: 11, color: _tealMain)),
+                            Text(AppLocalizations.of(context).newThisWeekCount(data.totalApplicants), style: const TextStyle(fontSize: 11, color: _tealMain)),
                           ],
                         ]),
                         // Dynamic status updates
@@ -277,10 +310,10 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                             decoration: BoxDecoration(color: const Color(0xFFF2F2F7), borderRadius: BorderRadius.circular(10)),
                             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                               if (data.totalApplicants > 0)
-                                _statusLine(CupertinoIcons.person_badge_plus, '${data.totalApplicants} new applicants to review', const Color(0xFFFF9500)),
+                                _statusLine(CupertinoIcons.person_badge_plus, AppLocalizations.of(context).newApplicantsToReview(data.totalApplicants), const Color(0xFFFF9500)),
                               if (data.unreadMessages > 0) ...[
                                 if (data.totalApplicants > 0) const SizedBox(height: 6),
-                                _statusLine(CupertinoIcons.bubble_left_bubble_right, '${data.unreadMessages} unread message${data.unreadMessages > 1 ? 's' : ''}', const Color(0xFF5856D6)),
+                                _statusLine(CupertinoIcons.bubble_left_bubble_right, AppLocalizations.of(context).unreadMessagesCount(data.unreadMessages), const Color(0xFF5856D6)),
                               ],
                               if (data.nextInterview != null) ...[
                                 if (data.totalApplicants > 0 || data.unreadMessages > 0) const SizedBox(height: 6),
@@ -303,7 +336,9 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                       const SizedBox(width: 8),
                       _StatCard(icon: CupertinoIcons.person_badge_plus_fill, color: const Color(0xFFFF9500), count: data.totalApplicants, label: AppLocalizations.of(context).newApplicants, badge: data.totalApplicants > 0 ? AppLocalizations.of(context).newNotification : null, onTap: () {
                         if (data.recentApplicants.isNotEmpty) {
-                          context.push('/business/candidate/${data.recentApplicants.first.id}');
+                          context.push(
+                            '/business/candidate/${_candidateRouteId(data.recentApplicants.first)}',
+                          );
                         } else {
                           context.push('/business/applicants');
                         }
@@ -321,7 +356,9 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                     child: GestureDetector(
                       onTap: () {
                         if (data.totalApplicants > 0 && data.recentApplicants.isNotEmpty) {
-                          context.push('/business/candidate/${data.recentApplicants.first.id}');
+                          context.push(
+                            '/business/candidate/${_candidateRouteId(data.recentApplicants.first)}',
+                          );
                         } else if (data.unreadMessages > 0) { context.push('/business/messages'); }
                         else if (data.nextInterview != null) { context.push('/business/interview/${data.nextInterview!.id}'); }
                         else { context.push('/business/post-job'); }
@@ -628,7 +665,11 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
             itemBuilder: (context, i) {
               final a = data.recentApplicants[i];
               return GestureDetector(
-                onTap: () { debugPrint('[Dashboard] TAP applicant id=${a.id}, pushing /business/applicant/${a.id}'); context.push('/business/candidate/${a.id}'); },
+                onTap: () {
+                  final routeId = _candidateRouteId(a);
+                  debugPrint('[Dashboard] TAP applicant id=${a.id}, candidateId=${a.candidateId}, pushing /business/candidate/$routeId');
+                  context.push('/business/candidate/$routeId');
+                },
                 child: Container(
                   width: 110, padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: _subtleBorder, boxShadow: [_subtleShadow]),
@@ -658,7 +699,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
       child: GestureDetector(
-        onTap: () => context.push('/business/candidate/${a.id}'),
+        onTap: () => context.push('/business/candidate/${_candidateRouteId(a)}'),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: _subtleBorder, boxShadow: [_subtleShadow]),
@@ -698,7 +739,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
         return Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: GestureDetector(
-            onTap: () => context.push('/business/candidate/${a.id}'),
+            onTap: () => context.push('/business/candidate/${_candidateRouteId(a)}'),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: _subtleBorder, boxShadow: [_subtleShadow]),
@@ -737,7 +778,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
         ...data.recentApplicants.map((a) => Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
           child: GestureDetector(
-            onTap: () => context.push('/business/candidate/${a.id}'),
+            onTap: () => context.push('/business/candidate/${_candidateRouteId(a)}'),
             child: Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: _subtleBorder, boxShadow: [_subtleShadow]),
@@ -821,7 +862,14 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
             itemBuilder: (context, i) {
               final a = results[i];
               return GestureDetector(
-                onTap: () { setState(() { _showSearch = false; _searchQuery = ''; _searchCtrl.clear(); }); context.push('/business/candidate/${a.id}'); },
+                onTap: () {
+                  setState(() {
+                    _showSearch = false;
+                    _searchQuery = '';
+                    _searchCtrl.clear();
+                  });
+                  context.push('/business/candidate/${_candidateRouteId(a)}');
+                },
                 child: Padding(padding: const EdgeInsets.only(bottom: 8), child: Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 3))]),
