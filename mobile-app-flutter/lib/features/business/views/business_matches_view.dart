@@ -279,14 +279,24 @@ class _BusinessMatchesViewState extends State<BusinessMatchesView> {
             // Actions
             Row(
               children: [
-                _actionChip('Accept', Icons.check, AppColors.teal, true,
-                    () {}),
+                _actionChip(
+                  'View',
+                  Icons.person,
+                  AppColors.teal,
+                  true,
+                  () => context.push('/business/candidate/${c.candidateId}'),
+                ),
                 const SizedBox(width: AppSpacing.md),
                 _actionChip(
-                    'Deny', Icons.close, AppColors.urgent, false, () => _deny(id)),
+                  'Hide',
+                  Icons.visibility_off,
+                  AppColors.urgent,
+                  false,
+                  () => _deny(id),
+                ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () => context.push('/business/messages'),
                   child: const Icon(Icons.chat_bubble_outline,
                       size: 14, color: AppColors.indigo),
                 ),
