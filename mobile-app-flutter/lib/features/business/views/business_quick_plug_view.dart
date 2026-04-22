@@ -328,11 +328,32 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
   }
 
   void _syncPlanState(BusinessSubscription subscription) {
+    _queueDeckBootstrapForPlan(subscription);
+  }
+
+  Future<void> _retryDeckLoad(BusinessSubscription subscription) async {
     final canUseQuickPlug = EntitlementService.canUseQuickPlug(subscription);
     final dailyLimit = EntitlementService.dailySwipeLimit(subscription);
-    final planKey =
-        '${subscription.plan.name}:$dailyLimit:$canUseQuickPlug';
-    if (_syncedPlanKey == planKey) return;
+    _syncedPlanKey = '${subscription.plan.name}:$dailyLimit:$canUseQuickPlug';
+
+    final provider = context.read<BusinessQuickPlugProvider>();
+    provider.syncEntitlements(
+      canUseQuickPlug: canUseQuickPlug,
+      dailyLimit: dailyLimit,
+    );
+    if (canUseQuickPlug) {
+      await provider.load();
+    }
+  }
+
+  void _queueDeckBootstrapForPlan(
+    BusinessSubscription subscription, {
+    bool force = false,
+  }) {
+    final canUseQuickPlug = EntitlementService.canUseQuickPlug(subscription);
+    final dailyLimit = EntitlementService.dailySwipeLimit(subscription);
+    final planKey = '${subscription.plan.name}:$dailyLimit:$canUseQuickPlug';
+    if (!force && _syncedPlanKey == planKey) return;
     _syncedPlanKey = planKey;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -404,7 +425,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                       Text(provider.error!, style: const TextStyle(color: AppColors.secondary)),
                       const SizedBox(height: 12),
                       GestureDetector(
-                        onTap: () => context.read<BusinessQuickPlugProvider>().load(),
+                        onTap: () async => _retryDeckLoad(subscription),
                         child: Text(AppLocalizations.of(context).retryAction, style: const TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
                       ),
                     ],
