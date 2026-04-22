@@ -17,9 +17,33 @@ class BusinessApplicantDetailView extends StatefulWidget {
 }
 
 class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailView> {
+  bool _shortlisting = false;
+
   Color _avatarColor(String initials) {
     final hue = (initials.hashCode % 360).abs().toDouble();
     return HSLColor.fromAHSL(1, hue, 0.5, 0.45).toColor();
+  }
+
+  Future<void> _shortlistApplicant(String applicantId, String name) async {
+    if (_shortlisting) return;
+    setState(() => _shortlisting = true);
+    try {
+      await context.read<BusinessApplicantsProvider>().shortlist(applicantId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('$name shortlisted'),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), duration: const Duration(seconds: 1)),
+      );
+    } finally {
+      if (mounted) setState(() => _shortlisting = false);
+    }
   }
 
   void _confirmReject(String name) {
@@ -159,15 +183,12 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               Expanded(
                 child: _ActionBtn(
                   icon: Icons.star_outline,
-                  label: 'Shortlist',
+                  label: _shortlisting ? '...' : 'Shortlist',
                   color: AppColors.teal,
                   filled: true,
-                  onTap: () {
-                    context.read<BusinessApplicantsProvider>().shortlist(widget.applicantId);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${a.name} shortlisted'), duration: const Duration(seconds: 1)),
-                    );
-                  },
+                  onTap: _shortlisting
+                      ? null
+                      : () => _shortlistApplicant(widget.applicantId, a.name),
                 ),
               ),
               const SizedBox(width: 8),
@@ -405,7 +426,7 @@ class _ActionBtn extends StatelessWidget {
   final Color color;
   final bool filled;
   final bool textOnly;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
 
   const _ActionBtn({
     required this.icon,

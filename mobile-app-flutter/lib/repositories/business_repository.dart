@@ -159,6 +159,17 @@ class BusinessRepository {
     return Applicant.fromJson(payload as Map<String, dynamic>);
   }
 
+  Future<void> shortlistApplicant(String applicantId) async {
+    if (_isMock) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      return;
+    }
+    await _api.patch(
+      '/business/applicants/$applicantId/status',
+      body: {'status': 'shortlisted'},
+    );
+  }
+
   // ======================================
   // -- Conversations --
   // ======================================

@@ -19,6 +19,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
   String _selectedSort = 'Newest';
   final _searchController = TextEditingController();
   String _searchQuery = '';
+  final Set<String> _shortlistingIds = <String>{};
 
   static const _filters = [
     'All',
@@ -114,6 +115,30 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
     return statusScore * 100 +
         (applicant.verified ? 10 : 0) +
         _experienceScore(applicant.experience);
+  }
+
+  Future<void> _shortlistApplicant(Applicant applicant) async {
+    if (_shortlistingIds.contains(applicant.id)) return;
+    setState(() => _shortlistingIds.add(applicant.id));
+    try {
+      await context.read<BusinessApplicantsProvider>().shortlist(applicant.id);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).xShortlisted(applicant.name)),
+          duration: const Duration(seconds: 1),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString()), duration: const Duration(seconds: 1)),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _shortlistingIds.remove(applicant.id));
+      }
+    }
   }
 
   @override
@@ -293,7 +318,12 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filtered.length,
                     itemBuilder: (_, i) =>
-                        _ApplicantCard(applicant: filtered[i]),
+                        _ApplicantCard(
+                          applicant: filtered[i],
+                          shortlisting:
+                              _shortlistingIds.contains(filtered[i].id),
+                          onShortlist: () => _shortlistApplicant(filtered[i]),
+                        ),
                   ),
           ),
         ],
@@ -320,7 +350,13 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
 
 class _ApplicantCard extends StatelessWidget {
   final Applicant applicant;
-  const _ApplicantCard({required this.applicant});
+  final bool shortlisting;
+  final Future<void> Function() onShortlist;
+  const _ApplicantCard({
+    required this.applicant,
+    required this.shortlisting,
+    required this.onShortlist,
+  });
 
   Color _avatarColor(String initials) {
     final hue = (initials.hashCode % 360).abs().toDouble();
@@ -409,14 +445,11 @@ class _ApplicantCard extends StatelessWidget {
             Row(
               children: [
                 _ActionButton(
-                  label: '\u2713 Shortlist',
+                  label: shortlisting
+                      ? '...'
+                      : '\u2713 Shortlist',
                   color: AppColors.teal,
-                  onTap: () {
-                    context.read<BusinessApplicantsProvider>().shortlist(applicant.id);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('${applicant.name} shortlisted'), duration: const Duration(seconds: 1)),
-                    );
-                  },
+                  onTap: shortlisting ? null : onShortlist,
                 ),
                 const SizedBox(width: 8),
                 _ActionButton(
@@ -451,7 +484,7 @@ class _ApplicantCard extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final String label;
   final Color color;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   const _ActionButton({required this.label, required this.color, required this.onTap});
 
   @override

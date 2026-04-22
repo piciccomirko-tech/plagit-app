@@ -215,32 +215,9 @@ class BusinessApplicantsProvider extends ChangeNotifier {
     load();
   }
 
-  /// Shortlist an applicant (optimistic UI update).
-  void shortlist(String applicantId) {
-    final idx = _applicants.indexWhere((a) => a.id == applicantId);
-    if (idx >= 0) {
-      final old = _applicants[idx];
-      _applicants[idx] = Applicant(
-        id: old.id,
-        name: old.name,
-        initials: old.initials,
-        role: old.role,
-        jobId: old.jobId,
-        status: ApplicantStatus.shortlisted,
-        date: old.date,
-        experience: old.experience,
-        location: old.location,
-        verified: old.verified,
-        bio: old.bio,
-        languages: old.languages,
-        availability: old.availability,
-        salaryExpectation: old.salaryExpectation,
-        interviewDate: old.interviewDate,
-        interviewType: old.interviewType,
-      );
-      notifyListeners();
-    }
-    // TODO: _repo.updateApplicantStatus(applicantId, 'Shortlisted');
+  Future<void> shortlist(String applicantId) async {
+    await _repo.shortlistApplicant(applicantId);
+    await load();
   }
 
   /// Reject an applicant (optimistic UI update).
