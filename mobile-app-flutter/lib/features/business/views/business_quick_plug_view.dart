@@ -109,6 +109,61 @@ extension _QuickPlugL10n on AppLocalizations {
         return '$planName: $dailyLimit swipes available per day';
     }
   }
+
+  String get quickPlugRequiresPaidPlan {
+    switch (localeName) {
+      case 'it':
+        return 'Quick Plug richiede Pro o Premium';
+      case 'ar':
+        return 'Quick Plug يتطلب Pro أو Premium';
+      default:
+        return 'Quick Plug requires Pro or Premium';
+    }
+  }
+
+  String get quickPlugPassed {
+    switch (localeName) {
+      case 'it':
+        return 'Passato';
+      case 'ar':
+        return 'تم التخطي';
+      default:
+        return 'Passed';
+    }
+  }
+
+  String get quickPlugInterested {
+    switch (localeName) {
+      case 'it':
+        return 'INTERESSATO';
+      case 'ar':
+        return 'مهتم';
+      default:
+        return 'INTERESTED';
+    }
+  }
+
+  String get quickPlugPassLabel {
+    switch (localeName) {
+      case 'it':
+        return 'PASSA';
+      case 'ar':
+        return 'تخطي';
+      default:
+        return 'PASS';
+    }
+  }
+
+  String get verifiedLabel {
+    switch (localeName) {
+      case 'it':
+        return 'Verificato';
+      case 'ar':
+        return 'موثق';
+      default:
+        return 'Verified';
+    }
+  }
 }
 
 /// Business Quick Plug — Tinder-style swipe deck for candidate discovery.
@@ -180,7 +235,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               content: Text(
                 interested
                     ? AppLocalizations.of(context).interestSent
-                    : 'Passed',
+                    : AppLocalizations.of(context).quickPlugPassed,
               ),
               duration: const Duration(milliseconds: 1200),
               behavior: SnackBarBehavior.floating,
@@ -378,8 +433,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
         children: [
           const Icon(Icons.bolt, size: 28, color: AppColors.purple),
           const SizedBox(width: 8),
-          const Text(
-            'Quick Plug',
+          Text(
+            AppLocalizations.of(context).quickPlug,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -500,8 +555,8 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
           children: [
             const Icon(Icons.lock, size: 48, color: AppColors.amber),
             const SizedBox(height: 16),
-            const Text(
-              'Quick Plug requires Pro or Premium',
+            Text(
+              AppLocalizations.of(context).quickPlugRequiresPaidPlan,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 20,
@@ -624,7 +679,10 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                   left: 40,
                   child: Transform.rotate(
                     angle: -0.2,
-                    child: _buildSwipeLabel('INTERESTED', AppColors.green),
+                    child: _buildSwipeLabel(
+                      AppLocalizations.of(context).quickPlugInterested,
+                      AppColors.green,
+                    ),
                   ),
                 ),
               if (_dragX < -40)
@@ -633,7 +691,10 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                   right: 40,
                   child: Transform.rotate(
                     angle: 0.2,
-                    child: _buildSwipeLabel('PASS', AppColors.red),
+                    child: _buildSwipeLabel(
+                      AppLocalizations.of(context).quickPlugPassLabel,
+                      AppColors.red,
+                    ),
                   ),
                 ),
             ],
@@ -803,13 +864,13 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             const SizedBox(height: 4),
 
             // Role + experience
-              Text(
-                candidate.experience.isNotEmpty
-                    ? '${candidate.role} \u00B7 ${candidate.experience}'
-                    : candidate.role,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Colors.grey.shade500,
+            Text(
+              candidate.experience.isNotEmpty
+                  ? '${candidate.role} \u00B7 ${candidate.experience}'
+                  : candidate.role,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.grey.shade500,
               ),
             ),
             const SizedBox(height: 4),
@@ -832,12 +893,12 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             if (candidate.verified)
               Row(
                 mainAxisSize: MainAxisSize.min,
-                children: const [
-                  Icon(Icons.verified, size: 16, color: AppColors.teal),
-                  SizedBox(width: 4),
+                children: [
+                  const Icon(Icons.verified, size: 16, color: AppColors.teal),
+                  const SizedBox(width: 4),
                   Text(
-                    'Verified',
-                    style: TextStyle(
+                    AppLocalizations.of(context).verifiedLabel,
+                    style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.bold,
                       color: AppColors.teal,
