@@ -62,7 +62,6 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
         insights.totalApplicants == 0 &&
         insights.interviewCount == 0 &&
         insights.hiredCount == 0 &&
-        insights.unreadMessages == 0 &&
         insights.totalJobViews == 0 &&
         insights.totalJobSaves == 0 &&
         insights.topPerformingJob == null;
@@ -221,17 +220,17 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
           _insightCard(
             title: 'Interviews',
             number: insights.interviewCount.toString(),
-            change: 'Scheduled or tracked interviews',
+            change: 'Currently tracked interviews',
             icon: Icons.calendar_today_outlined,
             color: AppColors.online,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
-            title: 'Unread Messages',
-            number: insights.unreadMessages.toString(),
-            change: 'Pending conversation replies',
-            icon: Icons.mark_chat_unread_outlined,
-            color: AppColors.indigo,
+            title: 'Hires',
+            number: insights.hiredCount.toString(),
+            change: 'Recorded hires so far',
+            icon: Icons.person_add_alt_1_outlined,
+            color: AppColors.online,
           ),
           const SizedBox(height: AppSpacing.sectionGap),
           _insightCard(
@@ -286,11 +285,19 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context).topPerformingJob,
+              'Top current job',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.charcoal,
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Ranked by applicants, views and saves',
+              style: TextStyle(
+                fontSize: 12,
+                color: AppColors.secondary,
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
