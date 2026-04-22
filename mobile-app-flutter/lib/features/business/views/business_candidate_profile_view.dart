@@ -207,9 +207,9 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                               height: 48,
                               child: ElevatedButton.icon(
                                 onPressed: () => context.push('/business/schedule-interview', extra: {
-                                  'candidateId': widget.candidateId,
+                                  'candidateId': _candidate?.id ?? widget.candidateId,
                                   'candidateName': _candidate?.name ?? '',
-                                  'jobTitle': _candidate?.jobType ?? _candidate?.role ?? '',
+                                  'jobTitle': _candidate?.role ?? _candidate?.jobType ?? '',
                                 }),
                                 icon: const Icon(Icons.event_outlined, size: 18),
                                 label: Text(l.interviewAction),
