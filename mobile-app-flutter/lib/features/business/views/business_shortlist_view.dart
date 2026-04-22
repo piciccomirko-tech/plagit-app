@@ -172,9 +172,7 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
 
   Widget _candidateCard(BusinessShortlistCandidate c) {
     return GestureDetector(
-      onTap: () {
-        // Navigate to candidate profile placeholder
-      },
+      onTap: () => context.push('/business/candidate/${c.candidateId}'),
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.xl),
         decoration: BoxDecoration(
