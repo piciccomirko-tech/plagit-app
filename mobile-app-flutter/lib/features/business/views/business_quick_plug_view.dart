@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:plagit/core/services/entitlement_service.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/business_subscription.dart';
 import 'package:plagit/models/quick_plug_candidate.dart';
 import 'package:plagit/providers/business_providers.dart';
 
@@ -45,6 +47,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     with SingleTickerProviderStateMixin {
   double _dragX = 0;
   bool _isAnimatingOut = false;
+  String? _syncedPlanKey;
 
   late AnimationController _animController;
   late Animation<double> _animX;
@@ -56,9 +59,6 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BusinessQuickPlugProvider>().load();
-    });
   }
 
   @override
@@ -147,9 +147,42 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     return HSLColor.fromAHSL(1, hue, 0.55, 0.55).toColor();
   }
 
+  void _syncPlanState(BusinessSubscription subscription) {
+    final planKey =
+        '${subscription.plan.name}:${subscription.dailySwipeLimit}:${subscription.canUseQuickPlug}';
+    if (_syncedPlanKey == planKey) return;
+    _syncedPlanKey = planKey;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final provider = context.read<BusinessQuickPlugProvider>();
+      provider.setDailyLimit(EntitlementService.dailySwipeLimit(subscription));
+      if (EntitlementService.canUseQuickPlug(subscription)) {
+        provider.load();
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final subscription = context.watch<BusinessAuthProvider>().subscription;
+    final canUseQuickPlug = EntitlementService.canUseQuickPlug(subscription);
+    _syncPlanState(subscription);
     final provider = context.watch<BusinessQuickPlugProvider>();
+
+    if (!canUseQuickPlug) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildAppBar(),
+              Expanded(child: _buildLockedPrompt(subscription)),
+            ],
+          ),
+        ),
+      );
+    }
 
     // Loading state
     if (provider.loading) {
@@ -205,7 +238,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
         child: Column(
           children: [
             _buildAppBar(),
-            Expanded(child: _buildBody(provider)),
+            Expanded(child: _buildBody(provider, subscription)),
           ],
         ),
       ),
@@ -256,7 +289,10 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
   }
 
   // -- Body --
-  Widget _buildBody(BusinessQuickPlugProvider provider) {
+  Widget _buildBody(
+    BusinessQuickPlugProvider provider,
+    BusinessSubscription subscription,
+  ) {
     // Empty state: all candidates reviewed
     if (!provider.showUpgrade && !provider.hasCards) {
       return _buildEmptyState();
@@ -264,7 +300,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
     // Upgrade prompt
     if (provider.showUpgrade) {
-      return _buildUpgradePrompt();
+      return _buildUpgradePrompt(subscription, provider.dailyLimit);
     }
 
     // Swipe deck
@@ -329,8 +365,64 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
+  Widget _buildLockedPrompt(BusinessSubscription subscription) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.lock, size: 48, color: AppColors.amber),
+            const SizedBox(height: 16),
+            const Text(
+              'Quick Plug requires Pro or Premium',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: AppColors.charcoal,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '${subscription.plan.displayName} plan: upgrade to unlock candidate swipes.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+            ),
+            const SizedBox(height: 24),
+            GestureDetector(
+              onTap: () => context.push('/business/subscription'),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                decoration: BoxDecoration(
+                  color: AppColors.teal,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: const Text(
+                  'Upgrade to Premium',
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   // -- Upgrade Prompt --
-  Widget _buildUpgradePrompt() {
+  Widget _buildUpgradePrompt(
+    BusinessSubscription subscription,
+    int dailyLimit,
+  ) {
+    final planLine = dailyLimit >= 999
+        ? '${subscription.plan.displayName} plan: daily swipes available now.'
+        : '${subscription.plan.displayName} plan: $dailyLimit swipes per day';
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -349,8 +441,9 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             ),
             const SizedBox(height: 8),
             Text(
-              'Free plan: 5 swipes per day',
+              planLine,
               style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
             GestureDetector(

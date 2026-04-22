@@ -399,6 +399,7 @@ class BusinessQuickPlugProvider extends ChangeNotifier {
   List<QuickPlugCandidate> get deck => _deck;
   int get currentIndex => _currentIndex;
   int get swipesUsed => _swipesUsed;
+  int get dailyLimit => _dailyLimit;
   bool get loading => _loading;
   String? get error => _error;
   bool get showUpgrade => _showUpgrade;
