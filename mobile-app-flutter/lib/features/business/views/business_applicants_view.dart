@@ -31,6 +31,101 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
   ];
   static const _sorts = ['Newest', 'Most Experienced', 'Best Match'];
 
+  String _localText(
+    BuildContext context, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _filterLabel(BuildContext context, String filter) {
+    final l = AppLocalizations.of(context);
+    return switch (filter) {
+      'All' => l.filterAll,
+      'Applied' => l.statusApplied,
+      'Shortlisted' => _localText(
+        context,
+        en: 'Shortlisted',
+        it: 'In shortlist',
+        ar: 'في القائمة المختصرة',
+      ),
+      'Under Review' => _localText(
+        context,
+        en: 'Under Review',
+        it: 'In revisione',
+        ar: 'قيد المراجعة',
+      ),
+      'Interview' => _localText(
+        context,
+        en: 'Interview',
+        it: 'Colloquio',
+        ar: 'مقابلة',
+      ),
+      'Rejected' => l.statusRejected,
+      _ => filter,
+    };
+  }
+
+  String _sortLabel(BuildContext context, String sort) {
+    return switch (sort) {
+      'Newest' => _localText(
+        context,
+        en: 'Newest',
+        it: 'Più recenti',
+        ar: 'الأحدث',
+      ),
+      'Most Experienced' => _localText(
+        context,
+        en: 'Most Experienced',
+        it: 'Più esperienza',
+        ar: 'الأكثر خبرة',
+      ),
+      'Best Match' => _localText(
+        context,
+        en: 'Best Match',
+        it: 'Miglior match',
+        ar: 'أفضل تطابق',
+      ),
+      _ => sort,
+    };
+  }
+
+  String _applicantsCountLabel(BuildContext context, int count) {
+    if (Localizations.localeOf(context).languageCode == 'it') {
+      return '$count candidati';
+    }
+    if (Localizations.localeOf(context).languageCode == 'ar') {
+      return '$count متقدمين';
+    }
+    return '$count applicants';
+  }
+
+  String _searchApplicantsHint(BuildContext context) => _localText(
+        context,
+        en: 'Search applicants...',
+        it: 'Cerca candidati...',
+        ar: 'ابحث عن المتقدمين...',
+      );
+
+  String _noApplicantsFound(BuildContext context) => _localText(
+        context,
+        en: 'No applicants found',
+        it: 'Nessun candidato trovato',
+        ar: 'لم يتم العثور على متقدمين',
+      );
+
+  String _applicantsTitle(BuildContext context) => _localText(
+        context,
+        en: 'Applicants',
+        it: 'Candidati',
+        ar: 'المتقدمون',
+      );
+
   @override
   void initState() {
     super.initState();
@@ -228,7 +323,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
               controller: _searchController,
               onChanged: (v) => setState(() => _searchQuery = v),
               decoration: InputDecoration(
-                hintText: 'Search applicants...',
+                hintText: _searchApplicantsHint(context),
                 hintStyle: const TextStyle(color: AppColors.tertiary, fontSize: 14),
                 prefixIcon: const Icon(Icons.search, color: AppColors.tertiary, size: 20),
                 filled: true,
@@ -272,7 +367,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
                     ),
                     child: Center(
                       child: Text(
-                        f,
+                        _filterLabel(context, f),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -297,7 +392,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
                   child: GestureDetector(
                     onTap: () => setState(() => _selectedSort = s),
                     child: Text(
-                      s,
+                      _sortLabel(context, s),
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -315,7 +410,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              '${filtered.length} applicants',
+              _applicantsCountLabel(context, filtered.length),
               style: const TextStyle(fontSize: 13, color: AppColors.secondary),
             ),
           ),
@@ -331,10 +426,12 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
                         Icon(Icons.person_off_outlined,
                             size: 56, color: AppColors.tertiary),
                         const SizedBox(height: 12),
-                        const Text(
-                          'No applicants found',
-                          style:
-                              TextStyle(fontSize: 16, color: AppColors.secondary),
+                        Text(
+                          _noApplicantsFound(context),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: AppColors.secondary,
+                          ),
                         ),
                       ],
                     ),
@@ -362,14 +459,7 @@ class _BusinessApplicantsViewState extends State<BusinessApplicantsView> {
       backgroundColor: Colors.white,
       elevation: 0,
       centerTitle: false,
-      title: const Text(
-        'Applicants',
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: AppColors.charcoal,
-        ),
-      ),
+      title: Text(_applicantsTitle(context)),
     );
   }
 }
@@ -390,6 +480,41 @@ class _ApplicantCard extends StatelessWidget {
     final hue = (initials.hashCode % 360).abs().toDouble();
     return HSLColor.fromAHSL(1, hue, 0.5, 0.45).toColor();
   }
+
+  String _localText(
+    BuildContext context, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _applyingForLabel(BuildContext context) => _localText(
+        context,
+        en: 'Applying for: ${applicant.jobTitle ?? applicant.role}',
+        it: 'Candidatura per: ${applicant.jobTitle ?? applicant.role}',
+        ar: 'يتقدم إلى: ${applicant.jobTitle ?? applicant.role}',
+      );
+
+  String _appliedDateLabel(BuildContext context) => _localText(
+        context,
+        en: 'Applied ${applicant.date}',
+        it: 'Candidatura ${applicant.date}',
+        ar: 'تم التقديم ${applicant.date}',
+      );
+
+  String _shortlistLabel(BuildContext context) =>
+      _localText(context, en: 'Shortlist', it: 'Shortlist', ar: 'القائمة المختصرة');
+
+  String _rejectLabel(BuildContext context) =>
+      _localText(context, en: 'Reject', it: 'Rifiuta', ar: 'رفض');
+
+  String _messageLabel(BuildContext context) =>
+      _localText(context, en: 'Message', it: 'Messaggio', ar: 'رسالة');
 
   @override
   Widget build(BuildContext context) {
@@ -447,7 +572,7 @@ class _ApplicantCard extends StatelessWidget {
                         ],
                       ),
                       Text(
-                        'Applying for: ${applicant.jobTitle ?? applicant.role}',
+                        _applyingForLabel(context),
                         style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                       ),
                       Text(
@@ -464,7 +589,7 @@ class _ApplicantCard extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: Text(
-                'Applied ${applicant.date}',
+                _appliedDateLabel(context),
                 style: const TextStyle(fontSize: 11, color: AppColors.secondary),
               ),
             ),
@@ -475,13 +600,13 @@ class _ApplicantCard extends StatelessWidget {
                 _ActionButton(
                   label: shortlisting
                       ? '...'
-                      : '\u2713 Shortlist',
+                      : '\u2713 ${_shortlistLabel(context)}',
                   color: AppColors.teal,
                   onTap: shortlisting ? null : onShortlist,
                 ),
                 const SizedBox(width: 8),
                 _ActionButton(
-                  label: '\u2717 Reject',
+                  label: '\u2717 ${_rejectLabel(context)}',
                   color: AppColors.red,
                   onTap: () {
                     context.read<BusinessApplicantsProvider>().reject(applicant.id);
@@ -492,7 +617,7 @@ class _ApplicantCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 _ActionButton(
-                  label: '\uD83D\uDCAC Message',
+                  label: '\uD83D\uDCAC ${_messageLabel(context)}',
                   color: AppColors.secondary,
                   onTap: onMessage,
                 ),

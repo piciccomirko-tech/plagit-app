@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/repositories/business_repository.dart';
@@ -28,6 +29,118 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
     final hue = (initials.hashCode % 360).abs().toDouble();
     return HSLColor.fromAHSL(1, hue, 0.5, 0.45).toColor();
   }
+
+  String _localText({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    final code = Localizations.localeOf(context).languageCode;
+    if (code == 'it') return it;
+    if (code == 'ar') return ar;
+    return en;
+  }
+
+  String _applicantTitle() =>
+      _localText(en: 'Applicant', it: 'Candidato', ar: 'المتقدم');
+
+  String _retryLabel() => _localText(en: 'Retry', it: 'Riprova', ar: 'إعادة المحاولة');
+
+  String _rejectApplicantTitle() => _localText(
+        en: 'Reject Applicant',
+        it: 'Rifiuta candidato',
+        ar: 'رفض المتقدم',
+      );
+
+  String _rejectApplicantConfirm(String name) => _localText(
+        en: 'Are you sure you want to reject $name?',
+        it: 'Vuoi davvero rifiutare $name?',
+        ar: 'هل تريد بالتأكيد رفض $name؟',
+      );
+
+  String _rejectActionLabel() =>
+      _localText(en: 'Reject', it: 'Rifiuta', ar: 'رفض');
+
+  String _shortlistLabel() =>
+      _localText(en: 'Shortlist', it: 'Shortlist', ar: 'القائمة المختصرة');
+
+  String _messageLabel() =>
+      _localText(en: 'Message', it: 'Messaggio', ar: 'رسالة');
+
+  String _interviewLabel() =>
+      _localText(en: 'Interview', it: 'Colloquio', ar: 'مقابلة');
+
+  String _aboutLabel() => _localText(en: 'About', it: 'Profilo', ar: 'نبذة');
+
+  String _experienceLabel() =>
+      _localText(en: 'Experience', it: 'Esperienza', ar: 'الخبرة');
+
+  String _previousEmployerLabel() => _localText(
+        en: 'Previous Employer',
+        it: 'Datore di lavoro precedente',
+        ar: 'صاحب العمل السابق',
+      );
+
+  String _earlierVenueLabel() => _localText(
+        en: 'Earlier Venue',
+        it: 'Struttura precedente',
+        ar: 'مكان عمل سابق',
+      );
+
+  String _skillsLabel() => _localText(en: 'Skills', it: 'Competenze', ar: 'المهارات');
+
+  String _customerServiceLabel() => _localText(
+        en: 'Customer Service',
+        it: 'Servizio clienti',
+        ar: 'خدمة العملاء',
+      );
+
+  String _teamworkLabel() =>
+      _localText(en: 'Teamwork', it: 'Lavoro di squadra', ar: 'العمل الجماعي');
+
+  String _communicationLabel() =>
+      _localText(en: 'Communication', it: 'Comunicazione', ar: 'التواصل');
+
+  String _languagesLabel() =>
+      _localText(en: 'Languages', it: 'Lingue', ar: 'اللغات');
+
+  String _availabilityLabel() =>
+      _localText(en: 'Availability', it: 'Disponibilità', ar: 'التوفر');
+
+  String _salaryExpectationLabel() => _localText(
+        en: 'Salary Expectation',
+        it: 'Aspettativa salariale',
+        ar: 'الراتب المتوقع',
+      );
+
+  String _cvLabel() => 'CV';
+
+  String _viewCvLabel() =>
+      _localText(en: 'View CV', it: 'Apri CV', ar: 'عرض السيرة الذاتية');
+
+  String _applicationSectionLabel() =>
+      _localText(en: 'Application', it: 'Candidatura', ar: 'الترشح');
+
+  String _appliedToLabel(Applicant a) => _localText(
+        en: 'Applied to ${a.role} on ${a.date}',
+        it: 'Candidatura per ${a.role} il ${a.date}',
+        ar: 'تم التقديم إلى ${a.role} في ${a.date}',
+      );
+
+  String _timelineSectionLabel() =>
+      _localText(en: 'Timeline', it: 'Timeline', ar: 'الجدول الزمني');
+
+  String _appliedLabel() =>
+      _localText(en: 'Applied', it: 'Candidatura inviata', ar: 'تم التقديم');
+
+  String _viewedLabel() =>
+      _localText(en: 'Viewed', it: 'Visualizzato', ar: 'تمت المشاهدة');
+
+  String _pendingReviewLabel() => _localText(
+        en: 'Pending Review',
+        it: 'In attesa di revisione',
+        ar: 'بانتظار المراجعة',
+      );
 
   Future<void> _shortlistApplicant(String applicantId, String name) async {
     if (_shortlisting) return;
@@ -107,10 +220,13 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Reject Applicant'),
-        content: Text('Are you sure you want to reject $name?'),
+        title: Text(_rejectApplicantTitle()),
+        content: Text(_rejectApplicantConfirm(name)),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.of(context).cancelAction),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pop(ctx);
@@ -119,7 +235,10 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                 SnackBar(content: Text('$name rejected'), duration: const Duration(seconds: 1)),
               );
             },
-            child: const Text('Reject', style: TextStyle(color: AppColors.red)),
+            child: Text(
+              _rejectActionLabel(),
+              style: const TextStyle(color: AppColors.red),
+            ),
           ),
         ],
       ),
@@ -128,6 +247,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final provider = context.watch<BusinessApplicantsProvider>();
     final Applicant? providerApplicant = provider.applicants
         .where((a) => a.id == widget.applicantId)
@@ -145,7 +265,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               icon: const BackChevron(size: 28, color: AppColors.charcoal),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+            title: Text(_applicantTitle(), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           ),
           body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
         );
@@ -167,7 +287,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               icon: const BackChevron(size: 28, color: AppColors.charcoal),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+            title: Text(_applicantTitle(), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           ),
           body: const Center(child: CircularProgressIndicator(color: AppColors.teal)),
         );
@@ -183,7 +303,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               icon: const BackChevron(size: 28, color: AppColors.charcoal),
               onPressed: () => context.pop(),
             ),
-            title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+            title: Text(_applicantTitle(), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           ),
           body: Center(
             child: Column(
@@ -204,7 +324,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text('Retry'),
+                  child: Text(_retryLabel()),
                 ),
               ],
             ),
@@ -221,10 +341,13 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text('Applicant', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
+          title: Text(_applicantTitle(), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         ),
-        body: const Center(
-          child: Text('Applicant not found', style: TextStyle(color: AppColors.secondary)),
+        body: Center(
+          child: Text(
+            AppLocalizations.of(context).applicantNotFound,
+            style: const TextStyle(color: AppColors.secondary),
+          ),
         ),
       );
     }
@@ -301,7 +424,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               Expanded(
                 child: _ActionBtn(
                   icon: Icons.star_outline,
-                  label: _shortlisting ? '...' : 'Shortlist',
+                  label: _shortlisting ? '...' : _shortlistLabel(),
                   color: AppColors.teal,
                   filled: true,
                   onTap: _shortlisting
@@ -313,7 +436,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               Expanded(
                 child: _ActionBtn(
                   icon: Icons.chat_bubble_outline,
-                  label: 'Message',
+                  label: _messageLabel(),
                   color: AppColors.teal,
                   filled: false,
                   onTap: () => _openApplicantMessages(a),
@@ -323,7 +446,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               Expanded(
                 child: _ActionBtn(
                   icon: Icons.calendar_today_outlined,
-                  label: 'Interview',
+                  label: _interviewLabel(),
                   color: AppColors.purple,
                   filled: true,
                   onTap: () => context.push(
@@ -340,7 +463,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
               Expanded(
                 child: _ActionBtn(
                   icon: Icons.close,
-                  label: 'Reject',
+                  label: _rejectActionLabel(),
                   color: AppColors.red,
                   filled: false,
                   textOnly: true,
@@ -353,14 +476,14 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
 
           // -- A. About --
           _SectionCard(
-            title: 'About',
+            title: _aboutLabel(),
             child: Text(a.bio ?? '', style: const TextStyle(fontSize: 14, color: AppColors.secondary, height: 1.6)),
           ),
           const SizedBox(height: 12),
 
           // -- B. Experience --
           _SectionCard(
-            title: 'Experience',
+            title: _experienceLabel(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -368,13 +491,13 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
                 const SizedBox(height: 10),
                 _ExperienceItem(
                   title: a.role,
-                  company: 'Previous Employer',
+                  company: _previousEmployerLabel(),
                   period: '2023 - Present',
                 ),
                 const Divider(height: 16, color: AppColors.divider),
                 _ExperienceItem(
                   title: a.role,
-                  company: 'Earlier Venue',
+                  company: _earlierVenueLabel(),
                   period: '2021 - 2023',
                 ),
               ],
@@ -384,11 +507,16 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
 
           // -- C. Skills --
           _SectionCard(
-            title: 'Skills',
+            title: _skillsLabel(),
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: [a.role, 'Customer Service', 'Teamwork', 'Communication']
+              children: [
+                a.role,
+                _customerServiceLabel(),
+                _teamworkLabel(),
+                _communicationLabel(),
+              ]
                   .map((s) => Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
@@ -404,7 +532,7 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
 
           // -- D. Languages --
           _SectionCard(
-            title: 'Languages',
+            title: _languagesLabel(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: (a.languages ?? [])
@@ -425,31 +553,34 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
 
           // -- E. Availability --
           _SectionCard(
-            title: 'Availability',
+            title: _availabilityLabel(),
             child: Text(a.availability ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
           ),
           const SizedBox(height: 12),
 
           // -- F. Salary Expectation --
           _SectionCard(
-            title: 'Salary Expectation',
+            title: _salaryExpectationLabel(),
             child: Text(a.salaryExpectation ?? '', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.teal)),
           ),
           const SizedBox(height: 12),
 
           // -- CV section --
           _SectionCard(
-            title: 'CV',
+            title: _cvLabel(),
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('CV viewer coming soon'), duration: Duration(seconds: 1)),
+                    SnackBar(
+                      content: Text(AppLocalizations.of(context).cvViewerComingSoon),
+                      duration: const Duration(seconds: 1),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.description_outlined, size: 18),
-                label: const Text('View CV'),
+                label: Text(_viewCvLabel()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.teal,
                   foregroundColor: Colors.white,
@@ -472,14 +603,14 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Application', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+                Text(_applicationSectionLabel(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
                 const SizedBox(height: 10),
                 Text(
-                  'Applied to ${a.role} on ${a.date}',
+                  _appliedToLabel(a),
                   style: const TextStyle(fontSize: 13, color: AppColors.secondary),
                 ),
                 const SizedBox(height: 8),
-                StatusBadge(status: a.status.displayName),
+                StatusBadge(status: a.status.displayName, label: a.status.localizedLabel(l)),
               ],
             ),
           ),
@@ -496,10 +627,10 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Timeline', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
+                Text(_timelineSectionLabel(), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.charcoal)),
                 const SizedBox(height: 12),
-                _TimelineStep(label: 'Applied', done: true),
-                _TimelineStep(label: 'Viewed', done: true),
+                _TimelineStep(label: _appliedLabel(), done: true),
+                _TimelineStep(label: _viewedLabel(), done: true),
                 _TimelineStep(
                   label: _timelineStatusLabel(a.status.displayName),
                   done: _isStatusReached(a.status.displayName),
@@ -517,15 +648,23 @@ class _BusinessApplicantDetailViewState extends State<BusinessApplicantDetailVie
   String _timelineStatusLabel(String status) {
     switch (status) {
       case 'Shortlisted':
-        return 'Shortlisted';
+        return _shortlistLabel();
       case 'Interview Scheduled':
-        return 'Interview Scheduled';
+        return _localText(
+          en: 'Interview Scheduled',
+          it: 'Colloquio fissato',
+          ar: 'تم تحديد المقابلة',
+        );
       case 'Rejected':
-        return 'Rejected';
+        return _rejectActionLabel();
       case 'Under Review':
-        return 'Under Review';
+        return _localText(
+          en: 'Under Review',
+          it: 'In revisione',
+          ar: 'قيد المراجعة',
+        );
       default:
-        return 'Pending Review';
+        return _pendingReviewLabel();
     }
   }
 
