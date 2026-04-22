@@ -265,6 +265,15 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                           onTap: () => context.push('/business/messages'),
                           child: const Icon(CupertinoIcons.bubble_left_bubble_right, size: 22, color: Color(0xFF3C3C43)),
                         ),
+                        const SizedBox(width: 18),
+                        GestureDetector(
+                          onTap: () => setState(() => _showCreateMenu = true),
+                          child: const Icon(
+                            CupertinoIcons.add_circled_solid,
+                            size: 24,
+                            color: _tealMain,
+                          ),
+                        ),
                       ],
                     ),
                   ),
