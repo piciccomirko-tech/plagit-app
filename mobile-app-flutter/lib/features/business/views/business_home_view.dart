@@ -5,6 +5,45 @@ import 'package:plagit/features/business/views/business_jobs_view.dart';
 import 'package:plagit/features/business/views/business_applicants_view.dart';
 import 'package:plagit/features/business/views/business_quick_plug_view.dart';
 import 'package:plagit/features/business/views/business_profile_view.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+
+extension _BusinessHomeL10nX on AppLocalizations {
+  String _local({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    if (localeName.startsWith('it')) return it;
+    if (localeName.startsWith('ar')) return ar;
+    return en;
+  }
+
+  String get businessHomeTabHome => _local(
+        en: 'Home',
+        it: 'Home',
+        ar: 'الرئيسية',
+      );
+
+  String get businessHomeTabJobs => jobs;
+
+  String get businessHomeTabApplicants => _local(
+        en: 'Applicants',
+        it: 'Candidati',
+        ar: 'المتقدمون',
+      );
+
+  String get businessHomeTabQuickPlug => _local(
+        en: 'Quick Plug',
+        it: 'Quick Plug',
+        ar: 'كويك بلج',
+      );
+
+  String get businessHomeTabProfile => _local(
+        en: 'Profile',
+        it: 'Profilo',
+        ar: 'الملف',
+      );
+}
 
 class BusinessHomeView extends StatefulWidget {
   const BusinessHomeView({super.key});
@@ -26,6 +65,7 @@ class _BusinessHomeViewState extends State<BusinessHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       body: IndexedStack(index: _currentIndex, children: _tabs),
       bottomNavigationBar: Container(
@@ -54,12 +94,12 @@ class _BusinessHomeViewState extends State<BusinessHomeView> {
                   [Icons.bolt_outlined, Icons.bolt],
                   [Icons.business_outlined, Icons.business],
                 ];
-                const labels = [
-                  'Home',
-                  'Jobs',
-                  'Applicants',
-                  'Quick Plug',
-                  'Profile',
+                final labels = [
+                  l.businessHomeTabHome,
+                  l.businessHomeTabJobs,
+                  l.businessHomeTabApplicants,
+                  l.businessHomeTabQuickPlug,
+                  l.businessHomeTabProfile,
                 ];
                 final color = isPurple
                     ? (active

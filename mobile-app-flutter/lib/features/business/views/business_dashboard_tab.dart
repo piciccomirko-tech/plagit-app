@@ -81,6 +81,22 @@ extension _BusinessDashboardL10nX on AppLocalizations {
         it: 'Questa ricerca al momento controlla solo i candidati recenti.',
         ar: 'هذا البحث يبحث حالياً فقط ضمن المتقدمين الجدد.',
       );
+
+  String monthAbbr(int month) => switch (month) {
+        1 => _local(en: 'JAN', it: 'GEN', ar: 'ينا'),
+        2 => _local(en: 'FEB', it: 'FEB', ar: 'فبر'),
+        3 => _local(en: 'MAR', it: 'MAR', ar: 'مار'),
+        4 => _local(en: 'APR', it: 'APR', ar: 'أبر'),
+        5 => _local(en: 'MAY', it: 'MAG', ar: 'ماي'),
+        6 => _local(en: 'JUN', it: 'GIU', ar: 'يون'),
+        7 => _local(en: 'JUL', it: 'LUG', ar: 'يول'),
+        8 => _local(en: 'AUG', it: 'AGO', ar: 'أغس'),
+        9 => _local(en: 'SEP', it: 'SET', ar: 'سبت'),
+        10 => _local(en: 'OCT', it: 'OTT', ar: 'أكت'),
+        11 => _local(en: 'NOV', it: 'NOV', ar: 'نوف'),
+        12 => _local(en: 'DEC', it: 'DIC', ar: 'ديس'),
+        _ => '',
+      };
 }
 
 
@@ -1130,10 +1146,10 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
   }
 
   String _monthAbbr(String date) {
-    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
     if (date.length < 7) return '';
     final m = int.tryParse(date.substring(5, 7));
-    return (m != null && m >= 1 && m <= 12) ? months[m - 1] : '';
+    if (m == null || m < 1 || m > 12) return '';
+    return AppLocalizations.of(context).monthAbbr(m);
   }
 
   Widget _statusLine(IconData icon, String text, Color color) {
