@@ -200,14 +200,19 @@ extension _BusinessInsightsL10n on AppLocalizations {
 /// Business Insights / Analytics screen.
 /// Mirrors BusinessInsightsView.swift.
 class BusinessInsightsView extends StatefulWidget {
-  const BusinessInsightsView({super.key});
+  const BusinessInsightsView({
+    super.key,
+    this.repo,
+  });
+
+  final BusinessRepository? repo;
 
   @override
   State<BusinessInsightsView> createState() => _BusinessInsightsViewState();
 }
 
 class _BusinessInsightsViewState extends State<BusinessInsightsView> {
-  final BusinessRepository _repo = BusinessRepository();
+  late final BusinessRepository _repo;
 
   bool _loading = true;
   String? _error;
@@ -216,6 +221,7 @@ class _BusinessInsightsViewState extends State<BusinessInsightsView> {
   @override
   void initState() {
     super.initState();
+    _repo = widget.repo ?? BusinessRepository();
     _load();
   }
 
