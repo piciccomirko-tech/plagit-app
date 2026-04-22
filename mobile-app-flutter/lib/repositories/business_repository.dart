@@ -77,7 +77,9 @@ class BusinessRepository {
     final params = <String, String>{};
     if (filter != null && filter != 'All') params['status'] = filter;
     final resp = await _api.get('/business/jobs', queryParams: params.isNotEmpty ? params : null);
-    final list = resp['data'] as List<dynamic>? ?? [];
+    final payload =
+        resp['data'] ?? resp['jobs'] ?? (resp is List<dynamic> ? resp : null);
+    final list = payload is List<dynamic> ? payload : const <dynamic>[];
     return list.map((e) => BusinessJob.fromJson(e as Map<String, dynamic>)).toList();
   }
 
@@ -89,7 +91,8 @@ class BusinessRepository {
       );
     }
     final resp = await _api.get('/business/jobs/$jobId');
-    return BusinessJob.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
+    final payload = resp['data'] ?? resp['job'] ?? resp;
+    return BusinessJob.fromJson(payload as Map<String, dynamic>);
   }
 
   Future<void> postJob(Map<String, dynamic> data) async {

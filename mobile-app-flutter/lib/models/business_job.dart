@@ -5,6 +5,7 @@
 library;
 
 import 'package:plagit/core/mock/mock_data.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 // -----------------------------------------
 // BusinessJobStatus
@@ -17,7 +18,7 @@ enum BusinessJobStatus {
   paused,
   closed;
 
-  /// Human-readable label for UI display.
+  /// Canonical English label — used as API key and for StatusBadge color match.
   String get displayName => switch (this) {
         active => 'Active',
         draft => 'Draft',
@@ -25,9 +26,35 @@ enum BusinessJobStatus {
         closed => 'Closed',
       };
 
+  /// Localized label for UI rendering.
+  String localizedLabel(AppLocalizations l) => switch (this) {
+        active => _fallbackLabel(
+          l,
+          en: 'Active',
+          it: 'Attivo',
+          ar: 'نشط',
+        ),
+        draft => _fallbackLabel(
+          l,
+          en: 'Draft',
+          it: 'Bozza',
+          ar: 'مسودة',
+        ),
+        paused => _fallbackLabel(
+          l,
+          en: 'Paused',
+          it: 'In pausa',
+          ar: 'متوقف مؤقتا',
+        ),
+        closed => l.statusClosed,
+      };
+
   /// Parse a string into the enum value. Falls back to [draft].
   static BusinessJobStatus fromString(String s) {
-    final lower = s.toLowerCase();
+    final lower = s
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[\s_-]+'), '');
     return switch (lower) {
       'active' => active,
       'draft' => draft,
@@ -35,6 +62,17 @@ enum BusinessJobStatus {
       'closed' => closed,
       _ => draft,
     };
+  }
+
+  static String _fallbackLabel(
+    AppLocalizations l, {
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    if (l.localeName.startsWith('it')) return it;
+    if (l.localeName.startsWith('ar')) return ar;
+    return en;
   }
 }
 
@@ -81,26 +119,65 @@ class BusinessJob {
   // -- JSON serialisation --
 
   factory BusinessJob.fromJson(Map<String, dynamic> json) {
+    final title =
+        json['title']?.toString() ??
+        json['jobTitle']?.toString() ??
+        json['job_title']?.toString() ??
+        '';
     return BusinessJob(
-      id: json['id'] as String? ?? '',
-      title: json['title'] as String? ?? '',
-      contract: json['contract'] as String? ?? '',
-      salary: json['salary'] as String? ?? '',
-      applicants: json['applicants'] as int? ?? 0,
-      status: BusinessJobStatus.fromString(json['status'] as String? ?? 'Draft'),
-      urgent: json['urgent'] as bool? ?? false,
-      featured: json['featured'] as bool? ?? false,
-      location: json['location'] as String? ?? '',
-      posted: json['posted'] as String? ?? '',
-      views: json['views'] as int? ?? 0,
-      saves: json['saves'] as int? ?? 0,
-      description: json['description'] as String?,
-      requirements: (json['requirements'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      benefits: (json['benefits'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+      id: json['id']?.toString() ?? '',
+      title: title,
+      contract:
+          json['contract']?.toString() ??
+          json['contractType']?.toString() ??
+          json['contract_type']?.toString() ??
+          '',
+      salary:
+          json['salary']?.toString() ??
+          json['salaryRange']?.toString() ??
+          json['salary_range']?.toString() ??
+          '',
+      applicants:
+          (json['applicants'] as num?)?.toInt() ??
+          (json['applicantsCount'] as num?)?.toInt() ??
+          (json['applicants_count'] as num?)?.toInt() ??
+          (json['applicantCount'] as num?)?.toInt() ??
+          (json['applicant_count'] as num?)?.toInt() ??
+          0,
+      status: BusinessJobStatus.fromString(
+        json['status']?.toString() ?? 'Draft',
+      ),
+      urgent: _parseBool(
+        json['urgent'] ?? json['isUrgent'] ?? json['is_urgent'],
+      ),
+      featured: _parseBool(
+        json['featured'] ?? json['isFeatured'] ?? json['is_featured'],
+      ),
+      location: json['location']?.toString() ?? '',
+      posted:
+          json['posted']?.toString() ??
+          json['postedAt']?.toString() ??
+          json['posted_at']?.toString() ??
+          json['createdAt']?.toString() ??
+          json['created_at']?.toString() ??
+          '',
+      views:
+          (json['views'] as num?)?.toInt() ??
+          (json['viewsCount'] as num?)?.toInt() ??
+          (json['views_count'] as num?)?.toInt() ??
+          0,
+      saves:
+          (json['saves'] as num?)?.toInt() ??
+          (json['savesCount'] as num?)?.toInt() ??
+          (json['saves_count'] as num?)?.toInt() ??
+          0,
+      description: json['description']?.toString(),
+      requirements: _parseStringList(
+        json['requirements'] ?? json['job_requirements'],
+      ),
+      benefits: _parseStringList(
+        json['benefits'] ?? json['job_benefits'],
+      ),
     );
   }
 
@@ -127,4 +204,27 @@ class BusinessJob {
   /// Returns all mock business jobs as typed [BusinessJob] instances.
   static List<BusinessJob> mockAll() =>
       MockData.businessJobs.map((j) => BusinessJob.fromJson(j)).toList();
+
+  static bool _parseBool(Object? value) {
+    return switch (value) {
+      bool b => b,
+      num n => n != 0,
+      String s =>
+        s.toLowerCase() == 'true' || s == '1' || s.toLowerCase() == 'yes',
+      _ => false,
+    };
+  }
+
+  static List<String>? _parseStringList(Object? value) {
+    if (value is List) {
+      return value.map((e) => e.toString()).toList();
+    }
+    if (value is String && value.trim().isNotEmpty) {
+      return value
+          .split(RegExp(r'\s*,\s*'))
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+    return null;
+  }
 }
