@@ -34,7 +34,12 @@ extension _BusinessShortlistL10n on AppLocalizations {
 /// Business Shortlist screen — shortlisted candidates.
 /// Mirrors BusinessShortlistView.swift with mock data.
 class BusinessShortlistView extends StatefulWidget {
-  const BusinessShortlistView({super.key});
+  const BusinessShortlistView({
+    super.key,
+    this.repo,
+  });
+
+  final BusinessRepository? repo;
 
   @override
   State<BusinessShortlistView> createState() => _BusinessShortlistViewState();
@@ -43,12 +48,13 @@ class BusinessShortlistView extends StatefulWidget {
 class _BusinessShortlistViewState extends State<BusinessShortlistView> {
   bool _loading = true;
   String? _error;
-  final BusinessRepository _repo = BusinessRepository();
+  late final BusinessRepository _repo;
   List<BusinessShortlistCandidate> _candidates = [];
 
   @override
   void initState() {
     super.initState();
+    _repo = widget.repo ?? BusinessRepository();
     _load();
   }
 
