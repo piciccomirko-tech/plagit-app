@@ -38,6 +38,48 @@ class _BusinessScheduleInterviewViewState
   bool get _canSubmit =>
       !_submitting && _selectedDate != null && _selectedTime != null;
 
+  bool get _isArabic =>
+      Localizations.localeOf(context).languageCode.toLowerCase() == 'ar';
+
+  String _candidateLabel() => _isArabic ? 'المرشح' : 'it' == Localizations.localeOf(context).languageCode ? 'Candidato' : 'Candidate';
+
+  String _jobLabel() => _isArabic ? 'الوظيفة' : 'it' == Localizations.localeOf(context).languageCode ? 'Ruolo' : 'Job';
+
+  String _meetingLinkLabel() => _isArabic ? 'رابط الاجتماع' : 'it' == Localizations.localeOf(context).languageCode ? 'Link meeting' : 'Meeting Link';
+
+  String _selectCandidateLabel() =>
+      _isArabic ? 'اختر المرشح' : 'it' == Localizations.localeOf(context).languageCode ? 'Seleziona candidato' : 'Select candidate';
+
+  String _selectDateLabel() =>
+      _isArabic ? 'اختر التاريخ' : 'it' == Localizations.localeOf(context).languageCode ? 'Seleziona data' : 'Select date';
+
+  String _selectTimeLabel() =>
+      _isArabic ? 'اختر الوقت' : 'it' == Localizations.localeOf(context).languageCode ? 'Seleziona orario' : 'Select time';
+
+  String _interviewFormatLabel() =>
+      _isArabic ? 'نوع المقابلة' : 'it' == Localizations.localeOf(context).languageCode ? 'Modalità colloquio' : 'Interview Format';
+
+  String _notesInstructionsLabel() =>
+      _isArabic ? 'ملاحظات / تعليمات' : 'it' == Localizations.localeOf(context).languageCode ? 'Note / Istruzioni' : 'Notes / Instructions';
+
+  String _locationHint() =>
+      _isArabic ? 'أدخل موقع المقابلة' : 'it' == Localizations.localeOf(context).languageCode ? 'Inserisci luogo del colloquio' : 'Enter interview location';
+
+  String _meetingLinkHint() =>
+      _isArabic ? 'ألصق رابط الاجتماع' : 'it' == Localizations.localeOf(context).languageCode ? 'Incolla il link del meeting' : 'Paste meeting link';
+
+  String _notesHint() =>
+      _isArabic ? 'أضف أي ملاحظات للمرشح...' : 'it' == Localizations.localeOf(context).languageCode ? 'Aggiungi eventuali note per il candidato...' : 'Add any notes for the candidate...';
+
+  String _formatOptionLabel(String value) {
+    return switch (value) {
+      'In Person' => _isArabic ? 'حضوري' : 'it' == Localizations.localeOf(context).languageCode ? 'In presenza' : 'In Person',
+      'Video' => _isArabic ? 'فيديو' : 'it' == Localizations.localeOf(context).languageCode ? 'Video' : 'Video',
+      'Phone' => _isArabic ? 'هاتف' : 'it' == Localizations.localeOf(context).languageCode ? 'Telefono' : 'Phone',
+      _ => value,
+    };
+  }
+
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
@@ -119,18 +161,27 @@ class _BusinessScheduleInterviewViewState
   }
 
   String _formatDate(DateTime d) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    final months = _isArabic
+        ? const ['ينا', 'فبر', 'مار', 'أبر', 'ماي', 'يون', 'يول', 'أغس', 'سبت', 'أكت', 'نوف', 'ديس']
+        : 'it' == Localizations.localeOf(context).languageCode
+            ? const ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic']
+            : const ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    final days = _isArabic
+        ? const ['الاث', 'الثل', 'الأر', 'الخم', 'الجم', 'السب', 'الأحد']
+        : 'it' == Localizations.localeOf(context).languageCode
+            ? const ['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom']
+            : const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     return '${days[d.weekday - 1]}, ${months[d.month - 1]} ${d.day}, ${d.year}';
   }
 
   String _formatTime(TimeOfDay t) {
     final hour = t.hourOfPeriod == 0 ? 12 : t.hourOfPeriod;
     final min = t.minute.toString().padLeft(2, '0');
-    final period = t.period == DayPeriod.am ? 'AM' : 'PM';
+    final period = _isArabic
+        ? (t.period == DayPeriod.am ? 'ص' : 'م')
+        : t.period == DayPeriod.am
+            ? 'AM'
+            : 'PM';
     return '$hour:$min $period';
   }
 
@@ -144,6 +195,7 @@ class _BusinessScheduleInterviewViewState
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -154,8 +206,8 @@ class _BusinessScheduleInterviewViewState
           icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Schedule Interview',
+        title: Text(
+          l.scheduleInterviewTitle,
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -170,8 +222,8 @@ class _BusinessScheduleInterviewViewState
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Candidate
-            const Text(
-              'Candidate',
+            Text(
+              _candidateLabel(),
               style: TextStyle(fontSize: 12, color: AppColors.secondary),
             ),
             const SizedBox(height: 6),
@@ -186,7 +238,7 @@ class _BusinessScheduleInterviewViewState
               child: Text(
                 widget.candidateName.isNotEmpty
                     ? widget.candidateName
-                    : 'Select candidate',
+                    : _selectCandidateLabel(),
                 style: TextStyle(
                   fontSize: 15,
                   color: widget.candidateName.isNotEmpty
@@ -198,8 +250,8 @@ class _BusinessScheduleInterviewViewState
             const SizedBox(height: 16),
 
             // Job
-            const Text(
-              'Job',
+            Text(
+              _jobLabel(),
               style: TextStyle(fontSize: 12, color: AppColors.secondary),
             ),
             const SizedBox(height: 6),
@@ -219,8 +271,8 @@ class _BusinessScheduleInterviewViewState
             const SizedBox(height: 16),
 
             // Date
-            const Text(
-              'Date',
+            Text(
+              l.dateLabel,
               style: TextStyle(fontSize: 12, color: AppColors.secondary),
             ),
             const SizedBox(height: 6),
@@ -241,7 +293,7 @@ class _BusinessScheduleInterviewViewState
                     Text(
                       _selectedDate != null
                           ? _formatDate(_selectedDate!)
-                          : 'Select date',
+                          : _selectDateLabel(),
                       style: TextStyle(
                         fontSize: 15,
                         color: _selectedDate != null
@@ -256,8 +308,8 @@ class _BusinessScheduleInterviewViewState
             const SizedBox(height: 16),
 
             // Time
-            const Text(
-              'Time',
+            Text(
+              l.timeLabel,
               style: TextStyle(fontSize: 12, color: AppColors.secondary),
             ),
             const SizedBox(height: 6),
@@ -278,7 +330,7 @@ class _BusinessScheduleInterviewViewState
                     Text(
                       _selectedTime != null
                           ? _formatTime(_selectedTime!)
-                          : 'Select time',
+                          : _selectTimeLabel(),
                       style: TextStyle(
                         fontSize: 15,
                         color: _selectedTime != null
@@ -293,8 +345,8 @@ class _BusinessScheduleInterviewViewState
             const SizedBox(height: 16),
 
             // Interview Format
-            const Text(
-              'Interview Format',
+            Text(
+              _interviewFormatLabel(),
               style: TextStyle(fontSize: 12, color: AppColors.secondary),
             ),
             const SizedBox(height: 8),
@@ -318,7 +370,7 @@ class _BusinessScheduleInterviewViewState
                             : Border.all(color: AppColors.border),
                       ),
                       child: Text(
-                        label,
+                        _formatOptionLabel(label),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -334,15 +386,15 @@ class _BusinessScheduleInterviewViewState
 
             // Conditional: Location or Meeting Link
             if (_format == 'In Person') ...[
-              const Text(
-                'Location',
+              Text(
+                l.locationLabel,
                 style: TextStyle(fontSize: 12, color: AppColors.secondary),
               ),
               const SizedBox(height: 6),
               TextField(
                 controller: _locationCtrl,
                 decoration: InputDecoration(
-                  hintText: 'Enter interview location',
+                  hintText: _locationHint(),
                   hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
                   filled: true,
                   fillColor: Colors.white,
@@ -368,15 +420,15 @@ class _BusinessScheduleInterviewViewState
             ],
 
             if (_format == 'Video') ...[
-              const Text(
-                'Meeting Link',
+              Text(
+                _meetingLinkLabel(),
                 style: TextStyle(fontSize: 12, color: AppColors.secondary),
               ),
               const SizedBox(height: 6),
               TextField(
                 controller: _linkCtrl,
                 decoration: InputDecoration(
-                  hintText: 'Paste meeting link',
+                  hintText: _meetingLinkHint(),
                   hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
                   filled: true,
                   fillColor: Colors.white,
@@ -402,8 +454,8 @@ class _BusinessScheduleInterviewViewState
             ],
 
             // Notes
-            const Text(
-              'Notes / Instructions',
+            Text(
+              _notesInstructionsLabel(),
               style: TextStyle(fontSize: 12, color: AppColors.secondary),
             ),
             const SizedBox(height: 6),
@@ -411,7 +463,7 @@ class _BusinessScheduleInterviewViewState
               controller: _notesCtrl,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: 'Add any notes for the candidate...',
+                hintText: _notesHint(),
                 hintStyle: const TextStyle(fontSize: 14, color: AppColors.tertiary),
                 filled: true,
                 fillColor: Colors.white,
@@ -459,8 +511,8 @@ class _BusinessScheduleInterviewViewState
                           valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                         ),
                       )
-                    : const Text(
-                        'Send Interview Invite',
+                    : Text(
+                        l.sendInviteCta,
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                       ),
               ),

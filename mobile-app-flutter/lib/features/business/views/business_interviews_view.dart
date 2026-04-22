@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_interview.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
@@ -17,6 +18,16 @@ class BusinessInterviewsView extends StatefulWidget {
 
 class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
   String _filter = 'Upcoming';
+
+  String _filterLabel(BuildContext context, String label) {
+    final code = Localizations.localeOf(context).languageCode.toLowerCase();
+    return switch (label) {
+      'Upcoming' => code == 'ar' ? 'القادمة' : code == 'it' ? 'In arrivo' : 'Upcoming',
+      'Past' => code == 'ar' ? 'السابقة' : code == 'it' ? 'Passate' : 'Past',
+      'All' => AppLocalizations.of(context).all,
+      _ => label,
+    };
+  }
 
   @override
   void initState() {
@@ -78,8 +89,8 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text(
-            'Interviews',
+          title: Text(
+            AppLocalizations.of(context).interviews,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
           centerTitle: true,
@@ -102,8 +113,8 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text(
-            'Interviews',
+          title: Text(
+            AppLocalizations.of(context).interviews,
             style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
           centerTitle: true,
@@ -116,7 +127,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
               const SizedBox(height: 12),
               GestureDetector(
                 onTap: () => context.read<BusinessInterviewsProvider>().load(),
-                child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+                child: Text(AppLocalizations.of(context).retry, style: const TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -137,8 +148,8 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
           icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Interviews',
+        title: Text(
+          AppLocalizations.of(context).interviews,
           style: TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
@@ -149,8 +160,8 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
         actions: [
           TextButton(
             onPressed: () => context.push('/business/schedule-interview'),
-            child: const Text(
-              'Schedule',
+            child: Text(
+              AppLocalizations.of(context).schedule,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
@@ -186,7 +197,7 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                             : Border.all(color: AppColors.border),
                       ),
                       child: Text(
-                        label,
+                        _filterLabel(context, label),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -209,8 +220,8 @@ class _BusinessInterviewsViewState extends State<BusinessInterviewsView> {
                       children: [
                         Icon(Icons.calendar_today, size: 48, color: AppColors.tertiary),
                         const SizedBox(height: 12),
-                        const Text(
-                          'No interviews scheduled',
+                        Text(
+                          AppLocalizations.of(context).noInterviewsYet,
                           style: TextStyle(fontSize: 15, color: AppColors.secondary),
                         ),
                       ],

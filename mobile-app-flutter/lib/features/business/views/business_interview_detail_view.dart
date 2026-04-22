@@ -23,6 +23,18 @@ class _BusinessInterviewDetailViewState
   String? _localStatusOverride;
   bool _completing = false;
 
+  bool get _isArabic =>
+      Localizations.localeOf(context).languageCode.toLowerCase() == 'ar';
+
+  bool get _isItalian =>
+      Localizations.localeOf(context).languageCode.toLowerCase() == 'it';
+
+  String _localText({
+    required String en,
+    required String it,
+    required String ar,
+  }) => _isArabic ? ar : _isItalian ? it : en;
+
   String _effectiveStatus(BusinessInterview iv) =>
       _localStatusOverride ?? iv.status;
 
@@ -34,8 +46,8 @@ class _BusinessInterviewDetailViewState
   void _confirmInterview() {
     setState(() => _localStatusOverride = 'Confirmed');
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Interview confirmed'),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).interviewConfirmed),
         backgroundColor: AppColors.teal,
       ),
     );
@@ -70,22 +82,39 @@ class _BusinessInterviewDetailViewState
   }
 
   void _cancelInterview() {
+    final l = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Cancel Interview'),
-        content: const Text('Are you sure you want to cancel this interview?'),
+        title: Text(
+          _localText(
+            en: 'Cancel Interview',
+            it: 'Annulla colloquio',
+            ar: 'إلغاء المقابلة',
+          ),
+        ),
+        content: Text(l.cancelInterviewConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('No', style: TextStyle(color: AppColors.secondary)),
+            child: Text(
+              _localText(en: 'No', it: 'No', ar: 'لا'),
+              style: const TextStyle(color: AppColors.secondary),
+            ),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
               context.pop();
             },
-            child: const Text('Yes, Cancel', style: TextStyle(color: AppColors.red)),
+            child: Text(
+              _localText(
+                en: 'Yes, Cancel',
+                it: 'Sì, annulla',
+                ar: 'نعم، إلغاء',
+              ),
+              style: const TextStyle(color: AppColors.red),
+            ),
           ),
         ],
       ),
@@ -110,16 +139,20 @@ class _BusinessInterviewDetailViewState
             icon: const BackChevron(size: 28, color: AppColors.charcoal),
             onPressed: () => context.pop(),
           ),
-          title: const Text(
-            'Interview Details',
-            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
+          title: Text(
+            _localText(
+              en: 'Interview Details',
+              it: 'Dettagli colloquio',
+              ar: 'تفاصيل المقابلة',
+            ),
+            style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
           ),
           centerTitle: true,
         ),
         body: provider.loading
             ? const Center(child: CircularProgressIndicator(color: AppColors.teal))
-            : const Center(
-                child: Text('Interview not found', style: TextStyle(color: AppColors.secondary)),
+            : Center(
+                child: Text(AppLocalizations.of(context).interviewNotFound, style: const TextStyle(color: AppColors.secondary)),
               ),
       );
     }
@@ -138,9 +171,13 @@ class _BusinessInterviewDetailViewState
           icon: const BackChevron(size: 28, color: AppColors.charcoal),
           onPressed: () => context.pop(),
         ),
-        title: const Text(
-          'Interview Details',
-          style: TextStyle(
+        title: Text(
+          _localText(
+            en: 'Interview Details',
+            it: 'Dettagli colloquio',
+            ar: 'تفاصيل المقابلة',
+          ),
+          style: const TextStyle(
             fontSize: 17,
             fontWeight: FontWeight.w600,
             color: AppColors.charcoal,
@@ -229,14 +266,14 @@ class _BusinessInterviewDetailViewState
                   _infoRow(
                     Icons.calendar_today,
                     AppColors.teal,
-                    'Date',
+                    AppLocalizations.of(context).dateLabel,
                     interview.date,
                   ),
                   const Divider(height: 20, color: AppColors.divider),
                   _infoRow(
                     Icons.access_time,
                     AppColors.purple,
-                    'Time',
+                    AppLocalizations.of(context).timeLabel,
                     interview.time,
                   ),
                   const Divider(height: 20, color: AppColors.divider),
@@ -247,7 +284,7 @@ class _BusinessInterviewDetailViewState
                             ? Icons.place
                             : Icons.phone,
                     AppColors.amber,
-                    'Format',
+                    AppLocalizations.of(context).formatLabel,
                     interview.format,
                   ),
                   if (isVideo && interview.link != null) ...[
@@ -259,23 +296,31 @@ class _BusinessInterviewDetailViewState
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Meeting Link',
-                              style: TextStyle(fontSize: 12, color: AppColors.secondary),
+                            Text(
+                              _localText(
+                                en: 'Meeting Link',
+                                it: 'Link meeting',
+                                ar: 'رابط الاجتماع',
+                              ),
+                              style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                             ),
                             const SizedBox(height: 2),
                             GestureDetector(
                               onTap: () {
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Opening meeting link...'),
+                                  SnackBar(
+                                    content: Text(AppLocalizations.of(context).openingMeetingLink),
                                     backgroundColor: AppColors.teal,
                                   ),
                                 );
                               },
-                              child: const Text(
-                                'Join meeting',
-                                style: TextStyle(
+                              child: Text(
+                                _localText(
+                                  en: 'Join meeting',
+                                  it: 'Partecipa al meeting',
+                                  ar: 'انضم إلى الاجتماع',
+                                ),
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   color: AppColors.teal,
@@ -292,7 +337,7 @@ class _BusinessInterviewDetailViewState
                     _infoRow(
                       Icons.place,
                       AppColors.green,
-                      'Location',
+                      AppLocalizations.of(context).locationLabel,
                       interview.location ?? '',
                     ),
                   ],
@@ -314,9 +359,13 @@ class _BusinessInterviewDetailViewState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Notes',
-                      style: TextStyle(
+                    Text(
+                      _localText(
+                        en: 'Notes',
+                        it: 'Note',
+                        ar: 'ملاحظات',
+                      ),
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                         color: AppColors.charcoal,
@@ -350,9 +399,13 @@ class _BusinessInterviewDetailViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Confirm Interview',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    _localText(
+                      en: 'Confirm Interview',
+                      it: 'Conferma colloquio',
+                      ar: 'تأكيد المقابلة',
+                    ),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -363,8 +416,8 @@ class _BusinessInterviewDetailViewState
                 child: OutlinedButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Reschedule feature coming soon'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context).rescheduleComingSoon),
                         backgroundColor: AppColors.teal,
                       ),
                     );
@@ -376,9 +429,13 @@ class _BusinessInterviewDetailViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Reschedule',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    _localText(
+                      en: 'Reschedule',
+                      it: 'Riprogramma',
+                      ar: 'إعادة الجدولة',
+                    ),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -386,9 +443,9 @@ class _BusinessInterviewDetailViewState
               Center(
                 child: TextButton(
                   onPressed: _cancelInterview,
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
+                  child: Text(
+                    AppLocalizations.of(context).cancelAction,
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: AppColors.red,
@@ -405,8 +462,14 @@ class _BusinessInterviewDetailViewState
                 child: ElevatedButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Notes feature coming soon'),
+                      SnackBar(
+                        content: Text(
+                          _localText(
+                            en: 'Notes feature coming soon',
+                            it: 'Funzione note in arrivo',
+                            ar: 'ميزة الملاحظات قريبًا',
+                          ),
+                        ),
                         backgroundColor: AppColors.teal,
                       ),
                     );
@@ -418,9 +481,13 @@ class _BusinessInterviewDetailViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Add Notes',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    _localText(
+                      en: 'Add Notes',
+                      it: 'Aggiungi note',
+                      ar: 'إضافة ملاحظات',
+                    ),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -437,19 +504,40 @@ class _BusinessInterviewDetailViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Mark as Completed',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-                  ),
+                  child: _completing
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(AppColors.teal),
+                          ),
+                        )
+                      : Text(
+                          _localText(
+                            en: 'Mark as Completed',
+                            it: 'Segna come completato',
+                            ar: 'تحديد كمكتملة',
+                          ),
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 12),
               Center(
                 child: TextButton(
                   onPressed: _cancelInterview,
-                  child: const Text(
-                    'Cancel Interview',
-                    style: TextStyle(
+                  child: Text(
+                    _localText(
+                      en: 'Cancel Interview',
+                      it: 'Annulla colloquio',
+                      ar: 'إلغاء المقابلة',
+                    ),
+                    style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: AppColors.red,
@@ -466,8 +554,8 @@ class _BusinessInterviewDetailViewState
                 child: ElevatedButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Candidate marked as hired!'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context).candidateMarkedHired),
                         backgroundColor: AppColors.green,
                       ),
                     );
@@ -479,9 +567,13 @@ class _BusinessInterviewDetailViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Mark as Hired',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    _localText(
+                      en: 'Mark as Hired',
+                      it: 'Segna come assunto',
+                      ar: 'تحديد كتم التوظيف',
+                    ),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -492,8 +584,8 @@ class _BusinessInterviewDetailViewState
                 child: OutlinedButton(
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Feedback feature coming soon'),
+                      SnackBar(
+                        content: Text(AppLocalizations.of(context).feedbackComingSoon),
                         backgroundColor: AppColors.teal,
                       ),
                     );
@@ -505,9 +597,13 @@ class _BusinessInterviewDetailViewState
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Send Feedback',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                  child: Text(
+                    _localText(
+                      en: 'Send Feedback',
+                      it: 'Invia feedback',
+                      ar: 'إرسال الملاحظات',
+                    ),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
