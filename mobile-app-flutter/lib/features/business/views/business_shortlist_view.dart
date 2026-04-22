@@ -2,6 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
+import 'package:plagit/models/business_shortlist_candidate.dart';
+import 'package:plagit/repositories/business_repository.dart';
+
+extension _BusinessShortlistL10n on AppLocalizations {
+  String get retryAction => retry;
+  String get noShortlistedHeadline {
+    switch (localeName) {
+      case 'it':
+        return 'Nessun candidato preselezionato';
+      case 'ar':
+        return 'لا يوجد مرشحون في القائمة المختصرة';
+      default:
+        return 'No shortlisted candidates';
+    }
+  }
+
+  String get noShortlistedSubtext {
+    switch (localeName) {
+      case 'it':
+        return 'Preseleziona candidati da Vicino a te, Candidati o risultati di ricerca.';
+      case 'ar':
+        return 'اختر مرشحين من القريبين أو المتقدمين أو نتائج البحث.';
+      default:
+        return 'Shortlist candidates from Nearby, Applicants, or search results.';
+    }
+  }
+}
 
 /// Business Shortlist screen — shortlisted candidates.
 /// Mirrors BusinessShortlistView.swift with mock data.
@@ -14,7 +42,9 @@ class BusinessShortlistView extends StatefulWidget {
 
 class _BusinessShortlistViewState extends State<BusinessShortlistView> {
   bool _loading = true;
-  List<Map<String, dynamic>> _candidates = [];
+  String? _error;
+  final BusinessRepository _repo = BusinessRepository();
+  List<BusinessShortlistCandidate> _candidates = [];
 
   @override
   void initState() {
@@ -23,39 +53,25 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
   }
 
   Future<void> _load() async {
-    setState(() => _loading = true);
-    await Future.delayed(const Duration(milliseconds: 600));
-    if (!mounted) return;
     setState(() {
-      _candidates = _mockCandidates();
-      _loading = false;
+      _loading = true;
+      _error = null;
     });
+    try {
+      final candidates = await _repo.fetchShortlist();
+      if (!mounted) return;
+      setState(() {
+        _candidates = candidates;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
   }
-
-  List<Map<String, dynamic>> _mockCandidates() => [
-        {
-          'id': 'sl1',
-          'name': 'Marco Rossi',
-          'initials': 'MR',
-          'hue': 0.55,
-          'role': 'Senior Chef',
-          'experience': '8 years',
-          'location': 'London',
-          'isVerified': true,
-          'nationalityCode': 'IT',
-        },
-        {
-          'id': 'sl2',
-          'name': 'Sophie Chen',
-          'initials': 'SC',
-          'hue': 0.75,
-          'role': 'Sous Chef',
-          'experience': '5 years',
-          'location': 'Manchester',
-          'isVerified': false,
-          'nationalityCode': 'CN',
-        },
-      ];
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +89,7 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
   }
 
   Widget _topBar() {
+    final l = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
@@ -86,8 +103,8 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
                 child: BackChevron(size: 22, color: AppColors.charcoal)),
           ),
           const Spacer(),
-          const Text('Shortlist',
-              style: TextStyle(
+          Text(l.shortlistTitle,
+              style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.charcoal)),
@@ -115,6 +132,30 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
       return const Center(
           child: CircularProgressIndicator(color: AppColors.teal));
     }
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.warning_amber_rounded,
+                size: 28, color: AppColors.tertiary),
+            const SizedBox(height: AppSpacing.md),
+            Text(_error!,
+                style:
+                    const TextStyle(fontSize: 12, color: AppColors.secondary)),
+            const SizedBox(height: AppSpacing.md),
+            GestureDetector(
+              onTap: _load,
+              child: Text(AppLocalizations.of(context).retryAction,
+                  style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.teal)),
+            ),
+          ],
+        ),
+      );
+    }
     if (_candidates.isEmpty) {
       return _emptyState();
     }
@@ -129,7 +170,7 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
     );
   }
 
-  Widget _candidateCard(Map<String, dynamic> c) {
+  Widget _candidateCard(BusinessShortlistCandidate c) {
     return GestureDetector(
       onTap: () {
         // Navigate to candidate profile placeholder
@@ -148,7 +189,7 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
         ),
         child: Row(
           children: [
-            _avatar(c['initials'] ?? '--', c['hue'] ?? 0.5, 48),
+            _avatar(c.initials, _avatarHue(c), 48),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
@@ -156,7 +197,7 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
                 children: [
                   Row(
                     children: [
-                      Text(c['name'] ?? '',
+                      Text(c.name,
                           style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -164,23 +205,23 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
                       // Flag placeholder
                     ],
                   ),
-                  if (c['role'] != null) ...[
+                  if (c.role.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.xs),
-                    Text(c['role'],
+                    Text(c.role,
                         style: const TextStyle(
                             fontSize: 12, color: AppColors.secondary)),
                   ],
                   Row(
                     children: [
-                      if (c['experience'] != null)
-                        Text(c['experience'],
+                      if (c.experience.isNotEmpty)
+                        Text(c.experience,
                             style: const TextStyle(
                                 fontSize: 11, color: AppColors.tertiary)),
-                      if (c['location'] != null) ...[
+                      if (c.location.isNotEmpty) ...[
                         Text(' \u00b7 ',
                             style: TextStyle(color: AppColors.tertiary)),
                         Flexible(
-                          child: Text(c['location'],
+                          child: Text(c.location,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
@@ -200,6 +241,7 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
   }
 
   Widget _emptyState() {
+    final l = AppLocalizations.of(context);
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
@@ -217,16 +259,16 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
                   const Icon(Icons.star_border, size: 24, color: AppColors.amber),
             ),
             const SizedBox(height: AppSpacing.lg),
-            const Text('No shortlisted candidates',
-                style: TextStyle(
+            Text(l.noShortlistedHeadline,
+                style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: AppColors.charcoal)),
             const SizedBox(height: AppSpacing.sm),
-            const Text(
-                'Shortlist candidates from Nearby, Applicants, or search results.',
+            Text(
+                l.noShortlistedSubtext,
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
           ],
         ),
       ),
@@ -255,5 +297,12 @@ class _BusinessShortlistViewState extends State<BusinessShortlistView> {
               fontWeight: FontWeight.w700,
               color: Colors.white)),
     );
+  }
+
+  double _avatarHue(BusinessShortlistCandidate candidate) {
+    final seed =
+        candidate.candidateId.isNotEmpty ? candidate.candidateId : candidate.name;
+    final hash = seed.codeUnits.fold<int>(0, (sum, code) => sum + code);
+    return (hash % 360) / 360;
   }
 }
