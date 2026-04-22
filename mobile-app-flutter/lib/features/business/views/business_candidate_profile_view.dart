@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_candidate_profile.dart';
+import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/repositories/business_repository.dart';
 
 extension _BusinessCandidateProfileL10nX on AppLocalizations {
@@ -78,6 +80,35 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
     } catch (e) {
       if (mounted) setState(() { _error = e.toString(); _loading = false; });
     }
+  }
+
+  Future<void> _openCandidateMessages() async {
+    final provider = context.read<BusinessMessagesProvider>();
+    if (provider.conversations.isEmpty && !provider.loading) {
+      try {
+        await provider.load();
+      } catch (_) {
+        // Fall back to the messages area below.
+      }
+    }
+    if (!mounted) return;
+
+    final candidate = _candidate;
+    final candidateName = candidate?.name.toLowerCase() ?? '';
+    final conversation = provider.conversations
+        .where(
+          (c) =>
+              c.candidateId == widget.candidateId ||
+              (candidateName.isNotEmpty &&
+                  c.candidateName.toLowerCase() == candidateName),
+        )
+        .firstOrNull;
+
+    if (conversation != null) {
+      context.push('/business/chat/${conversation.id}');
+      return;
+    }
+    context.push('/business/messages');
   }
 
   @override
@@ -163,7 +194,7 @@ class _BusinessCandidateProfileViewState extends State<BusinessCandidateProfileV
                             child: SizedBox(
                               height: 48,
                               child: OutlinedButton.icon(
-                                onPressed: () => context.push('/business/chat/${widget.candidateId}'),
+                                onPressed: _openCandidateMessages,
                                 icon: const Icon(Icons.chat_outlined, size: 18),
                                 label: Text(l.messageAction),
                                 style: OutlinedButton.styleFrom(foregroundColor: AppColors.indigo, side: const BorderSide(color: AppColors.indigo)),
