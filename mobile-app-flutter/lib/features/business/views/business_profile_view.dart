@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/core/widgets/app_back_title_bar.dart';
 import 'package:plagit/core/widgets/business_identity.dart';
 import 'package:plagit/core/widgets/venue_gallery.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_profile.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/repositories/business_repository.dart';
@@ -30,6 +31,19 @@ BoxShadow get _subtleShadow => BoxShadow(
   blurRadius: 10,
   offset: const Offset(0, 3),
 );
+
+extension _BusinessProfileL10n on AppLocalizations {
+  String get addAction {
+    switch (localeName) {
+      case 'it':
+        return 'Aggiungi';
+      case 'ar':
+        return 'إضافة';
+      default:
+        return 'Add';
+    }
+  }
+}
 
 class BusinessProfileView extends StatefulWidget {
   const BusinessProfileView({super.key});
@@ -382,18 +396,18 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
                                   color: _tealMain.withValues(alpha: 0.10),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       CupertinoIcons.add,
                                       size: 12,
                                       color: _tealMain,
                                     ),
-                                    SizedBox(width: 4),
+                                    const SizedBox(width: 4),
                                     Text(
-                                      'Add',
-                                      style: TextStyle(
+                                      AppLocalizations.of(context).addAction,
+                                      style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
                                         color: _tealMain,

@@ -2,8 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/quick_plug_candidate.dart';
 import 'package:plagit/providers/business_providers.dart';
+
+extension _QuickPlugL10n on AppLocalizations {
+  String get superInterestedNotified {
+    switch (localeName) {
+      case 'it':
+        return 'Candidato avvisato del tuo super interesse';
+      case 'ar':
+        return 'تم إشعار المرشح باهتمامك الكبير';
+      default:
+        return 'Candidate notified of your super interest';
+    }
+  }
+
+  String get retryAction => retry;
+
+  String get filtersComingSoon {
+    switch (localeName) {
+      case 'it':
+        return 'Filtri disponibili presto';
+      case 'ar':
+        return 'عوامل التصفية قريبًا';
+      default:
+        return 'Filters coming soon';
+    }
+  }
+}
 
 /// Business Quick Plug — Tinder-style swipe deck for candidate discovery.
 /// This is the signature feature of the business side.
@@ -86,9 +113,9 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Super interested! Candidate notified'),
-        duration: Duration(milliseconds: 1500),
+      SnackBar(
+        content: Text(AppLocalizations.of(context).superInterestedNotified),
+        duration: const Duration(milliseconds: 1500),
         behavior: SnackBarBehavior.floating,
         backgroundColor: AppColors.gold,
       ),
@@ -160,7 +187,7 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                       const SizedBox(height: 12),
                       GestureDetector(
                         onTap: () => context.read<BusinessQuickPlugProvider>().load(),
-                        child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+                        child: Text(AppLocalizations.of(context).retryAction, style: const TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
                       ),
                     ],
                   ),
@@ -206,10 +233,10 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
             onTap: () {
               ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Filters coming soon'),
+                SnackBar(
+                  content: Text(AppLocalizations.of(context).filtersComingSoon),
                   behavior: SnackBarBehavior.floating,
-                  duration: Duration(milliseconds: 1200),
+                  duration: const Duration(milliseconds: 1200),
                 ),
               );
             },
