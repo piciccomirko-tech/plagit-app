@@ -9,7 +9,9 @@ import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/repositories/candidate_repository.dart';
 
 class SavedJobsView extends StatefulWidget {
-  const SavedJobsView({super.key});
+  final CandidateRepository? repo;
+
+  const SavedJobsView({super.key, this.repo});
 
   @override
   State<SavedJobsView> createState() => _SavedJobsViewState();
@@ -18,6 +20,8 @@ class SavedJobsView extends StatefulWidget {
 class _SavedJobsViewState extends State<SavedJobsView> {
   late Future<List<Job>> _savedJobsFuture;
 
+  CandidateRepository get _repo => widget.repo ?? CandidateRepository();
+
   @override
   void initState() {
     super.initState();
@@ -25,7 +29,7 @@ class _SavedJobsViewState extends State<SavedJobsView> {
   }
 
   Future<List<Job>> _loadSavedJobs() {
-    return CandidateRepository().fetchSavedJobs();
+    return _repo.fetchSavedJobs();
   }
 
   void _refresh() {

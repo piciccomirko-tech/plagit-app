@@ -10,7 +10,9 @@ import 'package:plagit/repositories/candidate_repository.dart';
 
 class CandidateJobDetailView extends StatefulWidget {
   final String jobId;
-  const CandidateJobDetailView({super.key, required this.jobId});
+  final CandidateRepository? repo;
+
+  const CandidateJobDetailView({super.key, required this.jobId, this.repo});
 
   @override
   State<CandidateJobDetailView> createState() => _CandidateJobDetailViewState();
@@ -23,6 +25,8 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
   Job? _job;
   bool _loading = true;
   String? _error;
+
+  CandidateRepository get _repo => widget.repo ?? CandidateRepository();
 
   @override
   void initState() {
@@ -53,7 +57,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
     }
 
     try {
-      final job = await CandidateRepository().fetchJobDetail(widget.jobId);
+      final job = await _repo.fetchJobDetail(widget.jobId);
       if (!mounted) return;
       setState(() {
         _job = job;
@@ -516,7 +520,7 @@ class _CandidateJobDetailViewState extends State<CandidateJobDetailView> {
     final l10n = context.jobDetailL10n;
     setState(() => _applying = true);
     try {
-      await CandidateRepository().applyToJob(widget.jobId, note: note?.isEmpty ?? true ? null : note);
+      await _repo.applyToJob(widget.jobId, note: note?.isEmpty ?? true ? null : note);
       if (!mounted) return;
       setState(() {
         _applying = false;
