@@ -40,6 +40,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.candidateApplicationsL10n;
     final provider = context.watch<CandidateApplicationsProvider>();
 
     // Loading state
@@ -47,9 +48,9 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text(
-            'My Applications',
-            style: TextStyle(
+          title: Text(
+            l10n.myApplicationsTitle,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.charcoal,
             ),
@@ -67,9 +68,9 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
       return Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text(
-            'My Applications',
-            style: TextStyle(
+          title: Text(
+            l10n.myApplicationsTitle,
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
               color: AppColors.charcoal,
             ),
@@ -94,7 +95,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
                   backgroundColor: AppColors.teal,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Retry'),
+                child: Text(l10n.retryAction),
               ),
             ],
           ),
@@ -107,9 +108,9 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'My Applications',
-          style: TextStyle(
+        title: Text(
+          l10n.myApplicationsTitle,
+          style: const TextStyle(
             fontWeight: FontWeight.bold,
             color: AppColors.charcoal,
           ),
@@ -150,7 +151,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
                           ),
                         ),
                         child: Text(
-                          f,
+                          l10n.filterLabel(f),
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
@@ -171,7 +172,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
             child: Text(
-              '${filtered.length} application${filtered.length == 1 ? '' : 's'}',
+              l10n.applicationCount(filtered.length),
               style: const TextStyle(
                 fontSize: 13,
                 color: AppColors.secondary,
@@ -191,7 +192,7 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
                             size: 56, color: AppColors.tertiary),
                         const SizedBox(height: 12),
                         Text(
-                          'No applications found',
+                          l10n.noApplicationsFound,
                           style: TextStyle(
                             fontSize: 16,
                             color: AppColors.secondary,
@@ -209,6 +210,8 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
                       return _ApplicationCard(
                         app: app,
                         avatarColor: _avatarColor(app.company),
+                        statusText: l10n.statusLabel(app.status.displayName),
+                        appliedText: l10n.appliedDate(app.date),
                         onTap: () => context.push(
                           '/candidate/application/${app.id}',
                         ),
@@ -225,11 +228,15 @@ class _CandidateApplicationsTabState extends State<CandidateApplicationsTab> {
 class _ApplicationCard extends StatelessWidget {
   final Application app;
   final Color avatarColor;
+  final String statusText;
+  final String appliedText;
   final VoidCallback onTap;
 
   const _ApplicationCard({
     required this.app,
     required this.avatarColor,
+    required this.statusText,
+    required this.appliedText,
     required this.onTap,
   });
 
@@ -291,14 +298,14 @@ class _ApplicationCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                StatusBadge(status: app.status.displayName),
+                StatusBadge(status: statusText),
               ],
             ),
             const SizedBox(height: 10),
             Row(
               children: [
                 Text(
-                  'Applied ${app.date}',
+                  appliedText,
                   style: const TextStyle(
                     fontSize: 12,
                     color: AppColors.tertiary,
@@ -312,5 +319,95 @@ class _ApplicationCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+extension _CandidateApplicationsL10n on BuildContext {
+  _CandidateApplicationsStrings get candidateApplicationsL10n =>
+      _CandidateApplicationsStrings(Localizations.localeOf(this).languageCode);
+}
+
+class _CandidateApplicationsStrings {
+  final String _lang;
+  const _CandidateApplicationsStrings(this._lang);
+
+  String get myApplicationsTitle => _lang == 'it'
+      ? 'Le mie candidature'
+      : _lang == 'ar'
+          ? 'طلباتي'
+          : 'My Applications';
+
+  String get retryAction => _lang == 'it'
+      ? 'Riprova'
+      : _lang == 'ar'
+          ? 'إعادة المحاولة'
+          : 'Retry';
+
+  String applicationCount(int count) => _lang == 'it'
+      ? '$count candidatur${count == 1 ? 'a' : 'e'}'
+      : _lang == 'ar'
+          ? '$count طلب${count == 1 ? '' : 'ات'}'
+          : '$count application${count == 1 ? '' : 's'}';
+
+  String get noApplicationsFound => _lang == 'it'
+      ? 'Nessuna candidatura trovata'
+      : _lang == 'ar'
+          ? 'لم يتم العثور على طلبات'
+          : 'No applications found';
+
+  String appliedDate(String date) => _lang == 'it'
+      ? 'Candidatura inviata $date'
+      : _lang == 'ar'
+          ? 'تم التقديم $date'
+          : 'Applied $date';
+
+  String filterLabel(String value) {
+    switch (value) {
+      case 'All':
+        return _lang == 'it'
+            ? 'Tutte'
+            : _lang == 'ar'
+                ? 'الكل'
+                : 'All';
+      default:
+        return statusLabel(value);
+    }
+  }
+
+  String statusLabel(String value) {
+    switch (value) {
+      case 'Applied':
+        return _lang == 'it'
+            ? 'Inviata'
+            : _lang == 'ar'
+                ? 'تم التقديم'
+                : 'Applied';
+      case 'Under Review':
+        return _lang == 'it'
+            ? 'In revisione'
+            : _lang == 'ar'
+                ? 'قيد المراجعة'
+                : 'Under Review';
+      case 'Interview Scheduled':
+        return _lang == 'it'
+            ? 'Colloquio fissato'
+            : _lang == 'ar'
+                ? 'تم تحديد المقابلة'
+                : 'Interview Scheduled';
+      case 'Shortlisted':
+        return _lang == 'it'
+            ? 'Selezionata'
+            : _lang == 'ar'
+                ? 'ضمن القائمة المختصرة'
+                : 'Shortlisted';
+      case 'Rejected':
+        return _lang == 'it'
+            ? 'Rifiutata'
+            : _lang == 'ar'
+                ? 'مرفوض'
+                : 'Rejected';
+      default:
+        return value;
+    }
   }
 }
