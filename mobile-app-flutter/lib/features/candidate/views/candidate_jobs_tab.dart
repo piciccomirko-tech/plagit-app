@@ -58,12 +58,13 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
   /// builder reads the same `CandidateJobsProvider` so newly loaded jobs
   /// appear in the results immediately.
   void _openSearchScreen(BuildContext context) {
+    final l10n = context.candidateJobsL10n;
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => SearchScreen(
           scope: RecentSearchScope.candidateJobs,
-          title: 'Search Jobs',
-          hintText: 'Search jobs, roles, locations…',
+          title: l10n.searchJobsTitle,
+          hintText: l10n.searchJobsHint,
           resultsBuilder: (ctx, query) {
             final jobs = ctx.watch<CandidateJobsProvider>().jobs;
             final q = query.toLowerCase();
@@ -144,6 +145,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.candidateJobsL10n;
     final provider = context.watch<CandidateJobsProvider>();
     final allJobs = provider.jobs;
     final counts = _chipCounts(allJobs);
@@ -158,7 +160,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
             // 2. TOP BAR
             // ══════════════════════════════════════
             AppBackTitleBar(
-              title: 'Jobs',
+              title: l10n.jobsTitle,
               onBack: () => context.canPop() ? context.pop() : null,
               padding: const EdgeInsets.fromLTRB(20, 14, 20, 12),
               backBackgroundColor: _surface,
@@ -259,7 +261,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            label,
+                            l10n.filterOption(label),
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -315,8 +317,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                       GestureDetector(
                         onTap: () =>
                             context.read<CandidateJobsProvider>().load(),
-                        child: const Text(
-                          'Retry',
+                        child: Text(
+                          l10n.retryAction,
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -337,7 +339,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                 child: Row(
                   children: [
                     Text(
-                      '${jobs.length} jobs found',
+                      l10n.jobsFound(jobs.length),
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w400,
@@ -351,7 +353,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            _sortOptions[_sortIndex],
+                            l10n.sortOption(_sortOptions[_sortIndex]),
                             style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w500,
@@ -396,8 +398,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'No jobs match your search',
+                          Text(
+                            l10n.noJobsMatchTitle,
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w500,
@@ -405,8 +407,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                             ),
                           ),
                           const SizedBox(height: 4),
-                          const Text(
-                            'Try adjusting your filters',
+                          Text(
+                            l10n.noJobsMatchSubtitle,
                             style: TextStyle(fontSize: 13, color: _secondary),
                           ),
                           const SizedBox(height: 20),
@@ -424,8 +426,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                                     borderRadius: BorderRadius.circular(100),
                                     border: Border.all(color: _tealMain),
                                   ),
-                                  child: const Text(
-                                    'Clear Filters',
+                                  child: Text(
+                                    l10n.clearFiltersAction,
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
@@ -446,8 +448,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                                     color: _tealMain,
                                     borderRadius: BorderRadius.circular(100),
                                   ),
-                                  child: const Text(
-                                    'All Jobs',
+                                  child: Text(
+                                    l10n.allJobsAction,
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
@@ -486,6 +488,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
   // 10. FILTER BOTTOM SHEET
   // ══════════════════════════════════════
   void _showFilterSheet(BuildContext context) {
+    final l10n = context.candidateJobsL10n;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -520,8 +523,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                       setState(() => _selectedChip = 0);
                       Navigator.pop(ctx);
                     },
-                    child: const Text(
-                      'Reset',
+                    child: Text(
+                      l10n.resetAction,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -530,8 +533,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                     ),
                   ),
                   const Spacer(),
-                  const Text(
-                    'Filters',
+                  Text(
+                    l10n.filtersTitle,
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
@@ -541,8 +544,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                   const Spacer(),
                   GestureDetector(
                     onTap: () => Navigator.pop(ctx),
-                    child: const Text(
-                      'Apply',
+                    child: Text(
+                      l10n.applyAction,
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w500,
@@ -561,7 +564,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                 padding: const EdgeInsets.all(20),
                 children: [
                   _FilterSection(
-                    title: 'Distance Radius',
+                    title: l10n.distanceRadiusTitle,
                     isPremium: true,
                     child: Column(
                       children: [
@@ -573,15 +576,15 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                           inactiveColor: _surface,
                           onChanged: (_) {},
                         ),
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '5 km',
+                              l10n.minRadiusLabel,
                               style: TextStyle(fontSize: 11, color: _secondary),
                             ),
                             Text(
-                              '50 km',
+                              l10n.maxRadiusLabel,
                               style: TextStyle(fontSize: 11, color: _secondary),
                             ),
                           ],
@@ -591,7 +594,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                   ),
                   const SizedBox(height: 12),
                   _FilterSection(
-                    title: 'Contract Type',
+                    title: l10n.contractTypeTitle,
                     isPremium: true,
                     child: Wrap(
                       spacing: 8,
@@ -602,12 +605,12 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                         'Part-time',
                         'Temporary',
                         'Seasonal',
-                      ].map((t) => _filterChip(t, t == 'All')).toList(),
+                      ].map((t) => _filterChip(context, t, t == 'All')).toList(),
                     ),
                   ),
                   const SizedBox(height: 12),
                   _FilterSection(
-                    title: 'Shift Type',
+                    title: l10n.shiftTypeTitle,
                     isPremium: true,
                     child: Wrap(
                       spacing: 8,
@@ -619,18 +622,18 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                         'Evening',
                         'Night',
                         'Split',
-                      ].map((t) => _filterChip(t, t == 'All')).toList(),
+                      ].map((t) => _filterChip(context, t, t == 'All')).toList(),
                     ),
                   ),
                   const SizedBox(height: 12),
                   _FilterSection(
-                    title: 'Urgent Jobs Only',
+                    title: l10n.urgentJobsOnlyTitle,
                     isPremium: true,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Show only urgent listings',
+                        Text(
+                          l10n.urgentJobsOnlySubtitle,
                           style: TextStyle(fontSize: 13, color: _secondary),
                         ),
                         Switch(
@@ -643,13 +646,13 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                   ),
                   const SizedBox(height: 12),
                   _FilterSection(
-                    title: 'Verified Businesses Only',
+                    title: l10n.verifiedBusinessesOnlyTitle,
                     isPremium: true,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Show only verified businesses',
+                        Text(
+                          l10n.verifiedBusinessesOnlySubtitle,
                           style: TextStyle(fontSize: 13, color: _secondary),
                         ),
                         Switch(
@@ -669,7 +672,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
     );
   }
 
-  Widget _filterChip(String label, bool active) {
+  Widget _filterChip(BuildContext context, String label, bool active) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
@@ -678,7 +681,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
         border: active ? null : Border.all(color: _border, width: 0.5),
       ),
       child: Text(
-        label,
+        context.candidateJobsL10n.filterOption(label),
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w500,
@@ -702,8 +705,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                'Sort by',
+              Text(
+                context.candidateJobsL10n.sortByTitle,
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -724,7 +727,7 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                     child: Row(
                       children: [
                         Text(
-                          _sortOptions[i],
+                          context.candidateJobsL10n.sortOption(_sortOptions[i]),
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -920,13 +923,13 @@ class _JobCard extends StatelessWidget {
                               ),
                               if (job.featured)
                                 _pill(
-                                  'Featured',
+                                  context.candidateJobsL10n.featuredBadge,
                                   _amber.withValues(alpha: 0.12),
                                   _amber,
                                 ),
                               if (job.urgent)
                                 _pill(
-                                  'Urgent',
+                                  context.candidateJobsL10n.urgentBadge,
                                   _urgent.withValues(alpha: 0.12),
                                   _urgent,
                                 ),
@@ -1183,7 +1186,7 @@ class _FilterSection extends StatelessWidget {
                       color: _amber,
                       borderRadius: BorderRadius.circular(100),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Icon(
@@ -1193,7 +1196,7 @@ class _FilterSection extends StatelessWidget {
                         ),
                         SizedBox(width: 6),
                         Text(
-                          'Upgrade to Premium',
+                          context.candidateJobsL10n.upgradeToPremium,
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -1325,5 +1328,250 @@ class _SearchJobResultRow extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+extension _CandidateJobsL10n on BuildContext {
+  _CandidateJobsStrings get candidateJobsL10n =>
+      _CandidateJobsStrings(Localizations.localeOf(this).languageCode);
+}
+
+class _CandidateJobsStrings {
+  final String _lang;
+  const _CandidateJobsStrings(this._lang);
+
+  String get searchJobsTitle => _lang == 'it'
+      ? 'Cerca offerte'
+      : _lang == 'ar'
+          ? 'ابحث عن وظائف'
+          : 'Search Jobs';
+
+  String get searchJobsHint => _lang == 'it'
+      ? 'Cerca offerte, ruoli, località…'
+      : _lang == 'ar'
+          ? 'ابحث عن وظائف أو أدوار أو مواقع…'
+          : 'Search jobs, roles, locations…';
+
+  String get jobsTitle => _lang == 'it'
+      ? 'Offerte'
+      : _lang == 'ar'
+          ? 'الوظائف'
+          : 'Jobs';
+
+  String get retryAction => _lang == 'it'
+      ? 'Riprova'
+      : _lang == 'ar'
+          ? 'إعادة المحاولة'
+          : 'Retry';
+
+  String jobsFound(int count) => _lang == 'it'
+      ? '$count offerte trovate'
+      : _lang == 'ar'
+          ? '$count وظيفة متاحة'
+          : '$count jobs found';
+
+  String get noJobsMatchTitle => _lang == 'it'
+      ? 'Nessuna offerta corrisponde alla ricerca'
+      : _lang == 'ar'
+          ? 'لا توجد وظائف تطابق بحثك'
+          : 'No jobs match your search';
+
+  String get noJobsMatchSubtitle => _lang == 'it'
+      ? 'Prova a modificare i filtri'
+      : _lang == 'ar'
+          ? 'جرّب تعديل الفلاتر'
+          : 'Try adjusting your filters';
+
+  String get clearFiltersAction => _lang == 'it'
+      ? 'Cancella filtri'
+      : _lang == 'ar'
+          ? 'مسح الفلاتر'
+          : 'Clear Filters';
+
+  String get allJobsAction => _lang == 'it'
+      ? 'Tutte le offerte'
+      : _lang == 'ar'
+          ? 'كل الوظائف'
+          : 'All Jobs';
+
+  String get resetAction => _lang == 'it'
+      ? 'Resetta'
+      : _lang == 'ar'
+          ? 'إعادة ضبط'
+          : 'Reset';
+
+  String get filtersTitle => _lang == 'it'
+      ? 'Filtri'
+      : _lang == 'ar'
+          ? 'الفلاتر'
+          : 'Filters';
+
+  String get applyAction => _lang == 'it'
+      ? 'Applica'
+      : _lang == 'ar'
+          ? 'تطبيق'
+          : 'Apply';
+
+  String get distanceRadiusTitle => _lang == 'it'
+      ? 'Raggio distanza'
+      : _lang == 'ar'
+          ? 'نطاق المسافة'
+          : 'Distance Radius';
+
+  String get minRadiusLabel => '5 km';
+  String get maxRadiusLabel => '50 km';
+
+  String get contractTypeTitle => _lang == 'it'
+      ? 'Tipo di contratto'
+      : _lang == 'ar'
+          ? 'نوع العقد'
+          : 'Contract Type';
+
+  String get shiftTypeTitle => _lang == 'it'
+      ? 'Tipo di turno'
+      : _lang == 'ar'
+          ? 'نوع الوردية'
+          : 'Shift Type';
+
+  String get urgentJobsOnlyTitle => _lang == 'it'
+      ? 'Solo offerte urgenti'
+      : _lang == 'ar'
+          ? 'الوظائف العاجلة فقط'
+          : 'Urgent Jobs Only';
+
+  String get urgentJobsOnlySubtitle => _lang == 'it'
+      ? 'Mostra solo annunci urgenti'
+      : _lang == 'ar'
+          ? 'اعرض الوظائف العاجلة فقط'
+          : 'Show only urgent listings';
+
+  String get verifiedBusinessesOnlyTitle => _lang == 'it'
+      ? 'Solo aziende verificate'
+      : _lang == 'ar'
+          ? 'المنشآت الموثقة فقط'
+          : 'Verified Businesses Only';
+
+  String get verifiedBusinessesOnlySubtitle => _lang == 'it'
+      ? 'Mostra solo aziende verificate'
+      : _lang == 'ar'
+          ? 'اعرض الشركات الموثقة فقط'
+          : 'Show only verified businesses';
+
+  String get sortByTitle => _lang == 'it'
+      ? 'Ordina per'
+      : _lang == 'ar'
+          ? 'ترتيب حسب'
+          : 'Sort by';
+
+  String get featuredBadge => _lang == 'it'
+      ? 'In evidenza'
+      : _lang == 'ar'
+          ? 'مميز'
+          : 'Featured';
+
+  String get urgentBadge => _lang == 'it'
+      ? 'Urgente'
+      : _lang == 'ar'
+          ? 'عاجل'
+          : 'Urgent';
+
+  String get upgradeToPremium => _lang == 'it'
+      ? 'Passa a Premium'
+      : _lang == 'ar'
+          ? 'الترقية إلى بريميوم'
+          : 'Upgrade to Premium';
+
+  String sortOption(String key) {
+    switch (key) {
+      case 'Best Match':
+        return _lang == 'it'
+            ? 'Più pertinenti'
+            : _lang == 'ar'
+                ? 'الأفضل تطابقًا'
+                : 'Best Match';
+      case 'Most Recent':
+        return _lang == 'it'
+            ? 'Più recenti'
+            : _lang == 'ar'
+                ? 'الأحدث'
+                : 'Most Recent';
+      case 'A-Z':
+        return 'A-Z';
+      default:
+        return key;
+    }
+  }
+
+  String filterOption(String key) {
+    switch (key) {
+      case 'All':
+        return _lang == 'it'
+            ? 'Tutti'
+            : _lang == 'ar'
+                ? 'الكل'
+                : 'All';
+      case 'Full-time':
+        return _lang == 'it'
+            ? 'Tempo pieno'
+            : _lang == 'ar'
+                ? 'دوام كامل'
+                : 'Full-time';
+      case 'Part-time':
+        return _lang == 'it'
+            ? 'Part-time'
+            : _lang == 'ar'
+                ? 'دوام جزئي'
+                : 'Part-time';
+      case 'Temporary':
+        return _lang == 'it'
+            ? 'Temporaneo'
+            : _lang == 'ar'
+                ? 'مؤقت'
+                : 'Temporary';
+      case 'Casual':
+        return _lang == 'it'
+            ? 'Occasionale'
+            : _lang == 'ar'
+                ? 'مرن'
+                : 'Casual';
+      case 'Seasonal':
+        return _lang == 'it'
+            ? 'Stagionale'
+            : _lang == 'ar'
+                ? 'موسمي'
+                : 'Seasonal';
+      case 'Morning':
+        return _lang == 'it'
+            ? 'Mattina'
+            : _lang == 'ar'
+                ? 'صباحي'
+                : 'Morning';
+      case 'Afternoon':
+        return _lang == 'it'
+            ? 'Pomeriggio'
+            : _lang == 'ar'
+                ? 'بعد الظهر'
+                : 'Afternoon';
+      case 'Evening':
+        return _lang == 'it'
+            ? 'Sera'
+            : _lang == 'ar'
+                ? 'مسائي'
+                : 'Evening';
+      case 'Night':
+        return _lang == 'it'
+            ? 'Notte'
+            : _lang == 'ar'
+                ? 'ليلي'
+                : 'Night';
+      case 'Split':
+        return _lang == 'it'
+            ? 'Spezzato'
+            : _lang == 'ar'
+                ? 'مجزأ'
+                : 'Split';
+      default:
+        return key;
+    }
   }
 }
