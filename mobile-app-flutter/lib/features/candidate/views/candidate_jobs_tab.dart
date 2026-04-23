@@ -473,6 +473,8 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
                     separatorBuilder: (_, i) => const SizedBox(height: 10),
                     itemBuilder: (context, i) => _JobCard(
                       job: jobs[i],
+                      saved: provider.isSaved(jobs[i].id),
+                      onSave: () => context.read<CandidateJobsProvider>().toggleSave(jobs[i].id),
                       onTap: () => context.push('/candidate/job/${jobs[i].id}'),
                     ),
                   ),
@@ -756,8 +758,15 @@ class _CandidateJobsTabState extends State<CandidateJobsTab> {
 
 class _JobCard extends StatelessWidget {
   final Job job;
+  final bool saved;
+  final VoidCallback onSave;
   final VoidCallback onTap;
-  const _JobCard({required this.job, required this.onTap});
+  const _JobCard({
+    required this.job,
+    required this.saved,
+    required this.onSave,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -825,11 +834,11 @@ class _JobCard extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.only(top: 1),
                           child: GestureDetector(
-                            onTap: () {},
-                            child: const Icon(
-                              CupertinoIcons.bookmark,
+                            onTap: onSave,
+                            child: Icon(
+                              saved ? CupertinoIcons.bookmark_fill : CupertinoIcons.bookmark,
                               size: 18,
-                              color: Color(0xFFB0B0B5),
+                              color: saved ? _tealMain : const Color(0xFFB0B0B5),
                             ),
                           ),
                         ),
