@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
+const { bus } = require('../services/realtime/eventBus');
 
 // Helper: create a hiring notification
 async function hiringNotify(recipientId, title, type, linkedEntity, route) {
@@ -348,11 +349,24 @@ async function updateApplicantStatus(req, res, next) {
     // Notify candidate of status change
     const fullApp = await db('applications').leftJoin('candidates', 'applications.candidate_id', 'candidates.id')
       .where('applications.id', app.id).select('candidates.user_id', 'applications.job_id').first();
+    let jobTitle = null;
     if (fullApp?.user_id) {
       const job = await db('jobs').where({ id: fullApp.job_id }).select('title').first();
+      jobTitle = job?.title || null;
       const labels = { shortlisted: 'You were shortlisted', rejected: 'Application update', under_review: 'Application under review', offer: 'You received an offer' };
-      hiringNotify(fullApp.user_id, `${labels[status] || 'Status update'} for ${job?.title || 'a job'}`, 'in_app', app.id, 'application');
+      hiringNotify(fullApp.user_id, `${labels[status] || 'Status update'} for ${jobTitle || 'a job'}`, 'in_app', app.id, 'application');
     }
+    // Realtime broadcast to candidate + business + admins
+    const audience = ['role:admin', `user:${req.user.id}`];
+    if (fullApp?.user_id) audience.push(`user:${fullApp.user_id}`);
+    bus.publish('application.status_changed', {
+      application_id: app.id,
+      status,
+      job_id: fullApp?.job_id || null,
+      job_title: jobTitle,
+      candidate_user_id: fullApp?.user_id || null,
+      business_user_id: req.user.id,
+    }, audience);
     ok(res, { success: true });
   } catch (err) { next(err); }
 }
