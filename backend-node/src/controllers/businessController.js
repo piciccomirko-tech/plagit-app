@@ -3,7 +3,9 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 
-// Helper: create a hiring notification
+// Helper: create a hiring notification + emit SSE so every subscribed
+// notifications provider (candidate, business, admin) refreshes its
+// badge + list in real time without a pull-to-refresh.
 async function hiringNotify(recipientId, title, type, linkedEntity, route) {
   try {
     await db('notifications').insert({
@@ -15,6 +17,13 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route) {
       delivery_state: 'delivered',
       is_read: false,
     });
+    bus.publish('notification.new', {
+      recipient_user_id: recipientId,
+      title,
+      notification_type: type || 'in_app',
+      linked_entity: linkedEntity || null,
+      destination_route: route || null,
+    }, ['role:admin', `user:${recipientId}`]);
   } catch (e) { /* ignore if table missing */ }
 }
 
