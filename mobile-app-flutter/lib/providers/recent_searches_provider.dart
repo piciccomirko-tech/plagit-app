@@ -23,6 +23,7 @@ enum RecentSearchScope {
   adminCandidates,
   adminBusinesses,
   adminApplications,
+  adminGlobal,
 
   // ── Shared pickers ──
   hospitalityCategory,

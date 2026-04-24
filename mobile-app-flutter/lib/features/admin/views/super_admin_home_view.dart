@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
 import 'package:plagit/features/admin/views/admin_shared_widgets.dart';
 import 'package:plagit/features/admin/views/admin_dashboard_view.dart';
@@ -17,14 +18,51 @@ import 'package:plagit/features/admin/views/admin_subscriptions_view.dart';
 import 'package:plagit/features/admin/views/admin_reports_view.dart';
 import 'package:plagit/features/admin/views/admin_logs_view.dart';
 import 'package:plagit/features/admin/views/admin_settings_view.dart';
+import 'package:plagit/features/admin/views/admin_global_search_view.dart';
+import 'package:plagit/features/admin/views/admin_account_sheet.dart';
+import 'package:plagit/providers/admin_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
 
-class SuperAdminHomeView extends StatelessWidget {
+class SuperAdminHomeView extends StatefulWidget {
   final VoidCallback onLogout;
   const SuperAdminHomeView({super.key, required this.onLogout});
 
+  @override
+  State<SuperAdminHomeView> createState() => _SuperAdminHomeViewState();
+}
+
+class _SuperAdminHomeViewState extends State<SuperAdminHomeView> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final notifs = context.read<AdminNotificationsProvider>();
+      if (notifs.items.isEmpty && !notifs.loading) {
+        notifs.load();
+      }
+    });
+  }
+
   void _push(BuildContext context, Widget page) {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => page));
+  }
+
+  void _openSearch(BuildContext context) {
+    _push(context, const AdminGlobalSearchView());
+  }
+
+  void _openAccountSheet(BuildContext context) {
+    showAdminAccountSheet(context, onLogout: widget.onLogout);
+  }
+
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) return 'AU';
+    if (parts.length == 1) {
+      return parts.first.substring(0, parts.first.length.clamp(0, 2)).toUpperCase();
+    }
+    return (parts.first.characters.first + parts[1].characters.first).toUpperCase();
   }
 
   @override
@@ -84,44 +122,109 @@ class SuperAdminHomeView extends StatelessWidget {
   }
 
   Widget _headerSection(BuildContext context) {
+    final auth = context.watch<AdminAuthProvider>();
+    final unread = context.watch<AdminNotificationsProvider>().unreadCount;
+    final initials = _initials(auth.userName.isEmpty ? 'Admin User' : auth.userName);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, AppSpacing.sm),
       child: Row(
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(_greeting(), style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
-              const SizedBox(height: 2),
-              const Text('Super Admin', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal)),
-            ],
-          ),
-          const Spacer(),
-          GestureDetector(
-            onTap: () => _push(context, const AdminNotificationsView()),
-            child: Stack(
-              clipBehavior: Clip.none,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.notifications_outlined, size: 22, color: AppColors.charcoal),
-                Positioned(right: -2, top: -2, child: Container(width: 7, height: 7, decoration: const BoxDecoration(color: AppColors.urgent, shape: BoxShape.circle))),
+                Text(_greeting(), style: const TextStyle(fontSize: 13, color: AppColors.secondary)),
+                const SizedBox(height: 2),
+                const Text('Super Admin', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: AppColors.charcoal)),
               ],
             ),
           ),
-          const SizedBox(width: AppSpacing.lg),
-          PopupMenuButton<String>(
-            onSelected: (v) { if (v == 'logout') onLogout(); },
-            itemBuilder: (_) => [
-              const PopupMenuItem(enabled: false, child: Text('Admin', style: TextStyle(fontWeight: FontWeight.bold))),
-              const PopupMenuItem(value: 'logout', child: Text('Sign Out')),
-            ],
+          _headerIconButton(
+            icon: Icons.search,
+            onTap: () => _openSearch(context),
+            tooltip: 'Search',
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          _headerIconButton(
+            icon: Icons.notifications_outlined,
+            onTap: () => _push(context, const AdminNotificationsView()),
+            tooltip: 'Notifications',
+            badgeCount: unread,
+          ),
+          const SizedBox(width: AppSpacing.sm),
+          GestureDetector(
+            onTap: () => _openAccountSheet(context),
+            behavior: HitTestBehavior.opaque,
             child: Container(
-              width: 32, height: 32,
-              decoration: const BoxDecoration(color: AppColors.indigo, shape: BoxShape.circle),
+              width: 36, height: 36,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [AppColors.indigo, AppColors.teal],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                shape: BoxShape.circle,
+              ),
               alignment: Alignment.center,
-              child: const Text('A', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.white)),
+              child: Text(
+                initials,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _headerIconButton({
+    required IconData icon,
+    required VoidCallback onTap,
+    required String tooltip,
+    int badgeCount = 0,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: SizedBox(
+          width: 36, height: 36,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.center,
+            children: [
+              Icon(icon, size: 22, color: AppColors.charcoal),
+              if (badgeCount > 0)
+                Positioned(
+                  right: 4, top: 4,
+                  child: Container(
+                    constraints: const BoxConstraints(minWidth: 14, minHeight: 14),
+                    padding: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      color: AppColors.urgent,
+                      borderRadius: BorderRadius.circular(7),
+                      border: Border.all(color: AppColors.background, width: 1.5),
+                    ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      badgeCount > 99 ? '99+' : '$badgeCount',
+                      style: const TextStyle(
+                        fontSize: 8,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

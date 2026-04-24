@@ -126,6 +126,10 @@ import 'package:plagit/features/admin/views/admin_support_detail_view.dart';
 import 'package:plagit/features/admin/views/admin_analytics_view.dart';
 import 'package:plagit/features/admin/views/admin_audit_view.dart';
 import 'package:plagit/features/admin/views/admin_audit_detail_view.dart';
+import 'package:plagit/features/admin/views/admin_settings_view.dart';
+import 'package:plagit/features/admin/views/admin_notifications_view.dart';
+import 'package:plagit/features/admin/views/admin_global_search_view.dart';
+import 'package:plagit/features/admin/views/admin_reports_view.dart';
 
 class AppRouter {
   AppRouter._();
@@ -305,7 +309,10 @@ class AppRouter {
       GoRoute(path: '/admin/analytics', builder: (context, state) => const AdminAnalyticsView()),
       GoRoute(path: '/admin/audit', builder: (context, state) => const AdminAuditView()),
       GoRoute(path: '/admin/audit/:id', builder: (context, state) => AdminAuditDetailView(auditId: state.pathParameters['id']!)),
-      GoRoute(path: '/admin/notifications', builder: (context, state) => const AdminShellView()),
+      GoRoute(path: '/admin/notifications', builder: (context, state) => const AdminNotificationsView()),
+      GoRoute(path: '/admin/settings', builder: (context, state) => const AdminSettingsView()),
+      GoRoute(path: '/admin/search', builder: (context, state) => const AdminGlobalSearchView()),
+      GoRoute(path: '/admin/reports', builder: (context, state) => const AdminReportsView()),
     ],
   );
 }
