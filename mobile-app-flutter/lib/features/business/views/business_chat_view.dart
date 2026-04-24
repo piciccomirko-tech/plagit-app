@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
-import 'package:plagit/l10n/app_localizations.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/models/conversation.dart'; // ChatMessage
 import 'package:plagit/providers/business_providers.dart';

@@ -11,7 +11,7 @@ import 'package:plagit/models/business_conversation.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
-import 'package:plagit/l10n/app_localizations.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 
 const _tealMain = Color(0xFF00B5B0);
 const _bgMain = Color(0xFFF6F7F8);
