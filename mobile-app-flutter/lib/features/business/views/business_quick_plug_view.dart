@@ -20,8 +20,6 @@ extension _QuickPlugL10n on AppLocalizations {
     }
   }
 
-  String get retryAction => retry;
-
   String get filtersUnavailable {
     switch (localeName) {
       case 'it':
@@ -169,7 +167,12 @@ extension _QuickPlugL10n on AppLocalizations {
 /// Business Quick Plug — Tinder-style swipe deck for candidate discovery.
 /// This is the signature feature of the business side.
 class BusinessQuickPlugView extends StatefulWidget {
-  const BusinessQuickPlugView({super.key});
+  final VoidCallback? onBackToHome;
+
+  const BusinessQuickPlugView({
+    super.key,
+    this.onBackToHome,
+  });
 
   @override
   State<BusinessQuickPlugView> createState() => _BusinessQuickPlugViewState();
@@ -177,6 +180,7 @@ class BusinessQuickPlugView extends StatefulWidget {
 
 class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     with SingleTickerProviderStateMixin {
+  static const _deckBackground = Color(0xFF10141C);
   double _dragX = 0;
   bool _isAnimatingOut = false;
   String? _syncedPlanKey;
@@ -264,62 +268,6 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     });
   }
 
-  void _handleSuperInterested() {
-    final provider = context.read<BusinessQuickPlugProvider>();
-    final messenger = ScaffoldMessenger.of(context);
-    final l = AppLocalizations.of(context);
-    if (_isAnimatingOut || !provider.hasCards) return;
-    if (provider.swipesUsed >= provider.dailyLimit) {
-      provider.swipe(true);
-      return;
-    }
-
-    _isAnimatingOut = true;
-    _animX = Tween<double>(begin: _dragX, end: 0.0).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOut),
-    );
-
-    _animController.forward(from: 0).then((_) async {
-      if (!mounted) return;
-      try {
-        await provider.swipe(true);
-
-        setState(() {
-          _dragX = 0;
-          _isAnimatingOut = false;
-        });
-
-        _animController.reset();
-        if (!mounted) return;
-        messenger.clearSnackBars();
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(l.interestSent),
-            duration: const Duration(milliseconds: 1500),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: AppColors.gold,
-          ),
-        );
-      } catch (e) {
-        if (!mounted) return;
-        setState(() {
-          _dragX = 0;
-          _isAnimatingOut = false;
-        });
-        _animController.reset();
-        messenger.clearSnackBars();
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            duration: const Duration(milliseconds: 1600),
-            behavior: SnackBarBehavior.floating,
-            backgroundColor: AppColors.red,
-          ),
-        );
-      }
-    });
-  }
-
   // -- Color from name hash for avatar --
   Color _avatarColor(String name) {
     final hash = name.hashCode;
@@ -378,12 +326,12 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
     if (!canUseQuickPlug) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: _deckBackground,
         body: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              _buildAppBar(),
-              Expanded(child: _buildLockedPrompt(subscription)),
+              Positioned.fill(child: _buildLockedPrompt(subscription)),
+              _buildTopChrome(),
             ],
           ),
         ),
@@ -393,16 +341,16 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     // Loading state
     if (provider.loading) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: _deckBackground,
         body: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              _buildAppBar(),
-              const Expanded(
+              const Positioned.fill(
                 child: Center(
                   child: CircularProgressIndicator(color: AppColors.teal),
                 ),
               ),
+              _buildTopChrome(),
             ],
           ),
         ),
@@ -412,26 +360,37 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     // Error state
     if (provider.error != null) {
       return Scaffold(
-        backgroundColor: AppColors.background,
+        backgroundColor: _deckBackground,
         body: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              _buildAppBar(),
-              Expanded(
+              Positioned.fill(
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(provider.error!, style: const TextStyle(color: AppColors.secondary)),
+                      Text(
+                        provider.error!,
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.82),
+                        ),
+                      ),
                       const SizedBox(height: 12),
                       GestureDetector(
                         onTap: () async => _retryDeckLoad(subscription),
-                        child: Text(AppLocalizations.of(context).retryAction, style: const TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+                        child: Text(
+                          AppLocalizations.of(context).retryAction,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
+              _buildTopChrome(),
             ],
           ),
         ),
@@ -439,36 +398,37 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: _deckBackground,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            Expanded(child: _buildBody(provider, subscription)),
-          ],
-        ),
+        child: _buildBody(provider, subscription),
       ),
     );
   }
 
-  // -- Custom App Bar --
-  Widget _buildAppBar() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+  Widget _buildTopChrome() {
+    return Positioned(
+      top: 16,
+      left: 20,
+      right: 20,
       child: Row(
         children: [
-          const Icon(Icons.bolt, size: 28, color: AppColors.purple),
-          const SizedBox(width: 8),
-          Text(
-            AppLocalizations.of(context).quickPlug,
-            style: TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.purple,
-            ),
+          _glassCircleButton(
+            icon: Icons.arrow_back_ios_new_rounded,
+            onTap: () {
+              if (widget.onBackToHome != null) {
+                widget.onBackToHome!.call();
+                return;
+              }
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                context.go('/business/home');
+              }
+            },
           ),
           const Spacer(),
-          GestureDetector(
+          _glassCircleButton(
+            icon: Icons.tune_rounded,
             onTap: () {
               ScaffoldMessenger.of(context).clearSnackBars();
               ScaffoldMessenger.of(context).showSnackBar(
@@ -479,17 +439,34 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
                 ),
               );
             },
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(Icons.tune, size: 20, color: Colors.grey.shade600),
-            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _glassCircleButton({
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.22),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: 0.14),
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Icon(
+          icon,
+          size: 18,
+          color: Colors.white,
+        ),
       ),
     );
   }
@@ -499,17 +476,26 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     BusinessQuickPlugProvider provider,
     BusinessSubscription subscription,
   ) {
-    // Empty state: all candidates reviewed
     if (!provider.showUpgrade && !provider.hasCards) {
-      return _buildEmptyState();
+      return Stack(
+        children: [
+          Positioned.fill(child: _buildEmptyState()),
+          _buildTopChrome(),
+        ],
+      );
     }
 
-    // Upgrade prompt
     if (provider.showUpgrade) {
-      return _buildUpgradePrompt(subscription, provider.dailyLimit);
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: _buildUpgradePrompt(subscription, provider.dailyLimit),
+          ),
+          _buildTopChrome(),
+        ],
+      );
     }
 
-    // Swipe deck
     return _buildSwipeDeck(provider);
   }
 
@@ -525,24 +511,25 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: AppColors.teal.withValues(alpha: 0.12),
+                color: Colors.white.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.check_circle, size: 60, color: AppColors.teal),
+              child: const Icon(Icons.check_circle, size: 36, color: Colors.white),
             ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context).quickPlugNoMoreCandidatesTitle,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.charcoal,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
               ),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context).quickPlugNoMoreCandidatesBody,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.72)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -553,15 +540,15 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
                 decoration: BoxDecoration(
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: AppColors.teal, width: 1.5),
                 ),
                 child: Text(
                   AppLocalizations.of(context).quickPlugReloadDeck,
                   style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.teal,
+                    color: AppColors.charcoal,
                   ),
                 ),
               ),
@@ -579,15 +566,29 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.lock, size: 48, color: AppColors.amber),
+            Container(
+              width: 76,
+              height: 76,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.08),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
+              ),
+              child: const Icon(
+                Icons.lock_rounded,
+                size: 34,
+                color: AppColors.amber,
+              ),
+            ),
             const SizedBox(height: 16),
             Text(
               AppLocalizations.of(context).quickPlugRequiresPaidPlan,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.charcoal,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: -0.4,
               ),
             ),
             const SizedBox(height: 8),
@@ -595,25 +596,63 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               AppLocalizations.of(context)
                   .quickPlugUpgradeHint(subscription.plan.displayName),
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.45,
+                color: Colors.white.withValues(alpha: 0.72),
+              ),
+            ),
+            const SizedBox(height: 18),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              ),
+              child: Text(
+                subscription.plan.displayName,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white.withValues(alpha: 0.82),
+                ),
+              ),
             ),
             const SizedBox(height: 24),
             GestureDetector(
               onTap: () => context.push('/business/subscription'),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
                 decoration: BoxDecoration(
-                  color: AppColors.teal,
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(100),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 18,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
-                child: Text(
-                  AppLocalizations.of(context).quickPlugViewPlans,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppLocalizations.of(context).quickPlugViewPlans,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.charcoal,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Icon(
+                      Icons.arrow_forward_rounded,
+                      size: 18,
+                      color: AppColors.charcoal,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -643,13 +682,13 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: AppColors.charcoal,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               planLine,
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade500),
+              style: TextStyle(fontSize: 14, color: Colors.white.withValues(alpha: 0.72)),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -680,97 +719,69 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
   // -- Swipe Deck --
   Widget _buildSwipeDeck(BusinessQuickPlugProvider provider) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth - 48;
+    final cardWidth = screenWidth - 8;
     final deck = provider.deck;
     final currentIndex = provider.currentIndex;
 
-    return Column(
+    return Stack(
+      alignment: Alignment.center,
       children: [
-        Expanded(
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Background card (next card peeking)
-              if (currentIndex + 1 < deck.length)
-                _buildBackgroundCard(deck[currentIndex + 1], cardWidth),
+        if (currentIndex + 1 < deck.length)
+          _buildBackgroundCard(deck[currentIndex + 1], cardWidth),
 
-              // Foreground card
-              if (provider.hasCards)
-                _buildForegroundCard(provider.currentCard!, cardWidth),
+        if (provider.hasCards)
+          _buildForegroundCard(provider.currentCard!, cardWidth),
 
-              // Swipe labels
-              if (_dragX > 40)
-                Positioned(
-                  top: 40,
-                  left: 40,
-                  child: Transform.rotate(
-                    angle: -0.2,
-                    child: _buildSwipeLabel(
-                      AppLocalizations.of(context).quickPlugInterested,
-                      AppColors.green,
-                    ),
-                  ),
-                ),
-              if (_dragX < -40)
-                Positioned(
-                  top: 40,
-                  right: 40,
-                  child: Transform.rotate(
-                    angle: 0.2,
-                    child: _buildSwipeLabel(
-                      AppLocalizations.of(context).quickPlugPassLabel,
-                      AppColors.red,
-                    ),
-                  ),
-                ),
-            ],
+        _buildTopChrome(),
+
+        if (_dragX > 40)
+          Positioned(
+            top: 72,
+            left: 28,
+            child: Transform.rotate(
+              angle: -0.2,
+              child: _buildSwipeLabel(
+                AppLocalizations.of(context).quickPlugInterested,
+                AppColors.green,
+              ),
+            ),
           ),
-        ),
+        if (_dragX < -40)
+          Positioned(
+            top: 72,
+            right: 28,
+            child: Transform.rotate(
+              angle: 0.2,
+              child: _buildSwipeLabel(
+                AppLocalizations.of(context).quickPlugPassLabel,
+                AppColors.red,
+              ),
+            ),
+          ),
 
-        // Bottom action buttons
-        Padding(
-          padding: const EdgeInsets.only(top: 24, bottom: 32),
+        Positioned(
+          left: 0,
+          right: 0,
+          bottom: 30,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Pass button
-              GestureDetector(
+              _floatingActionButton(
                 onTap: () => _processSwipe(false),
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.red, width: 2),
-                  ),
-                  child: const Icon(Icons.close, size: 28, color: AppColors.red),
-                ),
+                size: 62,
+                fill: Colors.white.withValues(alpha: 0.95),
+                icon: Icons.close_rounded,
+                iconColor: AppColors.red,
+                shadowColor: Colors.black.withValues(alpha: 0.18),
               ),
-              // Same submit path as interested; visual emphasis only for now.
-              GestureDetector(
-                onTap: _handleSuperInterested,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.gold,
-                  ),
-                  child: const Icon(Icons.star, size: 24, color: Colors.white),
-                ),
-              ),
-              // Shortlist button
-              GestureDetector(
+              const SizedBox(width: 28),
+              _floatingActionButton(
                 onTap: () => _processSwipe(true),
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.teal,
-                  ),
-                  child: const Icon(Icons.check, size: 28, color: Colors.white),
-                ),
+                size: 68,
+                fill: AppColors.teal,
+                icon: Icons.favorite_rounded,
+                iconColor: Colors.white,
+                shadowColor: AppColors.teal.withValues(alpha: 0.34),
               ),
             ],
           ),
@@ -779,14 +790,43 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
+  Widget _floatingActionButton({
+    required VoidCallback onTap,
+    required double size,
+    required Color fill,
+    required IconData icon,
+    required Color iconColor,
+    required Color shadowColor,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: fill,
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor,
+              blurRadius: 18,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Icon(icon, size: size * 0.42, color: iconColor),
+      ),
+    );
+  }
+
   // -- Background Card --
   Widget _buildBackgroundCard(QuickPlugCandidate nextCandidate, double cardWidth) {
     return Transform.translate(
-      offset: const Offset(0, 12),
+      offset: const Offset(0, 16),
       child: Transform.scale(
-        scale: 0.95,
+        scale: 0.96,
         child: Opacity(
-          opacity: 0.7,
+          opacity: 0.55,
           child: _buildCandidateCard(nextCandidate, cardWidth),
         ),
       ),
@@ -833,142 +873,211 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
 
   // -- Candidate Card --
   Widget _buildCandidateCard(QuickPlugCandidate candidate, double cardWidth) {
+    final deck = context.read<BusinessQuickPlugProvider>().deck;
+    final currentIndex = context.read<BusinessQuickPlugProvider>().currentIndex;
+    final metaParts = <String>[
+      if (candidate.location.isNotEmpty) candidate.location,
+      if (candidate.experience.isNotEmpty) candidate.experience,
+    ];
+
     return Container(
       width: cardWidth,
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.30),
+            blurRadius: 30,
+            offset: const Offset(0, 16),
           ),
         ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
+      clipBehavior: Clip.antiAlias,
+      child: AspectRatio(
+        aspectRatio: 0.72,
+        child: Stack(
+          fit: StackFit.expand,
           children: [
-            // Avatar
-            Container(
-              width: 120,
-              height: 120,
+            _buildCandidatePhoto(candidate),
+            DecoratedBox(
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: _avatarColor(candidate.name),
-              ),
-              child: Center(
-                child: Text(
-                  candidate.initials,
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.10),
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.18),
+                    Colors.black.withValues(alpha: 0.78),
+                  ],
+                  stops: const [0.0, 0.34, 0.62, 1.0],
                 ),
               ),
             ),
-            const SizedBox(height: 16),
-
-            // Name
-            Text(
-              candidate.name,
-              style: const TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: AppColors.charcoal,
-              ),
-            ),
-            const SizedBox(height: 4),
-
-            // Role + experience
-            Text(
-              candidate.experience.isNotEmpty
-                  ? '${candidate.role} \u00B7 ${candidate.experience}'
-                  : candidate.role,
-              style: TextStyle(
-                fontSize: 15,
-                color: Colors.grey.shade500,
-              ),
-            ),
-            const SizedBox(height: 4),
-
-            // Location
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.place, size: 14, color: AppColors.teal),
-                const SizedBox(width: 4),
-                Text(
-                  candidate.location,
-                  style: const TextStyle(fontSize: 13, color: AppColors.teal),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-
-            // Verified badge
-            if (candidate.verified)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.verified, size: 16, color: AppColors.teal),
-                  const SizedBox(width: 4),
-                  Text(
-                    AppLocalizations.of(context).verifiedLabel,
-                    style: const TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.teal,
+            Positioned(
+              top: 14,
+              left: 14,
+              right: 14,
+              child: Row(
+                children: List.generate(deck.length, (index) {
+                  final isActive = index == currentIndex;
+                  final isViewed = index < currentIndex;
+                  return Expanded(
+                    child: Container(
+                      height: 3,
+                      margin: EdgeInsets.only(right: index == deck.length - 1 ? 0 : 4),
+                      decoration: BoxDecoration(
+                        color: isViewed || isActive
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.28),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
                     ),
+                  );
+                }),
+              ),
+            ),
+            Positioned(
+              left: 22,
+              right: 22,
+              bottom: 118,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (candidate.verified)
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.16),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.verified, size: 14, color: Colors.white),
+                          const SizedBox(width: 6),
+                          Text(
+                            AppLocalizations.of(context).verifiedLabel,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  Text(
+                    candidate.name,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w800,
+                      height: 1.0,
+                      letterSpacing: -0.6,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                  const SizedBox(height: 6),
+                  Text(
+                    candidate.role,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (metaParts.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(
+                      metaParts.join(' · '),
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white.withValues(alpha: 0.84),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (candidate.tags.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: candidate.tags.take(3).map((tag) {
+                          return Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(100),
+                              border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.10),
+                              ),
+                            ),
+                            child: Text(
+                              tag,
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                  if (candidate.summary.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      candidate.summary,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        height: 1.35,
+                        color: Colors.white.withValues(alpha: 0.78),
+                      ),
+                    ),
+                  ],
                 ],
               ),
-            const SizedBox(height: 16),
-
-            // Tags
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: candidate.tags.map((tag) {
-                return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.teal.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    tag,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.teal,
-                      fontWeight: FontWeight.w500,
+            ),
+            Positioned(
+              bottom: 72,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: GestureDetector(
+                  onTap: () => context.push('/business/candidate/${candidate.id}'),
+                  child: Container(
+                    width: 42,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.22),
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.12),
+                      ),
+                    ),
+                    alignment: Alignment.center,
+                    child: const Icon(
+                      Icons.keyboard_arrow_up_rounded,
+                      color: Colors.white,
+                      size: 20,
                     ),
                   ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16),
-
-            // Summary
-            Text(
-              candidate.summary,
-              textAlign: TextAlign.center,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade500,
-                height: 1.4,
+                ),
               ),
             ),
           ],
@@ -977,24 +1086,69 @@ class _BusinessQuickPlugViewState extends State<BusinessQuickPlugView>
     );
   }
 
+  Widget _buildCandidatePhoto(QuickPlugCandidate candidate) {
+    final photoUrl = _candidatePhotoUrl(candidate);
+    return Image.network(
+      photoUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (_, _, _) => _buildPhotoFallback(candidate),
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return _buildPhotoFallback(candidate);
+      },
+    );
+  }
+
+  Widget _buildPhotoFallback(QuickPlugCandidate candidate) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            _avatarColor(candidate.name).withValues(alpha: 0.92),
+            AppColors.charcoal,
+          ],
+        ),
+      ),
+      child: Center(
+        child: Text(
+          candidate.initials,
+          style: const TextStyle(
+            fontSize: 72,
+            fontWeight: FontWeight.w800,
+            color: Colors.white,
+            letterSpacing: -1.2,
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _candidatePhotoUrl(QuickPlugCandidate candidate) {
+    final imageId = (candidate.id.hashCode.abs() % 70) + 1;
+    return 'https://i.pravatar.cc/900?img=$imageId';
+  }
+
   // -- Swipe Label --
   Widget _buildSwipeLabel(String text, Color color) {
     final opacity = (_dragX.abs() / 120).clamp(0.0, 1.0);
     return Opacity(
       opacity: opacity,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(8),
+          color: color.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.white, width: 2),
         ),
         child: Text(
           text,
           style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w800,
             color: Colors.white,
+            letterSpacing: 1.2,
           ),
         ),
       ),

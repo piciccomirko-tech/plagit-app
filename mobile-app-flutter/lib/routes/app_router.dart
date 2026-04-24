@@ -25,8 +25,10 @@ import 'package:plagit/features/onboarding/views/onboarding_experience_view.dart
 import 'package:plagit/features/onboarding/views/onboarding_availability_view.dart';
 
 // Candidate
-import 'package:plagit/features/candidate/views/candidate_home_view.dart';
+import 'package:plagit/features/candidate/views/candidate_dashboard_tab.dart';
+import 'package:plagit/features/candidate/views/candidate_jobs_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_job_detail_view.dart';
+import 'package:plagit/features/candidate/views/candidate_messages_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_chat_view.dart';
 import 'package:plagit/features/candidate/views/candidate_interviews_view.dart';
 import 'package:plagit/features/candidate/views/candidate_interview_detail_view.dart';
@@ -34,10 +36,12 @@ import 'package:plagit/features/candidate/views/candidate_matches_view.dart';
 import 'package:plagit/features/candidate/views/candidate_nearby_view.dart';
 import 'package:plagit/features/candidate/views/nearby_map_view.dart';
 import 'package:plagit/features/candidate/views/saved_jobs_view.dart';
+import 'package:plagit/features/candidate/views/candidate_applications_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_application_detail_view.dart';
 import 'package:plagit/features/candidate/views/candidate_subscription_view.dart';
 import 'package:plagit/features/candidate/views/notifications_view.dart';
 import 'package:plagit/features/candidate/views/profile_edit_view.dart';
+import 'package:plagit/features/candidate/views/candidate_profile_tab.dart';
 import 'package:plagit/features/candidate/views/candidate_quick_plug_view.dart';
 import 'package:plagit/features/candidate/views/company_discovery_view.dart';
 import 'package:plagit/features/candidate/views/cv_review_view.dart';
@@ -101,7 +105,6 @@ import 'package:plagit/features/feed/views/saved_posts_view.dart';
 // Admin
 import 'package:plagit/features/admin/views/admin_root_view.dart';
 import 'package:plagit/features/admin/views/admin_shell_view.dart';
-import 'package:plagit/features/admin/views/admin_dashboard_view.dart';
 import 'package:plagit/features/admin/views/admin_candidates_view.dart';
 import 'package:plagit/features/admin/views/admin_candidate_detail_view.dart';
 import 'package:plagit/features/admin/views/admin_businesses_view.dart';
@@ -170,8 +173,10 @@ class AppRouter {
       // ══════════════════════════════════════════
       // ── Candidate main area ──
       // ══════════════════════════════════════════
-      GoRoute(path: '/candidate/home', builder: (context, state) => const CandidateHomeView()),
+      GoRoute(path: '/candidate/home', builder: (context, state) => const CandidateDashboardTab()),
+      GoRoute(path: '/candidate/jobs', builder: (context, state) => const CandidateJobsTab()),
       GoRoute(path: '/candidate/job/:id', builder: (context, state) => CandidateJobDetailView(jobId: state.pathParameters['id']!)),
+      GoRoute(path: '/candidate/messages', builder: (context, state) => const CandidateMessagesTab()),
       GoRoute(path: '/candidate/chat/:id', builder: (context, state) => CandidateChatView(conversationId: state.pathParameters['id']!)),
       GoRoute(path: '/candidate/interviews', builder: (context, state) => const CandidateInterviewsView()),
       GoRoute(path: '/candidate/interview/:id', builder: (context, state) => CandidateInterviewDetailView(interviewId: state.pathParameters['id']!)),
@@ -179,16 +184,17 @@ class AppRouter {
       GoRoute(path: '/candidate/nearby', builder: (context, state) => const CandidateNearbyView()),
       GoRoute(path: '/candidate/nearby-map', builder: (context, state) => const NearbyMapView()),
       GoRoute(path: '/candidate/saved', builder: (context, state) => const SavedJobsView()),
+      GoRoute(path: '/candidate/applications', builder: (context, state) => const CandidateApplicationsTab()),
       GoRoute(path: '/candidate/application/:id', builder: (context, state) => CandidateApplicationDetailView(applicationId: state.pathParameters['id']!)),
       GoRoute(path: '/candidate/subscription', builder: (context, state) => const CandidateSubscriptionView()),
       GoRoute(path: '/candidate/notifications', builder: (context, state) => const NotificationsView()),
+      GoRoute(path: '/candidate/profile', builder: (context, state) => const CandidateProfileTab()),
       GoRoute(path: '/candidate/profile/edit', builder: (context, state) => const ProfileEditView()),
       GoRoute(path: '/candidate/profile-setup', builder: (context, state) => const CandidateProfileSetupView()),
       GoRoute(path: '/candidate/quick-plug', builder: (context, state) => const CandidateQuickPlugView()),
       GoRoute(path: '/candidate/companies', builder: (context, state) => const CompanyDiscoveryView()),
       GoRoute(path: '/candidate/cv-review', builder: (context, state) => const CvReviewView()),
       GoRoute(path: '/candidate/match-feedback/:id', builder: (context, state) => MatchFeedbackView(matchId: state.pathParameters['id']!)),
-      GoRoute(path: '/candidate/messages/:id', builder: (context, state) => CandidateChatView(conversationId: state.pathParameters['id']!)),
 
       // ══════════════════════════════════════════
       // ── Business auth ──

@@ -179,8 +179,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordHint => 'كلمة المرور (٨ أحرف على الأقل)';
 
   @override
-  String get termsOfServiceNote =>
-      'بإنشاء حساب فإنك توافق على الشروط وسياسة الخصوصية.';
+  String get termsOfServiceNote => 'بإنشاء حساب فإنك توافق على الشروط وسياسة الخصوصية.';
 
   @override
   String get networkError => 'خطأ في الشبكة';
@@ -204,12 +203,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get findYourNextRole => 'اعثر على وظيفتك التالية في مجال الضيافة';
 
   @override
-  String get candidateLoginSubtitle =>
-      'تواصل مع أفضل أصحاب العمل في لندن ودبي وأكثر.';
+  String get candidateLoginSubtitle => 'تواصل مع أفضل أصحاب العمل في لندن ودبي وأكثر.';
 
   @override
-  String get businessLoginSubtitle =>
-      'تواصل مع أفضل المواهب في مجال الضيافة ونمِّ فريقك.';
+  String get businessLoginSubtitle => 'تواصل مع أفضل المواهب في مجال الضيافة ونمِّ فريقك.';
 
   @override
   String get rememberMe => 'تذكرني';
@@ -230,19 +227,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get switchToCandidate => 'التبديل إلى المرشح';
 
   @override
-  String get createYourProfile =>
-      'أنشئ ملفك الشخصي وابدأ في استقطاب أفضل أصحاب العمل.';
+  String get createYourProfile => 'أنشئ ملفك الشخصي وابدأ في استقطاب أفضل أصحاب العمل.';
 
   @override
-  String get createBusinessProfile =>
-      'أنشئ ملف عملك وابدأ في توظيف أفضل المواهب في الضيافة.';
+  String get createBusinessProfile => 'أنشئ ملف عملك وابدأ في توظيف أفضل المواهب في الضيافة.';
 
   @override
   String get locationCityCountry => 'الموقع (المدينة، الدولة)';
 
   @override
-  String get termsAgreement =>
-      'بإنشاء حساب فإنك توافق على شروط الخدمة وسياسة الخصوصية.';
+  String get termsAgreement => 'بإنشاء حساب فإنك توافق على شروط الخدمة وسياسة الخصوصية.';
 
   @override
   String get searchHospitalityHint => 'ابحث عن فئة أو فئة فرعية أو دور…';
@@ -299,15 +293,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get resetPassword => 'إعادة تعيين كلمة المرور';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين.';
+  String get forgotPasswordSubtitle => 'أدخل بريدك الإلكتروني وسنرسل لك رابط إعادة تعيين.';
 
   @override
   String get sendResetLink => 'إرسال رابط الإعادة';
 
   @override
-  String get resetEmailSent =>
-      'إذا كان هناك حساب لهذا البريد، فقد تم إرسال رابط إعادة التعيين.';
+  String get resetEmailSent => 'إذا كان هناك حساب لهذا البريد، فقد تم إرسال رابط إعادة التعيين.';
 
   @override
   String get profileSetupTitle => 'أكمل ملفك الشخصي';
@@ -938,21 +930,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get statusOffer => 'عرض';
 
   @override
-  String get statusShortlisted => 'في القائمة المختصرة';
-
-  @override
-  String get statusUnderReview => 'قيد المراجعة';
-
-  @override
-  String get statusInterviewInvited => 'دعوة للمقابلة';
-
-  @override
-  String get statusInterviewScheduled => 'موعد مقابلة محدد';
-
-  @override
-  String get statusWithdrawn => 'تم السحب';
-
-  @override
   String get messagesSearch => 'ابحث في الرسائل…';
 
   @override
@@ -1081,8 +1058,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get allLanguages => 'كل اللغات';
 
   @override
-  String get uploadCVBig =>
-      'حمّل سيرتك الذاتية لملء الملف تلقائيًا وتوفير الوقت.';
+  String get uploadCVBig => 'حمّل سيرتك الذاتية لملء الملف تلقائيًا وتوفير الوقت.';
 
   @override
   String get supportedFormats => 'الصيغ المدعومة: PDF و DOC و DOCX';
@@ -1094,8 +1070,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get fillManuallySubtitle => 'أدخل بياناتك وأكمل ملفك خطوة بخطوة.';
 
   @override
-  String get photoUploadSoon =>
-      'تحميل الصورة قريبًا — استخدم صورة احترافية مؤقتًا.';
+  String get photoUploadSoon => 'تحميل الصورة قريبًا — استخدم صورة احترافية مؤقتًا.';
 
   @override
   String get yourCV => 'سيرتك الذاتية';
@@ -1640,8 +1615,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get plagitBusinessPlans => 'خطط Plagit للأعمال';
 
   @override
-  String get scaleYourHiringSubtitle =>
-      'وسّع نطاق التوظيف بالخطة المناسبة لأعمالك.';
+  String get scaleYourHiringSubtitle => 'وسّع نطاق التوظيف بالخطة المناسبة لأعمالك.';
 
   @override
   String get yearly => 'سنوي';
@@ -1658,8 +1632,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get subscriptionAutoRenewNote =>
-      'يتجدد الاشتراك تلقائيًا. يمكنك الإلغاء في أي وقت من الإعدادات.';
+  String get subscriptionAutoRenewNote => 'يتجدد الاشتراك تلقائيًا. يمكنك الإلغاء في أي وقت من الإعدادات.';
 
   @override
   String get purchaseFlowComingSoon => 'الشراء متاح قريبًا';
@@ -1671,7 +1644,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get applicantNotFound => 'المتقدم غير موجود';
 
   @override
-  String get cvViewerComingSoon => 'عارض السيرة الذاتية قادم قريباً';
+  String get cvViewerComingSoon => 'عارض السيرة الذاتية متاح قريبًا';
 
   @override
   String get viewCV => 'عرض السيرة الذاتية';
@@ -1686,7 +1659,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get interviewConfirmed => 'تم تأكيد المقابلة';
 
   @override
-  String get interviewMarkedCompleted => 'تم وضع علامة على المقابلة كمكتملة';
+  String get interviewMarkedCompleted => 'تم وضع علامة مكتملة على المقابلة';
 
   @override
   String get cancelInterviewConfirm => 'هل أنت متأكد من إلغاء هذه المقابلة؟';
@@ -1698,19 +1671,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get interviewNotFound => 'المقابلة غير موجودة';
 
   @override
-  String get openingMeetingLink => 'فتح رابط الاجتماع...';
+  String get openingMeetingLink => 'جارٍ فتح رابط الاجتماع...';
 
   @override
-  String get rescheduleComingSoon => 'ميزة إعادة الجدولة قادمة قريباً';
+  String get rescheduleComingSoon => 'ميزة إعادة الجدولة متاحة قريبًا';
 
   @override
   String get notesFeatureComingSoon => 'ميزة الملاحظات متاحة قريبًا';
 
   @override
-  String get candidateMarkedHired => 'تم تعيين المرشح!';
+  String get candidateMarkedHired => 'تم وضع علامة موظف على المرشح!';
 
   @override
-  String get feedbackComingSoon => 'ميزة التعليقات قادمة قريباً';
+  String get feedbackComingSoon => 'ميزة التقييم متاحة قريبًا';
 
   @override
   String get googleMapsComingSoon => 'تكامل خرائط جوجل متاح قريبًا';
@@ -1755,8 +1728,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get dailyLimitReached => 'تم الوصول إلى الحد اليومي';
 
   @override
-  String get upgradeForUnlimitedSwipes =>
-      'قم بالترقية للحصول على تمريرات غير محدودة.';
+  String get upgradeForUnlimitedSwipes => 'قم بالترقية للحصول على تمريرات غير محدودة.';
 
   @override
   String get distanceUpper => 'المسافة';
@@ -1816,8 +1788,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get filterAll => 'الكل';
 
   @override
-  String get whenCandidatesMessage =>
-      'عندما يراسلك المرشحون، ستظهر المحادثات هنا.';
+  String get whenCandidatesMessage => 'عندما يراسلك المرشحون، ستظهر المحادثات هنا.';
 
   @override
   String get trySwitchingFilter => 'جرّب تغيير الفلتر.';
@@ -1843,8 +1814,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteAllConversations => 'حذف كل المحادثات؟';
 
   @override
-  String get deleteSelectedNote =>
-      'ستُزال المحادثات المحددة من صندوق الوارد. يحتفظ المرشح بنسخته.';
+  String get deleteSelectedNote => 'ستُزال المحادثات المحددة من صندوق الوارد. يحتفظ المرشح بنسخته.';
 
   @override
   String get deleteAll => 'حذف الكل';
@@ -1873,8 +1843,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get nothingHereYet => 'لا شيء هنا حتى الآن';
 
   @override
-  String get shareVenueUpdate =>
-      'شارك تحديثًا من موقعك لبدء بناء حضورك في المجتمع.';
+  String get shareVenueUpdate => 'شارك تحديثًا من موقعك لبدء بناء حضورك في المجتمع.';
 
   @override
   String get communityPostsAppearHere => 'ستظهر منشورات المجتمع هنا.';
@@ -2120,8 +2089,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get weekendShiftsLabel => 'مناوبات نهاية الأسبوع';
 
   @override
-  String get describeRoleHint =>
-      'صِف الدور والمسؤوليات وما يميز هذه الوظيفة...';
+  String get describeRoleHint => 'صِف الدور والمسؤوليات وما يميز هذه الوظيفة...';
 
   @override
   String get requirementsHint => 'المهارات والخبرة والشهادات المطلوبة...';
@@ -2237,8 +2205,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get upgradeAction => 'الترقية';
 
   @override
-  String get searchJobsByTitleHint =>
-      'ابحث عن وظائف بالعنوان أو الدور أو الموقع…';
+  String get searchJobsByTitleHint => 'ابحث عن وظائف بالعنوان أو الدور أو الموقع…';
 
   @override
   String xShortlisted(String name) {
@@ -2598,8 +2565,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get restorePurchasesLabel => 'استعادة المشتريات';
 
   @override
-  String get subscriptionAutoRenewsNote =>
-      'يتم تجديد الاشتراك تلقائياً. يمكنك إلغاؤه في أي وقت من الإعدادات.';
+  String get subscriptionAutoRenewsNote => 'يتم تجديد الاشتراك تلقائياً. يمكنك إلغاؤه في أي وقت من الإعدادات.';
 
   @override
   String get appStatusPillApplied => 'مقدم';
@@ -2694,8 +2660,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get categoryOther => 'أخرى';
 
   @override
-  String get premiumHeroTagline =>
-      'ظهور أكبر، تنبيهات ذات أولوية، وفلاتر متقدمة مصممة لمحترفي الضيافة الجادين.';
+  String get premiumHeroTagline => 'ظهور أكبر، تنبيهات ذات أولوية، وفلاتر متقدمة مصممة لمحترفي الضيافة الجادين.';
 
   @override
   String get benefitAdvancedFilters => 'فلاتر بحث متقدمة';
@@ -2722,8 +2687,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get findYourFirstJob => 'اعثر على وظيفتك الأولى';
 
   @override
-  String get browseHospitalityRolesNearby =>
-      'تصفّح المئات من وظائف الضيافة بالقرب منك';
+  String get browseHospitalityRolesNearby => 'تصفّح المئات من وظائف الضيافة بالقرب منك';
 
   @override
   String get seeWhoViewedYourPostTitle => 'شاهد من اطّلع على منشورك';
@@ -2732,8 +2696,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get upgradeToPremiumCta => 'الترقية إلى Premium';
 
   @override
-  String get upgradeToPremiumSubtitle =>
-      'قم بالترقية إلى Premium لرؤية الشركات الموثّقة والمسؤولين عن التوظيف وقادة الضيافة الذين شاهدوا محتواك.';
+  String get upgradeToPremiumSubtitle => 'قم بالترقية إلى Premium لرؤية الشركات الموثّقة والمسؤولين عن التوظيف وقادة الضيافة الذين شاهدوا محتواك.';
 
   @override
   String get verifiedBusinessViewers => 'مشاهدو الأعمال الموثّقون';
@@ -3026,12 +2989,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get checkInterviewDetailsLine => 'راجع تفاصيل المقابلة';
 
   @override
-  String get interviewInvitedSubline =>
-      'صاحب العمل يريد إجراء مقابلة معك — أكد الموعد';
+  String get interviewInvitedSubline => 'صاحب العمل يريد إجراء مقابلة معك — أكد الموعد';
 
   @override
-  String get shortlistedSubline =>
-      'لقد دخلت القائمة المختصرة — انتظر الخطوة التالية';
+  String get shortlistedSubline => 'لقد دخلت القائمة المختصرة — انتظر الخطوة التالية';
 
   @override
   String get underReviewSubline => 'صاحب العمل يراجع ملفك';
@@ -3222,22 +3183,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get entryFindWork => 'ابحث عن عمل';
 
   @override
-  String get entryFindWorkSubtitle =>
-      'تصفّح الوظائف واحصل على عمل لدى أفضل الأماكن';
+  String get entryFindWorkSubtitle => 'تصفّح الوظائف واحصل على عمل لدى أفضل الأماكن';
 
   @override
   String get entryHireStaff => 'وظّف موظفين';
 
   @override
-  String get entryHireStaffSubtitle =>
-      'انشر وظائف واعثر على أفضل مواهب الضيافة';
+  String get entryHireStaffSubtitle => 'انشر وظائف واعثر على أفضل مواهب الضيافة';
 
   @override
   String get entryFindCompanies => 'ابحث عن شركات';
 
   @override
-  String get entryFindCompaniesSubtitle =>
-      'اكتشف أماكن الضيافة ومزوّدي الخدمات';
+  String get entryFindCompaniesSubtitle => 'اكتشف أماكن الضيافة ومزوّدي الخدمات';
 
   @override
   String get servicesEntryTitle => 'البحث عن شركات';
@@ -3246,22 +3204,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get servicesHospitalityServices => 'خدمات الضيافة';
 
   @override
-  String get servicesEntrySubtitle =>
-      'سجّل شركة خدماتك أو ابحث عن مزوّدي الضيافة بالقرب منك';
+  String get servicesEntrySubtitle => 'سجّل شركة خدماتك أو ابحث عن مزوّدي الضيافة بالقرب منك';
 
   @override
   String get servicesRegisterCardTitle => 'التسجيل كشركة';
 
   @override
-  String get servicesRegisterCardSubtitle =>
-      'اعرض خدمتك في مجال الضيافة ليكتشفك العملاء';
+  String get servicesRegisterCardSubtitle => 'اعرض خدمتك في مجال الضيافة ليكتشفك العملاء';
 
   @override
   String get servicesLookingCardTitle => 'أبحث عن شركة';
 
   @override
-  String get servicesLookingCardSubtitle =>
-      'ابحث عن مزوّدي خدمات الضيافة بالقرب منك';
+  String get servicesLookingCardSubtitle => 'ابحث عن مزوّدي خدمات الضيافة بالقرب منك';
 
   @override
   String get registerBusinessTitle => 'سجّل شركتك';
@@ -3424,8 +3379,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get activitySystemUpdate => 'أرسل لك تحديثًا';
 
   @override
-  String get noActivityYetDesc =>
-      'عندما يعجب الناس بمنشورك أو يعلّقون أو يتابعونك، سيظهر هنا.';
+  String get noActivityYetDesc => 'عندما يعجب الناس بمنشورك أو يعلّقون أو يتابعونك، سيظهر هنا.';
 
   @override
   String get activeStatus => 'نشط';
@@ -3446,15 +3400,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get billingAndCancellation => 'الفواتير والإلغاء';
 
   @override
-  String get billingAndCancellationCopy =>
-      'يتم تحرير فاتورة اشتراكك عبر حساب App Store / Google Play. يمكنك الإلغاء في أي وقت من إعدادات جهازك — وستحتفظ بالوصول إلى Premium حتى تاريخ التجديد.';
+  String get billingAndCancellationCopy => 'يتم تحرير فاتورة اشتراكك عبر حساب App Store / Google Play. يمكنك الإلغاء في أي وقت من إعدادات جهازك — وستحتفظ بالوصول إلى Premium حتى تاريخ التجديد.';
 
   @override
   String get premiumIsActive => 'Premium نشط';
 
   @override
-  String get premiumThanksCopy =>
-      'شكرًا لدعمك Plagit. لديك وصول كامل إلى جميع ميزات Premium.';
+  String get premiumThanksCopy => 'شكرًا لدعمك Plagit. لديك وصول كامل إلى جميع ميزات Premium.';
 
   @override
   String get manageSubscription => 'إدارة الاشتراك';
@@ -3468,22 +3420,19 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get fullViewerAccessLine =>
-      'وصول كامل للمشاهدين · جميع الإحصاءات متاحة';
+  String get fullViewerAccessLine => 'وصول كامل للمشاهدين · جميع الإحصاءات متاحة';
 
   @override
   String get premiumActiveBadge => 'Premium نشط';
 
   @override
-  String get fullInsightsUnlocked =>
-      'الإحصاءات الكاملة وتفاصيل المشاهدين متاحة.';
+  String get fullInsightsUnlocked => 'الإحصاءات الكاملة وتفاصيل المشاهدين متاحة.';
 
   @override
   String get noViewersInCategory => 'لا يوجد مشاهدون في هذه الفئة بعد';
 
   @override
-  String get onlyVerifiedViewersShown =>
-      'يتم عرض المشاهدين الموثّقين الذين لديهم ملفات عامة فقط.';
+  String get onlyVerifiedViewersShown => 'يتم عرض المشاهدين الموثّقين الذين لديهم ملفات عامة فقط.';
 
   @override
   String get notEnoughDataYet => 'لا توجد بيانات كافية بعد.';
@@ -3492,8 +3441,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noViewInsightsYet => 'لا توجد إحصاءات مشاهدات بعد';
 
   @override
-  String get noViewInsightsDesc =>
-      'ستظهر الإحصاءات عندما يحصل منشورك على المزيد من المشاهدات.';
+  String get noViewInsightsDesc => 'ستظهر الإحصاءات عندما يحصل منشورك على المزيد من المشاهدات.';
 
   @override
   String get suspiciousEngagementDetected => 'تم رصد تفاعل مريب';
@@ -3502,8 +3450,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get patternReviewRequired => 'مطلوب مراجعة النمط';
 
   @override
-  String get adminInsightsFooter =>
-      'عرض المشرف — نفس الإحصاءات التي يراها المؤلف بالإضافة إلى علامات الإشراف. البيانات مجمعة فقط ولا يتم الكشف عن هوية أي مشاهد فردي.';
+  String get adminInsightsFooter => 'عرض المشرف — نفس الإحصاءات التي يراها المؤلف بالإضافة إلى علامات الإشراف. البيانات مجمعة فقط ولا يتم الكشف عن هوية أي مشاهد فردي.';
 
   @override
   String get viewerKindBusiness => 'شركة';
@@ -3542,15 +3489,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get candidatePremiumActivated => 'أصبحت الآن Candidate Premium';
 
   @override
-  String get purchasesRestoredPremium =>
-      'تم استرجاع المشتريات — أصبحت الآن Candidate Premium';
+  String get purchasesRestoredPremium => 'تم استرجاع المشتريات — أصبحت الآن Candidate Premium';
 
   @override
   String get nothingToRestore => 'لا شيء لاستعادته';
 
   @override
-  String get noValidSubscriptionPremiumRemoved =>
-      'لم يتم العثور على اشتراك صالح — تمت إزالة الوصول إلى Premium';
+  String get noValidSubscriptionPremiumRemoved => 'لم يتم العثور على اشتراك صالح — تمت إزالة الوصول إلى Premium';
 
   @override
   String restoreFailedWithError(String error) {
@@ -3609,12 +3554,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeCompanyTitle => 'إزالة؟';
 
   @override
-  String get removeCompanyConfirm =>
-      'هل أنت متأكد من إزالة هذه الشركة من قائمة المحفوظات؟';
+  String get removeCompanyConfirm => 'هل أنت متأكد من إزالة هذه الشركة من قائمة المحفوظات؟';
 
   @override
-  String get signOutAllRolesConfirm =>
-      'هل أنت متأكد من تسجيل الخروج من كل الأدوار؟';
+  String get signOutAllRolesConfirm => 'هل أنت متأكد من تسجيل الخروج من كل الأدوار؟';
 
   @override
   String get tapToViewAllConversations => 'اضغط لعرض كل المحادثات';
@@ -3637,8 +3580,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeFromSavedTitle => 'إزالة من المحفوظات؟';
 
   @override
-  String get removeFromSavedConfirm =>
-      'ستتم إزالة هذه الوظيفة من قائمة محفوظاتك.';
+  String get removeFromSavedConfirm => 'ستتم إزالة هذه الوظيفة من قائمة محفوظاتك.';
 
   @override
   String get noSavedJobsSubtitle => 'تصفح الوظائف واحفظ ما يعجبك';
@@ -3676,8 +3618,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get resetYourPasswordTitle => 'إعادة تعيين كلمة المرور';
 
   @override
-  String get enterEmailForResetCode =>
-      'أدخل بريدك الإلكتروني لتلقي رمز إعادة التعيين';
+  String get enterEmailForResetCode => 'أدخل بريدك الإلكتروني لتلقي رمز إعادة التعيين';
 
   @override
   String get sendResetCode => 'إرسال رمز إعادة التعيين';
@@ -3701,8 +3642,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordUpdatedShort => 'تم تحديث كلمة المرور بنجاح.';
 
   @override
-  String get passwordUpdatedRelogin =>
-      'تم تحديث كلمة المرور. يُرجى تسجيل الدخول مرة أخرى بكلمة المرور الجديدة.';
+  String get passwordUpdatedRelogin => 'تم تحديث كلمة المرور. يُرجى تسجيل الدخول مرة أخرى بكلمة المرور الجديدة.';
 
   @override
   String get updatePassword => 'تحديث كلمة المرور';
@@ -3798,12 +3738,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get businessUpper => 'شركة';
 
   @override
-  String get waitingForBusinessFirstMessage =>
-      'في انتظار أن ترسل الشركة أول رسالة';
+  String get waitingForBusinessFirstMessage => 'في انتظار أن ترسل الشركة أول رسالة';
 
   @override
-  String get whenEmployersMessageYou =>
-      'عندما يراسلك أصحاب العمل، ستظهر الرسائل هنا.';
+  String get whenEmployersMessageYou => 'عندما يراسلك أصحاب العمل، ستظهر الرسائل هنا.';
 
   @override
   String get replyToCandidate => 'الرد على المرشح…';
@@ -3851,8 +3789,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get finishSetupAction => 'إنهاء الإعداد';
 
   @override
-  String get describeBusinessHintLong =>
-      'صِف شركتك وثقافتها وما يجعلها مكانًا رائعًا للعمل... (يُوصى بـ 150 حرفًا على الأقل)';
+  String get describeBusinessHintLong => 'صِف شركتك وثقافتها وما يجعلها مكانًا رائعًا للعمل... (يُوصى بـ 150 حرفًا على الأقل)';
 
   @override
   String get describeBusinessHintShort => 'صِف شركتك...';
@@ -3933,12 +3870,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get browseServices => 'تصفّح الخدمات';
 
   @override
-  String get searchServicesCompaniesLocationsHint =>
-      'ابحث عن خدمات وشركات ومواقع...';
+  String get searchServicesCompaniesLocationsHint => 'ابحث عن خدمات وشركات ومواقع...';
 
   @override
-  String get searchCompaniesServicesLocationsHint =>
-      'ابحث عن شركات وخدمات ومواقع...';
+  String get searchCompaniesServicesLocationsHint => 'ابحث عن شركات وخدمات ومواقع...';
 
   @override
   String get nearbyCompanies => 'شركات قريبة';
@@ -4448,8 +4383,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminSubtitleMorePage => 'الإعدادات والتحليلات والحساب';
 
   @override
-  String get adminSubtitleAnalyticsHero =>
-      'مؤشرات الأداء والاتجاهات وصحة المنصة';
+  String get adminSubtitleAnalyticsHero => 'مؤشرات الأداء والاتجاهات وصحة المنصة';
 
   @override
   String get adminBadgeUrgent => 'عاجل';
@@ -4769,8 +4703,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminActionBanUser => 'حظر المستخدم';
 
   @override
-  String get adminSearchUsersHint =>
-      'ابحث بالاسم أو البريد أو الدور أو الموقع...';
+  String get adminSearchUsersHint => 'ابحث بالاسم أو البريد أو الدور أو الموقع...';
 
   @override
   String get adminMiscPositive => 'إيجابي';
@@ -4867,8 +4800,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminSearchCandidatesTitle => 'البحث عن مرشحين';
 
   @override
-  String get adminSearchCandidatesHint =>
-      'ابحث بالاسم أو البريد الإلكتروني أو الدور…';
+  String get adminSearchCandidatesHint => 'ابحث بالاسم أو البريد الإلكتروني أو الدور…';
 
   @override
   String get adminSearchAuditHint => 'ابحث في سجل التدقيق…';
@@ -4979,8 +4911,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminDialogRemovePostTitle => 'إزالة المنشور؟';
 
   @override
-  String get adminDialogRemovePostBody =>
-      'سيؤدي هذا إلى حذف المنشور وتعليقاته بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.';
+  String get adminDialogRemovePostBody => 'سيؤدي هذا إلى حذف المنشور وتعليقاته بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.';
 
   @override
   String get adminSnackbarReportCleared => 'تم مسح البلاغ';
@@ -5527,8 +5458,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminValueSupport => 'الدعم';
 
   @override
-  String get adminMiscReportCreatedByPlatform =>
-      'تم إنشاء البلاغ تلقائيًا من قبل المنصة';
+  String get adminMiscReportCreatedByPlatform => 'تم إنشاء البلاغ تلقائيًا من قبل المنصة';
 
   @override
   String get adminActionPause => 'إيقاف مؤقت';
@@ -5624,8 +5554,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get adminDialogRemoveJobTitle => 'إزالة الوظيفة';
 
   @override
-  String get adminDialogRemoveJobBody =>
-      'هل تريد إزالة هذه الوظيفة بالكامل؟ لا يمكن التراجع عن هذا الإجراء.';
+  String get adminDialogRemoveJobBody => 'هل تريد إزالة هذه الوظيفة بالكامل؟ لا يمكن التراجع عن هذا الإجراء.';
 
   @override
   String get adminModerationFlagThis => 'الإبلاغ عن هذه الوظيفة';
@@ -5753,24 +5682,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get orLabel => 'أو';
 
   @override
-  String removeChatConfirm(String name) {
-    return 'هل تريد إزالة محادثتك مع $name؟ سيتم حذف نسختك فقط — يحتفظ المرشح بنسخته.';
-  }
-
-  @override
-  String deleteAllInboxConfirm(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other:
-          'سيؤدي ذلك إلى مسح بريدك الوارد بالكامل ($count محادثات). لا يمكن التراجع عن ذلك من جانبك.',
-      one:
-          'سيؤدي ذلك إلى مسح بريدك الوارد بالكامل (محادثة واحدة). لا يمكن التراجع عن ذلك من جانبك.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String quickPlugNewBadge(int count) {
     return '$count جديد';
   }
@@ -5806,124 +5717,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get retryAction => 'إعادة المحاولة';
-
-  @override
-  String get yourMatchesTitle => 'التوافقات الخاصة بك';
-
-  @override
-  String get nearbyTalentTitle => 'المواهب القريبة';
-
-  @override
-  String get notificationsTitle => 'الإشعارات';
-
-  @override
-  String get insightsTitle => 'الإحصاءات';
-
-  @override
-  String get candidateProfileTitle => 'ملف المرشح';
-
-  @override
-  String get applicantProfileTitle => 'المتقدم';
-
-  @override
-  String get noMatchesYet => 'لا توجد توافقات بعد';
-
-  @override
-  String get inviteToInterviewAction => 'دعوة لمقابلة';
-
-  @override
-  String get allRolesLabel => 'جميع الأدوار';
-
-  @override
-  String get kmUnit => 'كم';
-
-  @override
-  String withinKm(int distance) {
-    return 'ضمن $distance كم';
-  }
-
-  @override
-  String get aboutSection => 'نبذة';
-
-  @override
-  String get skillsSection => 'المهارات';
-
-  @override
-  String get applicationSection => 'الطلب';
-
-  @override
-  String get timelineSection => 'الجدول الزمني';
-
-  @override
-  String get viewCvAction => 'عرض السيرة الذاتية';
-
-  @override
-  String get filtersComingSoon => 'الفلاتر قادمة قريباً';
-
-  @override
-  String get interviewInviteSent => 'تم إرسال دعوة المقابلة!';
-
-  @override
-  String get cancelInterviewTitle => 'إلغاء المقابلة';
-
-  @override
-  String get noLabel => 'لا';
-
-  @override
-  String get yesCancelLabel => 'نعم، إلغاء';
-
-  @override
-  String get notesComingSoon => 'ميزة الملاحظات قادمة قريباً';
-
-  @override
-  String get superInterestedNotified => 'اهتمام كبير! تم إبلاغ المرشح';
-
-  @override
-  String get rejectApplicantTitle => 'رفض المتقدم';
-
-  @override
-  String rejectApplicantConfirm(String name) {
-    return 'هل أنت متأكد من رفض $name؟';
-  }
-
-  @override
-  String get languagesLabel => 'اللغات';
-
-  @override
-  String get jobTypeLabel => 'نوع الوظيفة';
-
-  @override
-  String get interviewDetailsTitle => 'تفاصيل المقابلة';
-
-  @override
-  String get confirmInterviewButton => 'تأكيد المقابلة';
-
-  @override
-  String get rescheduleButton => 'إعادة جدولة';
-
-  @override
-  String get addNotesButton => 'إضافة ملاحظات';
-
-  @override
-  String get markAsCompletedButton => 'وضع علامة كمكتمل';
-
-  @override
-  String get cancelInterviewButton => 'إلغاء المقابلة';
-
-  @override
-  String get markAsHiredButton => 'تم التوظيف';
-
-  @override
-  String get sendFeedbackButton => 'إرسال ملاحظات';
-
-  @override
-  String get meetingLinkLabel => 'رابط الاجتماع';
-
-  @override
-  String get joinMeetingLabel => 'الانضمام إلى الاجتماع';
-
-  @override
-  String get notesLabel => 'ملاحظات';
 
   @override
   String get jobMenuEdit => 'تعديل';
@@ -6089,8 +5882,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobDescriptionLabel => 'وصف الوظيفة';
 
   @override
-  String get jobDescriptionHint =>
-      'صف الدور والمسؤوليات وكيف تبدو الوردية النموذجية...';
+  String get jobDescriptionHint => 'صف الدور والمسؤوليات وكيف تبدو الوردية النموذجية...';
 
   @override
   String charCountMin(int count) {
@@ -6104,8 +5896,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get benefitsLabel => 'المزايا';
 
   @override
-  String get benefitsHint =>
-      'اذكر المزايا المقدمة (البقشيش، الوجبات، النقل، إلخ)';
+  String get benefitsHint => 'اذكر المزايا المقدمة (البقشيش، الوجبات، النقل، إلخ)';
 
   @override
   String get markAsUrgent => 'تمييز كعاجل';
@@ -6135,8 +5926,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noShortlistedHeadline => 'لا يوجد مرشحون في القائمة المختصرة';
 
   @override
-  String get noShortlistedSubtext =>
-      'اختر مرشحين من القريبين أو المتقدمين أو نتائج البحث.';
+  String get noShortlistedSubtext => 'اختر مرشحين من القريبين أو المتقدمين أو نتائج البحث.';
 
   @override
   String get jobNotFound => 'الوظيفة غير موجودة';
@@ -6184,78 +5974,4 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get quickActionMessage => 'رسالة';
-
-  @override
-  String get catWaiter => 'نادل';
-
-  @override
-  String get catBartender => 'نادل بار';
-
-  @override
-  String get catChef => 'شيف';
-
-  @override
-  String get catHost => 'مضيف';
-
-  @override
-  String get catManager => 'مدير';
-
-  @override
-  String get catBarista => 'باريستا';
-
-  @override
-  String get catSommelier => 'نادل نبيذ';
-
-  @override
-  String get catKitchenPorter => 'مساعد مطبخ';
-
-  @override
-  String get catRunner => 'ركض';
-
-  @override
-  String get contractFullTime => 'دوام كامل';
-
-  @override
-  String get contractPartTime => 'دوام جزئي';
-
-  @override
-  String get contractZeroHours => 'عقد عند الطلب';
-
-  @override
-  String get contractTemporary => 'مؤقت';
-
-  @override
-  String get shiftDays => 'نهاري';
-
-  @override
-  String get shiftEvenings => 'مسائي';
-
-  @override
-  String get shiftNights => 'ليلي';
-
-  @override
-  String get shiftWeekends => 'عطلات نهاية الأسبوع';
-
-  @override
-  String get shiftFlexible => 'مرن';
-
-  @override
-  String get salaryPerHour => 'بالساعة';
-
-  @override
-  String get salaryPerDay => 'باليوم';
-
-  @override
-  String get salaryPerWeek => 'بالأسبوع';
-
-  @override
-  String get salaryPerMonth => 'بالشهر';
-
-  @override
-  String get categoryLabel2 => 'الفئة';
-
-  @override
-  String charCount(int count) {
-    return '$count / 50 حد أدنى';
-  }
 }

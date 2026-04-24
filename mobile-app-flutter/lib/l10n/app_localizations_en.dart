@@ -179,8 +179,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordHint => 'Password (min 8 characters)';
 
   @override
-  String get termsOfServiceNote =>
-      'By creating an account you agree to our Terms of Service and Privacy Policy.';
+  String get termsOfServiceNote => 'By creating an account you agree to our Terms of Service and Privacy Policy.';
 
   @override
   String get networkError => 'Network error';
@@ -204,12 +203,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get findYourNextRole => 'Find your next role in hospitality';
 
   @override
-  String get candidateLoginSubtitle =>
-      'Connect with top employers in London, Dubai and beyond.';
+  String get candidateLoginSubtitle => 'Connect with top employers in London, Dubai and beyond.';
 
   @override
-  String get businessLoginSubtitle =>
-      'Reach top hospitality talent and grow your team.';
+  String get businessLoginSubtitle => 'Reach top hospitality talent and grow your team.';
 
   @override
   String get rememberMe => 'Remember me';
@@ -230,19 +227,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get switchToCandidate => 'Switch to Candidate';
 
   @override
-  String get createYourProfile =>
-      'Create your profile and start getting discovered by top employers.';
+  String get createYourProfile => 'Create your profile and start getting discovered by top employers.';
 
   @override
-  String get createBusinessProfile =>
-      'Create your business profile and start hiring top hospitality talent.';
+  String get createBusinessProfile => 'Create your business profile and start hiring top hospitality talent.';
 
   @override
   String get locationCityCountry => 'Location (city, country)';
 
   @override
-  String get termsAgreement =>
-      'By creating an account you agree to our Terms of Service and Privacy Policy.';
+  String get termsAgreement => 'By creating an account you agree to our Terms of Service and Privacy Policy.';
 
   @override
   String get searchHospitalityHint => 'Search category, subcategory or role…';
@@ -299,22 +293,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetPassword => 'Reset password';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'Enter your email and we\'ll send you a link to reset your password.';
+  String get forgotPasswordSubtitle => 'Enter your email and we\'ll send you a link to reset your password.';
 
   @override
   String get sendResetLink => 'Send reset link';
 
   @override
-  String get resetEmailSent =>
-      'If an account exists for that email, a reset link has been sent.';
+  String get resetEmailSent => 'If an account exists for that email, a reset link has been sent.';
 
   @override
   String get profileSetupTitle => 'Complete your profile';
 
   @override
-  String get profileSetupSubtitle =>
-      'A complete profile gets discovered faster.';
+  String get profileSetupSubtitle => 'A complete profile gets discovered faster.';
 
   @override
   String get uploadPhoto => 'Upload photo';
@@ -503,8 +494,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get premiumActive => 'Premium Active';
 
   @override
-  String get premiumActiveSubtitle =>
-      'Priority visibility enabled · Manage plan';
+  String get premiumActiveSubtitle => 'Priority visibility enabled · Manage plan';
 
   @override
   String get noJobsFound => 'No jobs match your search';
@@ -638,8 +628,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get noResultsSubtitle =>
-      'Try a different keyword or clear the search.';
+  String get noResultsSubtitle => 'Try a different keyword or clear the search.';
 
   @override
   String get recentSearchesEmptyTitle => 'No recent searches';
@@ -914,8 +903,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get withdrawApp => 'Withdraw application';
 
   @override
-  String get withdrawConfirm =>
-      'Are you sure you want to withdraw this application?';
+  String get withdrawConfirm => 'Are you sure you want to withdraw this application?';
 
   @override
   String get applicationWithdrawn => 'Application withdrawn';
@@ -942,21 +930,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusOffer => 'Offer';
 
   @override
-  String get statusShortlisted => 'Shortlisted';
-
-  @override
-  String get statusUnderReview => 'Under Review';
-
-  @override
-  String get statusInterviewInvited => 'Interview Invited';
-
-  @override
-  String get statusInterviewScheduled => 'Interview Scheduled';
-
-  @override
-  String get statusWithdrawn => 'Withdrawn';
-
-  @override
   String get messagesSearch => 'Search messages…';
 
   @override
@@ -972,8 +945,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNotificationsTitle => 'No notifications yet';
 
   @override
-  String get noNotificationsSubtitle =>
-      'We\'ll let you know when something happens';
+  String get noNotificationsSubtitle => 'We\'ll let you know when something happens';
 
   @override
   String get today2 => 'Today';
@@ -1021,8 +993,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMatchesTitle => 'No matches yet';
 
   @override
-  String get noMatchesSubtitle =>
-      'Keep applying — your matches will appear here';
+  String get noMatchesSubtitle => 'Keep applying — your matches will appear here';
 
   @override
   String get interestedBusinesses => 'Interested Businesses';
@@ -1087,8 +1058,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allLanguages => 'All Languages';
 
   @override
-  String get uploadCVBig =>
-      'Upload your CV to pre-fill your profile automatically and save time.';
+  String get uploadCVBig => 'Upload your CV to pre-fill your profile automatically and save time.';
 
   @override
   String get supportedFormats => 'Supported formats: PDF, DOC, DOCX';
@@ -1097,12 +1067,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fillManually => 'Fill Manually';
 
   @override
-  String get fillManuallySubtitle =>
-      'Enter your details yourself and complete your profile step by step.';
+  String get fillManuallySubtitle => 'Enter your details yourself and complete your profile step by step.';
 
   @override
-  String get photoUploadSoon =>
-      'Photo upload coming soon — use a professional avatar in the meantime.';
+  String get photoUploadSoon => 'Photo upload coming soon — use a professional avatar in the meantime.';
 
   @override
   String get yourCV => 'Your CV';
@@ -1209,8 +1177,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hireBestTalent => 'Hire the best hospitality talent';
 
   @override
-  String get businessLoginSub =>
-      'Post jobs and connect with verified candidates.';
+  String get businessLoginSub => 'Post jobs and connect with verified candidates.';
 
   @override
   String get lookingForWork => 'Looking for work? ';
@@ -1243,8 +1210,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noApplicantsYet => 'No applicants yet';
 
   @override
-  String get noApplicantsSubtitle =>
-      'Applicants will appear here once they apply.';
+  String get noApplicantsSubtitle => 'Applicants will appear here once they apply.';
 
   @override
   String get scheduleInterview => 'Schedule Interview';
@@ -1527,8 +1493,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noInterviewsYet => 'No interviews scheduled';
 
   @override
-  String get scheduleFirstInterview =>
-      'Schedule your first interview with a candidate';
+  String get scheduleFirstInterview => 'Schedule your first interview with a candidate';
 
   @override
   String get sendInterviewInvite => 'Send interview invite';
@@ -1650,8 +1615,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plagitBusinessPlans => 'Plagit Business Plans';
 
   @override
-  String get scaleYourHiringSubtitle =>
-      'Scale your hiring with the right plan for your business.';
+  String get scaleYourHiringSubtitle => 'Scale your hiring with the right plan for your business.';
 
   @override
   String get yearly => 'Yearly';
@@ -1660,8 +1624,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveWithAnnualBilling => 'Save more with annual billing';
 
   @override
-  String get chooseYourPlanSubtitle =>
-      'Choose the plan that fits your hiring needs.';
+  String get chooseYourPlanSubtitle => 'Choose the plan that fits your hiring needs.';
 
   @override
   String continueWithPlan(String plan) {
@@ -1669,8 +1632,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get subscriptionAutoRenewNote =>
-      'Subscription auto-renews. Cancel anytime in Settings.';
+  String get subscriptionAutoRenewNote => 'Subscription auto-renews. Cancel anytime in Settings.';
 
   @override
   String get purchaseFlowComingSoon => 'Purchase flow coming soon';
@@ -1700,8 +1662,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get interviewMarkedCompleted => 'Interview marked as completed';
 
   @override
-  String get cancelInterviewConfirm =>
-      'Are you sure you want to cancel this interview?';
+  String get cancelInterviewConfirm => 'Are you sure you want to cancel this interview?';
 
   @override
   String get yesCancel => 'Yes, Cancel';
@@ -1818,8 +1779,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get candidateUpper => 'CANDIDATE';
 
   @override
-  String get searchConversationsHint =>
-      'Search conversations, candidates, roles…';
+  String get searchConversationsHint => 'Search conversations, candidates, roles…';
 
   @override
   String get filterUnread => 'Unread';
@@ -1828,8 +1788,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterAll => 'All';
 
   @override
-  String get whenCandidatesMessage =>
-      'When candidates message you, conversations will appear here.';
+  String get whenCandidatesMessage => 'When candidates message you, conversations will appear here.';
 
   @override
   String get trySwitchingFilter => 'Try switching to a different filter.';
@@ -1855,8 +1814,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteAllConversations => 'Delete all conversations?';
 
   @override
-  String get deleteSelectedNote =>
-      'Selected chats will be removed from your inbox. The candidate still keeps their copy.';
+  String get deleteSelectedNote => 'Selected chats will be removed from your inbox. The candidate still keeps their copy.';
 
   @override
   String get deleteAll => 'Delete all';
@@ -1885,12 +1843,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get nothingHereYet => 'Nothing here yet';
 
   @override
-  String get shareVenueUpdate =>
-      'Share an update from your venue to start building your community presence.';
+  String get shareVenueUpdate => 'Share an update from your venue to start building your community presence.';
 
   @override
-  String get communityPostsAppearHere =>
-      'Posts from the community will appear here.';
+  String get communityPostsAppearHere => 'Posts from the community will appear here.';
 
   @override
   String get createFirstPost => 'Create First Post';
@@ -2133,8 +2089,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get weekendShiftsLabel => 'Weekend shifts';
 
   @override
-  String get describeRoleHint =>
-      'Describe the role, responsibilities, and what makes this job great...';
+  String get describeRoleHint => 'Describe the role, responsibilities, and what makes this job great...';
 
   @override
   String get requirementsHint => 'Skills, experience, certifications needed...';
@@ -2371,8 +2326,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get interviewConfirmedHeadline => 'Interview confirmed';
 
   @override
-  String get interviewConfirmedSubline =>
-      'You\'re all set. We\'ll remind you closer to the time.';
+  String get interviewConfirmedSubline => 'You\'re all set. We\'ll remind you closer to the time.';
 
   @override
   String get dateLabel => 'Date';
@@ -2563,8 +2517,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get postingToCommunityAsBusiness => 'Posting to Community as Business';
 
   @override
-  String get postingToCommunityAsPro =>
-      'Posting to Community as Hospitality Pro';
+  String get postingToCommunityAsPro => 'Posting to Community as Hospitality Pro';
 
   @override
   String get whatsOnYourMind => 'What\'s on your mind?';
@@ -2612,8 +2565,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get restorePurchasesLabel => 'Restore Purchases';
 
   @override
-  String get subscriptionAutoRenewsNote =>
-      'Subscription auto-renews. Cancel anytime in Settings.';
+  String get subscriptionAutoRenewsNote => 'Subscription auto-renews. Cancel anytime in Settings.';
 
   @override
   String get appStatusPillApplied => 'Applied';
@@ -2708,8 +2660,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryOther => 'Other';
 
   @override
-  String get premiumHeroTagline =>
-      'More visibility, priority alerts, and advanced filters built for serious hospitality professionals.';
+  String get premiumHeroTagline => 'More visibility, priority alerts, and advanced filters built for serious hospitality professionals.';
 
   @override
   String get benefitAdvancedFilters => 'Advanced search filters';
@@ -2736,8 +2687,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get findYourFirstJob => 'Find your first job';
 
   @override
-  String get browseHospitalityRolesNearby =>
-      'Browse hundreds of hospitality roles near you';
+  String get browseHospitalityRolesNearby => 'Browse hundreds of hospitality roles near you';
 
   @override
   String get seeWhoViewedYourPostTitle => 'See Who Viewed Your Post';
@@ -2746,15 +2696,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upgradeToPremiumCta => 'Upgrade to Premium';
 
   @override
-  String get upgradeToPremiumSubtitle =>
-      'Upgrade to Premium to see verified businesses, recruiters, and hospitality leaders who viewed your content.';
+  String get upgradeToPremiumSubtitle => 'Upgrade to Premium to see verified businesses, recruiters, and hospitality leaders who viewed your content.';
 
   @override
   String get verifiedBusinessViewers => 'Verified business viewers';
 
   @override
-  String get recruiterHiringManagerActivity =>
-      'Recruiter & hiring-manager activity';
+  String get recruiterHiringManagerActivity => 'Recruiter & hiring-manager activity';
 
   @override
   String get cityLevelReachBreakdown => 'City-level reach breakdown';
@@ -2937,12 +2885,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get quickActionMyApplicationsSubtitle => 'Track every application';
 
   @override
-  String get quickActionUpdateProfileSubtitle =>
-      'Improve your visibility & match score';
+  String get quickActionUpdateProfileSubtitle => 'Improve your visibility & match score';
 
   @override
-  String get quickActionCreatePostSubtitle =>
-      'Share your work with the community';
+  String get quickActionCreatePostSubtitle => 'Share your work with the community';
 
   @override
   String get quickActionViewInterviewsSubtitle => 'Prepare for what\'s next';
@@ -2995,12 +2941,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get checkInterviewDetailsLine => 'Check your interview details';
 
   @override
-  String get interviewInvitedSubline =>
-      'The employer wants to interview you — confirm a time';
+  String get interviewInvitedSubline => 'The employer wants to interview you — confirm a time';
 
   @override
-  String get shortlistedSubline =>
-      'You made the shortlist — wait for the next step';
+  String get shortlistedSubline => 'You made the shortlist — wait for the next step';
 
   @override
   String get underReviewSubline => 'Employer is reviewing your profile';
@@ -3015,8 +2959,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get applicationSubmittedHeadline => 'Application Submitted';
 
   @override
-  String get applicationSubmittedSubline =>
-      'The employer will review your application';
+  String get applicationSubmittedSubline => 'The employer will review your application';
 
   @override
   String get withdrawnHeadline => 'Withdrawn';
@@ -3139,8 +3082,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notifCompleteProfile => 'Complete your profile for better matches';
 
   @override
-  String get notifCompleteBusinessProfile =>
-      'Complete your business profile for better visibility';
+  String get notifCompleteBusinessProfile => 'Complete your business profile for better visibility';
 
   @override
   String notifNewJobViews(String role, String count) {
@@ -3167,8 +3109,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatStatusDelivered => 'Delivered';
 
   @override
-  String get entryTagline =>
-      'The staffing platform for hospitality professionals.';
+  String get entryTagline => 'The staffing platform for hospitality professionals.';
 
   @override
   String get entryFindWork => 'Find Work';
@@ -3180,15 +3121,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get entryHireStaff => 'Hire Staff';
 
   @override
-  String get entryHireStaffSubtitle =>
-      'Post jobs and find the best hospitality talent';
+  String get entryHireStaffSubtitle => 'Post jobs and find the best hospitality talent';
 
   @override
   String get entryFindCompanies => 'Find Companies';
 
   @override
-  String get entryFindCompaniesSubtitle =>
-      'Discover hospitality venues and service providers';
+  String get entryFindCompaniesSubtitle => 'Discover hospitality venues and service providers';
 
   @override
   String get servicesEntryTitle => 'Looking for Companies';
@@ -3197,22 +3136,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get servicesHospitalityServices => 'Hospitality Services';
 
   @override
-  String get servicesEntrySubtitle =>
-      'Register your service company or find hospitality providers near you';
+  String get servicesEntrySubtitle => 'Register your service company or find hospitality providers near you';
 
   @override
   String get servicesRegisterCardTitle => 'Register as a Business';
 
   @override
-  String get servicesRegisterCardSubtitle =>
-      'List your hospitality service and get discovered by clients';
+  String get servicesRegisterCardSubtitle => 'List your hospitality service and get discovered by clients';
 
   @override
   String get servicesLookingCardTitle => 'I\'m Looking for a Business';
 
   @override
-  String get servicesLookingCardSubtitle =>
-      'Find hospitality service providers near you';
+  String get servicesLookingCardSubtitle => 'Find hospitality service providers near you';
 
   @override
   String get registerBusinessTitle => 'Register Your Business';
@@ -3359,8 +3295,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get activitySystemUpdate => 'sent you an update';
 
   @override
-  String get noActivityYetDesc =>
-      'When people like, comment, or follow you, it will show here.';
+  String get noActivityYetDesc => 'When people like, comment, or follow you, it will show here.';
 
   @override
   String get activeStatus => 'Active';
@@ -3381,15 +3316,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get billingAndCancellation => 'Billing & cancellation';
 
   @override
-  String get billingAndCancellationCopy =>
-      'Your subscription is billed through your App Store / Google Play account. You can cancel anytime from your device Settings — you keep premium access until the renewal date.';
+  String get billingAndCancellationCopy => 'Your subscription is billed through your App Store / Google Play account. You can cancel anytime from your device Settings — you keep premium access until the renewal date.';
 
   @override
   String get premiumIsActive => 'Premium is active';
 
   @override
-  String get premiumThanksCopy =>
-      'Thanks for supporting Plagit. You have full access to every premium feature.';
+  String get premiumThanksCopy => 'Thanks for supporting Plagit. You have full access to every premium feature.';
 
   @override
   String get manageSubscription => 'Manage Subscription';
@@ -3403,22 +3336,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get fullViewerAccessLine =>
-      'Full viewer access · all insights unlocked';
+  String get fullViewerAccessLine => 'Full viewer access · all insights unlocked';
 
   @override
   String get premiumActiveBadge => 'Premium active';
 
   @override
-  String get fullInsightsUnlocked =>
-      'Full insights and viewer details unlocked.';
+  String get fullInsightsUnlocked => 'Full insights and viewer details unlocked.';
 
   @override
   String get noViewersInCategory => 'No viewers in this category yet';
 
   @override
-  String get onlyVerifiedViewersShown =>
-      'Only verified viewers with public profiles are shown.';
+  String get onlyVerifiedViewersShown => 'Only verified viewers with public profiles are shown.';
 
   @override
   String get notEnoughDataYet => 'Not enough data yet.';
@@ -3427,8 +3357,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noViewInsightsYet => 'No view insights yet';
 
   @override
-  String get noViewInsightsDesc =>
-      'Insights will appear once your post gets more views.';
+  String get noViewInsightsDesc => 'Insights will appear once your post gets more views.';
 
   @override
   String get suspiciousEngagementDetected => 'Suspicious engagement detected';
@@ -3437,8 +3366,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get patternReviewRequired => 'Pattern review required';
 
   @override
-  String get adminInsightsFooter =>
-      'Admin view — same insights the author sees, plus moderation flags. Aggregated only, no individual viewer identity is exposed.';
+  String get adminInsightsFooter => 'Admin view — same insights the author sees, plus moderation flags. Aggregated only, no individual viewer identity is exposed.';
 
   @override
   String get viewerKindBusiness => 'Business';
@@ -3477,15 +3405,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get candidatePremiumActivated => 'You are now Candidate Premium';
 
   @override
-  String get purchasesRestoredPremium =>
-      'Purchases restored — you are now Candidate Premium';
+  String get purchasesRestoredPremium => 'Purchases restored — you are now Candidate Premium';
 
   @override
   String get nothingToRestore => 'Nothing to restore';
 
   @override
-  String get noValidSubscriptionPremiumRemoved =>
-      'No valid subscription found — premium access removed';
+  String get noValidSubscriptionPremiumRemoved => 'No valid subscription found — premium access removed';
 
   @override
   String restoreFailedWithError(String error) {
@@ -3535,8 +3461,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get declineInterviewTitle => 'Decline Interview';
 
   @override
-  String get declineInterviewConfirm =>
-      'Are you sure you want to decline this interview?';
+  String get declineInterviewConfirm => 'Are you sure you want to decline this interview?';
 
   @override
   String get addedToCalendar => 'Added to calendar';
@@ -3545,12 +3470,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removeCompanyTitle => 'Remove?';
 
   @override
-  String get removeCompanyConfirm =>
-      'Are you sure you want to remove this company from your saved list?';
+  String get removeCompanyConfirm => 'Are you sure you want to remove this company from your saved list?';
 
   @override
-  String get signOutAllRolesConfirm =>
-      'Are you sure you want to sign out of all roles?';
+  String get signOutAllRolesConfirm => 'Are you sure you want to sign out of all roles?';
 
   @override
   String get tapToViewAllConversations => 'Tap to view all conversations';
@@ -3573,8 +3496,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get removeFromSavedTitle => 'Remove from saved?';
 
   @override
-  String get removeFromSavedConfirm =>
-      'This job will be removed from your saved list.';
+  String get removeFromSavedConfirm => 'This job will be removed from your saved list.';
 
   @override
   String get noSavedJobsSubtitle => 'Browse jobs and save the ones you like';
@@ -3612,8 +3534,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get resetYourPasswordTitle => 'Reset your password';
 
   @override
-  String get enterEmailForResetCode =>
-      'Enter your email to receive a reset code';
+  String get enterEmailForResetCode => 'Enter your email to receive a reset code';
 
   @override
   String get sendResetCode => 'Send Reset Code';
@@ -3634,12 +3555,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordChanged => 'Password Changed';
 
   @override
-  String get passwordUpdatedShort =>
-      'Your password has been successfully updated.';
+  String get passwordUpdatedShort => 'Your password has been successfully updated.';
 
   @override
-  String get passwordUpdatedRelogin =>
-      'Your password has been updated. Please log in again with your new password.';
+  String get passwordUpdatedRelogin => 'Your password has been updated. Please log in again with your new password.';
 
   @override
   String get updatePassword => 'Update Password';
@@ -3693,15 +3612,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get admin => 'Admin';
 
   @override
-  String get searchJobsRolesRestaurantsHint =>
-      'Search jobs, roles, restaurants...';
+  String get searchJobsRolesRestaurantsHint => 'Search jobs, roles, restaurants...';
 
   @override
   String get exploreNearbyJobs => 'Explore Nearby Jobs';
 
   @override
-  String get findOpportunitiesOnMap =>
-      'Find opportunities on the map around you';
+  String get findOpportunitiesOnMap => 'Find opportunities on the map around you';
 
   @override
   String get featuredJobs => 'Featured Jobs';
@@ -3719,12 +3636,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noNearbyJobsYet => 'No nearby jobs yet';
 
   @override
-  String get tryIncreasingRadius =>
-      'Try increasing the radius or changing filters';
+  String get tryIncreasingRadius => 'Try increasing the radius or changing filters';
 
   @override
-  String get checkBackForOpportunities =>
-      'Check back soon for new opportunities';
+  String get checkBackForOpportunities => 'Check back soon for new opportunities';
 
   @override
   String get noNotifications => 'No notifications';
@@ -3739,12 +3654,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessUpper => 'BUSINESS';
 
   @override
-  String get waitingForBusinessFirstMessage =>
-      'Waiting for the business to send the first message';
+  String get waitingForBusinessFirstMessage => 'Waiting for the business to send the first message';
 
   @override
-  String get whenEmployersMessageYou =>
-      'When employers message you, they\'ll appear here.';
+  String get whenEmployersMessageYou => 'When employers message you, they\'ll appear here.';
 
   @override
   String get replyToCandidate => 'Reply to candidate…';
@@ -3792,15 +3705,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get finishSetupAction => 'Finish Setup';
 
   @override
-  String get describeBusinessHintLong =>
-      'Describe your business, culture, and what makes it a great place to work... (min 150 characters suggested)';
+  String get describeBusinessHintLong => 'Describe your business, culture, and what makes it a great place to work... (min 150 characters suggested)';
 
   @override
   String get describeBusinessHintShort => 'Describe your business...';
 
   @override
-  String get writeShortIntroAboutYourself =>
-      'Write a short intro about yourself...';
+  String get writeShortIntroAboutYourself => 'Write a short intro about yourself...';
 
   @override
   String get createBusinessAccountTitle => 'Create Business Account';
@@ -3809,8 +3720,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get businessDetailsSection => 'Business Details';
 
   @override
-  String get openToInternationalCandidates =>
-      'Open to international candidates';
+  String get openToInternationalCandidates => 'Open to international candidates';
 
   @override
   String get createAccountShort => 'Create Account';
@@ -3849,8 +3759,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noPostsFound => 'No posts found';
 
   @override
-  String get tipsStoriesAdvice =>
-      'Tips, stories, and advice from hospitality professionals';
+  String get tipsStoriesAdvice => 'Tips, stories, and advice from hospitality professionals';
 
   @override
   String get searchTalentPostsRolesHint => 'Search talent, posts, roles…';
@@ -3877,12 +3786,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get browseServices => 'Browse Services';
 
   @override
-  String get searchServicesCompaniesLocationsHint =>
-      'Search services, companies, locations...';
+  String get searchServicesCompaniesLocationsHint => 'Search services, companies, locations...';
 
   @override
-  String get searchCompaniesServicesLocationsHint =>
-      'Search companies, services, locations...';
+  String get searchCompaniesServicesLocationsHint => 'Search companies, services, locations...';
 
   @override
   String get nearbyCompanies => 'Nearby Companies';
@@ -3909,8 +3816,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get savedCompaniesTitle => 'Saved Companies';
 
   @override
-  String get saveCompaniesForLater =>
-      'Save companies you like to find them easily later';
+  String get saveCompaniesForLater => 'Save companies you like to find them easily later';
 
   @override
   String get latestUpdates => 'Latest Updates';
@@ -3979,8 +3885,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get growYourServiceBusiness => 'Grow Your Service Business';
 
   @override
-  String get getDiscoveredPremium =>
-      'Get discovered by more clients with a premium listing.';
+  String get getDiscoveredPremium => 'Get discovered by more clients with a premium listing.';
 
   @override
   String get unlockPremium => 'Unlock Premium';
@@ -4007,8 +3912,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get serviceDescription => 'Service Description';
 
   @override
-  String get describeServicesHint =>
-      'Describe your services, experience, and what makes you stand out...';
+  String get describeServicesHint => 'Describe your services, experience, and what makes you stand out...';
 
   @override
   String get websiteOptional => 'Website (optional)';
@@ -4041,8 +3945,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tryDifferentSearchTerm => 'Try a different search term';
 
   @override
-  String get tryDifferentOrAdjust =>
-      'Try a different search, category, or adjust your filters.';
+  String get tryDifferentOrAdjust => 'Try a different search, category, or adjust your filters.';
 
   @override
   String get noPostsYetCompany => 'No posts yet';
@@ -4058,8 +3961,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get employerCheckingProfile =>
-      'An employer is checking your profile right now';
+  String get employerCheckingProfile => 'An employer is checking your profile right now';
 
   @override
   String profileStrengthPercent(int percent) {
@@ -4391,8 +4293,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminSubtitleContentPage => 'Jobs, applications, and interviews';
 
   @override
-  String get adminSubtitleModerationPage =>
-      'Verifications, reports, and support';
+  String get adminSubtitleModerationPage => 'Verifications, reports, and support';
 
   @override
   String get adminSubtitleMorePage => 'Settings, analytics, and account';
@@ -4926,8 +4827,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDialogRemovePostTitle => 'Remove Post?';
 
   @override
-  String get adminDialogRemovePostBody =>
-      'This permanently deletes the post and its comments. This action cannot be undone.';
+  String get adminDialogRemovePostBody => 'This permanently deletes the post and its comments. This action cannot be undone.';
 
   @override
   String get adminSnackbarReportCleared => 'Report cleared';
@@ -5474,8 +5374,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminValueSupport => 'Support';
 
   @override
-  String get adminMiscReportCreatedByPlatform =>
-      'Report created by Platform auto-detection';
+  String get adminMiscReportCreatedByPlatform => 'Report created by Platform auto-detection';
 
   @override
   String get adminActionPause => 'Pause';
@@ -5571,8 +5470,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDialogRemoveJobTitle => 'Remove Job';
 
   @override
-  String get adminDialogRemoveJobBody =>
-      'Remove this job completely? This cannot be undone.';
+  String get adminDialogRemoveJobBody => 'Remove this job completely? This cannot be undone.';
 
   @override
   String get adminModerationFlagThis => 'Flag this job';
@@ -5700,24 +5598,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orLabel => 'OR';
 
   @override
-  String removeChatConfirm(String name) {
-    return 'Remove your chat with $name? Only your copy is deleted — the candidate keeps theirs.';
-  }
-
-  @override
-  String deleteAllInboxConfirm(int count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other:
-          'This will clear your entire inbox ($count conversations). This cannot be undone from your side.',
-      one:
-          'This will clear your entire inbox (1 conversation). This cannot be undone from your side.',
-    );
-    return '$_temp0';
-  }
-
-  @override
   String quickPlugNewBadge(int count) {
     return '$count NEW';
   }
@@ -5753,124 +5633,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retryAction => 'Retry';
-
-  @override
-  String get yourMatchesTitle => 'Your Matches';
-
-  @override
-  String get nearbyTalentTitle => 'Nearby Talent';
-
-  @override
-  String get notificationsTitle => 'Notifications';
-
-  @override
-  String get insightsTitle => 'Insights';
-
-  @override
-  String get candidateProfileTitle => 'Candidate Profile';
-
-  @override
-  String get applicantProfileTitle => 'Applicant';
-
-  @override
-  String get noMatchesYet => 'No matches yet';
-
-  @override
-  String get inviteToInterviewAction => 'Invite to Interview';
-
-  @override
-  String get allRolesLabel => 'All roles';
-
-  @override
-  String get kmUnit => 'km';
-
-  @override
-  String withinKm(int distance) {
-    return 'within $distance km';
-  }
-
-  @override
-  String get aboutSection => 'About';
-
-  @override
-  String get skillsSection => 'Skills';
-
-  @override
-  String get applicationSection => 'Application';
-
-  @override
-  String get timelineSection => 'Timeline';
-
-  @override
-  String get viewCvAction => 'View CV';
-
-  @override
-  String get filtersComingSoon => 'Filters coming soon';
-
-  @override
-  String get interviewInviteSent => 'Interview invite sent!';
-
-  @override
-  String get cancelInterviewTitle => 'Cancel Interview';
-
-  @override
-  String get noLabel => 'No';
-
-  @override
-  String get yesCancelLabel => 'Yes, Cancel';
-
-  @override
-  String get notesComingSoon => 'Notes feature coming soon';
-
-  @override
-  String get superInterestedNotified => 'Super interested! Candidate notified';
-
-  @override
-  String get rejectApplicantTitle => 'Reject Applicant';
-
-  @override
-  String rejectApplicantConfirm(String name) {
-    return 'Are you sure you want to reject $name?';
-  }
-
-  @override
-  String get languagesLabel => 'Languages';
-
-  @override
-  String get jobTypeLabel => 'Job Type';
-
-  @override
-  String get interviewDetailsTitle => 'Interview Details';
-
-  @override
-  String get confirmInterviewButton => 'Confirm Interview';
-
-  @override
-  String get rescheduleButton => 'Reschedule';
-
-  @override
-  String get addNotesButton => 'Add Notes';
-
-  @override
-  String get markAsCompletedButton => 'Mark as Completed';
-
-  @override
-  String get cancelInterviewButton => 'Cancel Interview';
-
-  @override
-  String get markAsHiredButton => 'Mark as Hired';
-
-  @override
-  String get sendFeedbackButton => 'Send Feedback';
-
-  @override
-  String get meetingLinkLabel => 'Meeting Link';
-
-  @override
-  String get joinMeetingLabel => 'Join meeting';
-
-  @override
-  String get notesLabel => 'Notes';
 
   @override
   String get jobMenuEdit => 'Edit';
@@ -5966,8 +5728,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get benefitUnlimitedJobs => 'Unlimited job postings';
 
   @override
-  String get benefitPriorityVisibility =>
-      'Priority visibility to top candidates';
+  String get benefitPriorityVisibility => 'Priority visibility to top candidates';
 
   @override
   String get savePercent30 => 'Save 30%';
@@ -6037,8 +5798,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobDescriptionLabel => 'Job Description';
 
   @override
-  String get jobDescriptionHint =>
-      'Describe the role, responsibilities and what a typical shift looks like...';
+  String get jobDescriptionHint => 'Describe the role, responsibilities and what a typical shift looks like...';
 
   @override
   String charCountMin(int count) {
@@ -6052,8 +5812,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get benefitsLabel => 'Benefits';
 
   @override
-  String get benefitsHint =>
-      'List benefits offered (tips, meals, transport, etc.)';
+  String get benefitsHint => 'List benefits offered (tips, meals, transport, etc.)';
 
   @override
   String get markAsUrgent => 'Mark as Urgent';
@@ -6071,8 +5830,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobPublishedHeadline => 'Job Published!';
 
   @override
-  String get jobPublishedSubtext =>
-      'Your job is now live and visible to candidates';
+  String get jobPublishedSubtext => 'Your job is now live and visible to candidates';
 
   @override
   String get postAnother => 'Post Another';
@@ -6084,8 +5842,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noShortlistedHeadline => 'No shortlisted candidates';
 
   @override
-  String get noShortlistedSubtext =>
-      'Shortlist candidates from Nearby, Applicants, or search results.';
+  String get noShortlistedSubtext => 'Shortlist candidates from Nearby, Applicants, or search results.';
 
   @override
   String get jobNotFound => 'Job not found';
@@ -6133,78 +5890,4 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quickActionMessage => 'Message';
-
-  @override
-  String get catWaiter => 'Waiter';
-
-  @override
-  String get catBartender => 'Bartender';
-
-  @override
-  String get catChef => 'Chef';
-
-  @override
-  String get catHost => 'Host';
-
-  @override
-  String get catManager => 'Manager';
-
-  @override
-  String get catBarista => 'Barista';
-
-  @override
-  String get catSommelier => 'Sommelier';
-
-  @override
-  String get catKitchenPorter => 'Kitchen Porter';
-
-  @override
-  String get catRunner => 'Runner';
-
-  @override
-  String get contractFullTime => 'Full-time';
-
-  @override
-  String get contractPartTime => 'Part-time';
-
-  @override
-  String get contractZeroHours => 'Zero Hours';
-
-  @override
-  String get contractTemporary => 'Temporary';
-
-  @override
-  String get shiftDays => 'Days';
-
-  @override
-  String get shiftEvenings => 'Evenings';
-
-  @override
-  String get shiftNights => 'Nights';
-
-  @override
-  String get shiftWeekends => 'Weekends';
-
-  @override
-  String get shiftFlexible => 'Flexible';
-
-  @override
-  String get salaryPerHour => 'per hour';
-
-  @override
-  String get salaryPerDay => 'per day';
-
-  @override
-  String get salaryPerWeek => 'per week';
-
-  @override
-  String get salaryPerMonth => 'per month';
-
-  @override
-  String get categoryLabel2 => 'Category';
-
-  @override
-  String charCount(int count) {
-    return '$count / 50 min';
-  }
 }

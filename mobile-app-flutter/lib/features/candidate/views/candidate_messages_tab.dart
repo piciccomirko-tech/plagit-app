@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/demo_content_helpers.dart';
 import 'package:plagit/core/widgets/app_back_title_bar.dart';
-import 'package:plagit/core/widgets/app_selection_bar.dart';
 import 'package:plagit/core/widgets/header_action_icon.dart';
 import 'package:plagit/core/widgets/profile_photo.dart';
 import 'package:plagit/core/widgets/search_screen.dart';
@@ -13,7 +12,6 @@ import 'package:plagit/models/conversation.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/providers/recent_searches_provider.dart';
 
-const _urgent = Color(0xFFFF3B30);
 
 // ═══════════════════════════════════════════════════════════════
 // Theme (exact from Swift Theme.swift)
@@ -42,37 +40,6 @@ class CandidateMessagesTab extends StatefulWidget {
 }
 
 class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
-  // ── Selection mode ──
-  // Entered via long-press on any row. Tapping rows in this mode toggles
-  // their selection. Tapping Cancel or deleting exits the mode.
-  bool _selecting = false;
-  final Set<String> _selected = {};
-
-  void _enterSelection(String id) {
-    setState(() {
-      _selecting = true;
-      _selected.add(id);
-    });
-  }
-
-  void _toggleSelected(String id) {
-    setState(() {
-      if (_selected.contains(id)) {
-        _selected.remove(id);
-        if (_selected.isEmpty) _selecting = false;
-      } else {
-        _selected.add(id);
-      }
-    });
-  }
-
-  void _exitSelection() {
-    setState(() {
-      _selecting = false;
-      _selected.clear();
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -185,8 +152,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CandidateMessagesProvider>();
-    final allConvos = provider.conversations;
-    final convos = allConvos;
+    final convos = provider.conversations;
     final totalUnread = provider.totalUnread;
 
     return Scaffold(
@@ -199,9 +165,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
             // ══════════════════════════════════════
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              child: _selecting
-                  ? _buildSelectionBar(allConvos)
-                  : _buildDefaultBar(allConvos),
+              child: _buildDefaultBar(),
             ),
 
             // (Search now lives on a dedicated full-screen route — opened
@@ -215,7 +179,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
               child: Row(
                 children: [
                   Text(
-                    AppLocalizations.of(context).conversationCount(allConvos.length),
+                    AppLocalizations.of(context).conversationCount(convos.length),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -309,33 +273,13 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
                         itemBuilder: (context, i) {
                           final c = convos[i];
                           final isUnread = c.unread > 0;
-                          final isSelected = _selected.contains(c.id);
-                          return Dismissible(
-                            key: ValueKey('convo_${c.id}'),
-                            direction: _selecting
-                                ? DismissDirection.none
-                                : DismissDirection.endToStart,
-                            background: _buildSwipeBackground(),
-                            confirmDismiss: (_) => _confirmSingleDelete(c),
-                            onDismissed: (_) {
-                              context
-                                  .read<CandidateMessagesProvider>()
-                                  .deleteConversation(c.id);
-                            },
-                            child: _ConvoRow(
-                              conversation: c,
-                              isUnread: isUnread,
-                              selecting: _selecting,
-                              selected: isSelected,
-                              onTap: () {
-                                if (_selecting) {
-                                  _toggleSelected(c.id);
-                                } else {
-                                  context.push('/candidate/chat/${c.id}');
-                                }
-                              },
-                              onLongPress: () => _enterSelection(c.id),
-                            ),
+                          return _ConvoRow(
+                            conversation: c,
+                            isUnread: isUnread,
+                            selecting: false,
+                            selected: false,
+                            onTap: () => context.push('/candidate/chat/${c.id}'),
+                            onLongPress: null,
                           );
                         },
                       ),
@@ -394,7 +338,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
   // TOP BAR BUILDERS
   // ═══════════════════════════════════════════════════════════════
 
-  Widget _buildDefaultBar(List<Conversation> allConvos) {
+  Widget _buildDefaultBar() {
     return AppBackTitleBar(
       title: AppLocalizations.of(context).messages,
       onBack: () => context.canPop() ? context.pop() : null,
@@ -414,338 +358,7 @@ class _CandidateMessagesTabState extends State<CandidateMessagesTab> {
             onTap: () => _openSearchScreen(context),
             icon: const Icon(CupertinoIcons.search, size: 20, color: _charcoal),
           ),
-          const SizedBox(width: 16),
-          HeaderActionIcon(
-            onTap: allConvos.isEmpty
-                ? null
-                : () => _showOverflowMenu(allConvos),
-            icon: Icon(
-              CupertinoIcons.ellipsis,
-              size: 22,
-              color: allConvos.isEmpty ? _tertiary : _charcoal,
-            ),
-          ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildSelectionBar(List<Conversation> allConvos) {
-    final count = _selected.length;
-    return AppSelectionBar(
-      selectedCount: count,
-      onCancel: _exitSelection,
-      padding: EdgeInsets.zero,
-      title: count == 0
-          ? AppLocalizations.of(context).selectItems
-          : AppLocalizations.of(context).countSelected(count),
-      titleStyle: const TextStyle(
-        fontSize: 17,
-        fontWeight: FontWeight.w700,
-        color: _charcoal,
-        letterSpacing: -0.2,
-      ),
-      leading: GestureDetector(
-        onTap: _exitSelection,
-        child: Container(
-          width: 36,
-          height: 36,
-          decoration: BoxDecoration(
-            color: _surface,
-            borderRadius: BorderRadius.circular(18),
-          ),
-          child: const Icon(CupertinoIcons.xmark, size: 16, color: _charcoal),
-        ),
-      ),
-      trailing: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                if (_selected.length == allConvos.length) {
-                  _selected.clear();
-                } else {
-                  _selected
-                    ..clear()
-                    ..addAll(allConvos.map((c) => c.id));
-                }
-              });
-            },
-            child: Text(
-              _selected.length == allConvos.length
-                  ? AppLocalizations.of(context).clear
-                  : AppLocalizations.of(context).selectAll,
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
-                color: _tealMain,
-                letterSpacing: -0.1,
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
-          GestureDetector(
-            onTap: count == 0 ? null : () => _confirmBulkDelete(),
-            child: Icon(
-              CupertinoIcons.trash_fill,
-              size: 20,
-              color: count == 0 ? _tertiary : _urgent,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // DELETE FLOWS
-  // ═══════════════════════════════════════════════════════════════
-
-  Widget _buildSwipeBackground() {
-    return Container(
-      alignment: Alignment.centerRight,
-      padding: const EdgeInsets.only(right: 24),
-      color: _urgent,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(CupertinoIcons.trash_fill, size: 18, color: Colors.white),
-          const SizedBox(width: 6),
-          Text(
-            AppLocalizations.of(context).delete,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              letterSpacing: -0.1,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<bool> _confirmSingleDelete(Conversation c) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          AppLocalizations.of(context).deleteConversation,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: _charcoal,
-          ),
-        ),
-        content: Text(
-          AppLocalizations.of(context).removeChatBody(c.company),
-          style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: _secondary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              AppLocalizations.of(context).delete,
-              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
-    );
-    return ok == true;
-  }
-
-  Future<void> _confirmBulkDelete() async {
-    final ids = _selected.toList();
-    final count = ids.length;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          AppLocalizations.of(context).deleteConversationsCount(count),
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: _charcoal,
-          ),
-        ),
-        content: Text(
-          AppLocalizations.of(context).selectedChatsBody,
-          style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: _secondary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              AppLocalizations.of(context).delete,
-              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w700),
-            ),
-          ),
-        ],
-      ),
-    );
-    if (ok != true || !mounted) return;
-    context.read<CandidateMessagesProvider>().deleteConversations(_selected);
-    _exitSelection();
-  }
-
-  Future<void> _confirmDeleteAll(List<Conversation> allConvos) async {
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text(
-          AppLocalizations.of(context).deleteAllConversations,
-          style: const TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.w700,
-            color: _charcoal,
-          ),
-        ),
-        content: Text(
-          AppLocalizations.of(context).clearInboxBody(allConvos.length),
-          style: const TextStyle(fontSize: 14, color: _secondary, height: 1.4),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(AppLocalizations.of(context).cancel, style: const TextStyle(color: _secondary)),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              AppLocalizations.of(context).deleteAll,
-              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w800),
-            ),
-          ),
-        ],
-      ),
-    );
-    if (ok != true || !mounted) return;
-    context.read<CandidateMessagesProvider>().deleteAllConversations();
-  }
-
-  void _showOverflowMenu(List<Conversation> allConvos) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => Container(
-        decoration: const BoxDecoration(
-          color: _cardBg,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: SafeArea(
-          top: false,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 36,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD1D1D6),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 8),
-              _MenuItem(
-                icon: CupertinoIcons.checkmark_circle,
-                label: AppLocalizations.of(context).selectConversations,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  setState(() => _selecting = true);
-                },
-              ),
-              _MenuItem(
-                icon: CupertinoIcons.trash_fill,
-                label: AppLocalizations.of(context).deleteAll,
-                color: _urgent,
-                onTap: () {
-                  Navigator.pop(ctx);
-                  _confirmDeleteAll(allConvos);
-                },
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 14),
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(ctx),
-                  child: Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: _surface,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      AppLocalizations.of(context).cancel,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: _charcoal,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════
-// OVERFLOW MENU ITEM
-// ═══════════════════════════════════════════════════════════════
-
-class _MenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  const _MenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-    this.color = _charcoal,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        child: Row(
-          children: [
-            Icon(icon, size: 19, color: color),
-            const SizedBox(width: 14),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: color,
-                letterSpacing: -0.2,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

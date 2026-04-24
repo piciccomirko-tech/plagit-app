@@ -281,6 +281,11 @@
   "statusClosed": "Chiusa",
   "statusRejected": "Rifiutata",
   "statusOffer": "Offerta",
+  "statusShortlisted": "In shortlist",
+  "statusUnderReview": "In revisione",
+  "statusInterviewInvited": "Invito al colloquio",
+  "statusInterviewScheduled": "Colloquio fissato",
+  "statusWithdrawn": "Ritirata",
   "messagesSearch": "Cerca messaggi…",
   "noMessagesTitle": "Nessun messaggio",
   "noMessagesSubtitle": "Rispondi a un lavoro per iniziare a chattare",
@@ -2152,5 +2157,243 @@
   "selectedChatsBody": "Le chat selezionate verranno rimosse definitivamente.",
   "clearInboxBody": "{count, plural, =1{Svuotare 1 conversazione dalla casella?} other{Svuotare tutte le {count} conversazioni dalla casella?}}",
   "orLabel": "OPPURE",
-  "quickPlugNewBadge": "{count} NUOVI"
+  "removeChatConfirm": "Rimuovere la conversazione con {name}? Solo la tua copia verrà eliminata — il candidato manterrà la sua.",
+  "deleteAllInboxConfirm": "{count, plural, =1{Svuoterà completamente la tua casella (1 conversazione). L'azione non è reversibile dal tuo lato.} other{Svuoterà completamente la tua casella ({count} conversazioni). L'azione non è reversibile dal tuo lato.}}",
+  "quickPlugNewBadge": "{count} NUOVI",
+  "statusActive": "Attivo",
+  "statusDraft": "Bozza",
+  "statusPaused": "In pausa",
+  "filterActive": "Attivi",
+  "filterDraft": "Bozze",
+  "filterPaused": "In pausa",
+  "filterClosed": "Chiusi",
+  "myJobsTitle": "I miei annunci",
+  "noJobsForFilter": "Nessun annuncio {filter}",
+  "@noJobsForFilter": {
+    "placeholders": {
+      "filter": {
+        "type": "String"
+      }
+    }
+  },
+  "retryAction": "Riprova",
+  "yourMatchesTitle": "I tuoi match",
+  "nearbyTalentTitle": "Talenti vicini",
+  "notificationsTitle": "Notifiche",
+  "insightsTitle": "Statistiche",
+  "candidateProfileTitle": "Profilo candidato",
+  "applicantProfileTitle": "Candidato",
+  "noMatchesYet": "Nessun match ancora",
+  "inviteToInterviewAction": "Invita al colloquio",
+  "allRolesLabel": "Tutti i ruoli",
+  "kmUnit": "km",
+  "withinKm": "entro {distance} km",
+  "@withinKm": {
+    "placeholders": {"distance": {"type": "int"}}
+  },
+  "aboutSection": "Informazioni",
+  "skillsSection": "Competenze",
+  "applicationSection": "Candidatura",
+  "timelineSection": "Cronologia",
+  "messageAction": "Messaggio",
+  "interviewAction": "Colloquio",
+  "viewCvAction": "Vedi CV",
+  "cvViewerComingSoon": "Visualizzatore CV in arrivo",
+  "filtersComingSoon": "Filtri in arrivo",
+  "interviewInviteSent": "Invito al colloquio inviato!",
+  "interviewConfirmed": "Colloquio confermato",
+  "interviewMarkedCompleted": "Colloquio segnato come completato",
+  "interviewNotFound": "Colloquio non trovato",
+  "cancelInterviewTitle": "Annulla colloquio",
+  "cancelInterviewConfirm": "Sei sicuro di voler annullare questo colloquio?",
+  "noLabel": "No",
+  "yesCancelLabel": "Sì, annulla",
+  "openingMeetingLink": "Apertura link meeting...",
+  "rescheduleComingSoon": "Funzione riprogrammazione in arrivo",
+  "notesComingSoon": "Funzione note in arrivo",
+  "candidateMarkedHired": "Candidato segnato come assunto!",
+  "feedbackComingSoon": "Funzione feedback in arrivo",
+  "superInterestedNotified": "Super interessato! Candidato notificato",
+  "rejectApplicantTitle": "Rifiuta candidato",
+  "rejectApplicantConfirm": "Sei sicuro di voler rifiutare {name}?",
+  "@rejectApplicantConfirm": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "rejectAction": "Rifiuta",
+  "languagesLabel": "Lingue",
+  "jobTypeLabel": "Tipo di contratto",
+  "interviewDetailsTitle": "Dettagli colloquio",
+  "confirmInterviewButton": "Conferma colloquio",
+  "rescheduleButton": "Riprogramma",
+  "addNotesButton": "Aggiungi note",
+  "markAsCompletedButton": "Segna come completato",
+  "cancelInterviewButton": "Annulla colloquio",
+  "markAsHiredButton": "Segna come assunto",
+  "sendFeedbackButton": "Invia feedback",
+  "meetingLinkLabel": "Link meeting",
+  "joinMeetingLabel": "Entra nel meeting",
+  "notesLabel": "Note",
+  "jobMenuEdit": "Modifica",
+  "jobMenuPause": "Metti in pausa",
+  "jobMenuClose": "Chiudi",
+  "jobMenuDuplicate": "Duplica",
+  "jobsCountLabel": "{count,plural, =0{Nessun annuncio}=1{1 annuncio}other{{count} annunci}}",
+  "@jobsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicantsCountLabel": "{count,plural, =0{Nessun candidato}=1{1 candidato}other{{count} candidati}}",
+  "@applicantsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activeJobsShort": "{count, plural, =1{1 attivo}other{{count} attivi}}",
+  "@activeJobsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newThisWeekCount": "{count, plural, =1{1 nuovo questa settimana}other{{count} nuovi questa settimana}}",
+  "@newThisWeekCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newApplicantsToReview": "{count, plural, =1{1 nuovo candidato da rivedere}other{{count} nuovi candidati da rivedere}}",
+  "@newApplicantsToReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipFlexible": "Flessibile",
+  "businessPremiumTitle": "Business Premium",
+  "hireFasterWithPremium": "Assumi più velocemente con strumenti premium",
+  "unlockPowerfulRecruiting": "Sblocca funzionalità di recruiting avanzate",
+  "benefitQuickPlug": "Quick Plug — scorri per abbinare i migliori talenti",
+  "benefitFeaturedJobs": "Annunci in evidenza",
+  "benefitApplicantInsights": "Statistiche e analisi sui candidati",
+  "benefitUnlimitedJobs": "Annunci illimitati",
+  "benefitPriorityVisibility": "Visibilità prioritaria per i migliori candidati",
+  "savePercent30": "Risparmia 30%",
+  "freeTrialStarted": "Prova gratuita attivata!",
+  "startFreeTrial": "Inizia prova gratuita",
+  "planActiveSuffix": "Piano {plan} attivo",
+  "@planActiveSuffix": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "planRenewsOn": "Il tuo piano si rinnova il {date}",
+  "@planRenewsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumPlanIsActive": "Il tuo piano premium è attivo",
+  "postJobTitle": "Pubblica un annuncio",
+  "saveDraftButton": "Salva bozza",
+  "jobTitleLabel": "Titolo dell'annuncio",
+  "jobTitleHint": "es. Cameriere senior",
+  "locationHint": "es. Mayfair, Londra",
+  "numberOfPositions": "Numero di posizioni",
+  "nextButton": "Avanti",
+  "salaryLabel": "Stipendio",
+  "salaryHint": "es. €14",
+  "contractTypeLabel": "Tipo di contratto",
+  "shiftTypeLabel": "Tipo di turno",
+  "startDateLabel": "Data di inizio",
+  "asapChip": "Subito",
+  "specificDateChip": "Data specifica",
+  "jobDescriptionLabel": "Descrizione dell'annuncio",
+  "jobDescriptionHint": "Descrivi il ruolo, le responsabilità e com'è un tipico turno...",
+  "charCountMin": "{count} / min 50",
+  "@charCountMin": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requirementsLabel": "Requisiti",
+  "benefitsLabel": "Benefit",
+  "benefitsHint": "Elenca i benefit offerti (mance, pasti, trasporto, ecc.)",
+  "markAsUrgent": "Contrassegna come urgente",
+  "featuredJobToggle": "Annuncio in evidenza",
+  "premiumBadge": "Premium",
+  "publishJobButton": "Pubblica annuncio",
+  "jobPublishedHeadline": "Annuncio pubblicato!",
+  "jobPublishedSubtext": "Il tuo annuncio è online e visibile ai candidati",
+  "postAnother": "Pubblica un altro",
+  "addAction": "Aggiungi",
+  "noShortlistedHeadline": "Nessun candidato preselezionato",
+  "noShortlistedSubtext": "Preseleziona candidati da Vicino a te, Candidati o risultati di ricerca.",
+  "jobNotFound": "Annuncio non trovato",
+  "tabDetails": "Dettagli",
+  "tabApplicantsCount": "Candidati ({count})",
+  "@tabApplicantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pauseJobButton": "Metti in pausa",
+  "closeJobButton": "Chiudi annuncio",
+  "sectionDescription": "Descrizione",
+  "sectionRequirements": "Requisiti",
+  "sectionBenefits": "Benefit",
+  "labelPosted": "Pubblicato",
+  "labelViews": "Visualizzazioni",
+  "labelSaves": "Salvati",
+  "noApplicantsText": "Ancora nessun candidato",
+  "quickActionShortlist": "Preseleziona",
+  "quickActionReject": "Rifiuta",
+  "quickActionMessage": "Messaggio",
+  "catWaiter": "Cameriere",
+  "catBartender": "Barman",
+  "catChef": "Chef",
+  "catHost": "Host",
+  "catManager": "Manager",
+  "catBarista": "Barista",
+  "catSommelier": "Sommelier",
+  "catKitchenPorter": "Lavapiatti",
+  "catRunner": "Runner",
+  "contractFullTime": "Tempo pieno",
+  "contractPartTime": "Part-time",
+  "contractZeroHours": "Chiamata",
+  "contractTemporary": "Temporaneo",
+  "shiftDays": "Giorno",
+  "shiftEvenings": "Sera",
+  "shiftNights": "Notte",
+  "shiftWeekends": "Weekend",
+  "shiftFlexible": "Flessibile",
+  "salaryPerHour": "all'ora",
+  "salaryPerDay": "al giorno",
+  "salaryPerWeek": "a settimana",
+  "salaryPerMonth": "al mese",
+  "categoryLabel2": "Categoria",
+  "charCount": "{count} / min 50",
+  "@charCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

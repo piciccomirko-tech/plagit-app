@@ -281,6 +281,11 @@
   "statusClosed": "مغلق",
   "statusRejected": "مرفوض",
   "statusOffer": "عرض",
+  "statusShortlisted": "في القائمة المختصرة",
+  "statusUnderReview": "قيد المراجعة",
+  "statusInterviewInvited": "دعوة للمقابلة",
+  "statusInterviewScheduled": "موعد مقابلة محدد",
+  "statusWithdrawn": "تم السحب",
   "messagesSearch": "ابحث في الرسائل…",
   "noMessagesTitle": "لا توجد رسائل بعد",
   "noMessagesSubtitle": "رد على وظيفة لبدء المحادثة",
@@ -2152,5 +2157,243 @@
   "selectedChatsBody": "سيتم حذف المحادثات المحددة نهائيًا.",
   "clearInboxBody": "{count, plural, =1{مسح محادثة واحدة من البريد الوارد؟} other{مسح جميع {count} محادثات من البريد الوارد؟}}",
   "orLabel": "أو",
-  "quickPlugNewBadge": "{count} جديد"
+  "removeChatConfirm": "هل تريد إزالة محادثتك مع {name}؟ سيتم حذف نسختك فقط — يحتفظ المرشح بنسخته.",
+  "deleteAllInboxConfirm": "{count, plural, =1{سيؤدي ذلك إلى مسح بريدك الوارد بالكامل (محادثة واحدة). لا يمكن التراجع عن ذلك من جانبك.} other{سيؤدي ذلك إلى مسح بريدك الوارد بالكامل ({count} محادثات). لا يمكن التراجع عن ذلك من جانبك.}}",
+  "quickPlugNewBadge": "{count} جديد",
+  "statusActive": "نشط",
+  "statusDraft": "مسودة",
+  "statusPaused": "متوقف",
+  "filterActive": "Attivi",
+  "filterDraft": "Bozze",
+  "filterPaused": "In pausa",
+  "filterClosed": "Chiusi",
+  "myJobsTitle": "وظائفي",
+  "noJobsForFilter": "لا توجد وظائف {filter}",
+  "@noJobsForFilter": {
+    "placeholders": {
+      "filter": {
+        "type": "String"
+      }
+    }
+  },
+  "retryAction": "إعادة المحاولة",
+  "yourMatchesTitle": "التوافقات الخاصة بك",
+  "nearbyTalentTitle": "المواهب القريبة",
+  "notificationsTitle": "الإشعارات",
+  "insightsTitle": "الإحصاءات",
+  "candidateProfileTitle": "ملف المرشح",
+  "applicantProfileTitle": "المتقدم",
+  "noMatchesYet": "لا توجد توافقات بعد",
+  "inviteToInterviewAction": "دعوة لمقابلة",
+  "allRolesLabel": "جميع الأدوار",
+  "kmUnit": "كم",
+  "withinKm": "ضمن {distance} كم",
+  "@withinKm": {
+    "placeholders": {"distance": {"type": "int"}}
+  },
+  "aboutSection": "نبذة",
+  "skillsSection": "المهارات",
+  "applicationSection": "الطلب",
+  "timelineSection": "الجدول الزمني",
+  "messageAction": "رسالة",
+  "interviewAction": "مقابلة",
+  "viewCvAction": "عرض السيرة الذاتية",
+  "cvViewerComingSoon": "عارض السيرة الذاتية قادم قريباً",
+  "filtersComingSoon": "الفلاتر قادمة قريباً",
+  "interviewInviteSent": "تم إرسال دعوة المقابلة!",
+  "interviewConfirmed": "تم تأكيد المقابلة",
+  "interviewMarkedCompleted": "تم وضع علامة على المقابلة كمكتملة",
+  "interviewNotFound": "المقابلة غير موجودة",
+  "cancelInterviewTitle": "إلغاء المقابلة",
+  "cancelInterviewConfirm": "هل أنت متأكد من إلغاء هذه المقابلة؟",
+  "noLabel": "لا",
+  "yesCancelLabel": "نعم، إلغاء",
+  "openingMeetingLink": "فتح رابط الاجتماع...",
+  "rescheduleComingSoon": "ميزة إعادة الجدولة قادمة قريباً",
+  "notesComingSoon": "ميزة الملاحظات قادمة قريباً",
+  "candidateMarkedHired": "تم تعيين المرشح!",
+  "feedbackComingSoon": "ميزة التعليقات قادمة قريباً",
+  "superInterestedNotified": "اهتمام كبير! تم إبلاغ المرشح",
+  "rejectApplicantTitle": "رفض المتقدم",
+  "rejectApplicantConfirm": "هل أنت متأكد من رفض {name}؟",
+  "@rejectApplicantConfirm": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "rejectAction": "رفض",
+  "languagesLabel": "اللغات",
+  "jobTypeLabel": "نوع الوظيفة",
+  "interviewDetailsTitle": "تفاصيل المقابلة",
+  "confirmInterviewButton": "تأكيد المقابلة",
+  "rescheduleButton": "إعادة جدولة",
+  "addNotesButton": "إضافة ملاحظات",
+  "markAsCompletedButton": "وضع علامة كمكتمل",
+  "cancelInterviewButton": "إلغاء المقابلة",
+  "markAsHiredButton": "تم التوظيف",
+  "sendFeedbackButton": "إرسال ملاحظات",
+  "meetingLinkLabel": "رابط الاجتماع",
+  "joinMeetingLabel": "الانضمام إلى الاجتماع",
+  "notesLabel": "ملاحظات",
+  "jobMenuEdit": "تعديل",
+  "jobMenuPause": "إيقاف مؤقت",
+  "jobMenuClose": "إغلاق",
+  "jobMenuDuplicate": "تكرار",
+  "jobsCountLabel": "{count,plural, =0{لا توجد وظائف}=1{وظيفة واحدة}other{{count} وظيفة}}",
+  "@jobsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicantsCountLabel": "{count,plural, =0{لا يوجد متقدمون}=1{متقدم واحد}other{{count} متقدمون}}",
+  "@applicantsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activeJobsShort": "{count, plural, =1{نشط واحد}other{{count} نشط}}",
+  "@activeJobsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newThisWeekCount": "{count, plural, =1{جديد هذا الأسبوع}other{{count} جدد هذا الأسبوع}}",
+  "@newThisWeekCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newApplicantsToReview": "{count, plural, =1{متقدم جديد للمراجعة}other{{count} متقدمون جدد للمراجعة}}",
+  "@newApplicantsToReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipFlexible": "مرن",
+  "businessPremiumTitle": "الأعمال المميزة",
+  "hireFasterWithPremium": "وظّف أسرع مع الأدوات المميزة",
+  "unlockPowerfulRecruiting": "افتح ميزات التوظيف المتقدمة",
+  "benefitQuickPlug": "Quick Plug — اسحب للتوافق مع أفضل المواهب",
+  "benefitFeaturedJobs": "وظائف مميزة",
+  "benefitApplicantInsights": "رؤى وتحليلات المتقدمين",
+  "benefitUnlimitedJobs": "إعلانات وظائف غير محدودة",
+  "benefitPriorityVisibility": "ظهور أولوية لأفضل المرشحين",
+  "savePercent30": "وفّر 30%",
+  "freeTrialStarted": "بدأت التجربة المجانية!",
+  "startFreeTrial": "ابدأ التجربة المجانية",
+  "planActiveSuffix": "باقة {plan} نشطة",
+  "@planActiveSuffix": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "planRenewsOn": "تجدد باقتك في {date}",
+  "@planRenewsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumPlanIsActive": "باقتك المميزة نشطة",
+  "postJobTitle": "نشر وظيفة",
+  "saveDraftButton": "حفظ المسودة",
+  "jobTitleLabel": "المسمى الوظيفي",
+  "jobTitleHint": "مثال: نادل رئيسي",
+  "locationHint": "مثال: مايفير، لندن",
+  "numberOfPositions": "عدد الوظائف",
+  "nextButton": "التالي",
+  "salaryLabel": "الراتب",
+  "salaryHint": "مثال: £14",
+  "contractTypeLabel": "نوع العقد",
+  "shiftTypeLabel": "نوع الوردية",
+  "startDateLabel": "تاريخ البدء",
+  "asapChip": "في أقرب وقت",
+  "specificDateChip": "تاريخ محدد",
+  "jobDescriptionLabel": "وصف الوظيفة",
+  "jobDescriptionHint": "صف الدور والمسؤوليات وكيف تبدو الوردية النموذجية...",
+  "charCountMin": "{count} / 50 حد أدنى",
+  "@charCountMin": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requirementsLabel": "المتطلبات",
+  "benefitsLabel": "المزايا",
+  "benefitsHint": "اذكر المزايا المقدمة (البقشيش، الوجبات، النقل، إلخ)",
+  "markAsUrgent": "تمييز كعاجل",
+  "featuredJobToggle": "وظيفة مميزة",
+  "premiumBadge": "مميز",
+  "publishJobButton": "نشر الوظيفة",
+  "jobPublishedHeadline": "تم نشر الوظيفة!",
+  "jobPublishedSubtext": "أصبحت وظيفتك متاحة الآن وظاهرة للمرشحين",
+  "postAnother": "نشر وظيفة أخرى",
+  "addAction": "إضافة",
+  "noShortlistedHeadline": "لا يوجد مرشحون في القائمة المختصرة",
+  "noShortlistedSubtext": "اختر مرشحين من القريبين أو المتقدمين أو نتائج البحث.",
+  "jobNotFound": "الوظيفة غير موجودة",
+  "tabDetails": "تفاصيل",
+  "tabApplicantsCount": "المتقدمون ({count})",
+  "@tabApplicantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pauseJobButton": "إيقاف الوظيفة",
+  "closeJobButton": "إغلاق الوظيفة",
+  "sectionDescription": "الوصف",
+  "sectionRequirements": "المتطلبات",
+  "sectionBenefits": "المزايا",
+  "labelPosted": "تم النشر",
+  "labelViews": "المشاهدات",
+  "labelSaves": "المحفوظات",
+  "noApplicantsText": "لا يوجد متقدمون بعد",
+  "quickActionShortlist": "القائمة المختصرة",
+  "quickActionReject": "رفض",
+  "quickActionMessage": "رسالة",
+  "catWaiter": "نادل",
+  "catBartender": "نادل بار",
+  "catChef": "شيف",
+  "catHost": "مضيف",
+  "catManager": "مدير",
+  "catBarista": "باريستا",
+  "catSommelier": "نادل نبيذ",
+  "catKitchenPorter": "مساعد مطبخ",
+  "catRunner": "ركض",
+  "contractFullTime": "دوام كامل",
+  "contractPartTime": "دوام جزئي",
+  "contractZeroHours": "عقد عند الطلب",
+  "contractTemporary": "مؤقت",
+  "shiftDays": "نهاري",
+  "shiftEvenings": "مسائي",
+  "shiftNights": "ليلي",
+  "shiftWeekends": "عطلات نهاية الأسبوع",
+  "shiftFlexible": "مرن",
+  "salaryPerHour": "بالساعة",
+  "salaryPerDay": "باليوم",
+  "salaryPerWeek": "بالأسبوع",
+  "salaryPerMonth": "بالشهر",
+  "categoryLabel2": "الفئة",
+  "charCount": "{count} / 50 حد أدنى",
+  "@charCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

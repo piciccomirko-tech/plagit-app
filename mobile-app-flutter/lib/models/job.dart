@@ -55,13 +55,22 @@ class Job {
       return null;
     }
 
+    final business = json['business'] as Map<String, dynamic>?;
+    final employer = json['employer'] as Map<String, dynamic>?;
+
     return Job(
       id: json['id']?.toString() ?? '',
       title: json['title'] as String? ?? '',
-      company: json['business_name'] as String? ?? json['company'] as String? ?? '',
+      company: json['business_name'] as String?
+          ?? json['company_name'] as String?
+          ?? json['company'] as String?
+          ?? business?['name'] as String?
+          ?? employer?['name'] as String?
+          ?? '',
       location: json['location'] as String? ?? '',
       salary: json['salary'] as String? ?? json['salaryRange'] as String? ?? '',
       contract: json['employment_type'] as String?
+          ?? json['job_type'] as String?
           ?? json['contract'] as String?
           ?? json['contractType'] as String? ?? '',
       featured: json['is_featured'] as bool? ?? json['featured'] as bool? ?? false,

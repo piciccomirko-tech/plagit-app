@@ -2,10 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/core/demo_content_helpers.dart';
 import 'package:plagit/core/widgets/profile_photo.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/conversation.dart';
+import 'package:plagit/providers/candidate_providers.dart';
 import 'package:plagit/repositories/candidate_repository.dart';
 
 const _tealMain = Color(0xFF00B5B0);
@@ -17,7 +20,6 @@ const _surface = Color(0xFFF9FAFB);
 const _charcoal = Color(0xFF1A1C24);
 const _secondary = Color(0xFF707580);
 const _tertiary = Color(0xFF9EA3AD);
-const _green = Color(0xFF34C759);
 
 /// Premium 1-to-1 chat between a candidate and a business.
 ///
@@ -31,7 +33,13 @@ const _green = Color(0xFF34C759);
 ///     button — same visual language as the rest of the app.
 class CandidateChatView extends StatefulWidget {
   final String conversationId;
-  const CandidateChatView({super.key, required this.conversationId});
+  final CandidateRepository? repo;
+
+  const CandidateChatView({
+    super.key,
+    required this.conversationId,
+    this.repo,
+  });
 
   @override
   State<CandidateChatView> createState() => _CandidateChatViewState();
@@ -40,17 +48,13 @@ class CandidateChatView extends StatefulWidget {
 class _CandidateChatViewState extends State<CandidateChatView> {
   final _inputCtrl = TextEditingController();
   final _scrollCtrl = ScrollController();
+  Conversation? _conversation;
   List<ChatMessage> _messages = [];
   bool _loading = true;
+  String? _error;
+  bool _notFound = false;
 
-  // Mock business identity for the header — in a real build this comes
-  // from the conversation lookup. Stable for the candidate's only active
-  // mock thread (Ritz London).
-  static const _businessName = 'The Ritz London';
-  static const _businessInitials = 'TR';
-  static const _businessRole = 'Luxury Hotel · Hiring Waiter';
-  static const _businessPhotoUrl =
-      'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=400&h=400&fit=crop&q=80';
+  CandidateRepository get _repo => widget.repo ?? CandidateRepository();
 
   @override
   void initState() {
@@ -66,16 +70,55 @@ class _CandidateChatViewState extends State<CandidateChatView> {
   }
 
   Future<void> _loadMessages() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _error = null;
+      _notFound = false;
+    });
+
+    Conversation? cachedConversation;
     try {
-      final repo = CandidateRepository();
-      _messages = await repo.fetchMessages(widget.conversationId);
+      final provider = context.read<CandidateMessagesProvider>();
+      final cached = provider.conversations.cast<Conversation?>().firstWhere(
+        (c) => c?.id == widget.conversationId,
+        orElse: () => null,
+      );
+      cachedConversation = cached;
     } catch (_) {
-      // Fallback to mock if API fails
-      _messages = ChatMessage.mockRitzMessages();
+      cachedConversation = null;
     }
-    if (mounted) setState(() => _loading = false);
-    _scrollToBottom();
+
+    try {
+      final conversation = cachedConversation ??
+          await _repo.fetchConversationDetail(widget.conversationId);
+      final messages = await _repo.fetchMessages(widget.conversationId);
+      if (!mounted) return;
+      setState(() {
+        _conversation = conversation;
+        _messages = messages;
+        _loading = false;
+      });
+      _scrollToBottom();
+      return;
+    } on ApiError catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        if (e.type == ApiErrorType.notFound) {
+          _notFound = true;
+        } else {
+          _error = e.message;
+        }
+      });
+      return;
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+      return;
+    }
   }
 
   void _scrollToBottom() {
@@ -96,6 +139,20 @@ class _CandidateChatViewState extends State<CandidateChatView> {
   bool get _businessHasSentMessage =>
       _messages.any((m) => m.sender != 'candidate');
 
+  String get _businessName => _conversation?.company ?? '';
+
+  String get _businessInitials {
+    final cleaned = _businessName.trim();
+    if (cleaned.isEmpty) return '?';
+    final parts = cleaned.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return cleaned.substring(0, cleaned.length >= 2 ? 2 : 1).toUpperCase();
+  }
+
+  String get _businessRole => _conversation?.jobContext ?? '';
+
   void _send() {
     final text = _inputCtrl.text.trim();
     if (text.isEmpty) return;
@@ -108,24 +165,112 @@ class _CandidateChatViewState extends State<CandidateChatView> {
     _inputCtrl.clear();
     _scrollToBottom();
     // Fire-and-forget to backend
-    CandidateRepository().sendMessage(widget.conversationId, text);
+    _repo.sendMessage(widget.conversationId, text);
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final chatL10n = context._chatL10n;
     return Scaffold(
       backgroundColor: _bgMain,
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
             if (_loading)
               const Expanded(child: Center(child: CircularProgressIndicator(color: _tealMain)))
+            else if (_error != null)
+              Expanded(child: _buildStateMessage(context, _error!, actionLabel: l10n.retry, onTap: _loadMessages))
+            else if (_notFound || _conversation == null)
+              Expanded(child: _buildStateMessage(context, chatL10n.conversationNotFound))
             else
-              Expanded(child: _buildMessagesList()),
-            _businessHasSentMessage ? _buildComposer() : _buildWaitingBanner(),
+              ...[
+                _buildHeader(context),
+                Expanded(child: _buildMessagesList()),
+                _businessHasSentMessage ? _buildComposer() : _buildWaitingBanner(),
+              ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildStateMessage(
+    BuildContext context,
+    String message, {
+    String? actionLabel,
+    VoidCallback? onTap,
+  }) {
+    return Column(
+      children: [
+        _buildCompactHeader(context),
+        Expanded(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 14, color: _secondary),
+                  ),
+                  if (actionLabel != null && onTap != null) ...[
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: onTap,
+                      child: Text(
+                        actionLabel,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: _tealMain,
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCompactHeader(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+        color: _cardBg,
+        border: Border(bottom: BorderSide(color: Color(0xFFEBEDF0), width: 0.5)),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => context.pop(),
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: _surface,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const Icon(CupertinoIcons.chevron_left, size: 28, color: _charcoal),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            AppLocalizations.of(context).messages,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w600,
+              color: _charcoal,
+              letterSpacing: -0.2,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -157,12 +302,10 @@ class _CandidateChatViewState extends State<CandidateChatView> {
           ),
           const SizedBox(width: 12),
           // Larger square ID-card photo for the business
-          const ProfilePhoto(
-            photoUrl: _businessPhotoUrl,
+          ProfilePhoto(
             initials: _businessInitials,
             size: 44,
             square: true,
-            verified: true,
             hueSeed: _businessName,
           ),
           const SizedBox(width: 12),
@@ -170,9 +313,9 @@ class _CandidateChatViewState extends State<CandidateChatView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   _businessName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
                     color: _charcoal,
@@ -182,60 +325,14 @@ class _CandidateChatViewState extends State<CandidateChatView> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(color: _green, shape: BoxShape.circle),
-                    ),
-                    const SizedBox(width: 5),
-                    Text(
-                      AppLocalizations.of(context).onlineNow,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: _green,
-                        letterSpacing: -0.1,
-                      ),
-                    ),
-                    const Text('  ·  ', style: TextStyle(fontSize: 11, color: Color(0xFFC7C7CC))),
-                    const Flexible(
-                      child: Text(
-                        _businessRole,
-                        style: TextStyle(fontSize: 11, color: _tertiary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
+                if (_businessRole.isNotEmpty)
+                  Text(
+                    _businessRole,
+                    style: const TextStyle(fontSize: 11, color: _tertiary),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                 ),
               ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: _tealLight,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(CupertinoIcons.phone_fill, size: 15, color: _tealMain),
-            ),
-          ),
-          const SizedBox(width: 8),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: _tealLight,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Icon(CupertinoIcons.video_camera_solid, size: 16, color: _tealMain),
             ),
           ),
         ],
@@ -267,7 +364,6 @@ class _CandidateChatViewState extends State<CandidateChatView> {
           showName: !isMine && isFirstOfGroup,
           businessName: _businessName,
           businessInitials: _businessInitials,
-          businessPhotoUrl: _businessPhotoUrl,
         );
       },
     );
@@ -418,7 +514,6 @@ class _MessageBubble extends StatelessWidget {
   final bool showName;
   final String businessName;
   final String businessInitials;
-  final String businessPhotoUrl;
 
   const _MessageBubble({
     required this.message,
@@ -427,7 +522,6 @@ class _MessageBubble extends StatelessWidget {
     required this.showName,
     required this.businessName,
     required this.businessInitials,
-    required this.businessPhotoUrl,
   });
 
   @override
@@ -450,8 +544,6 @@ class _MessageBubble extends StatelessWidget {
                     letterSpacing: -0.1,
                   ),
                 ),
-                const SizedBox(width: 4),
-                const Icon(CupertinoIcons.checkmark_seal_fill, size: 11, color: _tealMain),
                 const SizedBox(width: 5),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
@@ -544,7 +636,6 @@ class _MessageBubble extends StatelessWidget {
               width: 32,
               child: showAvatar
                   ? ProfilePhoto(
-                      photoUrl: businessPhotoUrl,
                       initials: businessInitials,
                       size: 32,
                       square: true,
@@ -572,4 +663,20 @@ class _MessageBubble extends StatelessWidget {
       return '';
     }
   }
+}
+
+extension _CandidateChatL10n on BuildContext {
+  _CandidateChatStrings get _chatL10n =>
+      _CandidateChatStrings(Localizations.localeOf(this).languageCode);
+}
+
+class _CandidateChatStrings {
+  final String _lang;
+  const _CandidateChatStrings(this._lang);
+
+  String get conversationNotFound => _lang == 'it'
+      ? 'Conversazione non trovata'
+      : _lang == 'ar'
+          ? 'المحادثة غير موجودة'
+          : 'Conversation not found';
 }

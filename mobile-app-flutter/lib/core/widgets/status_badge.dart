@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 class StatusBadge extends StatelessWidget {
+  /// Canonical English status — drives color mapping.
   final String status;
+  /// Optional localized label. Falls back to [status] for legacy call sites.
+  final String? label;
   final bool large;
-  const StatusBadge({super.key, required this.status, this.large = false});
+  const StatusBadge({super.key, required this.status, this.label, this.large = false});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,7 @@ class StatusBadge extends StatelessWidget {
         borderRadius: BorderRadius.circular(100),
       ),
       child: Text(
-        status,
+        label ?? status,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: TextStyle(

@@ -386,6 +386,11 @@
   "statusClosed": "Closed",
   "statusRejected": "Rejected",
   "statusOffer": "Offer",
+  "statusShortlisted": "Shortlisted",
+  "statusUnderReview": "Under Review",
+  "statusInterviewInvited": "Interview Invited",
+  "statusInterviewScheduled": "Interview Scheduled",
+  "statusWithdrawn": "Withdrawn",
   "messagesSearch": "Search messages…",
   "noMessagesTitle": "No messages yet",
   "noMessagesSubtitle": "Reply to a job to start chatting",
@@ -4037,49 +4042,343 @@
   "codeSentToEmail": "We sent a 6-digit code to {email}.",
   "@codeSentToEmail": {
     "description": "Info text after sending password reset code",
-    "placeholders": { "email": { "type": "String" } }
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
   },
   "businessFieldMeetingLink": "Meeting link",
-  "@businessFieldMeetingLink": { "description": "Schedule interview form field" },
+  "@businessFieldMeetingLink": {
+    "description": "Schedule interview form field"
+  },
   "businessFieldLocation": "Location",
-  "@businessFieldLocation": { "description": "Schedule interview form field" },
+  "@businessFieldLocation": {
+    "description": "Schedule interview form field"
+  },
   "rePrefix": "Re: {context}",
   "@rePrefix": {
     "description": "Reply subject prefix",
-    "placeholders": { "context": { "type": "String" } }
+    "placeholders": {
+      "context": {
+        "type": "String"
+      }
+    }
   },
   "conversationCount": "{count, plural, =1{1 conversation} other{{count} conversations}}",
   "@conversationCount": {
     "description": "Count of conversations",
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "unreadCount": "{count, plural, =1{1 unread} other{{count} unread}}",
   "@unreadCount": {
     "description": "Count of unread messages",
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "removeChatBody": "Remove your conversation with {company}? This cannot be undone.",
   "@removeChatBody": {
     "description": "Remove chat confirm body",
-    "placeholders": { "company": { "type": "String" } }
+    "placeholders": {
+      "company": {
+        "type": "String"
+      }
+    }
   },
   "deleteConversationsCount": "{count, plural, =1{Delete 1 conversation?} other{Delete {count} conversations?}}",
   "@deleteConversationsCount": {
     "description": "Bulk delete confirm",
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "selectedChatsBody": "Selected chats will be permanently removed.",
-  "@selectedChatsBody": { "description": "Bulk delete dialog body" },
+  "@selectedChatsBody": {
+    "description": "Bulk delete dialog body"
+  },
   "clearInboxBody": "{count, plural, =1{Clear 1 conversation from your inbox?} other{Clear all {count} conversations from your inbox?}}",
   "@clearInboxBody": {
     "description": "Clear inbox confirm",
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "orLabel": "OR",
-  "@orLabel": { "description": "Divider label between alternatives" },
+  "@orLabel": {
+    "description": "Divider label between alternatives"
+  },
+  "removeChatConfirm": "Remove your chat with {name}? Only your copy is deleted — the candidate keeps theirs.",
+  "@removeChatConfirm": {
+    "description": "Single conversation delete confirm",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteAllInboxConfirm": "{count, plural, =1{This will clear your entire inbox (1 conversation). This cannot be undone from your side.} other{This will clear your entire inbox ({count} conversations). This cannot be undone from your side.}}",
+  "@deleteAllInboxConfirm": {
+    "description": "Delete-all inbox confirm",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "quickPlugNewBadge": "{count} NEW",
   "@quickPlugNewBadge": {
     "description": "Quick Plug new-match badge",
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statusActive": "Active",
+  "statusDraft": "Draft",
+  "statusPaused": "Paused",
+  "filterActive": "Active",
+  "filterDraft": "Draft",
+  "filterPaused": "Paused",
+  "filterClosed": "Closed",
+  "myJobsTitle": "My Jobs",
+  "noJobsForFilter": "No {filter} jobs",
+  "@noJobsForFilter": {
+    "placeholders": {
+      "filter": {
+        "type": "String"
+      }
+    }
+  },
+  "retryAction": "Retry",
+  "yourMatchesTitle": "Your Matches",
+  "nearbyTalentTitle": "Nearby Talent",
+  "notificationsTitle": "Notifications",
+  "insightsTitle": "Insights",
+  "candidateProfileTitle": "Candidate Profile",
+  "applicantProfileTitle": "Applicant",
+  "noMatchesYet": "No matches yet",
+  "inviteToInterviewAction": "Invite to Interview",
+  "allRolesLabel": "All roles",
+  "kmUnit": "km",
+  "withinKm": "within {distance} km",
+  "@withinKm": {
+    "placeholders": {"distance": {"type": "int"}}
+  },
+  "aboutSection": "About",
+  "skillsSection": "Skills",
+  "applicationSection": "Application",
+  "timelineSection": "Timeline",
+  "messageAction": "Message",
+  "interviewAction": "Interview",
+  "viewCvAction": "View CV",
+  "cvViewerComingSoon": "CV viewer coming soon",
+  "filtersComingSoon": "Filters coming soon",
+  "interviewInviteSent": "Interview invite sent!",
+  "interviewConfirmed": "Interview confirmed",
+  "interviewMarkedCompleted": "Interview marked as completed",
+  "interviewNotFound": "Interview not found",
+  "cancelInterviewTitle": "Cancel Interview",
+  "cancelInterviewConfirm": "Are you sure you want to cancel this interview?",
+  "noLabel": "No",
+  "yesCancelLabel": "Yes, Cancel",
+  "openingMeetingLink": "Opening meeting link...",
+  "rescheduleComingSoon": "Reschedule feature coming soon",
+  "notesComingSoon": "Notes feature coming soon",
+  "candidateMarkedHired": "Candidate marked as hired!",
+  "feedbackComingSoon": "Feedback feature coming soon",
+  "superInterestedNotified": "Super interested! Candidate notified",
+  "rejectApplicantTitle": "Reject Applicant",
+  "rejectApplicantConfirm": "Are you sure you want to reject {name}?",
+  "@rejectApplicantConfirm": {
+    "placeholders": {"name": {"type": "String"}}
+  },
+  "rejectAction": "Reject",
+  "languagesLabel": "Languages",
+  "jobTypeLabel": "Job Type",
+  "interviewDetailsTitle": "Interview Details",
+  "confirmInterviewButton": "Confirm Interview",
+  "rescheduleButton": "Reschedule",
+  "addNotesButton": "Add Notes",
+  "markAsCompletedButton": "Mark as Completed",
+  "cancelInterviewButton": "Cancel Interview",
+  "markAsHiredButton": "Mark as Hired",
+  "sendFeedbackButton": "Send Feedback",
+  "meetingLinkLabel": "Meeting Link",
+  "joinMeetingLabel": "Join meeting",
+  "notesLabel": "Notes",
+  "jobMenuEdit": "Edit",
+  "jobMenuPause": "Pause",
+  "jobMenuClose": "Close",
+  "jobMenuDuplicate": "Duplicate",
+  "jobsCountLabel": "{count,plural, =0{No jobs}=1{1 job}other{{count} jobs}}",
+  "@jobsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "applicantsCountLabel": "{count,plural, =0{No applicants}=1{1 applicant}other{{count} applicants}}",
+  "@applicantsCountLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "activeJobsShort": "{count, plural, =1{1 active}other{{count} active}}",
+  "@activeJobsShort": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newThisWeekCount": "{count, plural, =1{1 new this week}other{{count} new this week}}",
+  "@newThisWeekCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "newApplicantsToReview": "{count, plural, =1{1 new applicant to review}other{{count} new applicants to review}}",
+  "@newApplicantsToReview": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "chipFlexible": "Flexible",
+  "businessPremiumTitle": "Business Premium",
+  "hireFasterWithPremium": "Hire faster with premium tools",
+  "unlockPowerfulRecruiting": "Unlock powerful recruiting features",
+  "benefitQuickPlug": "Quick Plug — swipe to match top talent",
+  "benefitFeaturedJobs": "Featured job placements",
+  "benefitApplicantInsights": "Applicant insights & analytics",
+  "benefitUnlimitedJobs": "Unlimited job postings",
+  "benefitPriorityVisibility": "Priority visibility to top candidates",
+  "savePercent30": "Save 30%",
+  "freeTrialStarted": "Free trial started!",
+  "startFreeTrial": "Start Free Trial",
+  "planActiveSuffix": "{plan} Plan Active",
+  "@planActiveSuffix": {
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "planRenewsOn": "Your plan renews on {date}",
+  "@planRenewsOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "premiumPlanIsActive": "Your premium plan is active",
+  "postJobTitle": "Post a Job",
+  "saveDraftButton": "Save Draft",
+  "jobTitleLabel": "Job Title",
+  "jobTitleHint": "e.g. Senior Waiter",
+  "locationHint": "e.g. Mayfair, London",
+  "numberOfPositions": "Number of Positions",
+  "nextButton": "Next",
+  "salaryLabel": "Salary",
+  "salaryHint": "e.g. £14",
+  "contractTypeLabel": "Contract Type",
+  "shiftTypeLabel": "Shift Type",
+  "startDateLabel": "Start Date",
+  "asapChip": "ASAP",
+  "specificDateChip": "Specific Date",
+  "jobDescriptionLabel": "Job Description",
+  "jobDescriptionHint": "Describe the role, responsibilities and what a typical shift looks like...",
+  "charCountMin": "{count} / 50 min",
+  "@charCountMin": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "requirementsLabel": "Requirements",
+  "benefitsLabel": "Benefits",
+  "benefitsHint": "List benefits offered (tips, meals, transport, etc.)",
+  "markAsUrgent": "Mark as Urgent",
+  "featuredJobToggle": "Featured Job",
+  "premiumBadge": "Premium",
+  "publishJobButton": "Publish Job",
+  "jobPublishedHeadline": "Job Published!",
+  "jobPublishedSubtext": "Your job is now live and visible to candidates",
+  "postAnother": "Post Another",
+  "addAction": "Add",
+  "noShortlistedHeadline": "No shortlisted candidates",
+  "noShortlistedSubtext": "Shortlist candidates from Nearby, Applicants, or search results.",
+  "jobNotFound": "Job not found",
+  "tabDetails": "Details",
+  "tabApplicantsCount": "Applicants ({count})",
+  "@tabApplicantsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "pauseJobButton": "Pause Job",
+  "closeJobButton": "Close Job",
+  "sectionDescription": "Description",
+  "sectionRequirements": "Requirements",
+  "sectionBenefits": "Benefits",
+  "labelPosted": "Posted",
+  "labelViews": "Views",
+  "labelSaves": "Saves",
+  "noApplicantsText": "No applicants yet",
+  "quickActionShortlist": "Shortlist",
+  "quickActionReject": "Reject",
+  "quickActionMessage": "Message",
+  "catWaiter": "Waiter",
+  "catBartender": "Bartender",
+  "catChef": "Chef",
+  "catHost": "Host",
+  "catManager": "Manager",
+  "catBarista": "Barista",
+  "catSommelier": "Sommelier",
+  "catKitchenPorter": "Kitchen Porter",
+  "catRunner": "Runner",
+  "contractFullTime": "Full-time",
+  "contractPartTime": "Part-time",
+  "contractZeroHours": "Zero Hours",
+  "contractTemporary": "Temporary",
+  "shiftDays": "Days",
+  "shiftEvenings": "Evenings",
+  "shiftNights": "Nights",
+  "shiftWeekends": "Weekends",
+  "shiftFlexible": "Flexible",
+  "salaryPerHour": "per hour",
+  "salaryPerDay": "per day",
+  "salaryPerWeek": "per week",
+  "salaryPerMonth": "per month",
+  "categoryLabel2": "Category",
+  "charCount": "{count} / 50 min",
+  "@charCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

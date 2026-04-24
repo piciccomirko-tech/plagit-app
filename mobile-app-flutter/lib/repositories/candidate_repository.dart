@@ -109,7 +109,36 @@ class CandidateRepository {
       );
     }
     final resp = await _api.get('/candidate/jobs/$jobId');
-    return Job.fromJson(resp['data'] as Map<String, dynamic>? ?? resp);
+    final data = resp['data'] as Map<String, dynamic>? ?? resp;
+    final jobJson = data['job'] as Map<String, dynamic>? ?? data;
+    return Job.fromJson(jobJson);
+  }
+
+  /// Rebuild a coherent saved-jobs list from the real saved ids plus the
+  /// existing jobs/detail endpoints, without introducing a new endpoint.
+  Future<List<Job>> fetchSavedJobs() async {
+    final savedIds = await fetchSavedJobIds();
+    if (savedIds.isEmpty) return const [];
+
+    if (_isMock) {
+      return Job.mockAll().where((j) => savedIds.contains(j.id)).toList();
+    }
+
+    final jobs = await fetchJobs();
+    final byId = {for (final job in jobs) job.id: job};
+    final result = <Job>[];
+
+    for (final id in savedIds) {
+      final existing = byId[id];
+      if (existing != null) {
+        result.add(existing);
+        continue;
+      }
+
+      result.add(await fetchJobDetail(id));
+    }
+
+    return result;
   }
 
   Future<void> applyToJob(String jobId, {String? note}) async {
@@ -143,6 +172,18 @@ class CandidateRepository {
     return list.map((e) => Application.fromJson(e as Map<String, dynamic>)).toList();
   }
 
+  Future<Application> fetchApplicationDetail(String id) async {
+    final applications = await fetchApplications();
+    try {
+      return applications.firstWhere((app) => app.id == id);
+    } catch (_) {
+      throw ApiError(
+        type: ApiErrorType.notFound,
+        message: 'Application not found',
+      );
+    }
+  }
+
   // ══════════════════════════════════════════
   // ── Conversations ──
   // ══════════════════════════════════════════
@@ -152,6 +193,18 @@ class CandidateRepository {
     final resp = await _api.get('/candidate/conversations');
     final list = resp['data'] as List<dynamic>? ?? [];
     return list.map((e) => Conversation.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<Conversation> fetchConversationDetail(String id) async {
+    final conversations = await fetchConversations();
+    try {
+      return conversations.firstWhere((conversation) => conversation.id == id);
+    } catch (_) {
+      throw ApiError(
+        type: ApiErrorType.notFound,
+        message: 'Conversation not found',
+      );
+    }
   }
 
   Future<List<ChatMessage>> fetchMessages(String conversationId) async {
@@ -180,6 +233,18 @@ class CandidateRepository {
     final resp = await _api.get('/candidate/interviews', queryParams: params.isNotEmpty ? params : null);
     final list = resp['data'] as List<dynamic>? ?? [];
     return list.map((e) => Interview.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  Future<Interview> fetchInterviewDetail(String id) async {
+    final interviews = await fetchInterviews();
+    try {
+      return interviews.firstWhere((interview) => interview.id == id);
+    } catch (_) {
+      throw ApiError(
+        type: ApiErrorType.notFound,
+        message: 'Interview not found',
+      );
+    }
   }
 
   // ══════════════════════════════════════════

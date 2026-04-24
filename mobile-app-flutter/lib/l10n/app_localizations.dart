@@ -19,7 +19,7 @@ import 'app_localizations_it.dart';
 /// `supportedLocales` list. For example:
 ///
 /// ```dart
-/// import 'generated/app_localizations.dart';
+/// import 'l10n/app_localizations.dart';
 ///
 /// return MaterialApp(
 ///   localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -63,17 +63,15 @@ import 'app_localizations_it.dart';
 /// be consistent with the languages listed in the AppLocalizations.supportedLocales
 /// property.
 abstract class AppLocalizations {
-  AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  AppLocalizations(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
-  static AppLocalizations of(BuildContext context) {
-    return Localizations.of<AppLocalizations>(context, AppLocalizations)!;
+  static AppLocalizations? of(BuildContext context) {
+    return Localizations.of<AppLocalizations>(context, AppLocalizations);
   }
 
-  static const LocalizationsDelegate<AppLocalizations> delegate =
-      _AppLocalizationsDelegate();
+  static const LocalizationsDelegate<AppLocalizations> delegate = _AppLocalizationsDelegate();
 
   /// A list of this localizations delegate along with the default localizations
   /// delegates.
@@ -85,19 +83,18 @@ abstract class AppLocalizations {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
-      <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
     Locale('en'),
-    Locale('it'),
+    Locale('it')
   ];
 
   /// No description provided for @appName.
@@ -1785,36 +1782,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Offer'**
   String get statusOffer;
-
-  /// No description provided for @statusShortlisted.
-  ///
-  /// In en, this message translates to:
-  /// **'Shortlisted'**
-  String get statusShortlisted;
-
-  /// No description provided for @statusUnderReview.
-  ///
-  /// In en, this message translates to:
-  /// **'Under Review'**
-  String get statusUnderReview;
-
-  /// No description provided for @statusInterviewInvited.
-  ///
-  /// In en, this message translates to:
-  /// **'Interview Invited'**
-  String get statusInterviewInvited;
-
-  /// No description provided for @statusInterviewScheduled.
-  ///
-  /// In en, this message translates to:
-  /// **'Interview Scheduled'**
-  String get statusInterviewScheduled;
-
-  /// No description provided for @statusWithdrawn.
-  ///
-  /// In en, this message translates to:
-  /// **'Withdrawn'**
-  String get statusWithdrawn;
 
   /// No description provided for @messagesSearch.
   ///
@@ -10264,18 +10231,6 @@ abstract class AppLocalizations {
   /// **'OR'**
   String get orLabel;
 
-  /// Single conversation delete confirm
-  ///
-  /// In en, this message translates to:
-  /// **'Remove your chat with {name}? Only your copy is deleted — the candidate keeps theirs.'**
-  String removeChatConfirm(String name);
-
-  /// Delete-all inbox confirm
-  ///
-  /// In en, this message translates to:
-  /// **'{count, plural, =1{This will clear your entire inbox (1 conversation). This cannot be undone from your side.} other{This will clear your entire inbox ({count} conversations). This cannot be undone from your side.}}'**
-  String deleteAllInboxConfirm(int count);
-
   /// Quick Plug new-match badge
   ///
   /// In en, this message translates to:
@@ -10341,234 +10296,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retryAction;
-
-  /// No description provided for @yourMatchesTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Your Matches'**
-  String get yourMatchesTitle;
-
-  /// No description provided for @nearbyTalentTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Nearby Talent'**
-  String get nearbyTalentTitle;
-
-  /// No description provided for @notificationsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Notifications'**
-  String get notificationsTitle;
-
-  /// No description provided for @insightsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Insights'**
-  String get insightsTitle;
-
-  /// No description provided for @candidateProfileTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Candidate Profile'**
-  String get candidateProfileTitle;
-
-  /// No description provided for @applicantProfileTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Applicant'**
-  String get applicantProfileTitle;
-
-  /// No description provided for @noMatchesYet.
-  ///
-  /// In en, this message translates to:
-  /// **'No matches yet'**
-  String get noMatchesYet;
-
-  /// No description provided for @inviteToInterviewAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Invite to Interview'**
-  String get inviteToInterviewAction;
-
-  /// No description provided for @allRolesLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'All roles'**
-  String get allRolesLabel;
-
-  /// No description provided for @kmUnit.
-  ///
-  /// In en, this message translates to:
-  /// **'km'**
-  String get kmUnit;
-
-  /// No description provided for @withinKm.
-  ///
-  /// In en, this message translates to:
-  /// **'within {distance} km'**
-  String withinKm(int distance);
-
-  /// No description provided for @aboutSection.
-  ///
-  /// In en, this message translates to:
-  /// **'About'**
-  String get aboutSection;
-
-  /// No description provided for @skillsSection.
-  ///
-  /// In en, this message translates to:
-  /// **'Skills'**
-  String get skillsSection;
-
-  /// No description provided for @applicationSection.
-  ///
-  /// In en, this message translates to:
-  /// **'Application'**
-  String get applicationSection;
-
-  /// No description provided for @timelineSection.
-  ///
-  /// In en, this message translates to:
-  /// **'Timeline'**
-  String get timelineSection;
-
-  /// No description provided for @viewCvAction.
-  ///
-  /// In en, this message translates to:
-  /// **'View CV'**
-  String get viewCvAction;
-
-  /// No description provided for @filtersComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Filters coming soon'**
-  String get filtersComingSoon;
-
-  /// No description provided for @interviewInviteSent.
-  ///
-  /// In en, this message translates to:
-  /// **'Interview invite sent!'**
-  String get interviewInviteSent;
-
-  /// No description provided for @cancelInterviewTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel Interview'**
-  String get cancelInterviewTitle;
-
-  /// No description provided for @noLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'No'**
-  String get noLabel;
-
-  /// No description provided for @yesCancelLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Yes, Cancel'**
-  String get yesCancelLabel;
-
-  /// No description provided for @notesComingSoon.
-  ///
-  /// In en, this message translates to:
-  /// **'Notes feature coming soon'**
-  String get notesComingSoon;
-
-  /// No description provided for @superInterestedNotified.
-  ///
-  /// In en, this message translates to:
-  /// **'Super interested! Candidate notified'**
-  String get superInterestedNotified;
-
-  /// No description provided for @rejectApplicantTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Reject Applicant'**
-  String get rejectApplicantTitle;
-
-  /// No description provided for @rejectApplicantConfirm.
-  ///
-  /// In en, this message translates to:
-  /// **'Are you sure you want to reject {name}?'**
-  String rejectApplicantConfirm(String name);
-
-  /// No description provided for @languagesLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Languages'**
-  String get languagesLabel;
-
-  /// No description provided for @jobTypeLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Job Type'**
-  String get jobTypeLabel;
-
-  /// No description provided for @interviewDetailsTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Interview Details'**
-  String get interviewDetailsTitle;
-
-  /// No description provided for @confirmInterviewButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Interview'**
-  String get confirmInterviewButton;
-
-  /// No description provided for @rescheduleButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Reschedule'**
-  String get rescheduleButton;
-
-  /// No description provided for @addNotesButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Add Notes'**
-  String get addNotesButton;
-
-  /// No description provided for @markAsCompletedButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as Completed'**
-  String get markAsCompletedButton;
-
-  /// No description provided for @cancelInterviewButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Cancel Interview'**
-  String get cancelInterviewButton;
-
-  /// No description provided for @markAsHiredButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as Hired'**
-  String get markAsHiredButton;
-
-  /// No description provided for @sendFeedbackButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Send Feedback'**
-  String get sendFeedbackButton;
-
-  /// No description provided for @meetingLinkLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Meeting Link'**
-  String get meetingLinkLabel;
-
-  /// No description provided for @joinMeetingLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Join meeting'**
-  String get joinMeetingLabel;
-
-  /// No description provided for @notesLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Notes'**
-  String get notesLabel;
 
   /// No description provided for @jobMenuEdit.
   ///
@@ -10983,154 +10710,9 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Message'**
   String get quickActionMessage;
-
-  /// No description provided for @catWaiter.
-  ///
-  /// In en, this message translates to:
-  /// **'Waiter'**
-  String get catWaiter;
-
-  /// No description provided for @catBartender.
-  ///
-  /// In en, this message translates to:
-  /// **'Bartender'**
-  String get catBartender;
-
-  /// No description provided for @catChef.
-  ///
-  /// In en, this message translates to:
-  /// **'Chef'**
-  String get catChef;
-
-  /// No description provided for @catHost.
-  ///
-  /// In en, this message translates to:
-  /// **'Host'**
-  String get catHost;
-
-  /// No description provided for @catManager.
-  ///
-  /// In en, this message translates to:
-  /// **'Manager'**
-  String get catManager;
-
-  /// No description provided for @catBarista.
-  ///
-  /// In en, this message translates to:
-  /// **'Barista'**
-  String get catBarista;
-
-  /// No description provided for @catSommelier.
-  ///
-  /// In en, this message translates to:
-  /// **'Sommelier'**
-  String get catSommelier;
-
-  /// No description provided for @catKitchenPorter.
-  ///
-  /// In en, this message translates to:
-  /// **'Kitchen Porter'**
-  String get catKitchenPorter;
-
-  /// No description provided for @catRunner.
-  ///
-  /// In en, this message translates to:
-  /// **'Runner'**
-  String get catRunner;
-
-  /// No description provided for @contractFullTime.
-  ///
-  /// In en, this message translates to:
-  /// **'Full-time'**
-  String get contractFullTime;
-
-  /// No description provided for @contractPartTime.
-  ///
-  /// In en, this message translates to:
-  /// **'Part-time'**
-  String get contractPartTime;
-
-  /// No description provided for @contractZeroHours.
-  ///
-  /// In en, this message translates to:
-  /// **'Zero Hours'**
-  String get contractZeroHours;
-
-  /// No description provided for @contractTemporary.
-  ///
-  /// In en, this message translates to:
-  /// **'Temporary'**
-  String get contractTemporary;
-
-  /// No description provided for @shiftDays.
-  ///
-  /// In en, this message translates to:
-  /// **'Days'**
-  String get shiftDays;
-
-  /// No description provided for @shiftEvenings.
-  ///
-  /// In en, this message translates to:
-  /// **'Evenings'**
-  String get shiftEvenings;
-
-  /// No description provided for @shiftNights.
-  ///
-  /// In en, this message translates to:
-  /// **'Nights'**
-  String get shiftNights;
-
-  /// No description provided for @shiftWeekends.
-  ///
-  /// In en, this message translates to:
-  /// **'Weekends'**
-  String get shiftWeekends;
-
-  /// No description provided for @shiftFlexible.
-  ///
-  /// In en, this message translates to:
-  /// **'Flexible'**
-  String get shiftFlexible;
-
-  /// No description provided for @salaryPerHour.
-  ///
-  /// In en, this message translates to:
-  /// **'per hour'**
-  String get salaryPerHour;
-
-  /// No description provided for @salaryPerDay.
-  ///
-  /// In en, this message translates to:
-  /// **'per day'**
-  String get salaryPerDay;
-
-  /// No description provided for @salaryPerWeek.
-  ///
-  /// In en, this message translates to:
-  /// **'per week'**
-  String get salaryPerWeek;
-
-  /// No description provided for @salaryPerMonth.
-  ///
-  /// In en, this message translates to:
-  /// **'per month'**
-  String get salaryPerMonth;
-
-  /// No description provided for @categoryLabel2.
-  ///
-  /// In en, this message translates to:
-  /// **'Category'**
-  String get categoryLabel2;
-
-  /// No description provided for @charCount.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} / 50 min'**
-  String charCount(int count);
 }
 
-class _AppLocalizationsDelegate
-    extends LocalizationsDelegate<AppLocalizations> {
+class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
@@ -11139,28 +10721,26 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['ar', 'en', 'it'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>['ar', 'en', 'it'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
 }
 
 AppLocalizations lookupAppLocalizations(Locale locale) {
+
+
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
-    case 'ar':
-      return AppLocalizationsAr();
-    case 'en':
-      return AppLocalizationsEn();
-    case 'it':
-      return AppLocalizationsIt();
+    case 'ar': return AppLocalizationsAr();
+    case 'en': return AppLocalizationsEn();
+    case 'it': return AppLocalizationsIt();
   }
 
   throw FlutterError(
     'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
     'an issue with the localizations generation tool. Please file an issue '
     'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
+    'that was used.'
   );
 }

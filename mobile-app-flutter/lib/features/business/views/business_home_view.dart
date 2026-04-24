@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/features/business/views/business_dashboard_tab.dart';
 import 'package:plagit/features/business/views/business_jobs_view.dart';
-import 'package:plagit/features/business/views/business_applicants_view.dart';
 import 'package:plagit/features/business/views/business_quick_plug_view.dart';
 import 'package:plagit/features/business/views/business_profile_view.dart';
+import 'package:plagit/features/business/views/post_job_view.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 
 extension _BusinessHomeL10nX on AppLocalizations {
@@ -25,12 +25,6 @@ extension _BusinessHomeL10nX on AppLocalizations {
       );
 
   String get businessHomeTabJobs => jobs;
-
-  String get businessHomeTabApplicants => _local(
-        en: 'Applicants',
-        it: 'Candidati',
-        ar: 'المتقدمون',
-      );
 
   String get businessHomeTabQuickPlug => _local(
         en: 'Quick Plug',
@@ -55,88 +49,144 @@ class BusinessHomeView extends StatefulWidget {
 class _BusinessHomeViewState extends State<BusinessHomeView> {
   int _currentIndex = 0;
 
-  final List<Widget> _tabs = const [
-    BusinessDashboardTab(),
-    BusinessJobsView(),
-    BusinessApplicantsView(),
-    BusinessQuickPlugView(),
-    BusinessProfileView(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
+    final tabs = [
+      const BusinessDashboardTab(),
+      const BusinessJobsView(),
+      BusinessQuickPlugView(
+        onBackToHome: () => setState(() => _currentIndex = 0),
+      ),
+      const BusinessProfileView(),
+    ];
+
     return Scaffold(
-      body: IndexedStack(index: _currentIndex, children: _tabs),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 12,
-              offset: const Offset(0, -2),
+      body: IndexedStack(index: _currentIndex, children: tabs),
+      bottomNavigationBar: Material(
+        color: Colors.white,
+        elevation: 10,
+        child: SafeArea(
+          top: false,
+          child: SizedBox(
+            height: 72,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(6, 4, 6, 2),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _buildNavTab(
+                    icon: Icons.home,
+                    label: l.businessHomeTabHome,
+                    active: _currentIndex == 0,
+                    color: _currentIndex == 0
+                        ? AppColors.teal
+                        : AppColors.tertiary,
+                    onTap: () => setState(() => _currentIndex = 0),
+                  ),
+                  _buildNavTab(
+                    icon: Icons.work_outline,
+                    label: l.businessHomeTabJobs,
+                    active: _currentIndex == 1,
+                    color: _currentIndex == 1
+                        ? AppColors.teal
+                        : AppColors.tertiary,
+                    onTap: () => setState(() => _currentIndex = 1),
+                  ),
+                  _buildCenterPlus(
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const PostJobView()),
+                    ),
+                  ),
+                  _buildNavTab(
+                    icon: Icons.bolt,
+                    label: l.businessHomeTabQuickPlug,
+                    active: _currentIndex == 2,
+                    color: _currentIndex == 2
+                        ? AppColors.purple
+                        : AppColors.purple.withValues(alpha: 0.68),
+                    onTap: () => setState(() => _currentIndex = 2),
+                  ),
+                  _buildNavTab(
+                    icon: Icons.person_outline,
+                    label: l.businessHomeTabProfile,
+                    active: _currentIndex == 3,
+                    color: _currentIndex == 3
+                        ? AppColors.teal
+                        : AppColors.tertiary,
+                    onTap: () => setState(() => _currentIndex = 3),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavTab({
+    required IconData icon,
+    required String label,
+    required bool active,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 21, color: color),
+            const SizedBox(height: 2),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 9.5,
+                fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                color: color,
+                height: 1.05,
+                letterSpacing: active ? -0.1 : 0,
+              ),
             ),
           ],
         ),
-        child: SafeArea(
-          top: false,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 6, bottom: 2),
-            child: Row(
-              children: List.generate(5, (i) {
-                final active = _currentIndex == i;
-                final isPurple = i == 3;
-                const icons = [
-                  [Icons.home_outlined, Icons.home],
-                  [Icons.work_outline, Icons.work],
-                  [Icons.people_outline, Icons.people],
-                  [Icons.bolt_outlined, Icons.bolt],
-                  [Icons.business_outlined, Icons.business],
-                ];
-                final labels = [
-                  l.businessHomeTabHome,
-                  l.businessHomeTabJobs,
-                  l.businessHomeTabApplicants,
-                  l.businessHomeTabQuickPlug,
-                  l.businessHomeTabProfile,
-                ];
-                final color = isPurple
-                    ? (active
-                        ? AppColors.purple
-                        : AppColors.purple.withValues(alpha: 0.5))
-                    : (active ? AppColors.teal : AppColors.tertiary);
+      ),
+    );
+  }
 
-                return Expanded(
-                  child: GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => setState(() => _currentIndex = i),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 4),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            active ? icons[i][1] : icons[i][0],
-                            size: 22,
-                            color: color,
-                          ),
-                          const SizedBox(height: 3),
-                          Text(
-                            labels[i],
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight:
-                                  active ? FontWeight.w700 : FontWeight.w400,
-                              color: color,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+  Widget _buildCenterPlus({required VoidCallback onTap}) {
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Center(
+          child: Transform.translate(
+            offset: const Offset(0, -2),
+            child: Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.teal,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.teal.withValues(alpha: 0.24),
+                    blurRadius: 18,
+                    spreadRadius: 1,
+                    offset: const Offset(0, 8),
                   ),
-                );
-              }),
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: const Icon(Icons.add, size: 28, color: Colors.white),
             ),
           ),
         ),

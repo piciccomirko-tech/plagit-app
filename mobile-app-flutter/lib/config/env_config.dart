@@ -1,15 +1,15 @@
 enum Environment { development, localReal, staging, production }
 
 class EnvConfig {
-  static Environment _current = Environment.development;
+  static Environment _current = Environment.localReal;
 
   static Environment get current => _current;
   static bool get isDevelopment => _current == Environment.development;
   static bool get isProduction => _current == Environment.production;
 
   /// Whether to use mock data instead of real API calls.
-  /// In development: always true. In production: always false.
-  static bool get useMockData => _current == Environment.development;
+  /// Forced to false: the app always talks to the real backend.
+  static bool get useMockData => false;
 
   static String get apiBaseUrl => switch (_current) {
         Environment.development => 'http://localhost:3000/v1',

@@ -311,56 +311,71 @@ class _JobCard extends StatelessWidget {
           children: [
             // ── Title + badges ──
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
                     job.title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.charcoal,
+                      height: 1.22,
                     ),
                   ),
                 ),
-                StatusBadge(
-                  status: job.status.displayName,
-                  label: job.status.localizedLabel(l),
-                ),
-                if (job.urgent) ...[
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: AppColors.red.withValues(alpha: 0.10),
-                      borderRadius: BorderRadius.circular(100),
-                    ),
-                    child: Text(
-                      l.urgentBadge,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.red,
+                const SizedBox(width: 10),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 126),
+                  child: Wrap(
+                    alignment: WrapAlignment.end,
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      StatusBadge(
+                        status: job.status.displayName,
+                        label: job.status.localizedLabel(l),
                       ),
-                    ),
+                      if (job.urgent)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: AppColors.red.withValues(alpha: 0.10),
+                            borderRadius: BorderRadius.circular(100),
+                          ),
+                          child: Text(
+                            l.urgentBadge,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.red,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
-                ],
+                ),
               ],
             ),
             const SizedBox(height: 6),
 
             // ── Location · salary · contract ──
-            Row(
+            Wrap(
+              spacing: 4,
+              runSpacing: 4,
               children: [
                 Text(
                   job.location,
                   style: const TextStyle(fontSize: 12, color: AppColors.secondary),
                 ),
-                const Text(' · ', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                const Text('·', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
                 Text(
                   job.salary,
                   style: const TextStyle(fontSize: 12, color: AppColors.teal, fontWeight: FontWeight.w500),
                 ),
-                const Text(' · ', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
+                const Text('·', style: TextStyle(fontSize: 12, color: AppColors.secondary)),
                 Text(
                   job.contract,
                   style: const TextStyle(fontSize: 12, color: AppColors.secondary),
@@ -372,28 +387,42 @@ class _JobCard extends StatelessWidget {
             // ── Applicants + posted + menu ──
             Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.teal.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(100),
-                  ),
-                  child: Text(
-                    _applicantsCountLabel(context, job.applicants),
-                    style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.teal,
-                    ),
+                Expanded(
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.teal.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Text(
+                          _applicantsCountLabel(context, job.applicants),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.teal,
+                          ),
+                        ),
+                      ),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 112),
+                        child: Text(
+                          l.postedAgo(job.posted),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontSize: 11, color: AppColors.secondary, height: 1.2),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  l.postedAgo(job.posted),
-                  style: const TextStyle(fontSize: 11, color: AppColors.secondary),
-                ),
-                const Spacer(),
                 PopupMenuButton<String>(
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
                   icon: const Icon(Icons.more_vert, size: 20, color: AppColors.secondary),
                   onSelected: (v) {},
                   itemBuilder: (_) => [

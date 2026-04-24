@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:plagit/core/theme/app_colors.dart';
 import 'package:plagit/core/mock/mock_data.dart';
 import 'package:plagit/core/widgets/status_badge.dart';
+import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/interview.dart';
 import 'package:plagit/providers/candidate_providers.dart';
 
@@ -27,12 +28,13 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<CandidateInterviewsProvider>();
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          'Interviews',
+        title: Text(
+          l10n.localizedInterviewsTitle(),
           style: TextStyle(
             fontWeight: FontWeight.w700,
             color: AppColors.charcoal,
@@ -49,12 +51,13 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
-              children: ['Upcoming', 'Past', 'All'].map((label) {
+              children: _interviewFilters.map((label) {
                 final selected = provider.filter == label;
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: GestureDetector(
-                    onTap: () => context.read<CandidateInterviewsProvider>().setFilter(label),
+                    onTap: () =>
+                        context.read<CandidateInterviewsProvider>().setFilter(label),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 16, vertical: 8),
@@ -72,7 +75,7 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
                               ],
                       ),
                       child: Text(
-                        label,
+                        l10n.localizedInterviewFilter(label),
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
@@ -117,7 +120,13 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
             const SizedBox(height: 16),
             TextButton(
               onPressed: () => context.read<CandidateInterviewsProvider>().load(),
-              child: const Text('Retry', style: TextStyle(color: AppColors.teal, fontWeight: FontWeight.w600)),
+              child: Text(
+                AppLocalizations.of(context).retry,
+                style: const TextStyle(
+                  color: AppColors.teal,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),
@@ -134,7 +143,7 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: interviews.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 12),
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (context, index) {
         final interview = interviews[index];
         return _InterviewCard(interview: interview);
@@ -146,12 +155,12 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        children: const [
-          Icon(Icons.calendar_today, size: 56, color: AppColors.tertiary),
-          SizedBox(height: 16),
+        children: [
+          const Icon(Icons.calendar_today, size: 56, color: AppColors.tertiary),
+          const SizedBox(height: 16),
           Text(
-            'No interviews yet',
-            style: TextStyle(
+            AppLocalizations.of(context).localizedNoInterviewsYet(),
+            style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w600,
               color: AppColors.secondary,
@@ -162,6 +171,8 @@ class _CandidateInterviewsViewState extends State<CandidateInterviewsView> {
     );
   }
 }
+
+const _interviewFilters = ['Upcoming', 'Past', 'All'];
 
 class _InterviewCard extends StatelessWidget {
   final Interview interview;
@@ -258,7 +269,8 @@ class _InterviewCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(100),
                   ),
                   child: Text(
-                    interview.format.displayName,
+                    AppLocalizations.of(context)
+                        .localizedInterviewFormatLabel(interview.format),
                     style: const TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -267,12 +279,96 @@ class _InterviewCard extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                StatusBadge(status: interview.status.displayName),
+                StatusBadge(
+                  status: AppLocalizations.of(context)
+                      .localizedInterviewStatusLabel(interview.status),
+                ),
               ],
             ),
           ],
         ),
       ),
     );
+  }
+}
+
+extension _CandidateInterviewsL10n on AppLocalizations {
+  String localizedInterviewsTitle() => _lang(
+        en: 'Interviews',
+        it: 'Colloqui',
+        ar: 'المقابلات',
+      );
+
+  String localizedInterviewFilter(String filter) {
+    return switch (filter) {
+      'Upcoming' => _lang(en: 'Upcoming', it: 'In arrivo', ar: 'القادمة'),
+      'Past' => _lang(en: 'Past', it: 'Passate', ar: 'السابقة'),
+      'All' => _lang(en: 'All', it: 'Tutte', ar: 'الكل'),
+      _ => filter,
+    };
+  }
+
+  String localizedNoInterviewsYet() => _lang(
+        en: 'No interviews yet',
+        it: 'Nessun colloquio ancora',
+        ar: 'لا توجد مقابلات بعد',
+      );
+
+  String localizedInterviewStatusLabel(InterviewStatus status) {
+    return switch (status) {
+      InterviewStatus.confirmed => _lang(
+          en: 'Confirmed',
+          it: 'Confermato',
+          ar: 'تم التأكيد',
+        ),
+      InterviewStatus.invited => _lang(
+          en: 'Invited',
+          it: 'Invitato',
+          ar: 'تمت الدعوة',
+        ),
+      InterviewStatus.completed => _lang(
+          en: 'Completed',
+          it: 'Completato',
+          ar: 'مكتملة',
+        ),
+      InterviewStatus.noShow => _lang(
+          en: 'No Show',
+          it: 'Assente',
+          ar: 'لم يحضر',
+        ),
+      InterviewStatus.cancelled => _lang(
+          en: 'Cancelled',
+          it: 'Annullato',
+          ar: 'ألغيت',
+        ),
+    };
+  }
+
+  String localizedInterviewFormatLabel(InterviewFormat format) {
+    return switch (format) {
+      InterviewFormat.video => _lang(en: 'Video', it: 'Video', ar: 'فيديو'),
+      InterviewFormat.inPerson => _lang(
+          en: 'In Person',
+          it: 'Di persona',
+          ar: 'حضوري',
+        ),
+      InterviewFormat.phone => _lang(
+          en: 'Phone',
+          it: 'Telefono',
+          ar: 'هاتفي',
+        ),
+    };
+  }
+
+  String _lang({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    return switch (localeName.split('_').first) {
+      'it' => it,
+      'ar' => ar,
+      _ => en,
+    };
   }
 }

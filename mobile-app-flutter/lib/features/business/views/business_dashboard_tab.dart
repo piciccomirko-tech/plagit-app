@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/city_helpers.dart';
@@ -10,6 +9,7 @@ import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/applicant.dart';
 import 'package:plagit/models/business_home_data.dart';
 import 'package:plagit/models/business_interview.dart';
+import 'package:plagit/models/business_profile.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
 
@@ -21,6 +21,7 @@ const _tealLight = Color(0x1A00B5B0);
 const _bgMain = Color(0xFFF6F7F8);
 const _cardBg = Color(0xFFFFFFFF);
 const _surface = Color(0xFFF9FAFB);
+const _purpleLight = Color(0xFFF0EEFF);
 const _charcoal = Color(0xFF1A1C24);
 const _secondary = Color(0xFF707580);
 const _tertiary = Color(0xFF9EA3AD);
@@ -39,30 +40,6 @@ extension _BusinessDashboardL10nX on AppLocalizations {
     if (localeName.startsWith('ar')) return ar;
     return en;
   }
-
-  String activeJobsShort(int count) => _local(
-        en: '$count active jobs',
-        it: '$count lavori attivi',
-        ar: '$count وظائف نشطة',
-      );
-
-  String newThisWeekCount(int count) => _local(
-        en: '+$count this week',
-        it: '+$count questa settimana',
-        ar: '+$count هذا الأسبوع',
-      );
-
-  String newApplicantsToReview(int count) => _local(
-        en: '$count new applicants to review',
-        it: '$count nuovi candidati da rivedere',
-        ar: '$count متقدمين جدد للمراجعة',
-      );
-
-  String get comingSoonShort => _local(
-        en: 'Coming soon',
-        it: 'Prossimamente',
-        ar: 'قريباً',
-      );
 
   String get searchRecentApplicantsHint => _local(
         en: 'Search recent applicants',
@@ -117,7 +94,6 @@ class BusinessDashboardTab extends StatefulWidget {
 
 class _BusinessDashboardTabState extends State<BusinessDashboardTab> with SingleTickerProviderStateMixin {
   int _tabIndex = 0;
-  bool _showCreateMenu = false;
   bool _showSearch = false;
   String _searchQuery = '';
   final _searchCtrl = TextEditingController();
@@ -266,115 +242,11 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                           onTap: () => context.push('/business/messages'),
                           child: const Icon(CupertinoIcons.bubble_left_bubble_right, size: 22, color: Color(0xFF3C3C43)),
                         ),
-                        const SizedBox(width: 18),
-                        GestureDetector(
-                          onTap: () => setState(() => _showCreateMenu = true),
-                          child: const Icon(
-                            CupertinoIcons.add_circled_solid,
-                            size: 24,
-                            color: _tealMain,
-                          ),
-                        ),
                       ],
                     ),
                   ),
 
-                  // ══════════════════════════════════════
-                  // b. HERO CARD
-                  // ══════════════════════════════════════
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 20),
-                    padding: const EdgeInsets.fromLTRB(18, 18, 18, 16),
-                    decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: _subtleBorder, boxShadow: [_subtleShadow]),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                                Text(AppLocalizations.of(context).hiringDashboard, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF2BB8B0), letterSpacing: 1.2)),
-                                const SizedBox(height: 7),
-                                Text(AppLocalizations.of(context).yourPipelineActive, style: GoogleFonts.nunito(
-                                  fontSize: 24, fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF1C1C1E), height: 1.18, letterSpacing: -0.3,
-                                )),
-                                const SizedBox(height: 8),
-                                Text(
-                                  data.activeJobs.isEmpty && data.totalApplicants == 0
-                                      ? AppLocalizations.of(context).postJobToStart
-                                      : '${profile.name} · ${AppLocalizations.of(context).activeJobsCount(data.activeJobs.length)}',
-                                  style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: Color(0xFF4A4F5C), letterSpacing: -0.1),
-                                  maxLines: 1, overflow: TextOverflow.ellipsis,
-                                ),
-                              ]),
-                            ),
-                            const SizedBox(width: 14),
-                            // Square restaurant hero image — 118 px to match candidate hero ID-card footprint
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(21),
-                              child: SizedBox(
-                                width: 118, height: 118,
-                                child: Stack(fit: StackFit.expand, children: [
-                                  Image.network(
-                                    'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600&h=600&fit=crop&q=80',
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (_, _, _) => Container(
-                                      decoration: BoxDecoration(
-                                        gradient: const LinearGradient(colors: [Color(0xFF2BB8B0), Color(0xFF1A9090)], begin: Alignment.topLeft, end: Alignment.bottomRight),
-                                      ),
-                                      child: Center(child: Text(profile.initials, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 28, letterSpacing: 0.3))),
-                                    ),
-                                  ),
-                                  DecoratedBox(decoration: BoxDecoration(gradient: LinearGradient(
-                                    begin: Alignment.topCenter, end: Alignment.bottomCenter,
-                                    colors: [Colors.transparent, Colors.black.withValues(alpha: 0.18)],
-                                  ))),
-                                ]),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        // Live signal row
-                        Row(children: [
-                          if (data.activeJobs.isNotEmpty) ...[
-                            FadeTransition(opacity: _pulseCtrl.drive(Tween(begin: 0.4, end: 1.0)),
-                              child: Container(width: 5, height: 5, decoration: const BoxDecoration(color: _green, shape: BoxShape.circle))),
-                            const SizedBox(width: 6),
-                            Text(AppLocalizations.of(context).activeJobsShort(data.activeJobs.length), style: const TextStyle(fontSize: 11, color: _green)),
-                            const SizedBox(width: 14),
-                          ],
-                          if (data.totalApplicants > 0) ...[
-                            const Icon(CupertinoIcons.arrow_up, size: 10, color: _tealMain),
-                            const SizedBox(width: 4),
-                            Text(AppLocalizations.of(context).newThisWeekCount(data.totalApplicants), style: const TextStyle(fontSize: 11, color: _tealMain)),
-                          ],
-                        ]),
-                        // Dynamic status updates
-                        if (data.totalApplicants > 0 || data.unreadMessages > 0 || data.nextInterview != null) ...[
-                          const SizedBox(height: 12),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            decoration: BoxDecoration(color: const Color(0xFFF2F2F7), borderRadius: BorderRadius.circular(10)),
-                            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              if (data.totalApplicants > 0)
-                                _statusLine(CupertinoIcons.person_badge_plus, AppLocalizations.of(context).newApplicantsToReview(data.totalApplicants), const Color(0xFFFF9500)),
-                              if (data.unreadMessages > 0) ...[
-                                if (data.totalApplicants > 0) const SizedBox(height: 6),
-                                _statusLine(CupertinoIcons.bubble_left_bubble_right, AppLocalizations.of(context).unreadMessagesCount(data.unreadMessages), const Color(0xFF5856D6)),
-                              ],
-                              if (data.nextInterview != null) ...[
-                                if (data.totalApplicants > 0 || data.unreadMessages > 0) const SizedBox(height: 6),
-                                _statusLine(CupertinoIcons.calendar, AppLocalizations.of(context).interviewComingUp, _indigo),
-                              ],
-                            ]),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
+                  _buildHeroCard(data),
 
                   // ══════════════════════════════════════
                   // c. STATS ROW
@@ -402,64 +274,17 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   // d. NEXT ACTION CTA
                   // ══════════════════════════════════════
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (data.totalApplicants > 0 && data.recentApplicants.isNotEmpty) {
-                          context.push(
-                            '/business/candidate/${_candidateRouteId(data.recentApplicants.first)}',
-                          );
-                        } else if (data.unreadMessages > 0) { context.push('/business/messages'); }
-                        else if (data.nextInterview != null) { context.push('/business/interview/${data.nextInterview!.id}'); }
-                        else { context.push('/business/post-job'); }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2BB8B0).withValues(alpha: 0.07),
-                          borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: const Color(0xFF2BB8B0).withValues(alpha: 0.16)),
-                        ),
-                        child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                          Container(
-                            width: 28, height: 28,
-                            decoration: BoxDecoration(color: const Color(0xFF2BB8B0).withValues(alpha: 0.13), borderRadius: BorderRadius.circular(8)),
-                            alignment: Alignment.center,
-                            child: const Icon(CupertinoIcons.bolt_fill, size: 14, color: Color(0xFF1A9090)),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(child: Text(
-                            data.totalApplicants > 0 ? AppLocalizations.of(context).reviewApplicants(data.totalApplicants)
-                            : data.unreadMessages > 0 ? AppLocalizations.of(context).replyMessages(data.unreadMessages)
-                            : data.nextInterview != null ? '${AppLocalizations.of(context).nextInterview} · ${data.nextInterview!.time}'
-                            : AppLocalizations.of(context).postJobToStart,
-                            style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, color: Color(0xFF0F6E6A), letterSpacing: -0.1),
-                          )),
-                          const ForwardChevron(size: 28, color: Color(0xFF1A9090)),
-                        ]),
-                      ),
-                    ),
+                    padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                    child: _buildPrimaryCtaCard(data),
                   ),
 
                   // ══════════════════════════════════════
                   // e. NEXT INTERVIEW
                   // ══════════════════════════════════════
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: Row(children: [
-                      const Icon(CupertinoIcons.calendar_badge_plus, size: 16, color: _indigo),
-                      const SizedBox(width: 5),
-                      Text(AppLocalizations.of(context).nextInterview, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: Color(0xFF1C1C1E), letterSpacing: -0.2)),
-                      const Spacer(),
-                      GestureDetector(
-                        onTap: () => context.push('/business/interviews'),
-                        child: Row(mainAxisSize: MainAxisSize.min, children: [
-                          Text(AppLocalizations.of(context).seeAll, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF2BB8B0))),
-                          const SizedBox(width: 2),
-                          const ForwardChevron(size: 28, color: Color(0xFF2BB8B0)),
-                        ]),
-                      ),
-                    ]),
+                  _buildHomeSectionHeader(
+                    title: AppLocalizations.of(context).nextInterview,
+                    linkText: AppLocalizations.of(context).seeAll,
+                    onTap: () => context.push('/business/interviews'),
                   ),
                   const SizedBox(height: 12),
                   _buildNextInterview(data.nextInterview),
@@ -468,15 +293,15 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   // e. QUICK ACTIONS
                   // ══════════════════════════════════════
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
                     child: Row(children: [
-                      _QuickAction(icon: CupertinoIcons.plus_circle_fill, iconSize: 24, label: AppLocalizations.of(context).postJobShort, gradient: true, onTap: () => context.push('/business/post-job')),
-                      const SizedBox(width: 8),
-                      _QuickAction(icon: CupertinoIcons.placemark_fill, iconSize: 22, label: AppLocalizations.of(context).nearby, onTap: () => context.push('/business/nearby-talent')),
-                      const SizedBox(width: 8),
-                      _QuickAction(icon: CupertinoIcons.person_3_fill, iconSize: 24, label: AppLocalizations.of(context).community, onTap: () => context.push('/feed')),
-                      const SizedBox(width: 8),
-                      _QuickAction(icon: CupertinoIcons.bubble_left_bubble_right_fill, iconSize: 24, label: AppLocalizations.of(context).messages, onTap: () => context.push('/business/messages')),
+                      _QuickAction(icon: CupertinoIcons.plus_circle_fill, iconSize: 22, label: AppLocalizations.of(context).postJobShort, primary: true, onTap: () => context.push('/business/post-job')),
+                      const SizedBox(width: 12),
+                      _QuickAction(icon: CupertinoIcons.placemark_fill, iconSize: 20, label: AppLocalizations.of(context).nearby, onTap: () => context.push('/business/nearby-talent')),
+                      const SizedBox(width: 12),
+                      _QuickAction(icon: CupertinoIcons.person_3_fill, iconSize: 22, label: AppLocalizations.of(context).community, onTap: () => context.push('/feed')),
+                      const SizedBox(width: 12),
+                      _QuickAction(icon: CupertinoIcons.bubble_left_bubble_right_fill, iconSize: 22, label: AppLocalizations.of(context).messages, onTap: () => context.push('/business/messages')),
                     ]),
                   ),
 
@@ -485,39 +310,7 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   // ══════════════════════════════════════
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                    child: Container(
-                      padding: const EdgeInsets.all(18),
-                      decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(16), border: _subtleBorder, boxShadow: [_subtleShadow]),
-                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Row(children: [
-                          Container(
-                            width: 28, height: 28,
-                            decoration: BoxDecoration(color: const Color(0xFF2BB8B0).withValues(alpha: 0.10), borderRadius: BorderRadius.circular(7)),
-                            child: const Icon(CupertinoIcons.chart_bar_fill, size: 14, color: Color(0xFF2BB8B0)),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(AppLocalizations.of(context).hiringProgress, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF1C1C1E), letterSpacing: -0.2)),
-                        ]),
-                        const SizedBox(height: 12),
-                        _buildHiringProgress(data),
-                        const SizedBox(height: 10),
-                        // Positive feedback
-                        if (data.activeJobs.isNotEmpty || data.totalApplicants > 0)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                            decoration: BoxDecoration(color: const Color(0xFF34C759).withValues(alpha: 0.08), borderRadius: BorderRadius.circular(8)),
-                            child: Row(mainAxisSize: MainAxisSize.min, children: [
-                              const Icon(CupertinoIcons.checkmark_seal_fill, size: 12, color: Color(0xFF34C759)),
-                              const SizedBox(width: 5),
-                              Text(
-                                data.totalApplicants > 0 ? AppLocalizations.of(context).reviewApplicants(data.totalApplicants)
-                                : AppLocalizations.of(context).jobLiveVisible,
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF34C759)),
-                              ),
-                            ]),
-                          ),
-                      ]),
-                    ),
+                    child: _buildHiringProgressCard(data),
                   ),
 
                   // ══════════════════════════════════════
@@ -525,29 +318,8 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
                   // ══════════════════════════════════════
                   if (!subscription.plan.isPremium)
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                      child: GestureDetector(
-                        onTap: () => context.push('/business/subscription'),
-                        child: Container(
-                          padding: const EdgeInsets.all(18),
-                          decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(20), border: _subtleBorder, boxShadow: [_subtleShadow]),
-                          child: Row(children: [
-                            Container(
-                              width: 40, height: 40,
-                              decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), gradient: LinearGradient(colors: [_indigo, _indigo.withValues(alpha: 0.70)])),
-                              alignment: Alignment.center,
-                              child: const PhosphorIcon(PhosphorIconsFill.crown, size: 18, color: Colors.white),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(AppLocalizations.of(context).unlockBusinessPremium, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF1C1C1E), letterSpacing: -0.2)),
-                              const SizedBox(height: 1),
-                              Text(AppLocalizations.of(context).businessPremiumSubtitle, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w400, color: Color(0xFF8E8E93)), maxLines: 1, overflow: TextOverflow.ellipsis),
-                            ])),
-                            const ForwardChevron(size: 28, color: _indigo),
-                          ]),
-                        ),
-                      ),
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                      child: _buildPremiumUpsellCard(),
                     ),
 
                   // ══════════════════════════════════════
@@ -572,8 +344,6 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
         ),
 
         // ── CREATE MENU OVERLAY ──
-        if (_showCreateMenu) _buildCreateOverlay(),
-
         // ── SEARCH OVERLAY ──
         if (_showSearch) _buildSearchOverlay(data),
       ],
@@ -589,16 +359,58 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(20), border: _subtleBorder, boxShadow: [_subtleShadow]),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _cardBg,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.035),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
           child: Row(children: [
-            Container(width: 40, height: 40, decoration: BoxDecoration(color: _surface, borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.calendar_today, size: 16, color: _tertiary)),
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: _purpleLight,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: const Icon(
+                CupertinoIcons.calendar_today,
+                size: 18,
+                color: _indigo,
+              ),
+            ),
             const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(AppLocalizations.of(context).noUpcomingInterviews, style: const TextStyle(fontSize: 15, color: _charcoal)),
-              const SizedBox(height: 2),
-              Text(AppLocalizations.of(context).scheduleFromApplicants, style: const TextStyle(fontSize: 11, color: _tertiary)),
-            ])),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    AppLocalizations.of(context).noUpcomingInterviews,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: _charcoal,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    AppLocalizations.of(context).scheduleFromApplicants,
+                    style: const TextStyle(fontSize: 12, color: _secondary),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              CupertinoIcons.chevron_right,
+              size: 18,
+              color: _tertiary,
+            ),
           ]),
         ),
       );
@@ -615,44 +427,119 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: _cardBg, borderRadius: BorderRadius.circular(16),
-            border: _subtleBorder,
-            boxShadow: [_subtleShadow],
+            color: _cardBg,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.035),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Row(children: [
-            // Date block
             Container(
-              width: 62, padding: const EdgeInsets.symmetric(vertical: 8),
-              decoration: BoxDecoration(color: const Color(0xFF2BB8B0).withValues(alpha: 0.10), borderRadius: BorderRadius.circular(12)),
+              width: 64,
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              decoration: BoxDecoration(
+                color: _tealLight,
+                borderRadius: BorderRadius.circular(14),
+              ),
               child: Column(children: [
-                Text(iv.date.length >= 10 ? iv.date.substring(8, 10) : iv.date, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Color(0xFF2BB8B0))),
-                Text(_monthAbbr(iv.date), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF8E8E93))),
+                Text(
+                  iv.date.length >= 10 ? iv.date.substring(8, 10) : iv.date,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    color: _tealMain,
+                    height: 1.1,
+                  ),
+                ),
+                Text(
+                  _monthAbbr(iv.date),
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    color: _tealMain,
+                    letterSpacing: 0.6,
+                  ),
+                ),
                 const SizedBox(height: 2),
-                Text(iv.time.toLowerCase(), maxLines: 1, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF3A3A3C))),
+                Text(
+                  iv.time.toLowerCase(),
+                  maxLines: 1,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: _tealMain,
+                  ),
+                ),
               ]),
             ),
-            const SizedBox(width: 8),
-            Container(width: 1, height: 50, color: const Color(0xFFE5E5EA)),
             const SizedBox(width: 12),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(iv.candidateName, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF3A3A3C))),
-              Text(iv.jobTitle, style: const TextStyle(fontSize: 13, color: Color(0xFF8E8E93))),
-              const SizedBox(height: 6),
-              Row(children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(color: statusColor.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(20)),
-                  child: Text(localizedInterviewStatus(context, iv.status), style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: statusColor)),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(
+                  iv.candidateName,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: _charcoal,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 6),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(color: formatColor.withValues(alpha: 0.10), borderRadius: BorderRadius.circular(20)),
-                  child: Text(iv.format, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: formatColor)),
+                const SizedBox(height: 4),
+                Text(
+                  iv.jobTitle,
+                  style: const TextStyle(fontSize: 12.5, color: _secondary),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: statusColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(
+                        localizedInterviewStatus(context, iv.status),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: statusColor,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: formatColor.withValues(alpha: 0.10),
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                      child: Text(
+                        iv.format,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: formatColor,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ]),
-            ])),
-            const ForwardChevron(size: 28, color: Color(0xFFC7C7CC)),
+            ),
+            const Icon(
+              CupertinoIcons.chevron_right,
+              size: 18,
+              color: _tertiary,
+            ),
           ]),
         ),
       ),
@@ -1018,138 +905,6 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
   }
 
   // ═══════════════════════════════════════════════════════════════
-  // CREATE MENU OVERLAY
-  // ═══════════════════════════════════════════════════════════════
-
-  Widget _buildCreateOverlay() {
-    return Positioned.fill(
-      child: GestureDetector(
-        onTap: () => setState(() => _showCreateMenu = false),
-        child: Container(
-          color: Colors.black.withValues(alpha: 0.30),
-          child: Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Container(
-                margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(color: _cardBg, borderRadius: BorderRadius.circular(20)),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  _menuItem(
-                    CupertinoIcons.briefcase,
-                    AppLocalizations.of(context).postJobShort,
-                    AppLocalizations.of(context).hireBestTalent,
-                    onTap: () {
-                      setState(() => _showCreateMenu = false);
-                      context.push('/business/post-job');
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  _menuItem(
-                    CupertinoIcons.pencil,
-                    AppLocalizations.of(context).createUpdate,
-                    AppLocalizations.of(context).shareCompanyNews,
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 12),
-                  _menuItem(
-                    CupertinoIcons.camera,
-                    AppLocalizations.of(context).addStory,
-                    AppLocalizations.of(context).showWorkplace,
-                    enabled: false,
-                  ),
-                  const SizedBox(height: 12),
-                  _menuItem(
-                    CupertinoIcons.star,
-                    AppLocalizations.of(context).viewShortlist,
-                    AppLocalizations.of(context).yourSavedCandidates,
-                    onTap: () {
-                      setState(() => _showCreateMenu = false);
-                      context.push('/business/shortlist');
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  _menuItem(
-                    CupertinoIcons.person_badge_plus,
-                    AppLocalizations.of(context).inviteCandidate,
-                    AppLocalizations.of(context).reachOutDirectly,
-                    enabled: false,
-                  ),
-                ]),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _menuItem(
-    IconData icon,
-    String title,
-    String subtitle, {
-    VoidCallback? onTap,
-    bool enabled = true,
-  }) {
-    final l = AppLocalizations.of(context);
-    final titleColor =
-        enabled ? _charcoal : _charcoal.withValues(alpha: 0.6);
-    final subtitleColor =
-        enabled ? _secondary : _secondary.withValues(alpha: 0.7);
-    final iconBg = enabled ? _tealLight : _surface;
-    final iconColor = enabled ? _tealMain : _tertiary;
-
-    return GestureDetector(
-      onTap: enabled ? onTap : null,
-      child: Row(children: [
-        Container(
-          width: 40,
-          height: 40,
-          decoration: BoxDecoration(
-            color: iconBg,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(child: Icon(icon, size: 18, color: iconColor)),
-        ),
-        const SizedBox(width: 14),
-        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: titleColor,
-            ),
-          ),
-          Text(
-            subtitle,
-            style: TextStyle(fontSize: 13, color: subtitleColor),
-          ),
-        ])),
-        if (enabled)
-          const ForwardChevron(size: 28, color: Color(0xFFC7C7CC))
-        else
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: _surface,
-              borderRadius: BorderRadius.circular(100),
-              border: Border.all(color: _divider),
-            ),
-            child: Text(
-              l.comingSoonShort,
-              style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
-                color: _tertiary,
-              ),
-            ),
-          ),
-      ]),
-    );
-  }
-
-  // ═══════════════════════════════════════════════════════════════
   // HELPERS
   // ═══════════════════════════════════════════════════════════════
 
@@ -1179,12 +934,513 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
     return AppLocalizations.of(context).monthAbbr(m);
   }
 
-  Widget _statusLine(IconData icon, String text, Color color) {
-    return Row(children: [
-      Icon(icon, size: 12, color: color),
-      const SizedBox(width: 6),
-      Text(text, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: color)),
-    ]);
+  Widget _buildHeroCard(BusinessHomeData data) {
+    final l = AppLocalizations.of(context);
+    final profile = data.profile;
+    final hasActivity = data.activeJobs.isNotEmpty || data.totalApplicants > 0;
+    final summary = hasActivity
+        ? '${localizedCity(context, profile.location)} · ${l.activeJobsCount(data.activeJobs.length)}'
+        : l.postJobToStart;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.hiringDashboard,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: _tealMain,
+                        letterSpacing: 1.3,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      l.yourPipelineActive,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: _charcoal,
+                        letterSpacing: -0.3,
+                        height: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      summary,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: _secondary,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 14),
+              _buildBusinessHeroMedia(profile),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              if (data.activeJobs.isNotEmpty)
+                _heroPill(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FadeTransition(
+                        opacity: _pulseCtrl.drive(Tween(begin: 0.4, end: 1.0)),
+                        child: Container(
+                          width: 7,
+                          height: 7,
+                          decoration: const BoxDecoration(
+                            color: _green,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        l.activeJobsShort(data.activeJobs.length),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: _green,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              _heroPill(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      CupertinoIcons.bubble_left_bubble_right_fill,
+                      size: 13,
+                      color: _indigo,
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      l.unreadMessagesCount(data.unreadMessages),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: _charcoal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _heroPill(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      CupertinoIcons.calendar,
+                      size: 13,
+                      color: _tealMain,
+                    ),
+                    const SizedBox(width: 7),
+                    Text(
+                      data.nextInterview != null
+                          ? l.interviewComingUp
+                          : l.noUpcomingInterviews,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: _charcoal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBusinessHeroMedia(BusinessProfile profile) {
+    final imageUrl =
+        (profile.coverImage?.isNotEmpty ?? false) ? profile.coverImage : profile.logoUrl;
+
+    return Container(
+      width: 88,
+      height: 104,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(22),
+        gradient: const LinearGradient(
+          colors: [Color(0xFF2BB8B0), Color(0xFF1A9090)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: _tealMain.withValues(alpha: 0.18),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: imageUrl != null && imageUrl.isNotEmpty
+          ? Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => _heroInitials(profile.initials),
+            )
+          : _heroInitials(profile.initials),
+    );
+  }
+
+  Widget _heroInitials(String initials) {
+    return Container(
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            const Color(0xFF2BB8B0),
+            const Color(0xFF1A9090).withValues(alpha: 0.92),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Text(
+        initials,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 28,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _heroPill({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: _surface,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: child,
+    );
+  }
+
+  Widget _buildPrimaryCtaCard(BusinessHomeData data) {
+    final l = AppLocalizations.of(context);
+    final title = data.totalApplicants > 0
+        ? l.reviewApplicants(data.totalApplicants)
+        : data.unreadMessages > 0
+            ? l.replyMessages(data.unreadMessages)
+            : data.nextInterview != null
+                ? '${l.nextInterview} · ${data.nextInterview!.time}'
+                : l.postJobToStart;
+
+    final subtitle = data.totalApplicants > 0
+        ? l.newApplicantsToReview(data.totalApplicants)
+        : data.unreadMessages > 0
+            ? l.unreadMessagesCount(data.unreadMessages)
+            : data.nextInterview != null
+                ? data.nextInterview!.jobTitle
+                : l.hiringDashboard;
+
+    return GestureDetector(
+      onTap: () {
+        if (data.totalApplicants > 0 && data.recentApplicants.isNotEmpty) {
+          context.push('/business/candidate/${_candidateRouteId(data.recentApplicants.first)}');
+        } else if (data.unreadMessages > 0) {
+          context.push('/business/messages');
+        } else if (data.nextInterview != null) {
+          context.push('/business/interview/${data.nextInterview!.id}');
+        } else {
+          context.push('/business/post-job');
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.035),
+              blurRadius: 14,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                color: _tealLight,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              alignment: Alignment.center,
+              child: const Icon(
+                CupertinoIcons.bolt_fill,
+                size: 18,
+                color: _tealMain,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: _charcoal,
+                      letterSpacing: -0.15,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    subtitle,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: _secondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              CupertinoIcons.chevron_right,
+              size: 18,
+              color: _tertiary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHomeSectionHeader({
+    required String title,
+    required String linkText,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w800,
+              color: _charcoal,
+            ),
+          ),
+          GestureDetector(
+            onTap: onTap,
+            child: Row(
+              children: [
+                Text(
+                  linkText,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: _tealMain,
+                  ),
+                ),
+                const SizedBox(width: 2),
+                const Icon(
+                  CupertinoIcons.chevron_right,
+                  size: 16,
+                  color: _tealMain,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHiringProgressCard(BusinessHomeData data) {
+    final l = AppLocalizations.of(context);
+    final footnote = data.totalApplicants > 0
+        ? l.reviewApplicants(data.totalApplicants)
+        : l.jobLiveVisible;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: _tealLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                alignment: Alignment.center,
+                child: const Icon(
+                  CupertinoIcons.chart_bar_fill,
+                  size: 16,
+                  color: _tealMain,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l.hiringProgress,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: _charcoal,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      footnote,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: _secondary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          _buildHiringProgress(data),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPremiumUpsellCard() {
+    final l = AppLocalizations.of(context);
+    return GestureDetector(
+      onTap: () => context.push('/business/subscription'),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.028),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                color: _indigo.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              alignment: Alignment.center,
+              child: const PhosphorIcon(
+                PhosphorIconsFill.crown,
+                size: 16,
+                color: _indigo,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l.unlockBusinessPremium,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: _charcoal,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l.businessPremiumSubtitle,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: _secondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              CupertinoIcons.chevron_right,
+              size: 18,
+              color: _indigo,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildHiringProgress(BusinessHomeData data) {
@@ -1195,21 +1451,66 @@ class _BusinessDashboardTabState extends State<BusinessDashboardTab> with Single
       (t.statusInterviewsShort, data.interviewCount > 0),
       (t.statusHiredShort, data.hiredCount > 0),
     ];
-    return Row(children: [
-      for (int i = 0; i < steps.length; i++) ...[
-        if (i > 0) Expanded(child: Container(height: 2, color: steps[i].$2 ? const Color(0xFF2BB8B0) : const Color(0xFFE5E5EA))),
-        Container(
-          width: 24, height: 24,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: steps[i].$2 ? const Color(0xFF2BB8B0) : const Color(0xFFE5E5EA),
-          ),
-          child: Center(child: steps[i].$2
-            ? const Icon(CupertinoIcons.checkmark, size: 12, color: Colors.white)
-            : Text('${i + 1}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: Color(0xFF8E8E93)))),
+    return Column(
+      children: [
+        Row(children: [
+          for (int i = 0; i < steps.length; i++) ...[
+            if (i > 0)
+              Expanded(
+                child: Container(
+                  height: 2,
+                  color: steps[i].$2 ? _tealMain : const Color(0xFFE5E5EA),
+                ),
+              ),
+            Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: steps[i].$2 ? _tealMain : const Color(0xFFE5E5EA),
+              ),
+              child: Center(
+                child: steps[i].$2
+                    ? const Icon(
+                        CupertinoIcons.checkmark,
+                        size: 12,
+                        color: Colors.white,
+                      )
+                    : Text(
+                        '${i + 1}',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: _tertiary,
+                        ),
+                      ),
+              ),
+            ),
+          ],
+        ]),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            for (int i = 0; i < steps.length; i++)
+              Expanded(
+                child: Text(
+                  steps[i].$1,
+                  textAlign: i == 0
+                      ? TextAlign.start
+                      : i == steps.length - 1
+                          ? TextAlign.end
+                          : TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: steps[i].$2 ? FontWeight.w700 : FontWeight.w500,
+                    color: steps[i].$2 ? _charcoal : _secondary,
+                  ),
+                ),
+              ),
+          ],
         ),
       ],
-    ]);
+    );
   }
 
   Color _applicantStatusColor(ApplicantStatus s) => switch (s) {
@@ -1243,32 +1544,70 @@ class _StatCard extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
+          padding: const EdgeInsets.fromLTRB(14, 14, 14, 13),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFEFEFF4), width: 0.5),
-            boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.035), blurRadius: 10, offset: const Offset(0, 2))],
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.03),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Row(children: [
               Container(
-                width: 34, height: 34,
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.11), borderRadius: BorderRadius.circular(10)),
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 alignment: Alignment.center,
-                child: Icon(icon, size: 17, color: color),
+                child: Icon(icon, size: 16, color: color),
               ),
               const Spacer(),
-              if (badge != null) Container(
-                padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(7)),
-                child: Text(badge!, style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: color, letterSpacing: 0.2)),
-              ),
+              if (badge != null)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  child: Text(
+                    badge!,
+                    style: TextStyle(
+                      fontSize: 9,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+                  ),
+                ),
             ]),
-            const SizedBox(height: 14),
-            Text('$count', style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700, color: Color(0xFF1C1C1E), letterSpacing: -0.6, height: 1)),
-            const SizedBox(height: 4),
-            Text(label, style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w500, color: Color(0xFF707580), letterSpacing: -0.1), maxLines: 1, overflow: TextOverflow.clip, softWrap: false),
+            const SizedBox(height: 16),
+            Text(
+              '$count',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                color: _charcoal,
+                letterSpacing: -0.5,
+                height: 1,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w600,
+                color: _secondary,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ]),
         ),
       ),
@@ -1284,9 +1623,15 @@ class _QuickAction extends StatelessWidget {
   final IconData icon;
   final double iconSize;
   final String label;
-  final bool gradient;
+  final bool primary;
   final VoidCallback? onTap;
-  const _QuickAction({required this.icon, this.iconSize = 26, required this.label, this.gradient = false, this.onTap});
+  const _QuickAction({
+    required this.icon,
+    this.iconSize = 26,
+    required this.label,
+    this.primary = false,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1294,17 +1639,49 @@ class _QuickAction extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          height: 92,
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
           decoration: BoxDecoration(
-            color: gradient ? null : const Color(0xFF2BB8B0).withValues(alpha: 0.08),
-            gradient: gradient ? const LinearGradient(colors: [Color(0xFF2BB8B0), Color(0xFF1A9090)], begin: Alignment.topLeft, end: Alignment.bottomRight) : null,
-            borderRadius: BorderRadius.circular(14),
+            color: primary ? _tealMain : Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.028),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(18),
           ),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Icon(icon, size: iconSize, color: gradient ? Colors.white : const Color(0xFF2BB8B0)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: primary ? Colors.white.withValues(alpha: 0.20) : _tealLight,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              alignment: Alignment.center,
+              child: Icon(
+                icon,
+                size: iconSize,
+                color: primary ? Colors.white : _tealMain,
+              ),
+            ),
             const SizedBox(height: 6),
-            Text(label, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: gradient ? Colors.white : const Color(0xFF3A3A3C)),
-                maxLines: 1, overflow: TextOverflow.ellipsis),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: primary ? Colors.white : _charcoal,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
           ]),
         ),
       ),

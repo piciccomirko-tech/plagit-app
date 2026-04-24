@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/config/app_theme.dart';
-import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/notification_item.dart';
 import 'package:plagit/providers/business_providers.dart';
 import 'package:plagit/core/widgets/directional_chevron.dart';
@@ -18,10 +17,79 @@ class BusinessNotificationsView extends StatefulWidget {
 }
 
 class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
-  static final RegExp _compactRelativeTimePattern = RegExp(
+  String _a11yBackLabel() =>
+      _languageCode() == 'it' ? 'Indietro' : _languageCode() == 'ar' ? 'رجوع' : 'Back';
+
+  String _a11yFilterLabel(String filter) {
+    if (filter == 'Unread') {
+      return _languageCode() == 'it'
+          ? 'Filtro: Non letti'
+          : _languageCode() == 'ar'
+              ? 'عامل التصفية: غير مقروء'
+              : 'Filter: Unread';
+    }
+    return _languageCode() == 'it'
+        ? 'Filtro: Tutti'
+        : _languageCode() == 'ar'
+            ? 'عامل التصفية: الكل'
+            : 'Filter: All';
+  }
+
+  static final RegExp _relativeNotificationTimePattern = RegExp(
     r'^(\d+)\s*(m|min|mins|minute|minutes|h|hr|hrs|hour|hours|d|day|days)\s*ago$',
     caseSensitive: false,
   );
+
+  String _localizedNotificationTime(String rawTime) {
+    final normalized = rawTime.trim();
+    if (normalized.isEmpty) {
+      return rawTime;
+    }
+
+    final lower = normalized.toLowerCase();
+    if (lower == 'today') {
+      return _languageCode() == 'it'
+          ? 'Oggi'
+          : _languageCode() == 'ar'
+              ? 'اليوم'
+              : 'Today';
+    }
+    if (lower == 'yesterday') {
+      return _languageCode() == 'it'
+          ? 'Ieri'
+          : _languageCode() == 'ar'
+              ? 'أمس'
+              : 'Yesterday';
+    }
+
+    final match = _relativeNotificationTimePattern.firstMatch(lower);
+    if (match == null) {
+      return rawTime;
+    }
+
+    final count = int.tryParse(match.group(1) ?? '');
+    final unit = match.group(2) ?? '';
+    if (count == null) {
+      return rawTime;
+    }
+
+    if (_languageCode() == 'it') {
+      if (unit.startsWith('m')) return '$count min fa';
+      if (unit.startsWith('h')) return '$count h fa';
+      if (unit.startsWith('d')) return count == 1 ? 'Ieri' : '$count g fa';
+    }
+
+    if (_languageCode() == 'ar') {
+      if (unit.startsWith('m')) return count == 1 ? 'قبل دقيقة' : 'قبل $count دقائق';
+      if (unit.startsWith('h')) return count == 1 ? 'قبل ساعة' : 'قبل $count ساعات';
+      if (unit.startsWith('d')) return count == 1 ? 'أمس' : 'قبل $count أيام';
+    }
+
+    return rawTime;
+  }
+
+  String _languageCode() =>
+      Localizations.localeOf(context).languageCode.toLowerCase();
   String _selectedFilter = 'All';
   final List<String> _filters = ['All', 'Unread'];
 
@@ -55,140 +123,6 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     }
   }
 
-  String _localizedNotificationTime(String rawTime) {
-    final normalized = rawTime.trim();
-    if (normalized.isEmpty) {
-      return rawTime;
-    }
-
-    final lower = normalized.toLowerCase();
-    if (lower == 'today') {
-      return _localizedToday();
-    }
-    if (lower == 'yesterday') {
-      return _localizedYesterday();
-    }
-    if (lower == 'now' || lower == 'just now') {
-      return _localizedNow();
-    }
-
-    final compactMatch = _compactRelativeTimePattern.firstMatch(lower);
-    if (compactMatch != null) {
-      final count = int.tryParse(compactMatch.group(1) ?? '');
-      final unit = compactMatch.group(2) ?? '';
-      if (count == null) {
-        return rawTime;
-      }
-      if (unit.startsWith('m')) {
-        return _localizedMinutesAgo(count);
-      }
-      if (unit.startsWith('h')) {
-        return _localizedHoursAgo(count);
-      }
-      if (unit.startsWith('d')) {
-        return count == 1
-            ? _localizedYesterday()
-            : _localizedDaysAgo(count);
-      }
-    }
-
-    final parsedDate = DateTime.tryParse(normalized);
-    if (parsedDate == null) {
-      return rawTime;
-    }
-
-    final localDate = parsedDate.toLocal();
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-    final notificationDay =
-        DateTime(localDate.year, localDate.month, localDate.day);
-    final dayDiff = today.difference(notificationDay).inDays;
-
-    if (dayDiff <= 0) {
-      final diff = now.difference(localDate);
-      if (diff.inMinutes < 1) {
-        return _localizedNow();
-      }
-      if (diff.inHours < 1) {
-        return _localizedMinutesAgo(diff.inMinutes);
-      }
-      return _localizedHoursAgo(diff.inHours);
-    }
-    if (dayDiff == 1) {
-      return _localizedYesterday();
-    }
-    return _localizedDaysAgo(dayDiff);
-  }
-
-  String _languageCode() =>
-      Localizations.localeOf(context).languageCode.toLowerCase();
-
-  String _localizedToday() {
-    switch (_languageCode()) {
-      case 'it':
-        return 'Oggi';
-      case 'ar':
-        return 'اليوم';
-      default:
-        return 'Today';
-    }
-  }
-
-  String _localizedYesterday() {
-    switch (_languageCode()) {
-      case 'it':
-        return 'Ieri';
-      case 'ar':
-        return 'أمس';
-      default:
-        return 'Yesterday';
-    }
-  }
-
-  String _localizedNow() {
-    switch (_languageCode()) {
-      case 'it':
-        return 'ora';
-      case 'ar':
-        return 'الآن';
-      default:
-        return 'now';
-    }
-  }
-
-  String _localizedMinutesAgo(int count) {
-    switch (_languageCode()) {
-      case 'it':
-        return '$count min fa';
-      case 'ar':
-        return count == 1 ? 'قبل دقيقة' : 'قبل $count دقائق';
-      default:
-        return '${count}m ago';
-    }
-  }
-
-  String _localizedHoursAgo(int count) {
-    switch (_languageCode()) {
-      case 'it':
-        return '$count h fa';
-      case 'ar':
-        return count == 1 ? 'قبل ساعة' : 'قبل $count ساعات';
-      default:
-        return '${count}h ago';
-    }
-  }
-
-  String _localizedDaysAgo(int count) {
-    switch (_languageCode()) {
-      case 'it':
-        return '$count g fa';
-      case 'ar':
-        return count == 1 ? 'قبل يوم' : 'قبل $count أيام';
-      default:
-        return '${count}d ago';
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<BusinessNotificationsProvider>();
@@ -213,16 +147,23 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
           horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.pop(),
-            child: const SizedBox(
-                width: 36,
-                height: 36,
-                child: BackChevron(size: 22, color: AppColors.charcoal)),
+          Semantics(
+            button: true,
+            label: _a11yBackLabel(),
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: const ExcludeSemantics(
+                child: SizedBox(
+                  width: 36,
+                  height: 36,
+                  child: BackChevron(size: 22, color: AppColors.charcoal),
+                ),
+              ),
+            ),
           ),
           const Spacer(),
-          Text(AppLocalizations.of(context).notificationsTitle,
-              style: const TextStyle(
+          const Text('Notifications',
+              style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.charcoal)),
@@ -241,7 +182,20 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
             ),
           ],
           const Spacer(),
-          const SizedBox(width: 36, height: 36),
+          unreadCount > 0
+              ? GestureDetector(
+                  onTap: () =>
+                      context.read<BusinessNotificationsProvider>().markAllRead(),
+                  child: const Text(
+                    'Mark all read',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.teal,
+                    ),
+                  ),
+                )
+              : const SizedBox(width: 36, height: 36),
         ],
       ),
     );
@@ -255,28 +209,33 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
         children: [
           ..._filters.map((f) {
             final active = _selectedFilter == f;
-            final l = AppLocalizations.of(context);
-            final label = f == 'All' ? l.filterAll : (f == 'Unread' ? l.filterUnread : f);
             return Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
-              child: GestureDetector(
-                onTap: () => setState(() => _selectedFilter = f),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: active ? AppColors.teal : AppColors.surface,
-                    borderRadius: BorderRadius.circular(AppRadius.full),
-                    border: active
-                        ? null
-                        : Border.all(color: AppColors.border, width: 0.5),
+              child: Semantics(
+                button: true,
+                selected: active,
+                label: _a11yFilterLabel(f),
+                child: GestureDetector(
+                  onTap: () => setState(() => _selectedFilter = f),
+                  child: ExcludeSemantics(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+                      decoration: BoxDecoration(
+                        color: active ? AppColors.teal : AppColors.surface,
+                        borderRadius: BorderRadius.circular(AppRadius.full),
+                        border: active
+                            ? null
+                            : Border.all(color: AppColors.border, width: 0.5),
+                      ),
+                      child: Text(f,
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color:
+                                  active ? Colors.white : AppColors.secondary)),
+                    ),
                   ),
-                  child: Text(label,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color:
-                              active ? Colors.white : AppColors.secondary)),
                 ),
               ),
             );
@@ -306,8 +265,8 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
             const SizedBox(height: AppSpacing.md),
             GestureDetector(
               onTap: () => context.read<BusinessNotificationsProvider>().load(),
-              child: Text(AppLocalizations.of(context).retryAction,
-                  style: const TextStyle(
+              child: const Text('Retry',
+                  style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w500,
                       color: AppColors.teal)),
@@ -321,15 +280,28 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     final filtered = _applyFilter(provider.notifications);
 
     if (filtered.isEmpty) {
-      return _emptyState();
+      return RefreshIndicator(
+        onRefresh: () => context.read<BusinessNotificationsProvider>().load(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: const [
+            SizedBox(height: 120),
+            _EmptyStateHost(),
+          ],
+        ),
+      );
     }
-    return ListView.builder(
-      padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
-      itemCount: filtered.length,
-      itemBuilder: (_, i) => Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-        child: _notificationRow(filtered[i]),
+    return RefreshIndicator(
+      onRefresh: () => context.read<BusinessNotificationsProvider>().load(),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xl, vertical: AppSpacing.lg),
+        itemCount: filtered.length,
+        itemBuilder: (_, i) => Padding(
+          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+          child: _notificationRow(filtered[i]),
+        ),
       ),
     );
   }
@@ -405,7 +377,13 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
     context.push(destinationRoute);
   }
 
-  Widget _emptyState() {
+}
+
+class _EmptyStateHost extends StatelessWidget {
+  const _EmptyStateHost();
+
+  @override
+  Widget build(BuildContext context) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
@@ -423,16 +401,16 @@ class _BusinessNotificationsViewState extends State<BusinessNotificationsView> {
                   size: 20, color: AppColors.teal),
             ),
             const SizedBox(height: AppSpacing.lg),
-            Text(AppLocalizations.of(context).noNotifications,
-                style: const TextStyle(
+            const Text('No notifications',
+                style: TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: AppColors.charcoal)),
             const SizedBox(height: AppSpacing.sm),
-            Text(
-                AppLocalizations.of(context).noNotificationsSubtitle,
+            const Text(
+                'You\'ll be notified about new applicants, interviews, and messages.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12, color: AppColors.secondary)),
+                style: TextStyle(fontSize: 12, color: AppColors.secondary)),
           ],
         ),
       ),

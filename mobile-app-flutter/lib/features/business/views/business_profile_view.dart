@@ -132,6 +132,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final auth = context.watch<BusinessAuthProvider>();
     final profile = auth.profile;
 
@@ -180,7 +181,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
           children: [
             // TOP BAR
             AppBackTitleBar(
-              title: 'Company Profile',
+              title: l.companyProfile,
               onBack: () => context.canPop() ? context.pop() : null,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               backBackgroundColor: _surface,
@@ -212,7 +213,9 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
                         ),
                       )
                     : Text(
-                        _editing ? 'Save' : 'Edit',
+                        _editing
+                            ? AppLocalizations.of(context).save
+                            : AppLocalizations.of(context).editAction,
                         style: const TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -365,9 +368,9 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
                               color: _tealMain,
                             ),
                             const SizedBox(width: 6),
-                            const Text(
-                              'Venue Gallery',
-                              style: TextStyle(
+                            Text(
+                              l.venueGallery,
+                              style: const TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xFF1C1C1E),
@@ -377,7 +380,7 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
                             const Spacer(),
                             if (profile.galleryImages.isNotEmpty)
                               Text(
-                                '${profile.galleryImages.length} photos',
+                                l.photosCount(profile.galleryImages.length),
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
@@ -552,10 +555,10 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
                 color: _surface,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
-                  'Cancel',
-                  style: TextStyle(
+                  AppLocalizations.of(context).cancelAction,
+                  style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w500,
                     color: _secondary,
@@ -665,18 +668,18 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Sign out?',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(ctx).signOutTitle,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        content: const Text(
-          'Are you sure you want to sign out?',
-          style: TextStyle(fontSize: 15, color: _secondary),
+        content: Text(
+          AppLocalizations.of(ctx).signOutConfirm,
+          style: const TextStyle(fontSize: 15, color: _secondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel', style: TextStyle(color: _secondary)),
+            child: Text(AppLocalizations.of(ctx).cancelAction, style: const TextStyle(color: _secondary)),
           ),
           TextButton(
             onPressed: () {
@@ -684,9 +687,9 @@ class _BusinessProfileViewState extends State<BusinessProfileView> {
               auth.logout();
               context.go('/entry');
             },
-            child: const Text(
-              'Sign Out',
-              style: TextStyle(color: _urgent, fontWeight: FontWeight.w600),
+            child: Text(
+              AppLocalizations.of(ctx).signOut,
+              style: const TextStyle(color: _urgent, fontWeight: FontWeight.w600),
             ),
           ),
         ],

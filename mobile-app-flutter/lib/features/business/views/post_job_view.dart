@@ -78,7 +78,6 @@ extension _PostJobL10nX on AppLocalizations {
     it: 'Pubblica un lavoro',
     ar: 'نشر وظيفة',
   );
-  String get saveDraftButton => saveDraft;
   String get jobTitleLabel =>
       _local(en: 'Job Title', it: 'Titolo lavoro', ar: 'المسمى الوظيفي');
   String get jobTitleHint => _local(
@@ -392,13 +391,7 @@ class _PostJobViewState extends State<PostJobView> {
         ),
         title: Text(l.postJobTitle, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal)),
         centerTitle: true,
-        actions: [
-          if (!_published)
-            TextButton(
-              onPressed: () {},
-              child: Text(l.saveDraftButton, style: const TextStyle(color: AppColors.secondary, fontSize: 14)),
-            ),
-        ],
+        actions: const [],
       ),
       body: Column(
         children: [

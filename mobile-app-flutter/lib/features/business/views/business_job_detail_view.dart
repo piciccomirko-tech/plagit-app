@@ -62,16 +62,6 @@ extension _BusinessJobsDetailL10nX on AppLocalizations {
     it: 'Dettagli',
     ar: 'التفاصيل',
   );
-  String get pauseJobButton => _local(
-    en: 'Pause Job',
-    it: 'Metti in pausa',
-    ar: 'إيقاف الوظيفة مؤقتا',
-  );
-  String get closeJobButton => _local(
-    en: 'Close Job',
-    it: 'Chiudi lavoro',
-    ar: 'إغلاق الوظيفة',
-  );
   String get sectionDescription => _local(
     en: 'Description',
     it: 'Descrizione',
@@ -107,27 +97,17 @@ extension _BusinessJobsDetailL10nX on AppLocalizations {
     it: 'Nessun candidato',
     ar: 'لا يوجد متقدمون',
   );
-  String get quickActionShortlist => _local(
-    en: 'Shortlist',
-    it: 'Shortlist',
-    ar: 'القائمة المختصرة',
-  );
-  String get quickActionReject => _local(
-    en: 'Reject',
-    it: 'Rifiuta',
-    ar: 'رفض',
-  );
-  String get quickActionMessage => _local(
-    en: 'Message',
-    it: 'Messaggio',
-    ar: 'رسالة',
-  );
 }
 
 /// Business job detail — Details + Applicants tabs, provider-backed.
 class BusinessJobDetailView extends StatefulWidget {
   final String jobId;
-  const BusinessJobDetailView({super.key, required this.jobId});
+  final BusinessRepository? repo;
+  const BusinessJobDetailView({
+    super.key,
+    required this.jobId,
+    this.repo,
+  });
 
   @override
   State<BusinessJobDetailView> createState() => _BusinessJobDetailViewState();
@@ -143,6 +123,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   BusinessApplicantsProvider? _applicantsProvider;
   String? _previousApplicantsJobId;
   String _previousApplicantsFilter = 'All';
+  late final BusinessRepository _repo;
 
   static const _applicantFilters = [
     'All',
@@ -155,6 +136,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
   @override
   void initState() {
     super.initState();
+    _repo = widget.repo ?? BusinessRepository();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // Ensure both providers are loaded
       final jobsProv = context.read<BusinessJobsProvider>();
@@ -218,7 +200,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
     });
 
     try {
-      final job = await BusinessRepository().fetchJobDetail(widget.jobId);
+      final job = await _repo.fetchJobDetail(widget.jobId);
       if (!mounted) return;
       setState(() {
         _fetchedJob = job;
@@ -415,12 +397,7 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
           l.jobDetailsTitle,
           style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: AppColors.charcoal),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.edit_outlined, color: AppColors.teal),
-            onPressed: () {},
-          ),
-        ],
+        actions: const [],
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -537,43 +514,6 @@ class _BusinessJobDetailViewState extends State<BusinessJobDetailView> {
                 : _buildApplicantsTab(applicantsProvider, l),
           ),
 
-          // ── Bottom bar ──
-          Container(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              border: Border(top: BorderSide(color: AppColors.divider)),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.teal,
-                      side: const BorderSide(color: AppColors.teal),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: Text(l.pauseJobButton, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.red,
-                      side: const BorderSide(color: AppColors.red),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: Text(l.closeJobButton, style: const TextStyle(fontWeight: FontWeight.w600)),
-                  ),
-                ),
-              ],
-            ),
-          ),
         ],
       ),
     );
@@ -895,26 +835,6 @@ class _ApplicantRow extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(applicant.date, style: const TextStyle(fontSize: 10, color: AppColors.tertiary)),
                   ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            // ── Quick actions ──
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Text('\u2713 ${l.quickActionShortlist}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.teal)),
-                ),
-                const SizedBox(width: 20),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text('\u2717 ${l.quickActionReject}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.red)),
-                ),
-                const SizedBox(width: 20),
-                GestureDetector(
-                  onTap: () {},
-                  child: Text('\uD83D\uDCAC ${l.quickActionMessage}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.secondary)),
                 ),
               ],
             ),

@@ -4,11 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:plagit/core/city_helpers.dart';
 import 'package:plagit/core/l10n_helpers.dart';
+import 'package:plagit/core/network/api_error.dart';
 import 'package:plagit/core/widgets/app_back_title_bar.dart';
 import 'package:plagit/l10n/generated/app_localizations.dart';
 import 'package:plagit/models/interview.dart';
 import 'package:plagit/providers/candidate_providers.dart';
-import 'package:plagit/core/widgets/directional_chevron.dart';
+import 'package:plagit/repositories/candidate_repository.dart';
 
 // ═══════════════════════════════════════════════════════════════
 // Theme tokens — match Phase 1 premium screens
@@ -22,7 +23,6 @@ const _tertiary = Color(0xFF9EA3AD);
 const _divider = Color(0xFFEFEFF4);
 const _amber = Color(0xFFF59E33);
 const _red = Color(0xFFFF3B30);
-const _green = Color(0xFF34C759);
 
 // Whisper-quiet card shadow — micro-pass dropped this to 0.03/10/y2 so the
 // cards barely separate from the background. They feel embedded, not lifted.
@@ -34,7 +34,12 @@ BoxShadow get _cardShadow => BoxShadow(
 
 class CandidateInterviewDetailView extends StatefulWidget {
   final String interviewId;
-  const CandidateInterviewDetailView({super.key, required this.interviewId});
+  final CandidateRepository? repo;
+  const CandidateInterviewDetailView({
+    super.key,
+    required this.interviewId,
+    this.repo,
+  });
 
   @override
   State<CandidateInterviewDetailView> createState() =>
@@ -43,25 +48,77 @@ class CandidateInterviewDetailView extends StatefulWidget {
 
 class _CandidateInterviewDetailViewState
     extends State<CandidateInterviewDetailView> {
-  late Interview _interview;
-  late InterviewStatus _currentStatus;
+  Interview? _interview;
+  InterviewStatus? _currentStatus;
+  bool _loading = true;
+  String? _error;
+  bool _notFound = false;
+
+  CandidateRepository get _repo => widget.repo ?? CandidateRepository();
 
   @override
   void initState() {
     super.initState();
-    final provider = context.read<CandidateInterviewsProvider>();
-    _interview = provider.interviews.firstWhere(
-      (i) => i.id == widget.interviewId,
-      orElse: () => provider.interviews.first,
-    );
-    _currentStatus = _interview.status;
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadInterview());
   }
 
-  bool get _isVideo => _interview.format == InterviewFormat.video;
-  bool get _isInPerson => _interview.format == InterviewFormat.inPerson;
+  Future<void> _loadInterview() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+      _notFound = false;
+    });
+
+    final provider = context.read<CandidateInterviewsProvider>();
+    final cached = provider.interviews.cast<Interview?>().firstWhere(
+      (i) => i?.id == widget.interviewId,
+      orElse: () => null,
+    );
+
+    if (cached != null) {
+      setState(() {
+        _interview = cached;
+        _currentStatus = cached.status;
+        _loading = false;
+      });
+      return;
+    }
+
+    try {
+      final interview = await _repo.fetchInterviewDetail(widget.interviewId);
+      if (!mounted) return;
+      setState(() {
+        _interview = interview;
+        _currentStatus = interview.status;
+        _loading = false;
+      });
+    } on ApiError catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        if (e.type == ApiErrorType.notFound) {
+          _notFound = true;
+        } else {
+          _error = e.message;
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
+
+  Interview get _resolvedInterview => _interview!;
+  InterviewStatus get _resolvedStatus => _currentStatus ?? _resolvedInterview.status;
+
+  bool get _isVideo => _resolvedInterview.format == InterviewFormat.video;
+  bool get _isInPerson => _resolvedInterview.format == InterviewFormat.inPerson;
 
   // ── Status-aware visual + copy ──
-  Color get _statusColor => switch (_currentStatus) {
+  Color get _statusColor => switch (_resolvedStatus) {
         InterviewStatus.confirmed => _tealMain,
         InterviewStatus.invited => _amber,
         InterviewStatus.completed => _secondary,
@@ -69,7 +126,7 @@ class _CandidateInterviewDetailViewState
         InterviewStatus.cancelled => _red,
       };
 
-  IconData get _statusIcon => switch (_currentStatus) {
+  IconData get _statusIcon => switch (_resolvedStatus) {
         InterviewStatus.confirmed => CupertinoIcons.checkmark_seal_fill,
         InterviewStatus.invited => CupertinoIcons.bell_fill,
         InterviewStatus.completed => CupertinoIcons.flag_fill,
@@ -79,28 +136,120 @@ class _CandidateInterviewDetailViewState
 
   String _statusHeadline(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return switch (_currentStatus) {
+    return switch (_resolvedStatus) {
       InterviewStatus.confirmed => l.interviewConfirmedHeadline,
-      InterviewStatus.invited => 'Interview invitation',
-      InterviewStatus.completed => 'Interview completed',
-      InterviewStatus.noShow => 'Marked as no-show',
-      InterviewStatus.cancelled => 'Interview cancelled',
+      InterviewStatus.invited => l.localizedInterviewScheduledHeadline(),
+      InterviewStatus.completed => l.localizedInterviewCompletedHeadline(),
+      InterviewStatus.noShow => l.localizedInterviewStatusUpdatedHeadline(),
+      InterviewStatus.cancelled => l.localizedInterviewCancelledHeadline(),
     };
   }
 
   String _statusSubline(BuildContext context) {
     final l = AppLocalizations.of(context);
-    return switch (_currentStatus) {
+    return switch (_resolvedStatus) {
       InterviewStatus.confirmed => l.interviewConfirmedSubline,
-      InterviewStatus.invited => 'Review the details and accept to confirm.',
-      InterviewStatus.completed => 'Hope it went well — best of luck.',
-      InterviewStatus.noShow => 'Reach out to the employer if this was a mistake.',
-      InterviewStatus.cancelled => 'This interview is no longer scheduled.',
+      InterviewStatus.invited => l.localizedInterviewScheduledSubline(),
+      InterviewStatus.completed => l.localizedInterviewCompletedSubline(),
+      InterviewStatus.noShow => l.localizedInterviewNoShowSubline(),
+      InterviewStatus.cancelled => l.localizedInterviewCancelledSubline(),
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_loading) {
+      return Scaffold(
+        backgroundColor: _bgMain,
+        body: SafeArea(
+          child: Column(
+            children: [
+              AppBackTitleBar(
+                title: AppLocalizations.of(context).interviewDetails,
+                onBack: () => context.canPop() ? context.pop() : null,
+              ),
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(color: _tealMain),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Scaffold(
+        backgroundColor: _bgMain,
+        body: SafeArea(
+          child: Column(
+            children: [
+              AppBackTitleBar(
+                title: AppLocalizations.of(context).interviewDetails,
+                onBack: () => context.canPop() ? context.pop() : null,
+              ),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        _error!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: _secondary,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: _loadInterview,
+                        child: Text(
+                          AppLocalizations.of(context).retry,
+                          style: TextStyle(
+                            color: _tealMain,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_notFound || _interview == null) {
+      return Scaffold(
+        backgroundColor: _bgMain,
+        body: SafeArea(
+          child: Column(
+            children: [
+              AppBackTitleBar(
+                title: AppLocalizations.of(context).interviewDetails,
+                onBack: () => context.canPop() ? context.pop() : null,
+              ),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    AppLocalizations.of(context).localizedInterviewNotFound(),
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: _secondary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: _bgMain,
       body: SafeArea(
@@ -139,6 +288,7 @@ class _CandidateInterviewDetailViewState
 
   Widget _buildHeroStatusCard() {
     final accent = _statusColor;
+    final interview = _resolvedInterview;
     return Container(
       padding: const EdgeInsets.fromLTRB(17, 13, 17, 11),
       decoration: BoxDecoration(
@@ -221,7 +371,10 @@ class _CandidateInterviewDetailViewState
                 const SizedBox(width: 7),
                 Expanded(
                   child: Text(
-                    _interview.date.isEmpty ? 'Date TBC' : _interview.date,
+                    interview.date.isEmpty
+                        ? AppLocalizations.of(context)
+                            .localizedInterviewDateNotAvailable()
+                        : interview.date,
                     style: const TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
@@ -239,7 +392,10 @@ class _CandidateInterviewDetailViewState
                 Icon(CupertinoIcons.time, size: 13, color: accent),
                 const SizedBox(width: 7),
                 Text(
-                  _interview.time.isEmpty ? 'Time TBC' : _interview.time,
+                  interview.time.isEmpty
+                      ? AppLocalizations.of(context)
+                          .localizedInterviewTimeNotAvailable()
+                      : interview.time,
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -260,8 +416,9 @@ class _CandidateInterviewDetailViewState
   // ═══════════════════════════════════════════════════════════════
 
   Widget _buildDetailsCard() {
+    final interview = _resolvedInterview;
     final hasNotes =
-        _interview.notes != null && _interview.notes!.trim().isNotEmpty;
+        interview.notes != null && interview.notes!.trim().isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.fromLTRB(15, 13, 15, 4),
@@ -288,12 +445,12 @@ class _CandidateInterviewDetailViewState
           _DetailRow(
             icon: CupertinoIcons.calendar,
             label: AppLocalizations.of(context).dateLabel,
-            value: _interview.date.isEmpty ? '—' : _interview.date,
+            value: interview.date.isEmpty ? '—' : interview.date,
           ),
           _DetailRow(
             icon: CupertinoIcons.time,
             label: AppLocalizations.of(context).timeLabel,
-            value: _interview.time.isEmpty ? '—' : _interview.time,
+            value: interview.time.isEmpty ? '—' : interview.time,
           ),
           _DetailRow(
             icon: _isVideo
@@ -302,17 +459,14 @@ class _CandidateInterviewDetailViewState
                     ? CupertinoIcons.location_solid
                     : CupertinoIcons.phone_fill,
             label: AppLocalizations.of(context).formatLabel,
-            value: localizedInterviewFormat(context, _interview.format.displayName),
-            trailing: _isVideo && _interview.link != null
-                ? _JoinMeetingButton(onTap: _onJoinMeeting)
-                : null,
-            isLast: !(_isInPerson && _interview.location != null) && !hasNotes,
+            value: localizedInterviewFormat(context, interview.format.displayName),
+            isLast: !(_isInPerson && interview.location != null) && !hasNotes,
           ),
-          if (_isInPerson && _interview.location != null)
+          if (_isInPerson && interview.location != null)
             _DetailRow(
               icon: CupertinoIcons.placemark_fill,
               label: AppLocalizations.of(context).location,
-              value: localizedCity(context, _interview.location!),
+              value: localizedCity(context, interview.location!),
               isLast: !hasNotes,
             ),
           if (hasNotes) ...[
@@ -322,11 +476,11 @@ class _CandidateInterviewDetailViewState
               child: Container(height: 1, color: _divider),
             ),
             const SizedBox(height: 12),
-            const Padding(
+            Padding(
               padding: EdgeInsets.only(left: 2),
               child: Text(
-                'Notes from employer',
-                style: TextStyle(
+                AppLocalizations.of(context).localizedInterviewNotesFromEmployer(),
+                style: const TextStyle(
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                   color: _charcoal,
@@ -338,7 +492,7 @@ class _CandidateInterviewDetailViewState
             Padding(
               padding: const EdgeInsets.fromLTRB(2, 0, 2, 14),
               child: Text(
-                _interview.notes!,
+                interview.notes!,
                 style: const TextStyle(
                   fontSize: 13.5,
                   color: _secondary,
@@ -357,96 +511,75 @@ class _CandidateInterviewDetailViewState
   // ═══════════════════════════════════════════════════════════════
 
   Widget _buildEmployerCard() {
-    final hue = (_interview.company.hashCode % 360).abs().toDouble();
-    final initials = _initialsFor(_interview.company);
-    return GestureDetector(
-      onTap: () => context.push('/candidate/job/1'),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-        decoration: BoxDecoration(
-          color: _cardBg,
-          borderRadius: BorderRadius.circular(17),
-          boxShadow: [_cardShadow],
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 42,
-              height: 42,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    HSLColor.fromAHSL(1, hue, 0.48, 0.58).toColor(),
-                    HSLColor.fromAHSL(1, (hue + 30) % 360, 0.44, 0.52).toColor(),
-                  ],
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Text(
-                initials,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                  letterSpacing: -0.15,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _interview.company,
-                    style: const TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: FontWeight.w700,
-                      color: _charcoal,
-                      letterSpacing: -0.15,
-                      height: 1.2,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    AppLocalizations.of(context).hiringForTemplate(_interview.jobTitle),
-                    style: const TextStyle(
-                      fontSize: 11.5,
-                      color: _tertiary,
-                      letterSpacing: -0.05,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+    final interview = _resolvedInterview;
+    final hue = (interview.company.hashCode % 360).abs().toDouble();
+    final initials = _initialsFor(interview.company);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: BoxDecoration(
+        color: _cardBg,
+        borderRadius: BorderRadius.circular(17),
+        boxShadow: [_cardShadow],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  HSLColor.fromAHSL(1, hue, 0.48, 0.58).toColor(),
+                  HSLColor.fromAHSL(1, (hue + 30) % 360, 0.44, 0.52).toColor(),
                 ],
               ),
             ),
-            const SizedBox(width: 8),
-            // View-job affordance — bare text + chevron, slightly bolder.
-            Row(
-              mainAxisSize: MainAxisSize.min,
+            alignment: Alignment.center,
+            child: Text(
+              initials,
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+                letterSpacing: -0.15,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  AppLocalizations.of(context).viewJobAction,
+                  interview.company,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 14.5,
                     fontWeight: FontWeight.w700,
-                    color: _tealMain,
-                    letterSpacing: -0.1,
+                    color: _charcoal,
+                    letterSpacing: -0.15,
+                    height: 1.2,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 3),
-                const ForwardChevron(size: 28, color: _tealMain),
+                const SizedBox(height: 2),
+                Text(
+                  AppLocalizations.of(context).hiringForTemplate(interview.jobTitle),
+                  style: const TextStyle(
+                    fontSize: 11.5,
+                    color: _tertiary,
+                    letterSpacing: -0.05,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -456,94 +589,7 @@ class _CandidateInterviewDetailViewState
   // ═══════════════════════════════════════════════════════════════
 
   Widget _buildActionBar() {
-    final l = AppLocalizations.of(context);
-    switch (_currentStatus) {
-      case InterviewStatus.invited:
-        return Column(
-          children: [
-            _PrimaryButton(label: l.acceptInterview, onTap: _onAccept),
-            const SizedBox(height: 9),
-            _SecondaryButton(
-              label: l.decline,
-              color: _red,
-              onTap: _onDecline,
-            ),
-          ],
-        );
-      case InterviewStatus.confirmed:
-        return Column(
-          children: [
-            _PrimaryButton(label: l.addToCalendar, onTap: _onAddToCalendar),
-            const SizedBox(height: 9),
-            _SecondaryButton(
-              label: l.viewJobAction,
-              color: _tealMain,
-              onTap: () => context.push('/candidate/job/1'),
-            ),
-          ],
-        );
-      case InterviewStatus.completed:
-      case InterviewStatus.noShow:
-      case InterviewStatus.cancelled:
-        return _SecondaryButton(
-          label: l.viewJobAction,
-          color: _tealMain,
-          onTap: () => context.push('/candidate/job/1'),
-        );
-    }
-  }
-
-  // ═══════════════════════════════════════════════════════════════
-  // Action handlers — preserved 1:1 from previous implementation
-  // ═══════════════════════════════════════════════════════════════
-
-  void _onAccept() {
-    setState(() => _currentStatus = InterviewStatus.confirmed);
-    final l = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l.interviewAcceptedSnack),
-        backgroundColor: _green,
-      ),
-    );
-  }
-
-  void _onDecline() {
-    final l = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l.declineInterviewTitle),
-        content: Text(l.declineInterviewConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(l.cancel),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.pop();
-            },
-            child: Text(l.decline, style: const TextStyle(color: _red)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _onAddToCalendar() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).addedToCalendar)),
-    );
-  }
-
-  void _onJoinMeeting() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          content:
-              Text(AppLocalizations.of(context).openingMeetingLink)),
-    );
+    return const SizedBox.shrink();
   }
 
   String _initialsFor(String name) {
@@ -564,14 +610,12 @@ class _DetailRow extends StatelessWidget {
   final IconData icon;
   final String label;
   final String value;
-  final Widget? trailing;
   final bool isLast;
 
   const _DetailRow({
     required this.icon,
     required this.label,
     required this.value,
-    this.trailing,
     this.isLast = false,
   });
 
@@ -621,121 +665,94 @@ class _DetailRow extends StatelessWidget {
               ],
             ),
           ),
-          if (trailing != null) ...[
-            const SizedBox(width: 8),
-            trailing!,
-          ],
         ],
       ),
     );
   }
 }
 
-class _JoinMeetingButton extends StatelessWidget {
-  final VoidCallback onTap;
-  const _JoinMeetingButton({required this.onTap});
+extension _CandidateInterviewDetailL10n on AppLocalizations {
+  String localizedInterviewScheduledHeadline() => _lang(
+        en: 'Interview scheduled',
+        it: 'Colloquio programmato',
+        ar: 'تمت جدولة المقابلة',
+      );
 
-  @override
-  Widget build(BuildContext context) {
-    // Tinted-on-tint variant — same colour family as the row's icon tiles
-    // so the action reads as "part of the row", not "stuck on top of the row".
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
-        decoration: BoxDecoration(
-          color: _tealMain.withValues(alpha: 0.10),
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(CupertinoIcons.videocam_fill, size: 12, color: _tealMain),
-            const SizedBox(width: 5),
-            Text(
-              AppLocalizations.of(context).joinMeeting,
-              style: const TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: _tealMain,
-                letterSpacing: -0.1,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+  String localizedInterviewCompletedHeadline() => _lang(
+        en: 'Interview completed',
+        it: 'Colloquio completato',
+        ar: 'اكتملت المقابلة',
+      );
 
-class _PrimaryButton extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  const _PrimaryButton({required this.label, required this.onTap});
+  String localizedInterviewStatusUpdatedHeadline() => _lang(
+        en: 'Interview status updated',
+        it: 'Stato del colloquio aggiornato',
+        ar: 'تم تحديث حالة المقابلة',
+      );
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 44,
-      child: ElevatedButton(
-        onPressed: onTap,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: _tealMain,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.1,
-          ),
-        ),
-      ),
-    );
-  }
-}
+  String localizedInterviewCancelledHeadline() => _lang(
+        en: 'Interview cancelled',
+        it: 'Colloquio annullato',
+        ar: 'تم إلغاء المقابلة',
+      );
 
-class _SecondaryButton extends StatelessWidget {
-  final String label;
-  final Color color;
-  final VoidCallback onTap;
-  const _SecondaryButton({
-    required this.label,
-    required this.color,
-    required this.onTap,
-  });
+  String localizedInterviewScheduledSubline() => _lang(
+        en: 'Review the interview details below.',
+        it: 'Controlla qui sotto i dettagli del colloquio.',
+        ar: 'راجع تفاصيل المقابلة أدناه.',
+      );
 
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 44,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: color,
-          side: BorderSide(color: color.withValues(alpha: 0.32), width: 0.9),
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13.5,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.1,
-          ),
-        ),
-      ),
-    );
+  String localizedInterviewCompletedSubline() => _lang(
+        en: 'This interview has been marked as completed.',
+        it: 'Questo colloquio è stato segnato come completato.',
+        ar: 'تم وضع علامة على هذه المقابلة كمكتملة.',
+      );
+
+  String localizedInterviewNoShowSubline() => _lang(
+        en: 'This interview has been marked as no-show.',
+        it: 'Questo colloquio è stato segnato come mancata presenza.',
+        ar: 'تم وضع علامة على هذه المقابلة كعدم حضور.',
+      );
+
+  String localizedInterviewCancelledSubline() => _lang(
+        en: 'This interview is no longer scheduled.',
+        it: 'Questo colloquio non è più programmato.',
+        ar: 'لم تعد هذه المقابلة مجدولة.',
+      );
+
+  String localizedInterviewNotFound() => _lang(
+        en: 'Interview not found',
+        it: 'Colloquio non trovato',
+        ar: 'المقابلة غير موجودة',
+      );
+
+  String localizedInterviewDateNotAvailable() => _lang(
+        en: 'Date not available',
+        it: 'Data non disponibile',
+        ar: 'التاريخ غير متاح',
+      );
+
+  String localizedInterviewTimeNotAvailable() => _lang(
+        en: 'Time not available',
+        it: 'Orario non disponibile',
+        ar: 'الوقت غير متاح',
+      );
+
+  String localizedInterviewNotesFromEmployer() => _lang(
+        en: 'Notes from employer',
+        it: 'Note del datore di lavoro',
+        ar: 'ملاحظات من صاحب العمل',
+      );
+
+  String _lang({
+    required String en,
+    required String it,
+    required String ar,
+  }) {
+    return switch (localeName.split('_').first) {
+      'it' => it,
+      'ar' => ar,
+      _ => en,
+    };
   }
 }
