@@ -3,6 +3,9 @@ const router = require('express').Router();
 // Public
 router.use('/auth', require('./auth'));
 
+// Realtime (SSE)
+router.use('/events', require('./events'));
+
 // Candidate
 router.use('/candidate', require('./candidate'));
 
