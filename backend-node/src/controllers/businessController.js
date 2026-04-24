@@ -592,10 +592,75 @@ async function listMessages(req, res, next) {
     const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
     const msgs = await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
       .where('messages.conversation_id', conv.id)
-      .select('messages.id', 'messages.body', 'messages.is_read', 'messages.sender_id', 'messages.created_at', 'users.name as sender_name', 'users.user_type as sender_type')
+      .select('messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at', 'messages.sender_id', 'messages.created_at', 'users.name as sender_name', 'users.user_type as sender_type')
       .orderBy('messages.created_at', 'asc').limit(+limit).offset((+page - 1) * +limit);
-    await db('messages').where({ conversation_id: conv.id, is_read: false }).whereNot('sender_id', req.user.id).update({ is_read: true });
+
+    // Flip unread peer messages to read and broadcast to the sender.
+    const toMark = await db('messages')
+      .where({ conversation_id: conv.id, is_read: false })
+      .whereNot('sender_id', req.user.id)
+      .pluck('id');
+    if (toMark.length > 0) {
+      const readAt = new Date().toISOString();
+      await db('messages').whereIn('id', toMark).update({ is_read: true });
+      // Peer user id (candidate side) is the only audience — admin ignores seen state.
+      let candidateUserId = null;
+      if (conv.candidate_id) {
+        const cand = await db('candidates').where({ id: conv.candidate_id }).select('user_id').first();
+        if (cand) candidateUserId = cand.user_id;
+      }
+      if (candidateUserId) {
+        bus.publish('message.read', {
+          conversation_id: conv.id,
+          message_ids: toMark,
+          reader_user_id: req.user.id,
+          read_at: readAt,
+        }, [`user:${candidateUserId}`]);
+      }
+    }
     paginated(res, msgs, { page: +page, limit: +limit, total });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /business/conversations/:id/messages/ack-delivered — Mark peer messages delivered
+// ---------------------------------------------------------------------------
+// Called by the client as soon as a message is received (e.g. on SSE message.new
+// or on chat mount). Stamps delivered_at for each message from the counterpart
+// that has not yet been delivered, and emits message.delivered to the sender.
+async function ackMessagesDelivered(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+
+    const ids = Array.isArray(req.body?.message_ids) ? req.body.message_ids.filter(Boolean) : [];
+    const deliveredAt = new Date().toISOString();
+
+    // Update only rows that are from the peer AND not already delivered.
+    let query = db('messages')
+      .where({ conversation_id: conv.id })
+      .whereNot('sender_id', req.user.id)
+      .whereNull('delivered_at');
+    if (ids.length > 0) query = query.whereIn('id', ids);
+    const flipped = await query.clone().pluck('id');
+    if (flipped.length > 0) {
+      await query.update({ delivered_at: deliveredAt });
+
+      let candidateUserId = null;
+      if (conv.candidate_id) {
+        const cand = await db('candidates').where({ id: conv.candidate_id }).select('user_id').first();
+        if (cand) candidateUserId = cand.user_id;
+      }
+      if (candidateUserId) {
+        bus.publish('message.delivered', {
+          conversation_id: conv.id,
+          message_ids: flipped,
+          delivered_at: deliveredAt,
+        }, [`user:${candidateUserId}`]);
+      }
+    }
+    ok(res, { message_ids: flipped, delivered_at: deliveredAt });
   } catch (err) { next(err); }
 }
 
@@ -631,6 +696,8 @@ async function sendMessage(req, res, next) {
         body: msg.body,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
+        delivered_at: msg.delivered_at || null,
+        is_read: !!msg.is_read,
       },
       conversation_id: conv.id,
       sender_user_id: req.user.id,
@@ -962,7 +1029,7 @@ module.exports = {
   listJobs, createJob, getJob, updateJob,
   listApplicants, updateApplicantStatus,
   listInterviews, scheduleInterview, updateInterviewStatus,
-  listConversations, listMessages, sendMessage, sendTyping, startConversation, archiveConversation,
+  listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, startConversation, archiveConversation,
   getCandidateProfile,
   listNotifications, markNotificationRead, markAllNotificationsRead,
   recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,

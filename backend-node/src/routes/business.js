@@ -31,6 +31,7 @@ router.post('/conversations/start', c.startConversation);
 router.delete('/conversations/:id', c.archiveConversation);
 router.get('/conversations/:id/messages', c.listMessages);
 router.post('/conversations/:id/messages', c.sendMessage);
+router.post('/conversations/:id/messages/ack-delivered', c.ackMessagesDelivered);
 router.post('/conversations/:id/typing', c.sendTyping);
 
 // Candidates

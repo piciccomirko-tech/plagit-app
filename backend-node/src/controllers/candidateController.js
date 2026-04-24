@@ -583,20 +583,79 @@ async function listMessages(req, res, next) {
       .leftJoin('users', 'messages.sender_id', 'users.id')
       .where('messages.conversation_id', conv.id)
       .select(
-        'messages.id', 'messages.body', 'messages.is_read',
+        'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
         'users.name as sender_name', 'users.user_type as sender_type'
       )
       .orderBy('messages.created_at', 'asc')
       .limit(+limit).offset((+page - 1) * +limit);
 
-    // Mark unread messages from others as read
-    await db('messages')
+    // Flip unread peer messages to read and broadcast to the sender.
+    const toMark = await db('messages')
       .where({ conversation_id: conv.id, is_read: false })
       .whereNot('sender_id', userId)
-      .update({ is_read: true });
+      .pluck('id');
+    if (toMark.length > 0) {
+      const readAt = new Date().toISOString();
+      await db('messages').whereIn('id', toMark).update({ is_read: true });
+      let businessUserId = null;
+      if (conv.business_id) {
+        const biz = await db('businesses').where({ id: conv.business_id }).select('user_id').first();
+        if (biz) businessUserId = biz.user_id;
+      }
+      if (businessUserId) {
+        bus.publish('message.read', {
+          conversation_id: conv.id,
+          message_ids: toMark,
+          reader_user_id: userId,
+          read_at: readAt,
+        }, [`user:${businessUserId}`]);
+      }
+    }
 
     paginated(res, msgs, { page: +page, limit: +limit, total });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /candidate/conversations/:id/messages/ack-delivered — Mark peer messages delivered
+// ---------------------------------------------------------------------------
+async function ackMessagesDelivered(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.badRequest('Candidate profile required.');
+
+    const conv = await db('conversations')
+      .where({ id: req.params.id, candidate_id: candidate.id }).first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+
+    const ids = Array.isArray(req.body?.message_ids) ? req.body.message_ids.filter(Boolean) : [];
+    const deliveredAt = new Date().toISOString();
+
+    let query = db('messages')
+      .where({ conversation_id: conv.id })
+      .whereNot('sender_id', userId)
+      .whereNull('delivered_at');
+    if (ids.length > 0) query = query.whereIn('id', ids);
+    const flipped = await query.clone().pluck('id');
+    if (flipped.length > 0) {
+      await query.update({ delivered_at: deliveredAt });
+
+      let businessUserId = null;
+      if (conv.business_id) {
+        const biz = await db('businesses').where({ id: conv.business_id }).select('user_id').first();
+        if (biz) businessUserId = biz.user_id;
+      }
+      if (businessUserId) {
+        bus.publish('message.delivered', {
+          conversation_id: conv.id,
+          message_ids: flipped,
+          delivered_at: deliveredAt,
+        }, [`user:${businessUserId}`]);
+      }
+    }
+    ok(res, { message_ids: flipped, delivered_at: deliveredAt });
   } catch (err) { next(err); }
 }
 
@@ -655,6 +714,8 @@ async function sendMessage(req, res, next) {
         body: msg.body,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
+        delivered_at: msg.delivered_at || null,
+        is_read: !!msg.is_read,
       },
       conversation_id: conv.id,
       sender_user_id: userId,
@@ -1216,7 +1277,7 @@ module.exports = {
   listJobs, getJob, applyToJob,
   listApplications, getApplication, withdrawApplication,
   listInterviews, getInterview, respondToInterview,
-  listConversations, listMessages, sendMessage, sendTyping, archiveConversation,
+  listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, archiveConversation,
   updateProfile, uploadPhoto, uploadCV, parseCV,
   listCommunityPosts,
   nearbyJobs,
