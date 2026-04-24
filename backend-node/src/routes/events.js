@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 const { bus, audienceMatches } = require('../services/realtime/eventBus');
+const presence = require('../services/realtime/presence');
 
 /**
  * GET /v1/events/stream — Server-Sent Events stream.
@@ -25,6 +26,11 @@ router.get('/stream', authenticate, (req, res) => {
     `event: ready\ndata: ${JSON.stringify({ userId: req.user.id, role: req.user.role, ts: new Date().toISOString() })}\n\n`
   );
 
+  // Register this connection with the presence registry. A 0→1 transition
+  // will emit presence.update to every conversation counterpart so their
+  // chat header flips to "Online" live.
+  presence.connect(req.user.id).catch(() => { /* non-fatal */ });
+
   const onEvent = (event) => {
     if (!audienceMatches(req.user, event.audience)) return;
     const line = `event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`;
@@ -40,6 +46,7 @@ router.get('/stream', authenticate, (req, res) => {
   const cleanup = () => {
     clearInterval(heartbeat);
     bus.off('event', onEvent);
+    presence.disconnect(req.user.id).catch(() => { /* non-fatal */ });
     try { res.end(); } catch (_) { /* ignore */ }
   };
 

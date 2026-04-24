@@ -5,6 +5,7 @@ router.use('/auth', require('./auth'));
 
 // Realtime (SSE)
 router.use('/events', require('./events'));
+router.use('/presence', require('./presence'));
 
 // Candidate
 router.use('/candidate', require('./candidate'));
