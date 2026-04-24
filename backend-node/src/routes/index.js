@@ -7,6 +7,9 @@ router.use('/auth', require('./auth'));
 router.use('/events', require('./events'));
 router.use('/presence', require('./presence'));
 
+// Push notifications (APNS / FCM)
+router.use('/devices', require('./devices'));
+
 // Candidate
 router.use('/candidate', require('./candidate'));
 
