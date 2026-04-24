@@ -1007,6 +1007,20 @@ async function respondToInterview(req, res, next) {
     const iv = await db('interviews').where({ id: req.params.id, candidate_id: candId }).first();
     if (!iv) throw AppError.notFound('Interview not found.');
     await db('interviews').where({ id: iv.id }).update({ status, updated_at: db.fn.now() });
+    const job = await db('jobs').where({ id: iv.job_id }).select('business_id').first();
+    const bizUser = job ? await db('businesses').where({ id: job.business_id }).select('user_id').first() : null;
+    const audience = ['role:admin', `user:${req.user.id}`];
+    if (bizUser) audience.push(`user:${bizUser.user_id}`);
+    bus.publish('interview.status_changed', {
+      interview_id: iv.id,
+      application_id: iv.application_id,
+      candidate_id: iv.candidate_id,
+      job_id: iv.job_id,
+      status,
+      actor: 'candidate',
+      candidate_user_id: req.user.id,
+      business_user_id: bizUser?.user_id || null,
+    }, audience);
     ok(res, { success: true, status });
   } catch (err) { next(err); }
 }

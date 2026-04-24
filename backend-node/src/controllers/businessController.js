@@ -444,6 +444,21 @@ async function scheduleInterview(req, res, next) {
     if (candUser) {
       hiringNotify(candUser.user_id, `${bizUser?.name || 'A business'} invited you to interview`, 'in_app', iv.id, 'interview');
     }
+    const audience = ['role:admin', `user:${req.user.id}`];
+    if (candUser) audience.push(`user:${candUser.user_id}`);
+    bus.publish('interview.scheduled', {
+      interview: {
+        id: iv.id,
+        application_id: iv.application_id,
+        candidate_id: iv.candidate_id,
+        job_id: iv.job_id,
+        scheduled_at: iv.scheduled_at,
+        status: iv.status,
+        interview_type: iv.interview_type,
+      },
+      business_user_id: req.user.id,
+      candidate_user_id: candUser?.user_id || null,
+    }, audience);
     ok(res, iv);
   } catch (err) { next(err); }
 }
@@ -458,9 +473,23 @@ async function updateInterviewStatus(req, res, next) {
     // Verify interview belongs to a job owned by this business
     const iv = await db('interviews').leftJoin('jobs', 'interviews.job_id', 'jobs.id')
       .where('interviews.id', req.params.id).where('jobs.business_id', bizId)
-      .select('interviews.id').first();
+      .select('interviews.id', 'interviews.candidate_id', 'interviews.application_id', 'interviews.job_id')
+      .first();
     if (!iv) throw AppError.notFound('Interview not found.');
     await db('interviews').where({ id: iv.id }).update({ status, updated_at: db.fn.now() });
+    const candUser = await db('candidates').where({ id: iv.candidate_id }).select('user_id').first();
+    const audience = ['role:admin', `user:${req.user.id}`];
+    if (candUser) audience.push(`user:${candUser.user_id}`);
+    bus.publish('interview.status_changed', {
+      interview_id: iv.id,
+      application_id: iv.application_id,
+      candidate_id: iv.candidate_id,
+      job_id: iv.job_id,
+      status,
+      actor: 'business',
+      business_user_id: req.user.id,
+      candidate_user_id: candUser?.user_id || null,
+    }, audience);
     ok(res, { success: true });
   } catch (err) { next(err); }
 }
