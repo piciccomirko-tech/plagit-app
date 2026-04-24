@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
+const { bus } = require('../services/realtime/eventBus');
 
 // Helper: create a hiring notification
 async function hiringNotify(recipientId, title, type, linkedEntity, route) {
@@ -619,9 +620,11 @@ async function sendMessage(req, res, next) {
     });
 
     // Notify the business
+    let businessUserId = null;
     if (conv.business_id) {
       const biz = await db('businesses').where({ id: conv.business_id }).select('user_id').first();
       if (biz) {
+        businessUserId = biz.user_id;
         try {
           await db('notifications').insert({
             recipient_id: biz.user_id, notification_type: 'in_app',
@@ -632,6 +635,22 @@ async function sendMessage(req, res, next) {
         } catch (e) { /* ignore */ }
       }
     }
+
+    // Realtime broadcast
+    const audience = ['role:admin', `user:${userId}`];
+    if (businessUserId) audience.push(`user:${businessUserId}`);
+    bus.publish('message.new', {
+      message: {
+        id: msg.id,
+        conversation_id: conv.id,
+        body: msg.body,
+        sender_id: msg.sender_id,
+        created_at: msg.created_at,
+      },
+      conversation_id: conv.id,
+      sender_user_id: userId,
+      recipient_user_id: businessUserId,
+    }, audience);
 
     ok(res, msg);
   } catch (err) { next(err); }

@@ -574,13 +574,30 @@ async function sendMessage(req, res, next) {
     const [msg] = await db('messages').insert({ conversation_id: conv.id, sender_id: req.user.id, body: body.trim() }).returning('*');
     await db('conversations').where({ id: conv.id }).update({ last_message: body.trim().slice(0, 200), updated_at: db.fn.now() });
     // Notify the candidate
+    let candidateUserId = null;
     if (conv.candidate_id) {
       const cand = await db('candidates').where({ id: conv.candidate_id }).select('user_id', 'name').first();
       const bizUser = await db('users').where({ id: req.user.id }).first();
       if (cand) {
+        candidateUserId = cand.user_id;
         hiringNotify(cand.user_id, `New message from ${bizUser?.name || 'a business'}`, 'in_app', conv.id, 'message');
       }
     }
+    // Realtime broadcast
+    const audience = ['role:admin', `user:${req.user.id}`];
+    if (candidateUserId) audience.push(`user:${candidateUserId}`);
+    bus.publish('message.new', {
+      message: {
+        id: msg.id,
+        conversation_id: conv.id,
+        body: msg.body,
+        sender_id: msg.sender_id,
+        created_at: msg.created_at,
+      },
+      conversation_id: conv.id,
+      sender_user_id: req.user.id,
+      recipient_user_id: candidateUserId,
+    }, audience);
     ok(res, msg);
   } catch (err) { next(err); }
 }
