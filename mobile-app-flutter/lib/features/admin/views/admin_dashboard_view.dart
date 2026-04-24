@@ -476,18 +476,19 @@ class _AdminDashboardHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Admin Portal',
+                  'SUPER ADMIN',
                   style: TextStyle(
                     color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w800,
                     fontSize: 18,
+                    letterSpacing: 1.2,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   '$greeting, ${auth.userName.isEmpty ? 'Admin' : auth.userName.split(' ').first}',
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: Colors.white70,
                     fontSize: 13,
                   ),
                 ),
