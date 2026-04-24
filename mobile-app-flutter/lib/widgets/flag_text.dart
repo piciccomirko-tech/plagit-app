@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plagit/config/app_theme.dart';
 
 /// Shows a flag emoji via Text(). Mirrors FlagTextView.swift.
 class FlagText extends StatelessWidget {
