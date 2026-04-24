@@ -666,6 +666,41 @@ async function sendMessage(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
+// POST /candidate/conversations/:id/typing — Emit typing indicator
+// ---------------------------------------------------------------------------
+// Ephemeral — does NOT persist. Relays an SSE event to the business
+// counterpart so their chat view can render / hide the "…" typing bubble.
+// Admin is intentionally EXCLUDED (typing is UX noise, not auditable);
+// sender is excluded too.
+async function sendTyping(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.badRequest('Candidate profile required.');
+
+    const conv = await db('conversations')
+      .where({ id: req.params.id, candidate_id: candidate.id }).first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+
+    let businessUserId = null;
+    if (conv.business_id) {
+      const biz = await db('businesses').where({ id: conv.business_id }).select('user_id').first();
+      if (biz) businessUserId = biz.user_id;
+    }
+
+    if (businessUserId) {
+      bus.publish('chat.typing', {
+        conversation_id: conv.id,
+        sender_user_id: userId,
+        is_typing: !!req.body.is_typing,
+        actor: 'candidate',
+      }, [`user:${businessUserId}`]);
+    }
+    ok(res, { ok: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
 // PUT /candidate/profile — Update candidate profile
 // ---------------------------------------------------------------------------
 async function updateProfile(req, res, next) {
@@ -1181,7 +1216,7 @@ module.exports = {
   listJobs, getJob, applyToJob,
   listApplications, getApplication, withdrawApplication,
   listInterviews, getInterview, respondToInterview,
-  listConversations, listMessages, sendMessage, archiveConversation,
+  listConversations, listMessages, sendMessage, sendTyping, archiveConversation,
   updateProfile, uploadPhoto, uploadCV, parseCV,
   listCommunityPosts,
   nearbyJobs,

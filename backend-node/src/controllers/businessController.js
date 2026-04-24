@@ -641,6 +641,37 @@ async function sendMessage(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
+// POST /business/conversations/:id/typing — Emit typing indicator
+// ---------------------------------------------------------------------------
+// Ephemeral — does NOT persist. Just relays an SSE event to the candidate
+// counterpart so their chat view can render / hide the "…" typing bubble.
+// Admin is intentionally EXCLUDED from the audience: typing is UX noise, not
+// an auditable event. Sender is excluded too (they don't need to echo).
+async function sendTyping(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+
+    let candidateUserId = null;
+    if (conv.candidate_id) {
+      const cand = await db('candidates').where({ id: conv.candidate_id }).select('user_id').first();
+      if (cand) candidateUserId = cand.user_id;
+    }
+
+    if (candidateUserId) {
+      bus.publish('chat.typing', {
+        conversation_id: conv.id,
+        sender_user_id: req.user.id,
+        is_typing: !!req.body.is_typing,
+        actor: 'business',
+      }, [`user:${candidateUserId}`]);
+    }
+    ok(res, { ok: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
 // GET /business/candidates/:id — View a candidate's profile
 // ---------------------------------------------------------------------------
 async function getCandidateProfile(req, res, next) {
@@ -931,7 +962,7 @@ module.exports = {
   listJobs, createJob, getJob, updateJob,
   listApplicants, updateApplicantStatus,
   listInterviews, scheduleInterview, updateInterviewStatus,
-  listConversations, listMessages, sendMessage, startConversation, archiveConversation,
+  listConversations, listMessages, sendMessage, sendTyping, startConversation, archiveConversation,
   getCandidateProfile,
   listNotifications, markNotificationRead, markAllNotificationsRead,
   recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
