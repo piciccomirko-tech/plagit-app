@@ -105,17 +105,49 @@ async function home(req, res, next) {
     let newApplicants = 0;
     let interviewCount = 0;
 
-    if (bizId) {
-      const jobs = await db('jobs').where({ business_id: bizId }).select('id', 'status');
-      activeJobs = jobs.filter(j => j.status === 'active').length;
+    let activeJobsList = [];
+    let recentApplicantsList = [];
 
-      const activeJobIds = jobs.filter(j => j.status === 'active').map(j => j.id);
+    if (bizId) {
+      const jobs = await db('jobs').where({ business_id: bizId }).select('*').orderBy('created_at', 'desc');
+      const activeOnly = jobs.filter(j => j.status === 'active');
+      activeJobs = activeOnly.length;
+      activeJobsList = activeOnly.slice(0, 10);
+
+      // Attach applicant counts for the active jobs we'll return
+      for (const j of activeJobsList) {
+        const c = await db('applications').where({ job_id: j.id }).count('* as c').first();
+        j.applicant_count = +(c?.c || 0);
+      }
+
+      const activeJobIds = activeOnly.map(j => j.id);
       if (activeJobIds.length > 0) {
         const apps = await db('applications').whereIn('job_id', activeJobIds).select('status', 'created_at');
         totalApplicants = apps.length;
         const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
         newApplicants = apps.filter(a => new Date(a.created_at) > weekAgo).length;
         interviewCount = apps.filter(a => a.status === 'interview').length;
+
+        // Recent applicants (top 5 across all active jobs, joined with candidate + job)
+        const recentRows = await db('applications')
+          .whereIn('applications.job_id', activeJobIds)
+          .leftJoin('candidates', 'applications.candidate_id', 'candidates.id')
+          .leftJoin('jobs', 'applications.job_id', 'jobs.id')
+          .select(
+            'applications.id as id',
+            'applications.status as status',
+            'applications.created_at as created_at',
+            'applications.candidate_id as candidate_id',
+            'applications.job_id as job_id',
+            'candidates.name as candidate_name',
+            'candidates.role as candidate_role',
+            'candidates.initials as candidate_initials',
+            'candidates.avatar_hue as avatar_hue',
+            'jobs.title as job_title',
+          )
+          .orderBy('applications.created_at', 'desc')
+          .limit(5);
+        recentApplicantsList = recentRows;
       }
     }
 
@@ -177,6 +209,8 @@ async function home(req, res, next) {
         new_applicants: newApplicants,
         interviews: interviewCount,
       },
+      activeJobs: activeJobsList,
+      recentApplicants: recentApplicantsList,
       next_interview: nextInterview,
       unread_messages: unreadMessages,
     });
@@ -428,16 +462,21 @@ async function updateApplicantStatus(req, res, next) {
   try {
     const bizId = await getBizId(req.user.id);
     const { status } = req.body;
+    console.log(`[STATUS-DBG] PATCH /business/applicants/${req.params.id}/status status=${status} bizUserId=${req.user.id}`);
     if (!status) throw AppError.badRequest('Status is required.');
     // Verify this application belongs to a job owned by this business
     const app = await db('applications').leftJoin('jobs', 'applications.job_id', 'jobs.id')
       .where('applications.id', req.params.id).where('jobs.business_id', bizId)
       .select('applications.id').first();
-    if (!app) throw AppError.notFound('Application not found.');
+    if (!app) {
+      console.log(`[STATUS-DBG] application=${req.params.id} not found for bizId=${bizId}`);
+      throw AppError.notFound('Application not found.');
+    }
     await db('applications').where({ id: app.id }).update({ status, updated_at: db.fn.now() });
     // Notify candidate of status change
     const fullApp = await db('applications').leftJoin('candidates', 'applications.candidate_id', 'candidates.id')
       .where('applications.id', app.id).select('candidates.user_id', 'applications.job_id').first();
+    console.log(`[STATUS-DBG] candidate user_id recipient=${fullApp?.user_id} job_id=${fullApp?.job_id}`);
     let jobTitle = null;
     if (fullApp?.user_id) {
       const job = await db('jobs').where({ id: fullApp.job_id }).select('title').first();
@@ -469,7 +508,42 @@ async function updateApplicantStatus(req, res, next) {
         title = `Status update for ${job_label}`;
         body = `${businessName} updated your application`;
       }
-      hiringNotify(fullApp.user_id, title, 'application_status', app.id, 'application', body);
+      try {
+        const row = {
+          recipient_id: fullApp.user_id,
+          notification_type: 'in_app',
+          title,
+          body,
+          linked_entity: app.id,
+          destination_route: 'application',
+          delivery_state: 'delivered',
+          is_read: false,
+        };
+        const inserted = await db('notifications').insert(row).returning(['id', 'title', 'body']);
+        const ins = inserted[0] || {};
+        console.log(`[STATUS-DBG] notification inserted id=${ins.id} title="${ins.title}" body="${ins.body}"`);
+        bus.publish('notification.new', {
+          recipient_user_id: fullApp.user_id,
+          title,
+          body,
+          notification_type: 'in_app',
+          linked_entity: app.id,
+          destination_route: 'application',
+        }, ['role:admin', `user:${fullApp.user_id}`]);
+      } catch (e) {
+        console.error('[STATUS-DBG] notification insert failed:', e.message);
+      }
+      // Admin audit feed — persist a row per admin user.
+      try {
+        const candName = await db('candidates').where({ id: app.candidate_id }).select('name').first();
+        await notifyAllAdmins(
+          `Application ${status}: ${candName?.name || 'candidate'} · ${job_label}`,
+          'in_app',
+          app.id,
+          'application',
+          businessName,
+        );
+      } catch (e) { /* best-effort */ }
     }
     // Realtime broadcast to candidate + business + admins
     const audience = ['role:admin', `user:${req.user.id}`];
@@ -559,6 +633,18 @@ async function scheduleInterview(req, res, next) {
     if (candUser) {
       hiringNotify(candUser.user_id, `${bizUser?.name || 'A business'} invited you to interview`, 'in_app', iv.id, 'interview');
     }
+    // Admin audit feed
+    try {
+      const candName = await db('candidates').where({ id: app.candidate_id }).select('name').first();
+      const jobRow = await db('jobs').where({ id: app.job_id }).select('title').first();
+      await notifyAllAdmins(
+        `Interview scheduled: ${candName?.name || 'candidate'} · ${jobRow?.title || 'job'}`,
+        'in_app',
+        iv.id,
+        'interview',
+        bizUser?.name || null,
+      );
+    } catch (e) { /* best-effort */ }
     const audience = ['role:admin', `user:${req.user.id}`];
     if (candUser) audience.push(`user:${candUser.user_id}`);
     bus.publish('interview.scheduled', {
@@ -605,6 +691,14 @@ async function updateInterviewStatus(req, res, next) {
       business_user_id: req.user.id,
       candidate_user_id: candUser?.user_id || null,
     }, audience);
+    try {
+      const candName = await db('candidates').where({ id: iv.candidate_id }).select('name').first();
+      const jobRow = await db('jobs').where({ id: iv.job_id }).select('title').first();
+      await notifyAllAdmins(
+        `Interview ${status}: ${candName?.name || 'candidate'} · ${jobRow?.title || 'job'}`,
+        'in_app', iv.id, 'interview', null,
+      );
+    } catch (e) { /* best-effort */ }
     ok(res, { success: true });
   } catch (err) { next(err); }
 }
@@ -789,14 +883,24 @@ async function sendMessage(req, res, next) {
     console.log(`[BACKEND CREATE] business→candidate msgId=${msg.id} convId=${conv.id} businessUserId=${req.user.id} candidateId=${conv.candidate_id || 'null'} body="${msg.body}"`);
     // Notify the candidate
     let candidateUserId = null;
+    let candNameForAdmin = null;
+    let bizNameForAdmin = null;
     if (conv.candidate_id) {
       const cand = await db('candidates').where({ id: conv.candidate_id }).select('user_id', 'name').first();
       const bizUser = await db('users').where({ id: req.user.id }).first();
       if (cand) {
         candidateUserId = cand.user_id;
+        candNameForAdmin = cand.name;
+        bizNameForAdmin = bizUser?.name || null;
         hiringNotify(cand.user_id, `New message from ${bizUser?.name || 'a business'}`, 'in_app', conv.id, 'message');
       }
     }
+    try {
+      await notifyAllAdmins(
+        `Message: ${bizNameForAdmin || 'business'} → ${candNameForAdmin || 'candidate'}`,
+        'in_app', conv.id, 'message', body.trim().slice(0, 80),
+      );
+    } catch (e) { /* best-effort */ }
     // Realtime broadcast
     const audience = ['role:admin', `user:${req.user.id}`];
     if (candidateUserId) audience.push(`user:${candidateUserId}`);

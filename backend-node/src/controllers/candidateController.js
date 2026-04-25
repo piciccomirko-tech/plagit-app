@@ -29,6 +29,18 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route, body)
   } catch (e) { /* ignore */ }
 }
 
+// Persist a notification row for every admin user so the audit feed
+// reflects platform-wide events (apply, hire decisions, interviews,
+// messages). SSE audience `role:admin` keeps live admin clients fresh.
+async function notifyAllAdmins(title, type, linkedEntity, route, body) {
+  try {
+    const admins = await db('users').where({ user_type: 'admin' }).select('id');
+    for (const a of admins) {
+      await hiringNotify(a.id, title, type, linkedEntity, route, body);
+    }
+  } catch (e) { console.error('[notifyAllAdmins]', e.message); }
+}
+
 // ---------------------------------------------------------------------------
 // GET /candidate/profile — Return the authenticated candidate's profile
 // ---------------------------------------------------------------------------
@@ -374,6 +386,18 @@ async function applyToJob(req, res, next) {
         );
       } catch (e) { /* notification best-effort */ }
     }
+    // Admin audit feed — persist a row for every admin so the platform
+    // sees the application in the moderation list, not only on live SSE.
+    try {
+      const bizName = await db('businesses').where({ id: job.business_id }).select('name').first();
+      await notifyAllAdmins(
+        `New application: ${candidate.name} → ${bizName?.name || 'a business'}`,
+        'in_app',
+        application.id,
+        'application',
+        `For ${job.title}`,
+      );
+    } catch (e) { /* best-effort */ }
 
     ok(res, {
       id: application.id,
@@ -726,13 +750,21 @@ async function sendMessage(req, res, next) {
     // published on the SSE bus; otherwise BusinessNotificationsProvider
     // can't refresh in real time (it only listens to notification.new).
     let businessUserId = null;
+    let bizNameForAdmin = null;
     if (conv.business_id) {
-      const biz = await db('businesses').where({ id: conv.business_id }).select('user_id').first();
+      const biz = await db('businesses').where({ id: conv.business_id }).select('user_id', 'name').first();
       if (biz) {
         businessUserId = biz.user_id;
+        bizNameForAdmin = biz.name;
         hiringNotify(biz.user_id, `New message from ${candidate.name}`, 'in_app', conv.id, 'message');
       }
     }
+    try {
+      await notifyAllAdmins(
+        `Message: ${candidate.name} → ${bizNameForAdmin || 'business'}`,
+        'in_app', conv.id, 'message', body.trim().slice(0, 80),
+      );
+    } catch (e) { /* best-effort */ }
 
     // Realtime broadcast
     const audience = ['role:admin', `user:${userId}`];
@@ -1158,6 +1190,13 @@ async function respondToInterview(req, res, next) {
       candidate_user_id: req.user.id,
       business_user_id: bizUser?.user_id || null,
     }, audience);
+    try {
+      const jobRow = await db('jobs').where({ id: iv.job_id }).select('title').first();
+      await notifyAllAdmins(
+        `Interview ${status} by ${cand.name}: ${jobRow?.title || 'job'}`,
+        'in_app', iv.id, 'interview', null,
+      );
+    } catch (e) { /* best-effort */ }
     ok(res, { success: true, status });
   } catch (err) { next(err); }
 }
