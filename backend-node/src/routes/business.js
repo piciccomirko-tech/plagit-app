@@ -50,5 +50,7 @@ router.get('/recent-applicants', c.recentApplicants);
 router.get('/notifications', c.listNotifications);
 router.patch('/notifications/read-all', c.markAllNotificationsRead);
 router.patch('/notifications/:id/read', c.markNotificationRead);
+router.delete('/notifications/:id', c.deleteNotification);
+router.delete('/notifications', c.deleteAllNotifications);
 
 module.exports = router;

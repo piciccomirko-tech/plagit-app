@@ -43,6 +43,8 @@ router.get('/notifications', c.listCandidateNotifications);
 router.get('/notifications/count', c.candidateUnreadCount);
 router.patch('/notifications/:id/read', c.markCandidateNotifRead);
 router.patch('/notifications/read-all', c.markAllCandidateNotifsRead);
+router.delete('/notifications/:id', c.deleteCandidateNotif);
+router.delete('/notifications', c.deleteAllCandidateNotifs);
 
 // Matches
 router.get('/matches', c.listMatches);

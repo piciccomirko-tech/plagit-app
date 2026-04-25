@@ -813,6 +813,26 @@ async function markAllNotificationsRead(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
+// DELETE /business/notifications/:id — Delete a single notification
+// ---------------------------------------------------------------------------
+async function deleteNotification(req, res, next) {
+  try {
+    await db('notifications').where({ id: req.params.id, recipient_id: req.user.id }).del();
+    ok(res, { success: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /business/notifications — Delete every notification of the user
+// ---------------------------------------------------------------------------
+async function deleteAllNotifications(req, res, next) {
+  try {
+    await db('notifications').where({ recipient_id: req.user.id }).del();
+    ok(res, { success: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
 // GET /business/recent-applicants — Recent applicants across all jobs (for home dashboard)
 // ---------------------------------------------------------------------------
 async function recentApplicants(req, res, next) {
@@ -1039,5 +1059,6 @@ module.exports = {
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, startConversation, archiveConversation,
   getCandidateProfile,
   listNotifications, markNotificationRead, markAllNotificationsRead,
+  deleteNotification, deleteAllNotifications,
   recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
 };

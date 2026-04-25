@@ -1181,6 +1181,26 @@ async function markAllCandidateNotifsRead(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
+// DELETE /candidate/notifications/:id — Delete a single notification
+// ---------------------------------------------------------------------------
+async function deleteCandidateNotif(req, res, next) {
+  try {
+    await db('notifications').where({ id: req.params.id, recipient_id: req.user.id }).del();
+    ok(res, { success: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /candidate/notifications — Delete every notification of the user
+// ---------------------------------------------------------------------------
+async function deleteAllCandidateNotifs(req, res, next) {
+  try {
+    await db('notifications').where({ recipient_id: req.user.id }).del();
+    ok(res, { success: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
 // DELETE /candidate/conversations/:id — Archive conversation
 // ---------------------------------------------------------------------------
 async function archiveConversation(req, res, next) {
@@ -1286,4 +1306,5 @@ module.exports = {
   nearbyJobs,
   listMatches, submitMatchFeedback, updateMatchStatus,
   listCandidateNotifications, candidateUnreadCount, markCandidateNotifRead, markAllCandidateNotifsRead,
+  deleteCandidateNotif, deleteAllCandidateNotifs,
 };
