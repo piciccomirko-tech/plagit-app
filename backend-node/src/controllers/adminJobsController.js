@@ -16,7 +16,21 @@ async function list(req, res, next) {
 }
 
 async function get(req, res, next) {
-  try { const r = await db('jobs').where({ id: req.params.id }).first(); if (!r) throw AppError.notFound(); ok(res, r); } catch (e) { next(e); }
+  try {
+    const r = await db('jobs')
+      .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
+      .where('jobs.id', req.params.id)
+      .select(
+        'jobs.*',
+        'businesses.name as business_name',
+        'businesses.initials as business_initials',
+        'businesses.is_verified as is_verified_business'
+      )
+      .first();
+    if (!r) throw AppError.notFound();
+    const applicants = await db('applications').where({ job_id: req.params.id }).count('* as c').first().then(x => +x.c);
+    ok(res, { ...r, applicants });
+  } catch (e) { next(e); }
 }
 
 async function updateStatus(req, res, next) {

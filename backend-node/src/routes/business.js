@@ -15,6 +15,7 @@ router.get('/jobs', c.listJobs);
 router.post('/jobs', c.createJob);
 router.get('/jobs/:id', c.getJob);
 router.patch('/jobs/:id', c.updateJob);
+router.post('/jobs/:id/duplicate', c.duplicateJob);
 router.get('/jobs/:id/applicants', c.listApplicants);
 
 // Applicants

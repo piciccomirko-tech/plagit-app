@@ -6,9 +6,13 @@ const { bus } = require('../services/realtime/eventBus');
 // Helper: create a hiring notification + emit SSE so every subscribed
 // notifications provider (candidate, business, admin) refreshes its
 // badge + list in real time without a pull-to-refresh.
-async function hiringNotify(recipientId, title, type, linkedEntity, route) {
+//
+// `body` is optional and only persisted when the migration that adds
+// the `notifications.body` column has run — wrapped in try/catch so
+// older deployments don't crash on insert.
+async function hiringNotify(recipientId, title, type, linkedEntity, route, body) {
   try {
-    await db('notifications').insert({
+    const row = {
       recipient_id: recipientId,
       notification_type: type || 'in_app',
       title,
@@ -16,15 +20,32 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route) {
       destination_route: route || null,
       delivery_state: 'delivered',
       is_read: false,
-    });
+    };
+    if (body) row.body = body;
+    await db('notifications').insert(row);
     bus.publish('notification.new', {
       recipient_user_id: recipientId,
       title,
+      body: body || null,
       notification_type: type || 'in_app',
       linked_entity: linkedEntity || null,
       destination_route: route || null,
     }, ['role:admin', `user:${recipientId}`]);
   } catch (e) { /* ignore if table missing */ }
+}
+
+// Fan-out a single platform event (e.g. "new job posted") to every
+// admin user as their own notification row, so the admin list
+// renders correctly even though the controller does not filter by
+// recipient. The shared SSE audience `role:admin` still ensures live
+// refresh on all admin clients regardless of recipient.
+async function notifyAllAdmins(title, type, linkedEntity, route, body) {
+  try {
+    const admins = await db('users').where({ user_type: 'admin' }).select('id');
+    for (const a of admins) {
+      await hiringNotify(a.id, title, type, linkedEntity, route, body);
+    }
+  } catch (e) { console.error('[notifyAllAdmins]', e.message); }
 }
 
 // ---------------------------------------------------------------------------
@@ -215,6 +236,30 @@ async function createJob(req, res, next) {
       open_to_international: open_to_international || false,
     }).returning('*');
 
+    // Admin notification: fan-out to every admin user so the platform
+    // operator team sees a "New job posted by X" entry with a tap target
+    // that deep-links to /admin/jobs/:id. Title is the headline, body
+    // packs role · location · salary so the row carries enough context
+    // to triage without opening the detail.
+    (async () => {
+      try {
+        const biz = await db('businesses').where({ id: bizId }).first();
+        const businessName = biz?.name || 'a business';
+        const subtitleParts = [
+          category || null,
+          location || null,
+          salary || null,
+        ].filter((p) => p && String(p).trim().length > 0);
+        await notifyAllAdmins(
+          `New job posted by ${businessName}`,
+          'in_app',
+          job.id,
+          'job',
+          subtitleParts.join(' · '),
+        );
+      } catch (e) { console.error('[Admin job notify]', e.message); }
+    })();
+
     // Send match notifications to matching candidates (async, non-blocking)
     if (category && employment_type) {
       (async () => {
@@ -277,6 +322,29 @@ async function getJob(req, res, next) {
     const c = await db('applications').where({ job_id: job.id }).count('* as c').first();
     job.applicant_count = +(c?.c || 0);
     ok(res, job);
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /business/jobs/:id/duplicate — Clone a job as a new Draft
+// ---------------------------------------------------------------------------
+// Loads the source job (scoped by business owner), strips immutable fields
+// (id, timestamps, counters), forces status = 'draft', and inserts a fresh
+// row. The duplicate is invisible to candidates until the business
+// edits + activates it.
+async function duplicateJob(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const src = await db('jobs').where({ id: req.params.id, business_id: bizId }).first();
+    if (!src) throw AppError.notFound('Job not found.');
+    const {
+      id, created_at, updated_at, views, ...clone
+    } = src;
+    void id; void created_at; void updated_at; void views;
+    clone.status = 'draft';
+    clone.title = `${src.title} (Copy)`;
+    const [created] = await db('jobs').insert(clone).returning('*');
+    ok(res, created);
   } catch (err) { next(err); }
 }
 
@@ -1053,7 +1121,7 @@ async function updateMatchStatus(req, res, next) {
 
 module.exports = {
   profile, home, updateProfile, uploadPhoto,
-  listJobs, createJob, getJob, updateJob,
+  listJobs, createJob, getJob, updateJob, duplicateJob,
   listApplicants, updateApplicantStatus,
   listInterviews, scheduleInterview, updateInterviewStatus,
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, startConversation, archiveConversation,

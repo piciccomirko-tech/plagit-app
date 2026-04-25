@@ -5,12 +5,13 @@ const AppError = require('../utils/AppError');
 
 async function list(req, res, next) {
   try {
-    const { page = 1, limit = 50, status, search } = req.query;
+    const { page = 1, limit = 50, status, search, job_id } = req.query;
     let base = db('applications')
       .leftJoin('candidates', 'applications.candidate_id', 'candidates.id')
       .leftJoin('jobs', 'applications.job_id', 'jobs.id')
       .leftJoin('businesses', 'jobs.business_id', 'businesses.id');
     if (status) base = base.where('applications.status', status);
+    if (job_id) base = base.where('applications.job_id', job_id);
     if (search) base = base.where((b) => b.whereILike('candidates.name', `%${search}%`).orWhereILike('jobs.title', `%${search}%`).orWhereILike('businesses.name', `%${search}%`));
     const total = await base.clone().count('* as c').first().then(r => +r.c);
     const rows = await base.clone().select('applications.*', 'candidates.name as candidate_name', 'candidates.initials as candidate_initials', 'jobs.title as job_title', 'businesses.name as business_name').orderBy('applications.created_at', 'desc').limit(limit).offset((page - 1) * limit);

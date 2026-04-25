@@ -333,16 +333,38 @@ async function applyToJob(req, res, next) {
       status: 'applied',
     }).returning('*');
 
-    // Notify business of new applicant
+    // Broadcast application.new so admin's AdminApplicationsListProvider and
+    // the business' BusinessApplicantsProvider refresh live without polling.
+    try {
+      const bizForBroadcast = await db('businesses').where({ id: job.business_id }).select('user_id').first();
+      bus.publish('application.new', {
+        application_id: application.id,
+        job_id: jobId,
+        job_title: job.title,
+        candidate_id: candidate.id,
+        candidate_name: candidate.name,
+        business_id: job.business_id,
+      }, [
+        'role:admin',
+        bizForBroadcast ? `user:${bizForBroadcast.user_id}` : null,
+      ].filter(Boolean));
+    } catch (e) { /* ignore */ }
+
+    // Notify business of new applicant — use hiringNotify so SSE
+    // `notification.new` is broadcast to the business client (live badge +
+    // home dashboard refresh). The admin notifications list endpoint
+    // returns every row regardless of recipient, so the admin UI also
+    // refreshes via the same SSE event without a separate fan-out.
     const biz = await db('businesses').where({ id: job.business_id }).select('user_id').first();
     if (biz) {
       try {
-        await db('notifications').insert({
-          recipient_id: biz.user_id, notification_type: 'in_app',
-          title: `New applicant for ${job.title}: ${candidate.name}`,
-          linked_entity: application.id, destination_route: 'applicant',
-          delivery_state: 'delivered', is_read: false,
-        });
+        await hiringNotify(
+          biz.user_id,
+          `New applicant for ${job.title}: ${candidate.name}`,
+          'in_app',
+          application.id,
+          'applicant',
+        );
       } catch (e) { /* ignore */ }
     }
 
