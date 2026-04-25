@@ -6,12 +6,13 @@ const { bus } = require('../services/realtime/eventBus');
 // Helper: create a hiring notification + emit SSE so every subscribed
 // notifications provider (candidate, business, admin) refreshes its
 // badge + list in real time without a pull-to-refresh.
-async function hiringNotify(recipientId, title, type, linkedEntity, route) {
+async function hiringNotify(recipientId, title, type, linkedEntity, route, body) {
   try {
     await db('notifications').insert({
       recipient_id: recipientId,
       notification_type: type || 'in_app',
       title,
+      body: body || null,
       linked_entity: linkedEntity || null,
       destination_route: route || null,
       delivery_state: 'delivered',
@@ -20,6 +21,7 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route) {
     bus.publish('notification.new', {
       recipient_user_id: recipientId,
       title,
+      body: body || null,
       notification_type: type || 'in_app',
       linked_entity: linkedEntity || null,
       destination_route: route || null,
@@ -182,6 +184,7 @@ async function featuredJobs(req, res, next) {
 
     let base = db('jobs')
       .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
+      .leftJoin('users as biz_users', 'businesses.user_id', 'biz_users.id')
       .where('jobs.status', 'active');
 
     if (search) {
@@ -204,7 +207,8 @@ async function featuredJobs(req, res, next) {
         'businesses.id as business_id', 'businesses.name as business_name',
         'businesses.initials as business_initials',
         'businesses.is_verified as business_verified',
-        'businesses.avatar_hue as business_avatar_hue'
+        'businesses.avatar_hue as business_avatar_hue',
+        'biz_users.photo_url as business_photo_url'
       )
       .orderByRaw('jobs.is_featured DESC, jobs.created_at DESC')
       .limit(limit)
@@ -224,6 +228,7 @@ async function listJobs(req, res, next) {
 
     let base = db('jobs')
       .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
+      .leftJoin('users as biz_users', 'businesses.user_id', 'biz_users.id')
       .where('jobs.status', 'active');
 
     if (search) {
@@ -252,7 +257,8 @@ async function listJobs(req, res, next) {
         'businesses.id as business_id', 'businesses.name as business_name',
         'businesses.initials as business_initials',
         'businesses.is_verified as business_verified',
-        'businesses.avatar_hue as business_avatar_hue'
+        'businesses.avatar_hue as business_avatar_hue',
+        'biz_users.photo_url as business_photo_url'
       )
       .orderByRaw('jobs.is_featured DESC, jobs.created_at DESC')
       .limit(+limit)
@@ -360,12 +366,13 @@ async function applyToJob(req, res, next) {
       try {
         await hiringNotify(
           biz.user_id,
-          `New applicant for ${job.title}: ${candidate.name}`,
+          `New application from ${candidate.name}`,
           'in_app',
           application.id,
           'applicant',
+          `For ${job.title}`,
         );
-      } catch (e) { /* ignore */ }
+      } catch (e) { /* notification best-effort */ }
     }
 
     ok(res, {

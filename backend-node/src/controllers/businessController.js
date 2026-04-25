@@ -260,52 +260,64 @@ async function createJob(req, res, next) {
       } catch (e) { console.error('[Admin job notify]', e.message); }
     })();
 
-    // Send match notifications to matching candidates (async, non-blocking)
-    if (category && employment_type) {
-      (async () => {
-        try {
-          const jobCat = category.toLowerCase().trim();
-          const jobEmpType = employment_type.toLowerCase().trim();
-          const biz = await db('businesses').where({ id: bizId }).first();
-          const notifTitle = `New match: ${title} – ${employment_type} at ${biz?.name || 'a business'}`;
+    // Send match notifications to matching candidates (async, non-blocking).
+    // Match a candidate when their role matches the job title or category
+    // (case-insensitive substring). Optional employment_type filter only when
+    // the candidate has job_type set — otherwise we don't exclude them.
+    (async () => {
+      try {
+        const biz = await db('businesses').where({ id: bizId }).first();
+        const businessName = biz?.name || 'a business';
+        const subtitleParts = [title, location || null, salary || null].filter(Boolean);
+        const notifTitle = `New job posted by ${businessName}`;
+        const notifBody  = subtitleParts.join(' · ');
 
-          // Local matches: exact role + job_type
-          const matchedCandidates = await db('candidates')
-            .leftJoin('users', 'candidates.user_id', 'users.id')
-            .where('users.user_type', 'candidate')
-            .where('users.status', 'active')
-            .whereRaw('LOWER(TRIM(candidates.role)) = ?', [jobCat])
-            .whereRaw('LOWER(TRIM(candidates.job_type)) = ?', [jobEmpType])
+        const titleNeedle = `%${(title || '').toLowerCase().trim()}%`;
+        const catNeedle   = category ? `%${category.toLowerCase().trim()}%` : null;
+        const empType     = employment_type ? employment_type.toLowerCase().trim() : null;
+
+        const baseQ = db('candidates')
+          .leftJoin('users', 'candidates.user_id', 'users.id')
+          .where('users.user_type', 'candidate')
+          .where('users.status', 'active');
+
+        const matchedCandidates = await baseQ.clone()
+          .andWhere(b => {
+            b.whereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [titleNeedle]);
+            if (catNeedle) b.orWhereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [catNeedle]);
+          })
+          .andWhere(b => {
+            b.whereNull('candidates.job_type')
+             .orWhereRaw("TRIM(COALESCE(candidates.job_type,'')) = ''");
+            if (empType) b.orWhereRaw('LOWER(TRIM(candidates.job_type)) = ?', [empType]);
+          })
+          .select('users.id as user_id', 'candidates.id as cand_id')
+          .limit(50);
+
+        const notified = new Set();
+        for (const mc of matchedCandidates) {
+          try { await db('matches').insert({ candidate_id: mc.cand_id, job_id: job.id, status: 'pending' }); } catch (_) {}
+          await hiringNotify(mc.user_id, notifTitle, 'in_app', job.id, 'job', notifBody);
+          notified.add(mc.cand_id);
+        }
+
+        if (open_to_international) {
+          const intlCandidates = await baseQ.clone()
+            .where('candidates.available_to_relocate', true)
+            .andWhere(b => {
+              b.whereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [titleNeedle]);
+              if (catNeedle) b.orWhereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [catNeedle]);
+            })
             .select('users.id as user_id', 'candidates.id as cand_id')
             .limit(50);
-
-          const notified = new Set();
-          for (const mc of matchedCandidates) {
-            try { await db('matches').insert({ candidate_id: mc.cand_id, job_id: job.id, status: 'pending' }); } catch (_) {}
-            await hiringNotify(mc.user_id, notifTitle, 'in_app', job.id, 'match');
-            notified.add(mc.cand_id);
+          for (const ic of intlCandidates) {
+            if (notified.has(ic.cand_id)) continue;
+            try { await db('matches').insert({ candidate_id: ic.cand_id, job_id: job.id, status: 'pending' }); } catch (_) {}
+            await hiringNotify(ic.user_id, `International opportunity: ${title} at ${businessName}`, 'in_app', job.id, 'job', notifBody);
           }
-
-          // International matches: if open_to_international, also match relocatable candidates
-          if (open_to_international) {
-            const intlCandidates = await db('candidates')
-              .leftJoin('users', 'candidates.user_id', 'users.id')
-              .where('users.user_type', 'candidate')
-              .where('users.status', 'active')
-              .where('candidates.available_to_relocate', true)
-              .whereRaw('LOWER(TRIM(candidates.role)) = ?', [jobCat])
-              .whereRaw('LOWER(TRIM(candidates.job_type)) = ?', [jobEmpType])
-              .select('users.id as user_id', 'candidates.id as cand_id')
-              .limit(50);
-            for (const ic of intlCandidates) {
-              if (notified.has(ic.cand_id)) continue; // already notified locally
-              try { await db('matches').insert({ candidate_id: ic.cand_id, job_id: job.id, status: 'pending' }); } catch (_) {}
-              await hiringNotify(ic.user_id, `International opportunity: ${title} – ${employment_type} at ${biz?.name || 'a business'}`, 'in_app', job.id, 'match');
-            }
-          }
-        } catch (e) { console.error('[Match notify]', e.message); }
-      })();
-    }
+        }
+      } catch (e) { console.error('[Match notify]', e.message); }
+    })();
 
     ok(res, job);
   } catch (err) { next(err); }
@@ -430,8 +442,34 @@ async function updateApplicantStatus(req, res, next) {
     if (fullApp?.user_id) {
       const job = await db('jobs').where({ id: fullApp.job_id }).select('title').first();
       jobTitle = job?.title || null;
-      const labels = { shortlisted: 'You were shortlisted', rejected: 'Application update', under_review: 'Application under review', offer: 'You received an offer' };
-      hiringNotify(fullApp.user_id, `${labels[status] || 'Status update'} for ${jobTitle || 'a job'}`, 'in_app', app.id, 'application');
+      // Resolve business display name (companies.name preferred, fallback to owner user.name)
+      const biz = await db('businesses').where({ id: bizId }).select('name', 'user_id').first();
+      let businessName = biz?.name || null;
+      if (!businessName && biz?.user_id) {
+        const ownerUser = await db('users').where({ id: biz.user_id }).select('name').first();
+        businessName = ownerUser?.name || 'a business';
+      }
+      businessName = businessName || 'a business';
+      const job_label = jobTitle || 'a job';
+      let title;
+      let body;
+      if (status === 'shortlisted') {
+        title = `You have been shortlisted by ${businessName}`;
+        body = `For ${job_label}`;
+      } else if (status === 'rejected') {
+        title = 'Your application was not selected';
+        body = `For ${job_label} at ${businessName}`;
+      } else if (status === 'under_review') {
+        title = `Application under review for ${job_label}`;
+        body = `${businessName} is reviewing your application`;
+      } else if (status === 'offer') {
+        title = `You received an offer from ${businessName}`;
+        body = `For ${job_label}`;
+      } else {
+        title = `Status update for ${job_label}`;
+        body = `${businessName} updated your application`;
+      }
+      hiringNotify(fullApp.user_id, title, 'application_status', app.id, 'application', body);
     }
     // Realtime broadcast to candidate + business + admins
     const audience = ['role:admin', `user:${req.user.id}`];
