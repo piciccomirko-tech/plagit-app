@@ -588,12 +588,16 @@ async function listMessages(req, res, next) {
     const bizId = await getBizId(req.user.id);
     const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
     if (!conv) throw AppError.notFound('Conversation not found.');
-    const { page = 1, limit = 50 } = req.query;
+    const { page = 1, limit = 200 } = req.query;
     const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
-    const msgs = await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
+    // Pull the LATEST `limit` messages (desc + offset), then reverse to
+    // chronological order for the client. Previous ASC+offset query
+    // silently truncated long threads to the oldest page once total > limit,
+    // making the chat appear "stuck" while admin (limit=200) saw newer rows.
+    const msgs = (await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
       .where('messages.conversation_id', conv.id)
       .select('messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at', 'messages.sender_id', 'messages.created_at', 'users.name as sender_name', 'users.user_type as sender_type')
-      .orderBy('messages.created_at', 'asc').limit(+limit).offset((+page - 1) * +limit);
+      .orderBy('messages.created_at', 'desc').limit(+limit).offset((+page - 1) * +limit)).reverse();
 
     // Flip unread peer messages to read and broadcast to the sender.
     const toMark = await db('messages')
@@ -676,6 +680,7 @@ async function sendMessage(req, res, next) {
     if (!body || !body.trim()) throw AppError.badRequest('Message body is required.');
     const [msg] = await db('messages').insert({ conversation_id: conv.id, sender_id: req.user.id, body: body.trim() }).returning('*');
     await db('conversations').where({ id: conv.id }).update({ last_message: body.trim().slice(0, 200), updated_at: db.fn.now() });
+    console.log(`[BACKEND CREATE] business→candidate msgId=${msg.id} convId=${conv.id} businessUserId=${req.user.id} candidateId=${conv.candidate_id || 'null'} body="${msg.body}"`);
     // Notify the candidate
     let candidateUserId = null;
     if (conv.candidate_id) {
@@ -689,6 +694,7 @@ async function sendMessage(req, res, next) {
     // Realtime broadcast
     const audience = ['role:admin', `user:${req.user.id}`];
     if (candidateUserId) audience.push(`user:${candidateUserId}`);
+    console.log(`[SSE EMIT] type=message.new convId=${conv.id} senderUserId=${req.user.id} recipientUserId=${candidateUserId || 'null'} audience=${JSON.stringify(audience)}`);
     bus.publish('message.new', {
       message: {
         id: msg.id,
@@ -702,6 +708,7 @@ async function sendMessage(req, res, next) {
       conversation_id: conv.id,
       sender_user_id: req.user.id,
       recipient_user_id: candidateUserId,
+      sender_role: 'business',
     }, audience);
     ok(res, msg);
   } catch (err) { next(err); }

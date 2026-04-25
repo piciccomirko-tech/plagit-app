@@ -14,6 +14,7 @@ const db = require('../../config/db');
  * swap this for Redis pub/sub + SADD/SREM — but we're on one Node now.
  */
 const counts = new Map(); // userId -> number of active SSE connections
+const lastSeen = new Map(); // userId -> ISO timestamp of last disconnect
 
 async function findCounterpartUserIds(userId) {
   // Every user id that shares a conversation with `userId`, through either
@@ -55,7 +56,15 @@ async function findCounterpartUserIds(userId) {
 async function emitPresenceChange(userId, isOnline) {
   const counterparts = await findCounterpartUserIds(userId);
   const audience = ['role:admin', ...counterparts.map((id) => `user:${id}`)];
-  bus.publish('presence.update', { user_id: userId, is_online: isOnline }, audience);
+  bus.publish(
+    'presence.update',
+    {
+      user_id: userId,
+      is_online: isOnline,
+      last_seen_at: lastSeen.get(userId) || null,
+    },
+    audience,
+  );
 }
 
 async function connect(userId) {
@@ -73,6 +82,9 @@ async function disconnect(userId) {
   const prev = counts.get(userId) || 0;
   if (prev <= 1) {
     counts.delete(userId);
+    // Stamp last-seen at the moment of the 1 → 0 transition so the
+    // WhatsApp-style header label can render "last seen at HH:MM".
+    lastSeen.set(userId, new Date().toISOString());
     await emitPresenceChange(userId, false);
   } else {
     counts.set(userId, prev - 1);
@@ -83,4 +95,8 @@ function isOnline(userId) {
   return (counts.get(userId) || 0) > 0;
 }
 
-module.exports = { connect, disconnect, isOnline };
+function lastSeenAt(userId) {
+  return lastSeen.get(userId) || null;
+}
+
+module.exports = { connect, disconnect, isOnline, lastSeenAt };

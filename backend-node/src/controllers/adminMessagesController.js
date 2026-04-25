@@ -34,4 +34,40 @@ async function remove(req, res, next) {
   } catch (e) { next(e); }
 }
 
-module.exports = { list, updateStatus, remove };
+async function thread(req, res, next) {
+  try {
+    const conv = await db('conversations')
+      .leftJoin('candidates', 'conversations.candidate_id', 'candidates.id')
+      .leftJoin('businesses', 'conversations.business_id', 'businesses.id')
+      .leftJoin('jobs', 'conversations.job_id', 'jobs.id')
+      .where('conversations.id', req.params.id)
+      .select(
+        'conversations.*',
+        'candidates.name as candidate_name',
+        'candidates.initials as candidate_initials',
+        'businesses.name as business_name',
+        'businesses.initials as business_initials',
+        'jobs.title as job_title',
+      )
+      .first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+
+    const { page = 1, limit = 200 } = req.query;
+    const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
+    const msgs = await db('messages')
+      .leftJoin('users', 'messages.sender_id', 'users.id')
+      .where('messages.conversation_id', conv.id)
+      .select(
+        'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
+        'messages.sender_id', 'messages.created_at',
+        'users.name as sender_name', 'users.user_type as sender_type',
+      )
+      .orderBy('messages.created_at', 'asc')
+      .limit(+limit)
+      .offset((+page - 1) * +limit);
+
+    ok(res, { conversation: conv, messages: msgs, pagination: { page: +page, limit: +limit, total } });
+  } catch (e) { next(e); }
+}
+
+module.exports = { list, updateStatus, remove, thread };

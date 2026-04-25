@@ -16,7 +16,12 @@ router.use(authenticate);
  * caller is the business side, peer is the candidate user; and vice
  * versa. 404 if the caller doesn't participate in the conversation.
  *
- * Response: { peer_user_id, is_online }
+ * Response: { peer_user_id, is_online, last_seen_at }
+ *
+ * `last_seen_at` is an ISO timestamp captured at the most recent 1 → 0
+ * disconnect transition for `peer_user_id`. It is null while the peer
+ * is currently online, and remains null until the peer has been online
+ * at least once since the server last started (in-memory store).
  */
 router.get('/conversation/:convId', async (req, res, next) => {
   try {
@@ -39,9 +44,11 @@ router.get('/conversation/:convId', async (req, res, next) => {
       throw AppError.notFound('Conversation not found.');
     }
 
+    const online = peerUserId ? presence.isOnline(peerUserId) : false;
     ok(res, {
       peer_user_id: peerUserId,
-      is_online: peerUserId ? presence.isOnline(peerUserId) : false,
+      is_online: online,
+      last_seen_at: !online && peerUserId ? presence.lastSeenAt(peerUserId) : null,
     });
   } catch (err) { next(err); }
 });

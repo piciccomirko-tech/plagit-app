@@ -31,6 +31,13 @@ class RealtimeBus extends EventEmitter {
       audience: Array.isArray(audience) ? audience : [],
       timestamp: new Date().toISOString(),
     };
+    if (type === 'message.new') {
+      const convId = (payload && payload.conversation_id) || null;
+      const senderUserId = (payload && payload.sender_user_id) || null;
+      const recipientUserId = (payload && payload.recipient_user_id) || null;
+      const listenerCount = this.listenerCount('event');
+      console.log(`[SSE EMIT] bus.publish type=${type} convId=${convId} senderUserId=${senderUserId} recipientUserId=${recipientUserId} audience=${JSON.stringify(event.audience)} listeners=${listenerCount}`);
+    }
     this.emit('event', event);
     return event;
   }
