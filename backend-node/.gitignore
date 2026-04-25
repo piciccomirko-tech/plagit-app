@@ -2,3 +2,8 @@ node_modules/
 .env
 dist/
 *.log
+
+# Push provider credentials — must NEVER be committed
+firebase-admin*.json
+service-account*.json
+*.p8
