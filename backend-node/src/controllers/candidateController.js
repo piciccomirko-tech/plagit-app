@@ -41,6 +41,107 @@ async function notifyAllAdmins(title, type, linkedEntity, route, body) {
   } catch (e) { console.error('[notifyAllAdmins]', e.message); }
 }
 
+// Mutual-interest match creation. Mirrors the helper in
+// businessController.js — kept inline here so the candidate apply
+// flow does not need to require the business controller. Idempotent
+// on the (business_id, candidate_id, job_id) unique index, so it is
+// safe to call from either side of the interest pair.
+async function tryCreateMutualMatch({
+  businessId,
+  candidateId,
+  jobId,
+  sourceBusiness,
+  sourceCandidate,
+}) {
+  if (!businessId || !candidateId || !jobId) return false;
+  try {
+    const existing = await db('mutual_matches')
+      .where({
+        business_id: businessId,
+        candidate_id: candidateId,
+        job_id: jobId,
+      })
+      .first();
+    if (existing) return false;
+
+    const [row] = await db('mutual_matches')
+      .insert({
+        business_id: businessId,
+        candidate_id: candidateId,
+        job_id: jobId,
+        source_business: sourceBusiness || 'quickplug',
+        source_candidate: sourceCandidate || 'application',
+        status: 'active',
+      })
+      .returning(['id', 'created_at']);
+
+    const [biz, cand, job] = await Promise.all([
+      db('businesses').where({ id: businessId }).first(),
+      db('candidates').where({ id: candidateId }).first(),
+      db('jobs').where({ id: jobId }).first(),
+    ]);
+
+    const bizName = biz?.name || 'A business';
+    const candName = cand?.name || 'a candidate';
+    const jobTitle = job?.title || 'a role';
+
+    if (cand?.user_id) {
+      await hiringNotify(
+        cand.user_id,
+        `You matched with ${bizName}`,
+        'in_app',
+        row.id,
+        'match',
+        `Mutual interest on ${jobTitle}.`,
+      );
+    }
+    if (biz?.user_id) {
+      await hiringNotify(
+        biz.user_id,
+        `You matched with ${candName}`,
+        'in_app',
+        row.id,
+        'match',
+        `Mutual interest on ${jobTitle}.`,
+      );
+    }
+    await notifyAllAdmins(
+      `New match: ${bizName} ↔ ${candName} on ${jobTitle}`,
+      'in_app',
+      row.id,
+      'match',
+      null,
+    );
+
+    bus.publish(
+      'match.created',
+      {
+        match_id: row.id,
+        business_id: businessId,
+        business_name: bizName,
+        candidate_id: candidateId,
+        candidate_user_id: cand?.user_id || null,
+        candidate_name: candName,
+        job_id: jobId,
+        job_title: jobTitle,
+        source_business: sourceBusiness || 'quickplug',
+        source_candidate: sourceCandidate || 'application',
+        created_at: row.created_at,
+      },
+      [
+        'role:admin',
+        ...(cand?.user_id ? [`user:${cand.user_id}`] : []),
+        ...(biz?.user_id ? [`user:${biz.user_id}`] : []),
+      ],
+    );
+
+    return true;
+  } catch (e) {
+    console.error('[tryCreateMutualMatch]', e.message);
+    return false;
+  }
+}
+
 // ---------------------------------------------------------------------------
 // GET /candidate/profile — Return the authenticated candidate's profile
 // ---------------------------------------------------------------------------
@@ -398,6 +499,30 @@ async function applyToJob(req, res, next) {
         `For ${job.title}`,
       );
     } catch (e) { /* best-effort */ }
+
+    // Mutual match check — if this business has previously
+    // shortlisted the candidate via Quick Plug, the apply just closed
+    // the loop. Idempotent: a match for (business, candidate, job)
+    // already created from the other direction is a no-op.
+    try {
+      const shortlist = await db('quickplug_shortlists')
+        .where({
+          business_id: job.business_id,
+          candidate_id: candidate.id,
+        })
+        .first();
+      if (shortlist) {
+        await tryCreateMutualMatch({
+          businessId: job.business_id,
+          candidateId: candidate.id,
+          jobId: jobId,
+          sourceBusiness: shortlist.source || 'quickplug',
+          sourceCandidate: 'application',
+        });
+      }
+    } catch (e) {
+      console.error('[applyToJob match check]', e.message);
+    }
 
     ok(res, {
       id: application.id,

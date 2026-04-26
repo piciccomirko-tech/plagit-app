@@ -49,6 +49,122 @@ async function notifyAllAdmins(title, type, linkedEntity, route, body) {
 }
 
 // ---------------------------------------------------------------------------
+// Mutual-interest matching
+// ---------------------------------------------------------------------------
+// A mutual match exists when BOTH sides have shown explicit interest:
+//   - business shortlisted the candidate (Quick Plug shortlist row)
+//   - candidate applied to one of that business's jobs
+//
+// `tryCreateMutualMatch` is the single insertion point. It is
+// idempotent on the (business_id, candidate_id, job_id) unique index,
+// so callers can fire it from either direction (shortlist-then-apply
+// or apply-then-shortlist) without worrying about duplicates.
+//
+// On *new* match creation it:
+//   - looks up candidate.user_id + display name and business.name
+//   - notifies both sides + every admin
+//   - publishes a `match.created` SSE event so all three audiences
+//     refresh in real time
+//
+// Returns true when a new match row was inserted, false when the
+// match already existed (no notifications fired in that case).
+async function tryCreateMutualMatch({
+  businessId,
+  candidateId,
+  jobId,
+  sourceBusiness,
+  sourceCandidate,
+}) {
+  if (!businessId || !candidateId || !jobId) return false;
+  try {
+    const existing = await db('mutual_matches')
+      .where({
+        business_id: businessId,
+        candidate_id: candidateId,
+        job_id: jobId,
+      })
+      .first();
+    if (existing) return false;
+
+    const [row] = await db('mutual_matches')
+      .insert({
+        business_id: businessId,
+        candidate_id: candidateId,
+        job_id: jobId,
+        source_business: sourceBusiness || 'quickplug',
+        source_candidate: sourceCandidate || 'application',
+        status: 'active',
+      })
+      .returning(['id', 'created_at']);
+
+    const [biz, cand, job] = await Promise.all([
+      db('businesses').where({ id: businessId }).first(),
+      db('candidates').where({ id: candidateId }).first(),
+      db('jobs').where({ id: jobId }).first(),
+    ]);
+
+    const bizName = biz?.name || 'A business';
+    const candName = cand?.name || 'a candidate';
+    const jobTitle = job?.title || 'a role';
+
+    if (cand?.user_id) {
+      await hiringNotify(
+        cand.user_id,
+        `You matched with ${bizName}`,
+        'in_app',
+        row.id,
+        'match',
+        `Mutual interest on ${jobTitle}.`,
+      );
+    }
+    if (biz?.user_id) {
+      await hiringNotify(
+        biz.user_id,
+        `You matched with ${candName}`,
+        'in_app',
+        row.id,
+        'match',
+        `Mutual interest on ${jobTitle}.`,
+      );
+    }
+    await notifyAllAdmins(
+      `New match: ${bizName} ↔ ${candName} on ${jobTitle}`,
+      'in_app',
+      row.id,
+      'match',
+      null,
+    );
+
+    bus.publish(
+      'match.created',
+      {
+        match_id: row.id,
+        business_id: businessId,
+        business_name: bizName,
+        candidate_id: candidateId,
+        candidate_user_id: cand?.user_id || null,
+        candidate_name: candName,
+        job_id: jobId,
+        job_title: jobTitle,
+        source_business: sourceBusiness || 'quickplug',
+        source_candidate: sourceCandidate || 'application',
+        created_at: row.created_at,
+      },
+      [
+        'role:admin',
+        ...(cand?.user_id ? [`user:${cand.user_id}`] : []),
+        ...(biz?.user_id ? [`user:${biz.user_id}`] : []),
+      ],
+    );
+
+    return true;
+  } catch (e) {
+    console.error('[tryCreateMutualMatch]', e.message);
+    return false;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // GET /business/profile — Business profile
 // ---------------------------------------------------------------------------
 async function profile(req, res, next) {
@@ -1412,15 +1528,29 @@ async function quickplugSwipe(req, res, next) {
         if (cand && cand.user_id) {
           const bizName = biz?.name || 'A business';
           const candName = cand.name || 'a candidate';
-          const candTitle = `${bizName} shortlisted your profile`;
-          const candBody = 'Spotted you on Quick Plug — they may reach out soon.';
+
+          // Persist the business intent so the apply-side flow can
+          // detect it later. Idempotent on (business_id, candidate_id).
+          try {
+            await db('quickplug_shortlists')
+              .insert({
+                business_id: bizId,
+                candidate_id: candidateId,
+                source: 'quickplug',
+              })
+              .onConflict(['business_id', 'candidate_id'])
+              .ignore();
+          } catch (e) {
+            console.error('[quickplugSwipe shortlist persist]', e.message);
+          }
+
           await hiringNotify(
             cand.user_id,
-            candTitle,
+            `${bizName} shortlisted your profile`,
             'in_app',
             candidateId,
             'shortlist',
-            candBody,
+            'Spotted you on Quick Plug — they may reach out soon.',
           );
           await notifyAllAdmins(
             `${bizName} shortlisted ${candName} via Quick Plug`,
@@ -1441,6 +1571,29 @@ async function quickplugSwipe(req, res, next) {
             },
             ['role:admin', `user:${cand.user_id}`],
           );
+
+          // Mutual match check — if the candidate has already applied
+          // to one or more of this business's jobs, create a match per
+          // job. tryCreateMutualMatch is idempotent so retries are
+          // safe and existing matches will not duplicate.
+          try {
+            const apps = await db('applications')
+              .leftJoin('jobs', 'applications.job_id', 'jobs.id')
+              .where('applications.candidate_id', candidateId)
+              .where('jobs.business_id', bizId)
+              .select('applications.job_id as job_id');
+            for (const a of apps) {
+              await tryCreateMutualMatch({
+                businessId: bizId,
+                candidateId,
+                jobId: a.job_id,
+                sourceBusiness: 'quickplug',
+                sourceCandidate: 'application',
+              });
+            }
+          } catch (e) {
+            console.error('[quickplugSwipe match check]', e.message);
+          }
         }
       } catch (e) {
         console.error('[quickplugSwipe shortlist]', e.message);
@@ -1467,4 +1620,5 @@ module.exports = {
   deleteNotification, deleteAllNotifications,
   recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
   quickplugDeck, quickplugSwipe,
+  tryCreateMutualMatch,
 };
