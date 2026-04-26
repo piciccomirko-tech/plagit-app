@@ -20,6 +20,10 @@ router.get('/jobs', c.listJobs);
 router.get('/jobs/:id', c.getJob);
 router.post('/jobs/:id/apply', c.applyToJob);
 
+// Quick Jobs — Tinder-style swipe deck (mirror of Business Quick Plug)
+router.get('/quickjobs/deck', c.quickjobsDeck);
+router.post('/quickjobs/swipe', c.quickjobsSwipe);
+
 // Applications
 router.get('/applications', c.listApplications);
 router.get('/applications/:id', c.getApplication);

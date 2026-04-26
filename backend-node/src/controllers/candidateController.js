@@ -423,37 +423,44 @@ async function getJob(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
-// POST /candidate/jobs/:id/apply — Apply to a job
+// applyToJobCore — shared apply pipeline used by both POST /jobs/:id/apply
+// and POST /quickjobs/swipe (interested=true).
+//
+// Returns { application, applicationCreated, matchCreated, job, candidate }.
+//
+// Behavior on duplicate application:
+//  - returnExisting=false (default, classic apply handler): throws 400.
+//  - returnExisting=true (swipe path): resolves with applicationCreated=false
+//    and the existing row, then still runs the mutual-match check so a
+//    swipe-right after an out-of-band shortlist can still close the loop.
 // ---------------------------------------------------------------------------
-async function applyToJob(req, res, next) {
-  try {
-    const jobId = req.params.id;
-    const userId = req.user.id;
+async function applyToJobCore({ userId, jobId, sourceCandidate = 'application', returnExisting = false }) {
+  const candidate = await db('candidates').where({ user_id: userId }).first();
+  if (!candidate) throw AppError.badRequest('Please complete your candidate profile before applying.');
 
-    // Find candidate record
-    const candidate = await db('candidates').where({ user_id: userId }).first();
-    if (!candidate) throw AppError.badRequest('Please complete your candidate profile before applying.');
+  const job = await db('jobs').where({ id: jobId, status: 'active' }).first();
+  if (!job) throw AppError.notFound('Job not found or no longer active.');
 
-    // Check job exists and is active
-    const job = await db('jobs').where({ id: jobId, status: 'active' }).first();
-    if (!job) throw AppError.notFound('Job not found or no longer active.');
+  const existing = await db('applications')
+    .where({ candidate_id: candidate.id, job_id: jobId })
+    .whereNot('status', 'withdrawn')
+    .first();
 
-    // Check for duplicate application
-    const existing = await db('applications')
-      .where({ candidate_id: candidate.id, job_id: jobId })
-      .whereNot('status', 'withdrawn')
-      .first();
-    if (existing) throw AppError.badRequest('You have already applied to this job.');
+  let application = existing;
+  let applicationCreated = false;
 
-    // Create application
-    const [application] = await db('applications').insert({
+  if (existing && !returnExisting) {
+    throw AppError.badRequest('You have already applied to this job.');
+  }
+
+  if (!existing) {
+    [application] = await db('applications').insert({
       candidate_id: candidate.id,
       job_id: jobId,
       status: 'applied',
     }).returning('*');
+    applicationCreated = true;
 
-    // Broadcast application.new so admin's AdminApplicationsListProvider and
-    // the business' BusinessApplicantsProvider refresh live without polling.
     try {
       const bizForBroadcast = await db('businesses').where({ id: job.business_id }).select('user_id').first();
       bus.publish('application.new', {
@@ -469,11 +476,6 @@ async function applyToJob(req, res, next) {
       ].filter(Boolean));
     } catch (e) { /* ignore */ }
 
-    // Notify business of new applicant — use hiringNotify so SSE
-    // `notification.new` is broadcast to the business client (live badge +
-    // home dashboard refresh). The admin notifications list endpoint
-    // returns every row regardless of recipient, so the admin UI also
-    // refreshes via the same SSE event without a separate fan-out.
     const biz = await db('businesses').where({ id: job.business_id }).select('user_id').first();
     if (biz) {
       try {
@@ -485,10 +487,8 @@ async function applyToJob(req, res, next) {
           'applicant',
           `For ${job.title}`,
         );
-      } catch (e) { /* notification best-effort */ }
+      } catch (e) { /* best-effort */ }
     }
-    // Admin audit feed — persist a row for every admin so the platform
-    // sees the application in the moderation list, not only on live SSE.
     try {
       const bizName = await db('businesses').where({ id: job.business_id }).select('name').first();
       await notifyAllAdmins(
@@ -499,36 +499,111 @@ async function applyToJob(req, res, next) {
         `For ${job.title}`,
       );
     } catch (e) { /* best-effort */ }
+  }
 
-    // Mutual match check — if this business has previously
-    // shortlisted the candidate via Quick Plug, the apply just closed
-    // the loop. Idempotent: a match for (business, candidate, job)
-    // already created from the other direction is a no-op.
-    try {
-      const shortlist = await db('quickplug_shortlists')
-        .where({
-          business_id: job.business_id,
-          candidate_id: candidate.id,
-        })
-        .first();
-      if (shortlist) {
-        await tryCreateMutualMatch({
-          businessId: job.business_id,
-          candidateId: candidate.id,
-          jobId: jobId,
-          sourceBusiness: shortlist.source || 'quickplug',
-          sourceCandidate: 'application',
-        });
-      }
-    } catch (e) {
-      console.error('[applyToJob match check]', e.message);
+  // Mutual match check — runs whether the application is brand new or
+  // was already on file. tryCreateMutualMatch is idempotent on
+  // (business_id, candidate_id, job_id), so it returns false when a
+  // match was created from the other direction.
+  let matchCreated = false;
+  try {
+    const shortlist = await db('quickplug_shortlists')
+      .where({
+        business_id: job.business_id,
+        candidate_id: candidate.id,
+      })
+      .first();
+    if (shortlist) {
+      matchCreated = await tryCreateMutualMatch({
+        businessId: job.business_id,
+        candidateId: candidate.id,
+        jobId: jobId,
+        sourceBusiness: shortlist.source || 'quickplug',
+        sourceCandidate,
+      });
     }
+  } catch (e) {
+    console.error('[applyToJobCore match check]', e.message);
+  }
 
+  return { application, applicationCreated, matchCreated, job, candidate };
+}
+
+// ---------------------------------------------------------------------------
+// POST /candidate/jobs/:id/apply — Apply to a job
+// ---------------------------------------------------------------------------
+async function applyToJob(req, res, next) {
+  try {
+    const { application } = await applyToJobCore({
+      userId: req.user.id,
+      jobId: req.params.id,
+      sourceCandidate: 'application',
+      returnExisting: false,
+    });
     ok(res, {
       id: application.id,
       job_id: application.job_id,
       status: application.status,
       created_at: application.created_at,
+    });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /candidate/quickjobs/swipe — Record a Candidate Quick Jobs swipe
+// ---------------------------------------------------------------------------
+// Body: { jobId: string, interested: boolean }
+//
+// interested=true:
+//  - Reuses applyToJobCore so the apply pipeline (application row,
+//    business notification, admin audit, SSE broadcast, mutual-match
+//    check) stays the canonical path. Duplicate applications resolve
+//    silently (applicationCreated=false) instead of throwing 400.
+//  - source_candidate is tagged 'quickjobs' so the resulting match
+//    attributes the candidate side to the swipe surface.
+//
+// interested=false:
+//  - Pass. Silent. No application, no match, no notification. The job
+//    is looked up only to echo businessId in the response so the
+//    Flutter card animation has consistent context for analytics.
+async function quickjobsSwipe(req, res, next) {
+  try {
+    const { jobId, interested } = req.body || {};
+    if (!jobId) throw AppError.badRequest('jobId is required.');
+    if (typeof interested !== 'boolean') {
+      throw AppError.badRequest('interested must be a boolean.');
+    }
+
+    if (!interested) {
+      const job = await db('jobs')
+        .where({ id: jobId })
+        .select('id', 'business_id')
+        .first();
+      ok(res, {
+        success: true,
+        interested: false,
+        applicationCreated: false,
+        matchCreated: false,
+        jobId,
+        businessId: job?.business_id || null,
+      });
+      return;
+    }
+
+    const result = await applyToJobCore({
+      userId: req.user.id,
+      jobId,
+      sourceCandidate: 'quickjobs',
+      returnExisting: true,
+    });
+
+    ok(res, {
+      success: true,
+      interested: true,
+      applicationCreated: result.applicationCreated,
+      matchCreated: result.matchCreated,
+      jobId,
+      businessId: result.job.business_id,
     });
   } catch (err) { next(err); }
 }
@@ -1148,6 +1223,142 @@ async function nearbyJobs(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
+// GET /candidate/quickjobs/deck — Tinder-style swipe deck of jobs
+// ---------------------------------------------------------------------------
+// Returns up to `limit` active jobs the candidate hasn't applied to yet,
+// shaped for the Candidate Quick Jobs UI (mirror of Business Quick Plug).
+//
+// Query params (all optional):
+//  - lat, lng: coordinates. When both are provided we compute a Haversine
+//    distance and hard-filter by `radius` (default 50km, max 500).
+//  - verified_only=true: hard-filter to verified businesses only.
+//  - limit (default 20, max 50).
+//
+// Soft signals — never empty the deck, just reorder:
+//  - role_match: true when the candidate's primary_role/role overlaps
+//    with the job's category or main_role_needed (case-insensitive).
+//  - role_match=true rows surface first, then is_featured, then distance
+//    (when computed), then recency.
+//
+// Always excludes jobs the candidate has already applied to (any
+// non-withdrawn application). Withdrawn ones are eligible again so the
+// candidate can re-discover them.
+async function quickjobsDeck(req, res, next) {
+  try {
+    const { lat, lng, radius, verified_only, limit } = req.query;
+    const cap = Math.min(Math.max(parseInt(limit, 10) || 20, 1), 50);
+
+    const cand = await db('candidates').where({ user_id: req.user.id }).first();
+    if (!cand) throw AppError.badRequest('Please complete your candidate profile first.');
+
+    const hasCoords = lat !== undefined && lng !== undefined && lat !== '' && lng !== '';
+    const userLat = hasCoords ? parseFloat(lat) : null;
+    const userLng = hasCoords ? parseFloat(lng) : null;
+    const radiusKm = hasCoords
+      ? Math.min(Math.max(parseFloat(radius) || 50, 1), 500)
+      : null;
+
+    const candRole = (cand.primary_role || cand.role || '').trim();
+
+    let base = db('jobs')
+      .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
+      .leftJoin('users as biz_users', 'businesses.user_id', 'biz_users.id')
+      .where('jobs.status', 'active')
+      .whereNotExists(function () {
+        this.select('*')
+          .from('applications')
+          .whereRaw('applications.job_id = jobs.id')
+          .where('applications.candidate_id', cand.id)
+          .whereNot('applications.status', 'withdrawn');
+      });
+
+    if (verified_only === 'true' || verified_only === true) {
+      base = base.where('businesses.is_verified', true);
+    }
+
+    const baseSelect = [
+      'jobs.id', 'jobs.title', 'jobs.location', 'jobs.employment_type',
+      'jobs.salary', 'jobs.category', 'jobs.is_featured', 'jobs.is_urgent',
+      'jobs.shift_hours', 'jobs.description', 'jobs.requirements',
+      'jobs.avatar_hue', 'jobs.created_at', 'jobs.main_role_needed',
+      'businesses.id as business_id',
+      'businesses.name as business_name',
+      'businesses.initials as business_initials',
+      'businesses.is_verified as business_verified',
+      'businesses.avatar_hue as business_avatar_hue',
+      'businesses.venue_type as business_venue_type',
+      'biz_users.photo_url as business_photo_url',
+    ];
+
+    let rows;
+    if (hasCoords) {
+      base = base
+        .whereNotNull('jobs.latitude')
+        .whereNotNull('jobs.longitude')
+        .select(...baseSelect, db.raw(HAVERSINE_SELECT, [userLat, userLng, userLat]));
+      const sub = base.as('deck');
+      rows = await db.select('*').from(sub)
+        .where('distance_km', '<=', radiusKm)
+        .orderByRaw('is_featured DESC, distance_km ASC, created_at DESC')
+        .limit(cap);
+    } else {
+      rows = await base.clone()
+        .select(...baseSelect)
+        .orderByRaw('jobs.is_featured DESC, jobs.created_at DESC')
+        .limit(cap);
+    }
+
+    const candRoleLc = candRole.toLowerCase();
+    const data = rows.map((r) => {
+      const title = (r.title || '').toLowerCase();
+      const cat = (r.category || '').toLowerCase();
+      const mainRole = (r.main_role_needed || '').toLowerCase();
+      const overlaps = (a, b) =>
+        a.length > 0 && b.length > 0 && (a.includes(b) || b.includes(a));
+      const roleMatch = candRoleLc.length > 0 && (
+        overlaps(title, candRoleLc) ||
+        overlaps(cat, candRoleLc) ||
+        overlaps(mainRole, candRoleLc)
+      );
+      return {
+        id: r.id,
+        title: r.title || '',
+        location: r.location || '',
+        employment_type: r.employment_type || '',
+        salary: r.salary || '',
+        category: r.category || '',
+        shift_hours: r.shift_hours || '',
+        description: r.description || '',
+        requirements: r.requirements || '',
+        is_featured: !!r.is_featured,
+        is_urgent: !!r.is_urgent,
+        avatar_hue: r.avatar_hue,
+        distance_km: r.distance_km != null ? +Number(r.distance_km).toFixed(1) : null,
+        role_match: roleMatch,
+        business: {
+          id: r.business_id,
+          name: r.business_name || '',
+          initials: r.business_initials || '',
+          verified: !!r.business_verified,
+          venue_type: r.business_venue_type || '',
+          logo_url: r.business_photo_url || null,
+          avatar_hue: r.business_avatar_hue,
+        },
+      };
+    });
+
+    // Stable secondary sort: role_match=true first while preserving the
+    // SQL-imposed order within each group.
+    data.sort((a, b) => {
+      if (a.role_match === b.role_match) return 0;
+      return a.role_match ? -1 : 1;
+    });
+
+    ok(res, data);
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
 // POST /candidate/photo — Upload profile photo (base64)
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -1496,7 +1707,7 @@ module.exports = {
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, archiveConversation,
   updateProfile, uploadPhoto, uploadCV, parseCV,
   listCommunityPosts,
-  nearbyJobs,
+  nearbyJobs, quickjobsDeck, quickjobsSwipe,
   listMatches, submitMatchFeedback, updateMatchStatus,
   listCandidateNotifications, candidateUnreadCount, markCandidateNotifRead, markAllCandidateNotifsRead,
   deleteCandidateNotif, deleteAllCandidateNotifs,
