@@ -47,6 +47,10 @@ router.post('/feedback', c.submitMatchFeedback);
 // Dashboard extras
 router.get('/recent-applicants', c.recentApplicants);
 
+// QuickPlug (Tinder-style swipe deck)
+router.get('/quickplug/deck', c.quickplugDeck);
+router.post('/quickplug/swipe', c.quickplugSwipe);
+
 // Notifications
 router.get('/notifications', c.listNotifications);
 router.patch('/notifications/read-all', c.markAllNotificationsRead);

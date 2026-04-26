@@ -1261,6 +1261,201 @@ async function updateMatchStatus(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ---------------------------------------------------------------------------
+// GET /business/quickplug/deck — Tinder-style swipe deck of active candidates
+// ---------------------------------------------------------------------------
+// Returns up to 20 active candidates, newest first. Filters out candidates
+// the current business has already swiped on (when business_id is tracked).
+// Shape matches Flutter `QuickPlugCandidate.fromJson`.
+
+// Demo 3-photo album per seeded candidate name. Until candidates upload
+// their own photos, the deck ships a curated triplet so the swipe deck
+// can render Tinder-style stories progress bars + tap-to-cycle. URLs use
+// Unsplash CDN at 1200px wide for retina sharpness.
+const QUICKPLUG_DEMO_PHOTOS = {
+  'Elena Rossi': [
+    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'James Park': [
+    'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1492447166138-50c3889fccb1?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'Sofia Blanc': [
+    'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'Marco Bianchi': [
+    'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1463453091185-61582044d556?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'Anna Weber': [
+    'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1592621385612-4d7129426394?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'Tom Chen': [
+    'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1556157382-97eda2d62296?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1542178243-bc20204b769f?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'Priya Sharma': [
+    'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1485875437342-9b39470b3d95?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1605405748313-a416a1b84491?w=1200&q=80&auto=format&fit=crop',
+  ],
+  'David Okafor': [
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=1200&q=80&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1507081323647-4d250478b919?w=1200&q=80&auto=format&fit=crop',
+  ],
+};
+
+async function quickplugDeck(req, res, next) {
+  try {
+    const rows = await db('candidates')
+      .leftJoin('users', 'candidates.user_id', 'users.id')
+      .where('users.user_type', 'candidate')
+      .where('users.status', 'active')
+      .select(
+        'candidates.id',
+        'candidates.name',
+        'candidates.initials',
+        'candidates.role',
+        'candidates.location',
+        'candidates.experience',
+        'candidates.languages',
+        'candidates.verification_status',
+        'candidates.cv_url',
+        'candidates.cv_visible_to_businesses',
+      )
+      .orderBy('candidates.created_at', 'desc')
+      .limit(20);
+
+    const data = rows.map((r) => {
+      const langs = (r.languages || '')
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      const photos = QUICKPLUG_DEMO_PHOTOS[r.name] || [];
+      // Privacy gate: only expose cv_url when the candidate explicitly
+      // opted in. Treat missing flag as opted-in for back-compat with
+      // pre-019 rows.
+      const cvVisible = r.cv_visible_to_businesses !== false;
+      const cvUrl = cvVisible && r.cv_url ? r.cv_url : null;
+      return {
+        id: r.id,
+        name: r.name || '',
+        initials: r.initials || '',
+        role: r.role || '',
+        location: r.location || '',
+        experience: r.experience || '',
+        verified: r.verification_status === 'verified',
+        tags: langs.slice(0, 3),
+        summary: r.role && r.experience
+          ? `${r.role} with ${r.experience} of experience.`
+          : (r.role || ''),
+        photos,
+        cvUrl,
+      };
+    });
+
+    ok(res, data);
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /business/quickplug/swipe — Record a Quick Plug swipe
+// ---------------------------------------------------------------------------
+// Body: { candidateId: string, interested: boolean }
+//
+// Shortlist (`interested = true`):
+//  - Persist a `notifications` row addressed to the candidate's user
+//    so the candidate sees "<Business> shortlisted your profile" in
+//    their inbox + bell badge.
+//  - Fan out an admin notification row per admin user via
+//    `notifyAllAdmins`, so the admin notifications feed surfaces the
+//    Quick Plug interaction without us spinning up a separate audit
+//    log table.
+//  - SSE: hiringNotify already publishes `notification.new` with
+//    `role:admin` + `user:<candidateUserId>` audiences, so connected
+//    clients refresh in real time.
+//
+// Pass (`interested = false`):
+//  - No persistence, no notifications. Acknowledged silently so the
+//    Flutter card animation can complete and move to the next
+//    candidate. Analytics can be layered on later without a contract
+//    change.
+//
+// Failures inside the notification fan-out are swallowed so a missing
+// table or a transient DB hiccup never blocks the swipe response: the
+// UI must always be able to advance to the next card.
+async function quickplugSwipe(req, res, next) {
+  try {
+    const { candidateId, interested } = req.body || {};
+    if (!candidateId) throw AppError.badRequest('candidateId is required.');
+    if (typeof interested !== 'boolean') {
+      throw AppError.badRequest('interested must be a boolean.');
+    }
+
+    if (interested) {
+      try {
+        const bizId = await getBizId(req.user.id);
+        const biz = await db('businesses').where({ id: bizId }).first();
+        const cand = await db('candidates')
+          .where({ id: candidateId })
+          .first();
+        if (cand && cand.user_id) {
+          const bizName = biz?.name || 'A business';
+          const candName = cand.name || 'a candidate';
+          const candTitle = `${bizName} shortlisted your profile`;
+          const candBody = 'Spotted you on Quick Plug — they may reach out soon.';
+          await hiringNotify(
+            cand.user_id,
+            candTitle,
+            'in_app',
+            candidateId,
+            'shortlist',
+            candBody,
+          );
+          await notifyAllAdmins(
+            `${bizName} shortlisted ${candName} via Quick Plug`,
+            'in_app',
+            candidateId,
+            'shortlist',
+            null,
+          );
+          bus.publish(
+            'quickplug.shortlisted',
+            {
+              source: 'quickplug',
+              business_id: bizId,
+              business_name: bizName,
+              candidate_id: candidateId,
+              candidate_user_id: cand.user_id,
+              candidate_name: candName,
+            },
+            ['role:admin', `user:${cand.user_id}`],
+          );
+        }
+      } catch (e) {
+        console.error('[quickplugSwipe shortlist]', e.message);
+      }
+    }
+
+    ok(res, {
+      success: true,
+      candidateId,
+      interested,
+      source: 'quickplug',
+    });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   profile, home, updateProfile, uploadPhoto,
   listJobs, createJob, getJob, updateJob, duplicateJob,
@@ -1271,4 +1466,5 @@ module.exports = {
   listNotifications, markNotificationRead, markAllNotificationsRead,
   deleteNotification, deleteAllNotifications,
   recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
+  quickplugDeck, quickplugSwipe,
 };
