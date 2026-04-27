@@ -3,6 +3,53 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 
+// ---------------------------------------------------------------------------
+// Business Quick Plug daily swipe cap
+// ---------------------------------------------------------------------------
+// Server-side enforced cap on how many candidate cards a business can
+// swipe in a single UTC day. Free businesses only — premium / unlimited
+// tiers will override this via subscription resolution once that feature
+// lands. Mirrors the candidate-side Quick Jobs quota so the two flows
+// share the same source-of-truth pattern.
+//
+// Both interested=true and interested=false swipes count: we want the
+// cap to throttle deck consumption regardless of direction so no one can
+// burn the deck by mass-passing.
+const FREE_DAILY_QUICKPLUG_SWIPE_LIMIT = 5;
+
+// UTC midnight for "today" — matches the index on
+// business_quickplug_swipes(business_id, swiped_at) without leaking
+// per-tenant timezone state into the cap definition.
+function utcDayStart(d = new Date()) {
+  return new Date(Date.UTC(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    0, 0, 0, 0,
+  ));
+}
+
+// Resolves the daily Quick Plug swipe cap for a business. Returns the
+// raw count of swipes consumed today plus the derived remaining /
+// reached fields the deck and swipe endpoints surface to Flutter.
+//
+// Hook point for premium: when business subscriptions ship, branch on
+// the cached subscription tier here and return Infinity (or a large
+// premium cap) instead of FREE_DAILY_QUICKPLUG_SWIPE_LIMIT.
+async function resolveQuickplugSwipeQuota(businessId) {
+  const dailyLimit = FREE_DAILY_QUICKPLUG_SWIPE_LIMIT;
+  const since = utcDayStart();
+  const row = await db('business_quickplug_swipes')
+    .where({ business_id: businessId })
+    .andWhere('swiped_at', '>=', since)
+    .count({ n: '*' })
+    .first();
+  const swipesUsed = parseInt(row?.n, 10) || 0;
+  const swipesRemaining = Math.max(dailyLimit - swipesUsed, 0);
+  const hasReachedLimit = swipesUsed >= dailyLimit;
+  return { dailyLimit, swipesUsed, swipesRemaining, hasReachedLimit };
+}
+
 // Helper: create a hiring notification + emit SSE so every subscribed
 // notifications provider (candidate, business, admin) refreshes its
 // badge + list in real time without a pull-to-refresh.
@@ -1433,6 +1480,7 @@ const QUICKPLUG_DEMO_PHOTOS = {
 
 async function quickplugDeck(req, res, next) {
   try {
+    const bizId = await getBizId(req.user.id);
     const rows = await db('candidates')
       .leftJoin('users', 'candidates.user_id', 'users.id')
       .where('users.user_type', 'candidate')
@@ -1480,7 +1528,12 @@ async function quickplugDeck(req, res, next) {
       };
     });
 
-    ok(res, data);
+    // Daily-swipe quota — server is source of truth. Flutter mirrors
+    // these fields into BusinessQuickPlugProvider and shows the lock
+    // state when hasReachedLimit is true.
+    const quota = await resolveQuickplugSwipeQuota(bizId);
+
+    ok(res, data, quota);
   } catch (err) { next(err); }
 }
 
@@ -1518,9 +1571,39 @@ async function quickplugSwipe(req, res, next) {
       throw AppError.badRequest('interested must be a boolean.');
     }
 
+    const bizId = await getBizId(req.user.id);
+
+    // Quota gate — backend is source of truth. When the cap is reached
+    // we do not insert the swipe row, do not create a shortlist, do not
+    // emit any notifications or SSE events. Flutter renders the lock
+    // state from the returned quota.
+    const preQuota = await resolveQuickplugSwipeQuota(bizId);
+    if (preQuota.hasReachedLimit) {
+      return ok(res, {
+        success: false,
+        candidateId,
+        interested,
+        source: 'quickplug',
+        shortlisted: false,
+        ...preQuota,
+      });
+    }
+
+    // Log this swipe before running the shortlist/match pipeline so the
+    // counter stays consistent even if a downstream step throws.
+    try {
+      await db('business_quickplug_swipes').insert({
+        business_id: bizId,
+        candidate_id: candidateId,
+        interested,
+      });
+    } catch (e) {
+      console.error('[quickplugSwipe log]', e.message);
+    }
+
+    let shortlisted = false;
     if (interested) {
       try {
-        const bizId = await getBizId(req.user.id);
         const biz = await db('businesses').where({ id: bizId }).first();
         const cand = await db('candidates')
           .where({ id: candidateId })
@@ -1528,6 +1611,7 @@ async function quickplugSwipe(req, res, next) {
         if (cand && cand.user_id) {
           const bizName = biz?.name || 'A business';
           const candName = cand.name || 'a candidate';
+          shortlisted = true;
 
           // Persist the business intent so the apply-side flow can
           // detect it later. Idempotent on (business_id, candidate_id).
@@ -1600,11 +1684,18 @@ async function quickplugSwipe(req, res, next) {
       }
     }
 
+    // Re-resolve quota AFTER the insert so Flutter gets the post-swipe
+    // counters in a single round-trip — keeps provider state in lockstep
+    // with the server without a follow-up deck call.
+    const postQuota = await resolveQuickplugSwipeQuota(bizId);
+
     ok(res, {
       success: true,
       candidateId,
       interested,
       source: 'quickplug',
+      shortlisted,
+      ...postQuota,
     });
   } catch (err) { next(err); }
 }
