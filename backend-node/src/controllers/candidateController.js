@@ -3,6 +3,51 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 
+// ---------------------------------------------------------------------------
+// Candidate Quick Jobs daily swipe cap
+// ---------------------------------------------------------------------------
+// Server-side enforced cap on how many cards a candidate can swipe in a
+// single UTC day. Free candidates only — premium / unlimited tiers will
+// override this via subscription resolution once that feature lands.
+//
+// Both interested=true and interested=false swipes count: we want the
+// cap to throttle deck consumption regardless of direction so no one can
+// burn the deck by mass-passing.
+const FREE_DAILY_QUICKJOB_SWIPE_LIMIT = 5;
+
+// UTC midnight for "today" — matches the index on
+// candidate_quickjob_swipes(candidate_id, swiped_at) without leaking
+// per-tenant timezone state into the cap definition.
+function utcDayStart(d = new Date()) {
+  return new Date(Date.UTC(
+    d.getUTCFullYear(),
+    d.getUTCMonth(),
+    d.getUTCDate(),
+    0, 0, 0, 0,
+  ));
+}
+
+// Resolves the daily Quick Jobs swipe cap for a candidate. Returns the
+// raw count of swipes consumed today plus the derived remaining /
+// reached fields the deck and swipe endpoints surface to Flutter.
+//
+// Hook point for premium: when candidate subscriptions ship, branch on
+// the cached subscription tier here and return Infinity (or a large
+// premium cap) instead of FREE_DAILY_QUICKJOB_SWIPE_LIMIT.
+async function resolveQuickjobSwipeQuota(candidateId) {
+  const dailyLimit = FREE_DAILY_QUICKJOB_SWIPE_LIMIT;
+  const since = utcDayStart();
+  const row = await db('candidate_quickjob_swipes')
+    .where({ candidate_id: candidateId })
+    .andWhere('swiped_at', '>=', since)
+    .count({ n: '*' })
+    .first();
+  const swipesUsed = parseInt(row?.n, 10) || 0;
+  const swipesRemaining = Math.max(dailyLimit - swipesUsed, 0);
+  const hasReachedLimit = swipesUsed >= dailyLimit;
+  return { dailyLimit, swipesUsed, swipesRemaining, hasReachedLimit };
+}
+
 // Helper: create a hiring notification + emit SSE so every subscribed
 // notifications provider (candidate, business, admin) refreshes its
 // badge + list in real time without a pull-to-refresh.
@@ -574,11 +619,46 @@ async function quickjobsSwipe(req, res, next) {
       throw AppError.badRequest('interested must be a boolean.');
     }
 
+    const cand = await db('candidates').where({ user_id: req.user.id }).first();
+    if (!cand) throw AppError.badRequest('Please complete your candidate profile first.');
+
+    // Enforce the daily cap before doing any work — no apply pipeline,
+    // no log row, no notification when the candidate is over budget.
+    // Flutter renders the lock state from the returned quota fields.
+    const quotaBefore = await resolveQuickjobSwipeQuota(cand.id);
+    if (quotaBefore.hasReachedLimit) {
+      ok(res, {
+        success: false,
+        interested,
+        applicationCreated: false,
+        matchCreated: false,
+        jobId,
+        businessId: null,
+        hasReachedLimit: true,
+        dailyLimit: quotaBefore.dailyLimit,
+        swipesUsed: quotaBefore.swipesUsed,
+        swipesRemaining: 0,
+      });
+      return;
+    }
+
+    // Log the swipe against the daily cap. Both directions count so the
+    // candidate cannot bypass the limit by mass-passing. Failure here
+    // must NOT block the swipe pipeline: best-effort insert.
+    try {
+      await db('candidate_quickjob_swipes').insert({
+        candidate_id: cand.id,
+        job_id: jobId,
+        interested,
+      });
+    } catch (e) { /* best-effort */ }
+
     if (!interested) {
       const job = await db('jobs')
         .where({ id: jobId })
         .select('id', 'business_id')
         .first();
+      const quotaAfter = await resolveQuickjobSwipeQuota(cand.id);
       ok(res, {
         success: true,
         interested: false,
@@ -586,6 +666,10 @@ async function quickjobsSwipe(req, res, next) {
         matchCreated: false,
         jobId,
         businessId: job?.business_id || null,
+        hasReachedLimit: quotaAfter.hasReachedLimit,
+        dailyLimit: quotaAfter.dailyLimit,
+        swipesUsed: quotaAfter.swipesUsed,
+        swipesRemaining: quotaAfter.swipesRemaining,
       });
       return;
     }
@@ -597,6 +681,7 @@ async function quickjobsSwipe(req, res, next) {
       returnExisting: true,
     });
 
+    const quotaAfter = await resolveQuickjobSwipeQuota(cand.id);
     ok(res, {
       success: true,
       interested: true,
@@ -604,6 +689,10 @@ async function quickjobsSwipe(req, res, next) {
       matchCreated: result.matchCreated,
       jobId,
       businessId: result.job.business_id,
+      hasReachedLimit: quotaAfter.hasReachedLimit,
+      dailyLimit: quotaAfter.dailyLimit,
+      swipesUsed: quotaAfter.swipesUsed,
+      swipesRemaining: quotaAfter.swipesRemaining,
     });
   } catch (err) { next(err); }
 }
@@ -1354,7 +1443,12 @@ async function quickjobsDeck(req, res, next) {
       return a.role_match ? -1 : 1;
     });
 
-    ok(res, data);
+    // Daily-swipe quota — server is source of truth. Flutter mirrors
+    // these fields into CandidateQuickJobsProvider and shows the lock
+    // state when hasReachedLimit is true.
+    const quota = await resolveQuickjobSwipeQuota(cand.id);
+
+    ok(res, data, quota);
   } catch (err) { next(err); }
 }
 
