@@ -1615,46 +1615,54 @@ async function quickplugSwipe(req, res, next) {
 
           // Persist the business intent so the apply-side flow can
           // detect it later. Idempotent on (business_id, candidate_id).
+          // returning() lets us distinguish a brand-new shortlist from an
+          // already-existing one so the notification fan-out below only
+          // fires once per (business, candidate) pair.
+          let wasNewlyShortlisted = false;
           try {
-            await db('quickplug_shortlists')
+            const inserted = await db('quickplug_shortlists')
               .insert({
                 business_id: bizId,
                 candidate_id: candidateId,
                 source: 'quickplug',
               })
               .onConflict(['business_id', 'candidate_id'])
-              .ignore();
+              .ignore()
+              .returning(['id']);
+            wasNewlyShortlisted = Array.isArray(inserted) && inserted.length > 0;
           } catch (e) {
             console.error('[quickplugSwipe shortlist persist]', e.message);
           }
 
-          await hiringNotify(
-            cand.user_id,
-            `${bizName} shortlisted your profile`,
-            'in_app',
-            candidateId,
-            'shortlist',
-            'Spotted you on Quick Plug — they may reach out soon.',
-          );
-          await notifyAllAdmins(
-            `${bizName} shortlisted ${candName} via Quick Plug`,
-            'in_app',
-            candidateId,
-            'shortlist',
-            null,
-          );
-          bus.publish(
-            'quickplug.shortlisted',
-            {
-              source: 'quickplug',
-              business_id: bizId,
-              business_name: bizName,
-              candidate_id: candidateId,
-              candidate_user_id: cand.user_id,
-              candidate_name: candName,
-            },
-            ['role:admin', `user:${cand.user_id}`],
-          );
+          if (wasNewlyShortlisted) {
+            await hiringNotify(
+              cand.user_id,
+              `${bizName} shortlisted your profile`,
+              'in_app',
+              candidateId,
+              'shortlist',
+              'Spotted you on Quick Plug — they may reach out soon.',
+            );
+            await notifyAllAdmins(
+              `${bizName} shortlisted ${candName} via Quick Plug`,
+              'in_app',
+              candidateId,
+              'shortlist',
+              null,
+            );
+            bus.publish(
+              'quickplug.shortlisted',
+              {
+                source: 'quickplug',
+                business_id: bizId,
+                business_name: bizName,
+                candidate_id: candidateId,
+                candidate_user_id: cand.user_id,
+                candidate_name: candName,
+              },
+              ['role:admin', `user:${cand.user_id}`],
+            );
+          }
 
           // Mutual match check — if the candidate has already applied
           // to one or more of this business's jobs, create a match per
