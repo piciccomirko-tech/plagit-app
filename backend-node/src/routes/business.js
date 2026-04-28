@@ -51,6 +51,9 @@ router.get('/recent-applicants', c.recentApplicants);
 router.get('/quickplug/deck', c.quickplugDeck);
 router.post('/quickplug/swipe', c.quickplugSwipe);
 
+// Subscription
+router.get('/subscription', c.subscription);
+
 // Notifications
 router.get('/notifications', c.listNotifications);
 router.patch('/notifications/read-all', c.markAllNotificationsRead);

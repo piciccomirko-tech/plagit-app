@@ -28,6 +28,29 @@ function resolvePlanLimit(plan) {
   return PLAN_QUOTA_MAP[key] ?? PLAN_QUOTA_MAP.free;
 }
 
+// Maps the full product-string form stored in users.subscription_plan
+// (e.g. 'business_pro_monthly', 'business_premium_annual') to the simple
+// tier name Flutter's BusinessSubscriptionPlan enum understands. Direct
+// simple tier strings pass through; anything unknown falls back to free.
+// Keep aligned with the IAP product IDs in subscriptionController.js.
+function normalizeBusinessPlan(rawPlan) {
+  const s = (rawPlan || 'free').toString().toLowerCase().trim();
+  if (!s || s === 'free' || s === 'none' || s === 'inactive') return 'free';
+  if (s.includes('premium')) return 'premium';
+  if (s.includes('pro')) return 'pro';
+  if (s.includes('basic')) return 'basic';
+  return 'free';
+}
+
+// Active job posting cap, mirrors PLAN_QUOTA_MAP. Surfaced for forward
+// gating; not enforced server-side yet (no migration touched in Step C).
+const PLAN_JOB_LIMIT_MAP = {
+  free: 1,
+  basic: 3,
+  pro: 10,
+  premium: 999,
+};
+
 // UTC midnight for "today" — matches the index on
 // business_quickplug_swipes(business_id, swiped_at) without leaking
 // per-tenant timezone state into the cap definition.
@@ -391,6 +414,63 @@ async function home(req, res, next) {
       recentApplicants: recentApplicantsList,
       next_interview: nextInterview,
       unread_messages: unreadMessages,
+    });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// GET /business/subscription — Plan + derived limits for the auth'd business
+// ---------------------------------------------------------------------------
+// Reads users.subscription_plan / status / expires for the current user and
+// returns a Flutter-shaped payload (camelCase, simple tier strings, derived
+// limits). Read-only and idempotent; safe to hit on every login. Falls back
+// to 'free' when the row or columns are missing so the Flutter UI never
+// hits a 404 path post Step C.
+async function subscription(req, res, next) {
+  try {
+    const user = await db('users')
+      .where({ id: req.user.id })
+      .select(
+        'subscription_plan',
+        'subscription_status',
+        'subscription_expires',
+        'subscription_product_id',
+        'created_at',
+      )
+      .first();
+
+    let rawPlan = user?.subscription_plan || 'free';
+    let status = user?.subscription_status || 'inactive';
+    const expires = user?.subscription_expires || null;
+
+    // Mirror the grace-period logic from /v1/subscription/status without
+    // writing back to the DB: that endpoint is the writer, this one is
+    // read-only and called frequently from Flutter.
+    if (expires && new Date(expires) < new Date()) {
+      const graceEnd = new Date(new Date(expires).getTime() + 7 * 24 * 60 * 60 * 1000);
+      const now = new Date();
+      if (now < graceEnd && status === 'active') {
+        status = 'grace';
+      } else {
+        status = 'expired';
+        rawPlan = 'free';
+      }
+    }
+
+    const plan = normalizeBusinessPlan(rawPlan);
+    const dailyQuickPlugLimit = PLAN_QUOTA_MAP[plan] ?? PLAN_QUOTA_MAP.free;
+    const activeJobLimit = PLAN_JOB_LIMIT_MAP[plan] ?? PLAN_JOB_LIMIT_MAP.free;
+
+    ok(res, {
+      plan,
+      status,
+      dailyQuickPlugLimit,
+      activeJobLimit,
+      isPro: plan === 'pro',
+      isPremium: plan === 'premium',
+      startDate: user?.created_at ? new Date(user.created_at).toISOString() : null,
+      renewalDate: expires ? new Date(expires).toISOString() : null,
+      productId: user?.subscription_product_id || null,
     });
   } catch (err) { next(err); }
 }
@@ -1766,5 +1846,6 @@ module.exports = {
   deleteNotification, deleteAllNotifications,
   recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
   quickplugDeck, quickplugSwipe,
+  subscription,
   tryCreateMutualMatch,
 };
