@@ -2,8 +2,12 @@ const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 const c = require('../controllers/businessController');
 const boost = require('../controllers/businessBoostController');
+const catalog = require('../controllers/productCatalogController');
 
 router.use(authenticate);
+
+// Product catalog (Step 4 — read-only, always on)
+router.get('/job-products', catalog.listJobProducts);
 
 // Profile & Dashboard
 router.get('/profile', c.profile);
