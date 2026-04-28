@@ -5,6 +5,7 @@ const wallet = require('../controllers/adminWalletController');
 router.use(authenticate, requireAdmin);
 router.get('/', c.list);
 router.get('/:id', c.get);
+router.get('/:id/wallet', wallet.getWallet);
 router.patch('/:id/status', c.updateStatus);
 router.patch('/:id/verify', c.setVerified);
 router.patch('/:id/featured', c.setFeatured);
