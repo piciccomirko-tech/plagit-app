@@ -9,11 +9,13 @@
  * flag at runtime can require this module and mutate the exported
  * object — the controller code reads the live value on each request.
  *
- * | env var                  | exported key      | behaviour when ON                          |
- * |--------------------------|-------------------|--------------------------------------------|
- * | BOOST_RANKING_ENABLED    | rankingEnabled    | jobRanking.rankJobs() applies the formula  |
- * | BOOST_RANKING_LOG        | rankingLog        | rankJobs() logs the per-job breakdown      |
- * | BOOST_CRON_ENABLED       | cronEnabled       | cron registry boots its scheduled jobs     |
+ * | env var                   | exported key       | behaviour when ON                                |
+ * |---------------------------|--------------------|--------------------------------------------------|
+ * | BOOST_RANKING_ENABLED     | rankingEnabled     | jobRanking.rankJobs() applies the formula        |
+ * | BOOST_RANKING_LOG         | rankingLog         | rankJobs() logs the per-job breakdown            |
+ * | BOOST_CRON_ENABLED        | cronEnabled        | cron registry boots its scheduled jobs           |
+ * | BOOST_ACTIVATION_ENABLED  | activationEnabled  | admin/business boost activation endpoints accept |
+ *                                                   | requests; OFF returns 503 BOOST_ACTIVATION_OFF   |
  */
 
 function asBool(value, fallback = false) {
@@ -23,9 +25,10 @@ function asBool(value, fallback = false) {
 }
 
 const flags = {
-  rankingEnabled: asBool(process.env.BOOST_RANKING_ENABLED, false),
-  rankingLog:     asBool(process.env.BOOST_RANKING_LOG,     false),
-  cronEnabled:    asBool(process.env.BOOST_CRON_ENABLED,    false),
+  rankingEnabled:    asBool(process.env.BOOST_RANKING_ENABLED,    false),
+  rankingLog:        asBool(process.env.BOOST_RANKING_LOG,        false),
+  cronEnabled:       asBool(process.env.BOOST_CRON_ENABLED,       false),
+  activationEnabled: asBool(process.env.BOOST_ACTIVATION_ENABLED, false),
 };
 
 module.exports = flags;

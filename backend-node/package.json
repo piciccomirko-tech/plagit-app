@@ -15,7 +15,7 @@
     "seed": "npx knex seed:run",
     "seed:prod": "NODE_ENV=production npx knex seed:run",
     "db:setup": "npx knex migrate:latest && npx knex seed:run",
-    "test": "node --test tests/"
+    "test": "node --test \"tests/**/*.test.js\""
   },
   "keywords": [],
   "author": "",

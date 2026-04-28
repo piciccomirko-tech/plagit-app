@@ -23,6 +23,7 @@ const PRODUCTS = [
     boost_priority: 25,
     duration_hours: 24,
     price_minor: 499,
+    credits_cost: 1,
     sort_order: 10,
   },
   {
@@ -33,6 +34,7 @@ const PRODUCTS = [
     boost_priority: 30,
     duration_hours: 72,
     price_minor: 999,
+    credits_cost: 2,
     sort_order: 11,
   },
   {
@@ -43,6 +45,7 @@ const PRODUCTS = [
     boost_priority: 35,
     duration_hours: 168,
     price_minor: 1499,
+    credits_cost: 3,
     sort_order: 12,
   },
 
@@ -55,6 +58,7 @@ const PRODUCTS = [
     boost_priority: 60,
     duration_hours: 24,
     price_minor: 499,
+    credits_cost: 1,
     sort_order: 20,
   },
   {
@@ -65,6 +69,7 @@ const PRODUCTS = [
     boost_priority: 70,
     duration_hours: 72,
     price_minor: 999,
+    credits_cost: 2,
     sort_order: 21,
   },
   {
@@ -75,6 +80,7 @@ const PRODUCTS = [
     boost_priority: 80,
     duration_hours: 168,
     price_minor: 1999,
+    credits_cost: 4,
     sort_order: 22,
   },
 
@@ -87,6 +93,7 @@ const PRODUCTS = [
     boost_priority: 50,
     duration_hours: 168, // featured runs 7d by default
     price_minor: 999,
+    credits_cost: 2,
     sort_order: 30,
   },
 
@@ -99,12 +106,15 @@ const PRODUCTS = [
     boost_priority: 0,
     duration_hours: 168,
     price_minor: 2999,
+    credits_cost: 5,
     is_bundle: true,
     bundle_contents: 'urgent_7d + top_7d + featured',
     sort_order: 40,
   },
 
   // ── Credit Packs (non-boost products) ──────────────────────────────
+  // credits_cost is irrelevant for credit-pack products (they grant, not consume),
+  // but we keep DEFAULT 1 from the migration to satisfy NOT NULL.
   {
     code: 'credit_3',
     name: 'Credit Pack — 3 credits',
@@ -114,6 +124,7 @@ const PRODUCTS = [
     duration_hours: null,
     price_minor: 3499,
     credits_granted: 3,
+    credits_cost: 1,
     sort_order: 50,
   },
   {
@@ -125,6 +136,7 @@ const PRODUCTS = [
     duration_hours: null,
     price_minor: 4999,
     credits_granted: 5,
+    credits_cost: 1,
     sort_order: 51,
   },
   {
@@ -136,6 +148,7 @@ const PRODUCTS = [
     duration_hours: null,
     price_minor: 7499,
     credits_granted: 10,
+    credits_cost: 1,
     sort_order: 52,
   },
 ];
@@ -155,6 +168,7 @@ exports.seed = async function (knex) {
       google_product_id: null,
       stripe_price_id: null,
       credits_granted: p.credits_granted || 0,
+      credits_cost: p.credits_cost ?? 1,
       is_bundle: !!p.is_bundle,
       bundle_contents: p.bundle_contents || null,
       is_active: true,
@@ -174,6 +188,7 @@ exports.seed = async function (knex) {
         price_minor: row.price_minor,
         currency: row.currency,
         credits_granted: row.credits_granted,
+        credits_cost: row.credits_cost,
         is_bundle: row.is_bundle,
         bundle_contents: row.bundle_contents,
         is_active: row.is_active,

@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 const c = require('../controllers/businessController');
+const boost = require('../controllers/businessBoostController');
 
 router.use(authenticate);
 
@@ -17,6 +18,10 @@ router.get('/jobs/:id', c.getJob);
 router.patch('/jobs/:id', c.updateJob);
 router.post('/jobs/:id/duplicate', c.duplicateJob);
 router.get('/jobs/:id/applicants', c.listApplicants);
+
+// Boost activation (Step 3 — flag-gated by BOOST_ACTIVATION_ENABLED)
+router.post('/jobs/:id/use-credit-boost', boost.useCreditBoost);
+router.get('/jobs/:id/boost-status', boost.boostStatus);
 
 // Applicants
 router.patch('/applicants/:id/status', c.updateApplicantStatus);
