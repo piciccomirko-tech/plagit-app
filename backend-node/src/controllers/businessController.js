@@ -42,14 +42,27 @@ function normalizeBusinessPlan(rawPlan) {
   return 'free';
 }
 
-// Active job posting cap, mirrors PLAN_QUOTA_MAP. Surfaced for forward
-// gating; not enforced server-side yet (no migration touched in Step C).
+// Active job posting cap, mirrors PLAN_QUOTA_MAP. Enforced in createJob
+// (Step D) by counting jobs.status='active' for the business and rejecting
+// the insert before it touches the table when the cap is reached.
 const PLAN_JOB_LIMIT_MAP = {
   free: 1,
-  basic: 3,
+  basic: 1,
   pro: 10,
   premium: 999,
 };
+
+// Resolves the active-job cap for the current user's plan. Mirrors the
+// shape of resolveQuickplugSwipeQuota so call sites read the same way.
+async function resolveBusinessJobLimit(userId) {
+  const user = await db('users')
+    .where({ id: userId })
+    .select('subscription_plan')
+    .first();
+  const plan = normalizeBusinessPlan(user?.subscription_plan);
+  const activeJobLimit = PLAN_JOB_LIMIT_MAP[plan] ?? PLAN_JOB_LIMIT_MAP.free;
+  return { plan, activeJobLimit };
+}
 
 // UTC midnight for "today" — matches the index on
 // business_quickplug_swipes(business_id, swiped_at) without leaking
@@ -515,6 +528,30 @@ async function createJob(req, res, next) {
             description, requirements, is_urgent, num_hires, start_date, end_date, shift_hours,
             open_to_international } = req.body;
     if (!title) throw AppError.badRequest('Job title is required.');
+
+    // Plan-aware active job cap (Step D). Counts only jobs.status='active'
+    // — paused / closed jobs don't count toward the cap, and existing
+    // active jobs above-cap are grandfathered in (the cap blocks new
+    // inserts, never the existing rows). Returns a structured 403 with
+    // code=JOB_LIMIT_REACHED so Flutter can render a tailored upgrade CTA
+    // instead of a generic error toast.
+    const { plan, activeJobLimit } = await resolveBusinessJobLimit(req.user.id);
+    const activeRow = await db('jobs')
+      .where({ business_id: bizId, status: 'active' })
+      .count({ n: '*' })
+      .first();
+    const activeJobCount = parseInt(activeRow?.n, 10) || 0;
+    if (activeJobCount >= activeJobLimit) {
+      return res.status(403).json({
+        error: 'Upgrade your plan to post more active jobs.',
+        code: 'JOB_LIMIT_REACHED',
+        message: 'Upgrade your plan to post more active jobs.',
+        activeJobLimit,
+        activeJobCount,
+        plan,
+      });
+    }
+
     const avatarHue = Math.random() * 0.8 + 0.1;
     const [job] = await db('jobs').insert({
       business_id: bizId, title, location: location || null,
