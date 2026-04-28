@@ -2,6 +2,7 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
+const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 
 // ---------------------------------------------------------------------------
 // Business Quick Plug daily swipe cap
@@ -1495,6 +1496,18 @@ const QUICKPLUG_DEMO_PHOTOS = {
 async function quickplugDeck(req, res, next) {
   try {
     const bizId = await getBizId(req.user.id);
+
+    // Pull all of this business's active jobs once. Each candidate is
+    // ranked against the *best fit* job in this set so a Quick Plug
+    // swipe surfaces the relevant candidate→job pairing without making
+    // the business pick a job per swipe.
+    const businessJobs = await db('jobs')
+      .where({ business_id: bizId, status: 'active' })
+      .select(
+        'id', 'title', 'main_role_needed', 'additional_roles_needed',
+        'location', 'employment_type', 'salary', 'requirements',
+      );
+
     const rows = await db('candidates')
       .leftJoin('users', 'candidates.user_id', 'users.id')
       .where('users.user_type', 'candidate')
@@ -1504,8 +1517,14 @@ async function quickplugDeck(req, res, next) {
         'candidates.name',
         'candidates.initials',
         'candidates.role',
+        'candidates.primary_role',
+        'candidates.additional_roles',
         'candidates.location',
+        'candidates.country_code',
         'candidates.experience',
+        'candidates.job_type',
+        'candidates.start_date',
+        'candidates.available_to_relocate',
         'candidates.languages',
         'candidates.verification_status',
         'candidates.cv_url',
@@ -1525,6 +1544,9 @@ async function quickplugDeck(req, res, next) {
       // pre-019 rows.
       const cvVisible = r.cv_visible_to_businesses !== false;
       const cvUrl = cvVisible && r.cv_url ? r.cv_url : null;
+
+      const match = scoreCandidateAgainstBusinessJobs(r, businessJobs);
+
       return {
         id: r.id,
         name: r.name || '',
@@ -1539,8 +1561,19 @@ async function quickplugDeck(req, res, next) {
           : (r.role || ''),
         photos,
         cvUrl,
+        match_score: match.score,
+        match_level: match.level,
+        match_reasons: match.reasons,
+        top_match_reason: match.topReason,
+        best_job_id: match.bestJobId,
+        best_job_title: match.bestJobTitle,
       };
     });
+
+    // Re-rank by match score so the strongest candidate→job fit is
+    // shown first. SQL's recency ordering remains the tiebreaker
+    // implicitly via stable sort.
+    data.sort((a, b) => b.match_score - a.match_score);
 
     // Daily-swipe quota — server is source of truth. Flutter mirrors
     // these fields into BusinessQuickPlugProvider and shows the lock

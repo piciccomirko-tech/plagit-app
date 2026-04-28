@@ -2,6 +2,7 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
+const { scoreCandidateForJob } = require('../services/matchScoring');
 
 // ---------------------------------------------------------------------------
 // Candidate Quick Jobs daily swipe cap
@@ -1361,8 +1362,6 @@ async function quickjobsDeck(req, res, next) {
       ? Math.min(Math.max(parseFloat(radius) || 50, 1), 500)
       : null;
 
-    const candRole = (cand.primary_role || cand.role || '').trim();
-
     let base = db('jobs')
       .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
       .leftJoin('users as biz_users', 'businesses.user_id', 'biz_users.id')
@@ -1384,6 +1383,7 @@ async function quickjobsDeck(req, res, next) {
       'jobs.salary', 'jobs.category', 'jobs.is_featured', 'jobs.is_urgent',
       'jobs.shift_hours', 'jobs.description', 'jobs.requirements',
       'jobs.avatar_hue', 'jobs.created_at', 'jobs.main_role_needed',
+      'jobs.additional_roles_needed',
       'businesses.id as business_id',
       'businesses.name as business_name',
       'businesses.initials as business_initials',
@@ -1411,18 +1411,18 @@ async function quickjobsDeck(req, res, next) {
         .limit(cap);
     }
 
-    const candRoleLc = candRole.toLowerCase();
     const data = rows.map((r) => {
-      const title = (r.title || '').toLowerCase();
-      const cat = (r.category || '').toLowerCase();
-      const mainRole = (r.main_role_needed || '').toLowerCase();
-      const overlaps = (a, b) =>
-        a.length > 0 && b.length > 0 && (a.includes(b) || b.includes(a));
-      const roleMatch = candRoleLc.length > 0 && (
-        overlaps(title, candRoleLc) ||
-        overlaps(cat, candRoleLc) ||
-        overlaps(mainRole, candRoleLc)
-      );
+      const jobShape = {
+        id: r.id,
+        title: r.title,
+        main_role_needed: r.main_role_needed,
+        additional_roles_needed: r.additional_roles_needed,
+        location: r.location,
+        employment_type: r.employment_type,
+        salary: r.salary,
+        requirements: r.requirements,
+      };
+      const match = scoreCandidateForJob(cand, jobShape);
       return {
         id: r.id,
         title: r.title || '',
@@ -1437,7 +1437,14 @@ async function quickjobsDeck(req, res, next) {
         is_urgent: !!r.is_urgent,
         avatar_hue: r.avatar_hue,
         distance_km: r.distance_km != null ? +Number(r.distance_km).toFixed(1) : null,
-        role_match: roleMatch,
+        // Legacy soft signal — kept for back-compat with older Flutter
+        // builds that still read role_match. New builds should use
+        // match_score / match_level instead.
+        role_match: match.breakdown.role >= 25,
+        match_score: match.score,
+        match_level: match.level,
+        match_reasons: match.reasons,
+        top_match_reason: match.topReason,
         business: {
           id: r.business_id,
           name: r.business_name || '',
@@ -1450,11 +1457,16 @@ async function quickjobsDeck(req, res, next) {
       };
     });
 
-    // Stable secondary sort: role_match=true first while preserving the
-    // SQL-imposed order within each group.
+    // Primary order: matchScore DESC. Featured / distance / recency
+    // remain influential because the upstream SQL already ordered the
+    // candidate set; we re-rank that set by score so unrelated jobs
+    // sink to the bottom regardless of how recent or featured they
+    // are. Stable tiebreaker on featured to preserve distance/recency
+    // ordering within the same score bucket.
     data.sort((a, b) => {
-      if (a.role_match === b.role_match) return 0;
-      return a.role_match ? -1 : 1;
+      if (b.match_score !== a.match_score) return b.match_score - a.match_score;
+      if (b.is_featured !== a.is_featured) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+      return 0;
     });
 
     // Daily-swipe quota — server is source of truth. Flutter mirrors
