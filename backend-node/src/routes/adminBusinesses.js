@@ -1,11 +1,13 @@
 const router = require('express').Router();
 const { authenticate, requireAdmin } = require('../middleware/auth');
 const c = require('../controllers/adminBusinessesController');
+const wallet = require('../controllers/adminWalletController');
 router.use(authenticate, requireAdmin);
 router.get('/', c.list);
 router.get('/:id', c.get);
 router.patch('/:id/status', c.updateStatus);
 router.patch('/:id/verify', c.setVerified);
 router.patch('/:id/featured', c.setFeatured);
+router.post('/:id/grant-credits', wallet.grantCredits);
 router.delete('/:id', c.remove);
 module.exports = router;
