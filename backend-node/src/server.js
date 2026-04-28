@@ -3,6 +3,7 @@ const app = require('./app');
 const db = require('./config/db');
 const pushSubscriber = require('./services/push/subscriber');
 const { MODE: PUSH_MODE } = require('./services/push/pushSender');
+const cronRegistry = require('./cron');
 
 const PORT = process.env.PORT || 3000;
 
@@ -14,6 +15,10 @@ app.listen(PORT, '0.0.0.0', () => {
 
   // Realtime push fan-out: hook bus events → registered device tokens.
   pushSubscriber.start();
+
+  // Boost expiry + visibility score recompute. No-op when
+  // BOOST_CRON_ENABLED is OFF, so production stays untouched.
+  cronRegistry.startIfEnabled();
 
   // Verify DB connection
   db.raw('SELECT 1')

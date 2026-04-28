@@ -3,6 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { scoreCandidateForJob } = require('../services/matchScoring');
+const { rankJobs } = require('../services/jobRanking');
 
 // ---------------------------------------------------------------------------
 // Candidate Quick Jobs daily swipe cap
@@ -427,17 +428,21 @@ async function listJobs(req, res, next) {
         'jobs.salary', 'jobs.category', 'jobs.is_featured', 'jobs.avatar_hue',
         'jobs.created_at', 'jobs.open_to_international',
         'jobs.is_urgent', 'jobs.shift_hours',
+        'jobs.boost_status', 'jobs.boost_type', 'jobs.visibility_score',
         'businesses.id as business_id', 'businesses.name as business_name',
         'businesses.initials as business_initials',
         'businesses.is_verified as business_verified',
         'businesses.avatar_hue as business_avatar_hue',
         'biz_users.photo_url as business_photo_url'
       )
-      // Pre-TestFlight order: newest active job first. The list endpoint
-      // has no per-candidate matchScore, so postedAt DESC is the canonical
-      // sort. Featured stays as a visible badge on the card but no longer
-      // pushes older jobs above brand-new postings.
-      .orderBy('jobs.created_at', 'desc')
+      // Pre-TestFlight order: visibility_score DESC, then newest active
+      // job. visibility_score is recomputed by the boost cron (see
+      // services/visibilityScoreRecalc.js) and bakes in boost priority,
+      // freshness and stale/expiry penalties; jobs without a meaningful
+      // score (cron not run yet, or all zeros) collapse to created_at.
+      // The list endpoint is candidate-AGNOSTIC so we cannot apply the
+      // per-match rankJobs() here without page-level re-sort artefacts.
+      .orderByRaw('jobs.visibility_score DESC NULLS LAST, jobs.created_at DESC')
       .limit(+limit)
       .offset((+page - 1) * +limit);
 
@@ -1388,6 +1393,9 @@ async function quickjobsDeck(req, res, next) {
       'jobs.shift_hours', 'jobs.description', 'jobs.requirements',
       'jobs.avatar_hue', 'jobs.created_at', 'jobs.main_role_needed',
       'jobs.additional_roles_needed',
+      'jobs.expiry_date',
+      'jobs.boost_status', 'jobs.boost_type', 'jobs.boost_priority',
+      'jobs.boost_starts_at',
       'businesses.id as business_id',
       'businesses.name as business_name',
       'businesses.initials as business_initials',
@@ -1415,7 +1423,11 @@ async function quickjobsDeck(req, res, next) {
         .limit(cap);
     }
 
-    const data = rows.map((r) => {
+    // Phase 1 — score each row and attach the per-candidate match
+    // signals straight onto the SQL row object. We keep the original
+    // row shape so rankJobs() can read boost_*, created_at, expiry_date
+    // directly without us having to re-marshal.
+    const enriched = rows.map((r) => {
       const jobShape = {
         id: r.id,
         title: r.title,
@@ -1428,50 +1440,70 @@ async function quickjobsDeck(req, res, next) {
       };
       const match = scoreCandidateForJob(cand, jobShape);
       return {
-        id: r.id,
-        title: r.title || '',
-        location: r.location || '',
-        employment_type: r.employment_type || '',
-        salary: r.salary || '',
-        category: r.category || '',
-        shift_hours: r.shift_hours || '',
-        description: r.description || '',
-        requirements: r.requirements || '',
-        is_featured: !!r.is_featured,
-        is_urgent: !!r.is_urgent,
-        avatar_hue: r.avatar_hue,
-        distance_km: r.distance_km != null ? +Number(r.distance_km).toFixed(1) : null,
-        // Legacy soft signal — kept for back-compat with older Flutter
-        // builds that still read role_match. New builds should use
-        // match_score / match_level instead.
-        role_match: match.breakdown.role >= 25,
+        ...r,
         match_score: match.score,
         match_level: match.level,
         match_reasons: match.reasons,
         top_match_reason: match.topReason,
-        business: {
-          id: r.business_id,
-          name: r.business_name || '',
-          initials: r.business_initials || '',
-          verified: !!r.business_verified,
-          venue_type: r.business_venue_type || '',
-          logo_url: r.business_photo_url || null,
-          avatar_hue: r.business_avatar_hue,
-        },
+        role_match: match.breakdown.role >= 25,
       };
     });
 
-    // Primary order: matchScore DESC. Featured / distance / recency
-    // remain influential because the upstream SQL already ordered the
-    // candidate set; we re-rank that set by score so unrelated jobs
-    // sink to the bottom regardless of how recent or featured they
-    // are. Stable tiebreaker on featured to preserve distance/recency
-    // ordering within the same score bucket.
-    data.sort((a, b) => {
-      if (b.match_score !== a.match_score) return b.match_score - a.match_score;
-      if (b.is_featured !== a.is_featured) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
-      return 0;
-    });
+    // Phase 2 — boost-aware re-rank. When BOOST_RANKING_ENABLED is OFF
+    // (production default) rankJobs() is a pure pass-through and the
+    // legacy match-score order below kicks in instead. When ON, the
+    // rankJobs sort already accounts for matchScore, urgent/top/featured
+    // boosts, freshness, expiry, stale-boost penalties, the floor-for-30
+    // demote and the featured-cap rule.
+    const ranked = rankJobs(enriched);
+    const isFlagOn = ranked.length > 0 && ranked[0].__ranking !== undefined;
+
+    if (!isFlagOn) {
+      // Legacy fallback sort — same behaviour as before Step 2 so the
+      // off-flag path is bit-for-bit equivalent.
+      ranked.sort((a, b) => {
+        if (b.match_score !== a.match_score) return b.match_score - a.match_score;
+        if (b.is_featured !== a.is_featured) return (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0);
+        return 0;
+      });
+    }
+
+    // Phase 3 — map the ranked rows to the API DTO. The __ranking field
+    // is dropped from the response unless ?explain=1 is set.
+    const explain = req.query.explain === '1' || req.query.explain === 'true';
+    const data = ranked.map((r) => ({
+      id: r.id,
+      title: r.title || '',
+      location: r.location || '',
+      employment_type: r.employment_type || '',
+      salary: r.salary || '',
+      category: r.category || '',
+      shift_hours: r.shift_hours || '',
+      description: r.description || '',
+      requirements: r.requirements || '',
+      is_featured: !!r.is_featured,
+      is_urgent: !!r.is_urgent,
+      avatar_hue: r.avatar_hue,
+      distance_km: r.distance_km != null ? +Number(r.distance_km).toFixed(1) : null,
+      // Legacy soft signal — kept for back-compat with older Flutter
+      // builds that still read role_match. New builds should use
+      // match_score / match_level instead.
+      role_match: r.role_match,
+      match_score: r.match_score,
+      match_level: r.match_level,
+      match_reasons: r.match_reasons,
+      top_match_reason: r.top_match_reason,
+      business: {
+        id: r.business_id,
+        name: r.business_name || '',
+        initials: r.business_initials || '',
+        verified: !!r.business_verified,
+        venue_type: r.business_venue_type || '',
+        logo_url: r.business_photo_url || null,
+        avatar_hue: r.business_avatar_hue,
+      },
+      ...(explain && r.__ranking ? { __ranking: r.__ranking } : {}),
+    }));
 
     // Daily-swipe quota — server is source of truth. Flutter mirrors
     // these fields into CandidateQuickJobsProvider and shows the lock
