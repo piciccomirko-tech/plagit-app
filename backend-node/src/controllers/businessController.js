@@ -7,15 +7,25 @@ const { bus } = require('../services/realtime/eventBus');
 // Business Quick Plug daily swipe cap
 // ---------------------------------------------------------------------------
 // Server-side enforced cap on how many candidate cards a business can
-// swipe in a single UTC day. Free businesses only — premium / unlimited
-// tiers will override this via subscription resolution once that feature
-// lands. Mirrors the candidate-side Quick Jobs quota so the two flows
-// share the same source-of-truth pattern.
+// swipe in a single UTC day. Plan-aware: cap is derived from the
+// business owner's users.subscription_plan. Unknown / null plans fall
+// back to 'free'. Mirrors the candidate-side Quick Jobs quota so the
+// two flows share the same source-of-truth pattern.
 //
 // Both interested=true and interested=false swipes count: we want the
 // cap to throttle deck consumption regardless of direction so no one can
 // burn the deck by mass-passing.
-const FREE_DAILY_QUICKPLUG_SWIPE_LIMIT = 5;
+const PLAN_QUOTA_MAP = {
+  free: 5,
+  basic: 5,
+  pro: 20,
+  premium: 999,
+};
+
+function resolvePlanLimit(plan) {
+  const key = (plan || 'free').toLowerCase();
+  return PLAN_QUOTA_MAP[key] ?? PLAN_QUOTA_MAP.free;
+}
 
 // UTC midnight for "today" — matches the index on
 // business_quickplug_swipes(business_id, swiped_at) without leaking
@@ -29,15 +39,19 @@ function utcDayStart(d = new Date()) {
   ));
 }
 
-// Resolves the daily Quick Plug swipe cap for a business. Returns the
-// raw count of swipes consumed today plus the derived remaining /
-// reached fields the deck and swipe endpoints surface to Flutter.
-//
-// Hook point for premium: when business subscriptions ship, branch on
-// the cached subscription tier here and return Infinity (or a large
-// premium cap) instead of FREE_DAILY_QUICKPLUG_SWIPE_LIMIT.
+// Resolves the daily Quick Plug swipe cap for a business. Joins
+// businesses → users to read subscription_plan, maps it via
+// PLAN_QUOTA_MAP, and returns the count of swipes consumed today plus
+// the derived remaining / reached fields the deck and swipe endpoints
+// surface to Flutter. Falls back to 'free' if the plan is missing.
 async function resolveQuickplugSwipeQuota(businessId) {
-  const dailyLimit = FREE_DAILY_QUICKPLUG_SWIPE_LIMIT;
+  const planRow = await db('businesses')
+    .join('users', 'users.id', 'businesses.user_id')
+    .where('businesses.id', businessId)
+    .select('users.subscription_plan as plan')
+    .first();
+  const plan = planRow?.plan || 'free';
+  const dailyLimit = resolvePlanLimit(plan);
   const since = utcDayStart();
   const row = await db('business_quickplug_swipes')
     .where({ business_id: businessId })
@@ -47,7 +61,7 @@ async function resolveQuickplugSwipeQuota(businessId) {
   const swipesUsed = parseInt(row?.n, 10) || 0;
   const swipesRemaining = Math.max(dailyLimit - swipesUsed, 0);
   const hasReachedLimit = swipesUsed >= dailyLimit;
-  return { dailyLimit, swipesUsed, swipesRemaining, hasReachedLimit };
+  return { dailyLimit, swipesUsed, swipesRemaining, hasReachedLimit, plan };
 }
 
 // Helper: create a hiring notification + emit SSE so every subscribed

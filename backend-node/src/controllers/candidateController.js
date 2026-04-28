@@ -7,13 +7,23 @@ const { bus } = require('../services/realtime/eventBus');
 // Candidate Quick Jobs daily swipe cap
 // ---------------------------------------------------------------------------
 // Server-side enforced cap on how many cards a candidate can swipe in a
-// single UTC day. Free candidates only — premium / unlimited tiers will
-// override this via subscription resolution once that feature lands.
+// single UTC day. Plan-aware: cap is derived from the candidate's
+// users.subscription_plan. Unknown / null plans fall back to 'free'.
 //
 // Both interested=true and interested=false swipes count: we want the
 // cap to throttle deck consumption regardless of direction so no one can
 // burn the deck by mass-passing.
-const FREE_DAILY_QUICKJOB_SWIPE_LIMIT = 5;
+const PLAN_QUOTA_MAP = {
+  free: 5,
+  basic: 5,
+  pro: 20,
+  premium: 999,
+};
+
+function resolvePlanLimit(plan) {
+  const key = (plan || 'free').toLowerCase();
+  return PLAN_QUOTA_MAP[key] ?? PLAN_QUOTA_MAP.free;
+}
 
 // UTC midnight for "today" — matches the index on
 // candidate_quickjob_swipes(candidate_id, swiped_at) without leaking
@@ -27,15 +37,19 @@ function utcDayStart(d = new Date()) {
   ));
 }
 
-// Resolves the daily Quick Jobs swipe cap for a candidate. Returns the
-// raw count of swipes consumed today plus the derived remaining /
-// reached fields the deck and swipe endpoints surface to Flutter.
-//
-// Hook point for premium: when candidate subscriptions ship, branch on
-// the cached subscription tier here and return Infinity (or a large
-// premium cap) instead of FREE_DAILY_QUICKJOB_SWIPE_LIMIT.
+// Resolves the daily Quick Jobs swipe cap for a candidate. Joins
+// candidates → users to read subscription_plan, maps it via
+// PLAN_QUOTA_MAP, and returns the count of swipes consumed today plus
+// the derived remaining / reached fields the deck and swipe endpoints
+// surface to Flutter. Falls back to 'free' if the plan is missing.
 async function resolveQuickjobSwipeQuota(candidateId) {
-  const dailyLimit = FREE_DAILY_QUICKJOB_SWIPE_LIMIT;
+  const planRow = await db('candidates')
+    .join('users', 'users.id', 'candidates.user_id')
+    .where('candidates.id', candidateId)
+    .select('users.subscription_plan as plan')
+    .first();
+  const plan = planRow?.plan || 'free';
+  const dailyLimit = resolvePlanLimit(plan);
   const since = utcDayStart();
   const row = await db('candidate_quickjob_swipes')
     .where({ candidate_id: candidateId })
@@ -45,7 +59,7 @@ async function resolveQuickjobSwipeQuota(candidateId) {
   const swipesUsed = parseInt(row?.n, 10) || 0;
   const swipesRemaining = Math.max(dailyLimit - swipesUsed, 0);
   const hasReachedLimit = swipesUsed >= dailyLimit;
-  return { dailyLimit, swipesUsed, swipesRemaining, hasReachedLimit };
+  return { dailyLimit, swipesUsed, swipesRemaining, hasReachedLimit, plan };
 }
 
 // Helper: create a hiring notification + emit SSE so every subscribed
