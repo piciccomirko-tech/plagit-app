@@ -433,7 +433,11 @@ async function listJobs(req, res, next) {
         'businesses.avatar_hue as business_avatar_hue',
         'biz_users.photo_url as business_photo_url'
       )
-      .orderByRaw('jobs.is_featured DESC, jobs.created_at DESC')
+      // Pre-TestFlight order: newest active job first. The list endpoint
+      // has no per-candidate matchScore, so postedAt DESC is the canonical
+      // sort. Featured stays as a visible badge on the card but no longer
+      // pushes older jobs above brand-new postings.
+      .orderBy('jobs.created_at', 'desc')
       .limit(+limit)
       .offset((+page - 1) * +limit);
 
