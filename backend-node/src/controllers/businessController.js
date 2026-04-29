@@ -1450,9 +1450,13 @@ async function startConversation(req, res, next) {
       return;
     }
 
-    // Create new conversation
+    // Create new conversation. Schema default for `status` is 'normal'
+    // (enum: ['normal','flagged','under_review','archived','restricted']);
+    // do NOT pass 'active' here — it's not a valid value and the CHECK
+    // constraint rejects the insert with HTTP 500, breaking every first
+    // Message tap from Quick Plug / Nearby / candidate profile.
     const [conv] = await db('conversations').insert({
-      business_id: bizId, candidate_id, status: 'active',
+      business_id: bizId, candidate_id,
     }).returning('*');
 
     ok(res, { conversation_id: conv.id, created: true });
