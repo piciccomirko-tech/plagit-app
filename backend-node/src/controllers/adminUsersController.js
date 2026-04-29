@@ -165,13 +165,21 @@ async function forcePasswordChange(req, res, next) {
       updated_at: db.fn.now(),
     });
 
+    // Kill active sessions so the user cannot keep working under their
+    // current refresh token — the gate in /auth/login + /auth/refresh
+    // will then force them through the reset flow.
+    const revoked = await db('refresh_tokens').where({ user_id: target.id }).del();
+
     await logAdminAction({
       admin_user_id: req.user.id,
       target_user_id: target.id,
       action: 'force_password_change_required',
       reason,
       result: 'success',
-      metadata: { previously_required: target.must_change_password === true },
+      metadata: {
+        previously_required: target.must_change_password === true,
+        refresh_tokens_revoked: revoked,
+      },
       ...ctx,
     }, { swallow: true });
 

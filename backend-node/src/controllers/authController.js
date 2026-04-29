@@ -32,6 +32,16 @@ async function login(req, res, next) {
     if (!valid) throw AppError.unauthorized('Invalid email or password.');
     if (user.status === 'banned') throw AppError.forbidden('Account is banned.');
 
+    // Admin-mandated password rotation: the user authenticated correctly
+    // but cannot proceed until they reset their password through the
+    // forgot-password flow. No tokens are issued.
+    if (user.must_change_password === true) {
+      throw AppError.forbidden(
+        'Password change required. Use Forgot Password to set a new one.',
+        'FORCE_PASSWORD_CHANGE_REQUIRED',
+      );
+    }
+
     const accessToken = signAccessToken(user);
     const refreshToken = await createRefreshToken(user.id);
 
@@ -56,6 +66,16 @@ async function refresh(req, res, next) {
 
     const user = await db('users').where({ id: stored.user_id }).first();
     if (!user) throw AppError.unauthorized('User not found.');
+
+    // Same gate as login(): admin-mandated rotation kills refresh too.
+    // We drop the presented token so it cannot be reused.
+    if (user.must_change_password === true) {
+      await db('refresh_tokens').where({ id: stored.id }).del();
+      throw AppError.forbidden(
+        'Password change required. Use Forgot Password to set a new one.',
+        'FORCE_PASSWORD_CHANGE_REQUIRED',
+      );
+    }
 
     // Rotate refresh token
     await db('refresh_tokens').where({ id: stored.id }).del();
@@ -96,7 +116,12 @@ async function changePassword(req, res, next) {
     if (sameAsOld) throw AppError.badRequest('New password must be different from the current password.');
 
     const hash = await bcrypt.hash(new_password, 12);
-    await db('users').where({ id: user.id }).update({ password_hash: hash, updated_at: db.fn.now() });
+    await db('users').where({ id: user.id }).update({
+      password_hash: hash,
+      must_change_password: false,
+      password_changed_at: db.fn.now(),
+      updated_at: db.fn.now(),
+    });
 
     // Revoke all existing refresh tokens so other sessions must re-login
     await db('refresh_tokens').where({ user_id: user.id }).del();
@@ -179,9 +204,14 @@ async function resetPassword(req, res, next) {
       .where({ user_id: user.id, used: false })
       .update({ used: true });
 
-    // Update password
+    // Update password and lift the admin-mandated rotation flag if set.
     const hash = await bcrypt.hash(new_password, 12);
-    await db('users').where({ id: user.id }).update({ password_hash: hash, updated_at: db.fn.now() });
+    await db('users').where({ id: user.id }).update({
+      password_hash: hash,
+      must_change_password: false,
+      password_changed_at: db.fn.now(),
+      updated_at: db.fn.now(),
+    });
 
     // Revoke all refresh tokens
     await db('refresh_tokens').where({ user_id: user.id }).del();
