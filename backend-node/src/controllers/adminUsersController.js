@@ -13,6 +13,20 @@ const AppError = require('../utils/AppError');
 const ADMIN_RESET_TTL_MS = 60 * 60 * 1000; // 1 hour
 const ADMIN_RESET_MAX_ACTIVE = 3;
 
+// Status / reason guards shared by updateStatus + forcePasswordChange.
+// Reason is mandatory at the API layer (audit-log discipline) — kept
+// generous (500 chars) so support staff can paste a ticket excerpt.
+const ALLOWED_STATUSES = Object.freeze(['active', 'suspended', 'banned']);
+const REASON_MIN = 3;
+const REASON_MAX = 500;
+
+function normalizeReason(raw) {
+  if (typeof raw !== 'string') return null;
+  const r = raw.trim();
+  if (r.length < REASON_MIN) return null;
+  return r.slice(0, REASON_MAX);
+}
+
 const SAFE_COLS = ['id','name','initials','email','phone','user_type','admin_role','location','role','status','is_verified','profile_strength','flag_count','avatar_hue','plan','created_at','updated_at'];
 
 async function listUsers(req, res, next) {
@@ -47,12 +61,120 @@ async function updateUser(req, res, next) {
   } catch (e) { next(e); }
 }
 
+// PATCH /admin/users/:id/status
+//
+// Sets users.status to one of ALLOWED_STATUSES with a mandatory reason
+// (>=3 chars). Writes an admin_audit_log row with old/new status. When
+// moving INTO suspended/banned we stamp suspended_reason/at/by; when
+// moving back to active we clear them. Self-targeting is rejected so an
+// admin cannot lock themselves out by mistake.
 async function updateStatus(req, res, next) {
+  const { id: targetUserId } = req.params;
+  const { status, reason: rawReason } = req.body || {};
+  const ctx = extractRequestContext(req);
+
   try {
-    const { status } = req.body;
-    const [u] = await db('users').where({ id: req.params.id }).update({ status, updated_at: db.fn.now() }).returning(['id','name','status']);
-    if (!u) throw AppError.notFound('User not found.');
+    if (!ALLOWED_STATUSES.includes(status)) {
+      throw AppError.badRequest(
+        `Invalid status. Allowed: ${ALLOWED_STATUSES.join(', ')}.`,
+        'INVALID_STATUS',
+      );
+    }
+    const reason = normalizeReason(rawReason);
+    if (!reason) {
+      throw AppError.badRequest(
+        `A reason of at least ${REASON_MIN} characters is required.`,
+        'REASON_REQUIRED',
+      );
+    }
+    if (req.user.id === targetUserId) {
+      throw AppError.badRequest(
+        'Admins cannot change their own status.',
+        'SELF_TARGET_FORBIDDEN',
+      );
+    }
+
+    const target = await db('users').where({ id: targetUserId }).first();
+    if (!target) throw AppError.notFound('User not found.');
+
+    const oldStatus = target.status;
+    const upd = { status, updated_at: db.fn.now() };
+    if (status === 'suspended' || status === 'banned') {
+      upd.suspended_reason = reason;
+      upd.suspended_at = db.fn.now();
+      upd.suspended_by = req.user.id;
+    } else {
+      // status === 'active' — wipe the suspension stamp
+      upd.suspended_reason = null;
+      upd.suspended_at = null;
+      upd.suspended_by = null;
+    }
+
+    const [u] = await db('users').where({ id: targetUserId }).update(upd).returning(['id','name','status']);
+
+    await logAdminAction({
+      admin_user_id: req.user.id,
+      target_user_id: target.id,
+      action: 'status_changed',
+      reason,
+      result: 'success',
+      metadata: { old_status: oldStatus, new_status: status },
+      ...ctx,
+    }, { swallow: true });
+
+    // Keep the legacy admin_logs row so the existing operational UI still works.
     await log(req.user.email, `Set status to ${status}`, u.name, 'Users');
+
+    ok(res, { success: true, status: u.status });
+  } catch (e) { next(e); }
+}
+
+// POST /admin/users/:id/force-password-change
+//
+// Marks the user's must_change_password flag so the next successful
+// login forces a self-service password rotation. We never read, hash,
+// or write the password itself — that path stays in /auth/.
+//
+// Idempotent: re-issuing on a user who already has the flag set still
+// returns 200 and writes a fresh audit row (so we capture every issue).
+async function forcePasswordChange(req, res, next) {
+  const { id: targetUserId } = req.params;
+  const { reason: rawReason } = req.body || {};
+  const ctx = extractRequestContext(req);
+
+  try {
+    const reason = normalizeReason(rawReason);
+    if (!reason) {
+      throw AppError.badRequest(
+        `A reason of at least ${REASON_MIN} characters is required.`,
+        'REASON_REQUIRED',
+      );
+    }
+    if (req.user.id === targetUserId) {
+      throw AppError.badRequest(
+        'Admins cannot force a password change on themselves.',
+        'SELF_TARGET_FORBIDDEN',
+      );
+    }
+
+    const target = await db('users').where({ id: targetUserId }).first();
+    if (!target) throw AppError.notFound('User not found.');
+
+    await db('users').where({ id: target.id }).update({
+      must_change_password: true,
+      updated_at: db.fn.now(),
+    });
+
+    await logAdminAction({
+      admin_user_id: req.user.id,
+      target_user_id: target.id,
+      action: 'force_password_change_required',
+      reason,
+      result: 'success',
+      metadata: { previously_required: target.must_change_password === true },
+      ...ctx,
+    }, { swallow: true });
+
     ok(res, { success: true });
   } catch (e) { next(e); }
 }
@@ -190,4 +312,5 @@ async function sendResetLink(req, res, next) {
 module.exports = {
   listUsers, getUser, updateUser, updateStatus, setVerified, deleteUser, sendMessage,
   sendResetLink,
+  forcePasswordChange,
 };
