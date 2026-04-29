@@ -1,7 +1,17 @@
+const crypto = require('crypto');
 const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const { log } = require('../services/logService');
+const { logAdminAction, extractRequestContext } = require('../services/adminAuditService');
+const { sendPasswordResetEmail } = require('../services/emailService');
 const AppError = require('../utils/AppError');
+
+// Admin-triggered reset links live longer than the 15-minute self-service
+// flow because support staff often need a window to coach the user through
+// the email step over a phone call. Still single-use, still single-token-
+// per-row, still capped by the active-token rate limit.
+const ADMIN_RESET_TTL_MS = 60 * 60 * 1000; // 1 hour
+const ADMIN_RESET_MAX_ACTIVE = 3;
 
 const SAFE_COLS = ['id','name','initials','email','phone','user_type','admin_role','location','role','status','is_verified','profile_strength','flag_count','avatar_hue','plan','created_at','updated_at'];
 
@@ -80,4 +90,104 @@ async function sendMessage(req, res, next) {
   } catch (e) { next(e); }
 }
 
-module.exports = { listUsers, getUser, updateUser, updateStatus, setVerified, deleteUser, sendMessage };
+// ---------------------------------------------------------------------------
+// POST /admin/users/:id/send-reset-link
+//
+// Admin-triggered password reset. The endpoint:
+//   - generates a fresh 6-digit code + sha256-hashed token (TTL 1h),
+//   - persists in password_reset_tokens (same table the self-service
+//     forgot-password flow uses, so the existing /auth/reset-password
+//     endpoint validates and consumes them with no extra logic),
+//   - emails the code to the USER directly (never returned to the admin),
+//   - logs an `admin_audit_log` row with admin_user_id, target_user_id,
+//     ip, user-agent, and metadata.ttl_minutes.
+//
+// Security:
+//   - The token and code are NEVER included in the API response.
+//   - The reason is optional here (low-risk action) but still recorded
+//     when the admin provides one in the request body.
+//   - On email-send failure we still record the audit row with
+//     result='failed' so the action is traceable, and surface a 502 to
+//     the admin so they know the user did not receive it.
+// ---------------------------------------------------------------------------
+async function sendResetLink(req, res, next) {
+  const { id: targetUserId } = req.params;
+  const { reason = null } = req.body || {};
+  const ctx = extractRequestContext(req);
+
+  try {
+    const target = await db('users').where({ id: targetUserId }).first();
+    if (!target) throw AppError.notFound('User not found.');
+
+    // Respect the same active-token rate limit used by the self-service
+    // flow so an admin cannot accidentally spam the user with codes.
+    const activeRow = await db('password_reset_tokens')
+      .where({ user_id: target.id, used: false })
+      .where('expires_at', '>', db.fn.now())
+      .count('* as c').first();
+    if (parseInt(activeRow.c, 10) >= ADMIN_RESET_MAX_ACTIVE) {
+      await logAdminAction({
+        admin_user_id: req.user.id,
+        target_user_id: target.id,
+        action: 'password_reset_link_sent',
+        reason,
+        result: 'failed',
+        metadata: { error: 'rate_limited', max_active: ADMIN_RESET_MAX_ACTIVE },
+        ...ctx,
+      }, { swallow: true });
+      throw AppError.badRequest(
+        'Too many active reset codes for this user. Ask them to use one or wait for expiry.',
+        'RESET_RATE_LIMITED',
+      );
+    }
+
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const token = crypto.randomBytes(32).toString('hex');
+    const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+    const expiresAt = new Date(Date.now() + ADMIN_RESET_TTL_MS);
+
+    await db('password_reset_tokens').insert({
+      user_id: target.id,
+      token_hash: tokenHash,
+      code,
+      expires_at: expiresAt,
+    });
+
+    let emailDelivered = true;
+    try {
+      await sendPasswordResetEmail(target.email, code);
+    } catch (e) {
+      emailDelivered = false;
+      // eslint-disable-next-line no-console
+      console.error('[admin/sendResetLink] email failed:', e.message);
+    }
+
+    await logAdminAction({
+      admin_user_id: req.user.id,
+      target_user_id: target.id,
+      action: 'password_reset_link_sent',
+      reason,
+      result: emailDelivered ? 'success' : 'failed',
+      metadata: {
+        ttl_minutes: ADMIN_RESET_TTL_MS / 60000,
+        email_delivered: emailDelivered,
+      },
+      ...ctx,
+    }, { swallow: true });
+
+    if (!emailDelivered) {
+      throw AppError.unavailable(
+        'Reset code was created but the email could not be sent.',
+        'RESET_EMAIL_FAILED',
+      );
+    }
+
+    // Deliberately minimal response — no token, no code, no expiry timestamp.
+    ok(res, { success: true, message: 'Reset code sent to user email.' });
+  } catch (err) { next(err); }
+}
+
+module.exports = {
+  listUsers, getUser, updateUser, updateStatus, setVerified, deleteUser, sendMessage,
+  sendResetLink,
+};
