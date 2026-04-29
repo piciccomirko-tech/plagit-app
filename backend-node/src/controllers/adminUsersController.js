@@ -112,13 +112,27 @@ async function updateStatus(req, res, next) {
 
     const [u] = await db('users').where({ id: targetUserId }).update(upd).returning(['id','name','status']);
 
+    // Suspending or banning must kick the user out immediately. The
+    // /auth/login + /auth/refresh gates would block re-auth anyway, but
+    // active sessions hold an access token until expiry — revoking the
+    // refresh tokens kills the rotation and effectively ends the session
+    // within the access-token TTL.
+    let refreshTokensRevoked = 0;
+    if (status === 'suspended' || status === 'banned') {
+      refreshTokensRevoked = await db('refresh_tokens').where({ user_id: target.id }).del();
+    }
+
     await logAdminAction({
       admin_user_id: req.user.id,
       target_user_id: target.id,
       action: 'status_changed',
       reason,
       result: 'success',
-      metadata: { old_status: oldStatus, new_status: status },
+      metadata: {
+        old_status: oldStatus,
+        new_status: status,
+        refresh_tokens_revoked: refreshTokensRevoked,
+      },
       ...ctx,
     }, { swallow: true });
 

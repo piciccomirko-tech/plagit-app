@@ -19,6 +19,7 @@ if (!RUN) {
     assert.ok(true);
   });
 } else {
+  const crypto = require('crypto');
   const db = require('../../src/config/db');
   const {
     updateStatus,
@@ -187,6 +188,117 @@ if (!RUN) {
     }));
     assert.ok(err);
     assert.equal(err.status, 404);
+  });
+
+  test('updateStatus: → suspended revokes active refresh tokens + audit count', async () => {
+    const snap = await snapshotUser(TARGET_ID);
+    await clearAudit('status_changed');
+    await db('refresh_tokens').where({ user_id: TARGET_ID }).del();
+    try {
+      // Seed two active refresh tokens.
+      await db('refresh_tokens').insert([
+        {
+          user_id: TARGET_ID,
+          token: crypto.randomBytes(32).toString('hex'),
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+        {
+          user_id: TARGET_ID,
+          token: crypto.randomBytes(32).toString('hex'),
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        },
+      ]);
+
+      const { err } = await call(updateStatus, mockReq({
+        params: { id: TARGET_ID },
+        body: { status: 'suspended', reason: 'revoke-on-suspend test' },
+        user: adminUser,
+      }));
+      assert.equal(err, null, err && err.message);
+
+      const remaining = await db('refresh_tokens').where({ user_id: TARGET_ID });
+      assert.equal(remaining.length, 0, 'all refresh tokens revoked on suspend');
+
+      const audit = await db('admin_audit_log')
+        .where({ target_user_id: TARGET_ID, action: 'status_changed' })
+        .orderBy('created_at', 'desc').first();
+      assert.equal(audit.metadata.refresh_tokens_revoked, 2);
+      assert.equal(audit.metadata.new_status, 'suspended');
+    } finally {
+      await db('refresh_tokens').where({ user_id: TARGET_ID }).del();
+      await restoreUser(TARGET_ID, snap);
+      await clearAudit('status_changed');
+    }
+  });
+
+  test('updateStatus: → banned revokes active refresh tokens + audit count', async () => {
+    const snap = await snapshotUser(TARGET_ID);
+    await clearAudit('status_changed');
+    await db('refresh_tokens').where({ user_id: TARGET_ID }).del();
+    try {
+      await db('refresh_tokens').insert({
+        user_id: TARGET_ID,
+        token: crypto.randomBytes(32).toString('hex'),
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      });
+
+      const { err } = await call(updateStatus, mockReq({
+        params: { id: TARGET_ID },
+        body: { status: 'banned', reason: 'revoke-on-ban test' },
+        user: adminUser,
+      }));
+      assert.equal(err, null, err && err.message);
+
+      const remaining = await db('refresh_tokens').where({ user_id: TARGET_ID });
+      assert.equal(remaining.length, 0, 'all refresh tokens revoked on ban');
+
+      const audit = await db('admin_audit_log')
+        .where({ target_user_id: TARGET_ID, action: 'status_changed' })
+        .orderBy('created_at', 'desc').first();
+      assert.equal(audit.metadata.refresh_tokens_revoked, 1);
+      assert.equal(audit.metadata.new_status, 'banned');
+    } finally {
+      await db('refresh_tokens').where({ user_id: TARGET_ID }).del();
+      await restoreUser(TARGET_ID, snap);
+      await clearAudit('status_changed');
+    }
+  });
+
+  test('updateStatus: → active leaves refresh tokens untouched', async () => {
+    const snap = await snapshotUser(TARGET_ID);
+    await clearAudit('status_changed');
+    await db('refresh_tokens').where({ user_id: TARGET_ID }).del();
+    try {
+      // Start from suspended, with one active session restored after the
+      // suspension (e.g., support helped the user log back in pre-fix).
+      await db('users').where({ id: TARGET_ID })
+        .update({ status: 'suspended', updated_at: db.fn.now() });
+      await db('refresh_tokens').insert({
+        user_id: TARGET_ID,
+        token: crypto.randomBytes(32).toString('hex'),
+        expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      });
+
+      const { err } = await call(updateStatus, mockReq({
+        params: { id: TARGET_ID },
+        body: { status: 'active', reason: 'reactivate after appeal' },
+        user: adminUser,
+      }));
+      assert.equal(err, null, err && err.message);
+
+      const remaining = await db('refresh_tokens').where({ user_id: TARGET_ID });
+      assert.equal(remaining.length, 1, 'reactivation must NOT revoke tokens');
+
+      const audit = await db('admin_audit_log')
+        .where({ target_user_id: TARGET_ID, action: 'status_changed' })
+        .orderBy('created_at', 'desc').first();
+      assert.equal(audit.metadata.refresh_tokens_revoked, 0);
+      assert.equal(audit.metadata.new_status, 'active');
+    } finally {
+      await db('refresh_tokens').where({ user_id: TARGET_ID }).del();
+      await restoreUser(TARGET_ID, snap);
+      await clearAudit('status_changed');
+    }
   });
 
   // ── forcePasswordChange ──────────────────────────────────────────────

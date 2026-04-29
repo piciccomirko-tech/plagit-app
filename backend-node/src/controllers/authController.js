@@ -30,11 +30,16 @@ async function login(req, res, next) {
 
     const valid = await bcrypt.compare(password, user.password_hash);
     if (!valid) throw AppError.unauthorized('Invalid email or password.');
-    if (user.status === 'banned') throw AppError.forbidden('Account is banned.');
 
-    // Admin-mandated password rotation: the user authenticated correctly
-    // but cannot proceed until they reset their password through the
-    // forgot-password flow. No tokens are issued.
+    // Admin-controlled status gates. Order matters: banned is permanent,
+    // suspended is reversible, must_change_password is the softest gate.
+    // Each carries a stable machine code so the client can branch.
+    if (user.status === 'banned') {
+      throw AppError.forbidden('Account is banned.', 'ACCOUNT_BANNED');
+    }
+    if (user.status === 'suspended') {
+      throw AppError.forbidden('Account is suspended.', 'ACCOUNT_SUSPENDED');
+    }
     if (user.must_change_password === true) {
       throw AppError.forbidden(
         'Password change required. Use Forgot Password to set a new one.',
@@ -67,8 +72,16 @@ async function refresh(req, res, next) {
     const user = await db('users').where({ id: stored.user_id }).first();
     if (!user) throw AppError.unauthorized('User not found.');
 
-    // Same gate as login(): admin-mandated rotation kills refresh too.
-    // We drop the presented token so it cannot be reused.
+    // Same gates as login(). We drop the presented token in every gate
+    // path so it cannot be reused even after the user is unblocked.
+    if (user.status === 'banned') {
+      await db('refresh_tokens').where({ id: stored.id }).del();
+      throw AppError.forbidden('Account is banned.', 'ACCOUNT_BANNED');
+    }
+    if (user.status === 'suspended') {
+      await db('refresh_tokens').where({ id: stored.id }).del();
+      throw AppError.forbidden('Account is suspended.', 'ACCOUNT_SUSPENDED');
+    }
     if (user.must_change_password === true) {
       await db('refresh_tokens').where({ id: stored.id }).del();
       throw AppError.forbidden(
