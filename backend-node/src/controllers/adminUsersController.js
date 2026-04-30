@@ -1,4 +1,5 @@
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const { log } = require('../services/logService');
@@ -201,6 +202,108 @@ async function forcePasswordChange(req, res, next) {
   } catch (e) { next(e); }
 }
 
+// POST /admin/users/:id/set-temp-password
+//
+// Generates a random strong password server-side, hashes it, writes the
+// hash to users.password_hash, flips must_change_password=true, and
+// revokes every active refresh token for the target. The plaintext is
+// returned ONCE in the response so the super_admin can hand it to the
+// user via a secure channel — it is never stored, never logged, never
+// re-fetched. The next /auth/login forces the user through the
+// reset-password flow (Step 4-bis gate).
+//
+// Restricted to super_admin (mounted with requireRole('super_admin') in
+// the router). support_admin uses send-reset-link instead.
+const TEMP_PASSWORD_LENGTH = 16;
+const TEMP_PASSWORD_ALPHABET =
+  'ABCDEFGHJKLMNPQRSTUVWXYZ' +     // no I/O — easy to confuse
+  'abcdefghijkmnpqrstuvwxyz' +     // no l/o
+  '23456789' +                     // no 0/1
+  '!@#$%&*+-';                     // safe symbols, terminal-paste friendly
+
+function generateTempPassword() {
+  // crypto.randomInt is uniform; pulling each char independently is fine
+  // because the alphabet covers all four character classes and the
+  // length (16) makes "missing class" outcomes vanishingly unlikely.
+  // Still, retry up to 5 times in the unlikely case a class is missing.
+  for (let attempt = 0; attempt < 5; attempt++) {
+    let out = '';
+    for (let i = 0; i < TEMP_PASSWORD_LENGTH; i++) {
+      out += TEMP_PASSWORD_ALPHABET[crypto.randomInt(0, TEMP_PASSWORD_ALPHABET.length)];
+    }
+    if (/[A-Z]/.test(out) && /[a-z]/.test(out) && /[0-9]/.test(out)) return out;
+  }
+  // Fallback: deterministic seed of one char per class plus random tail.
+  const tail = Array.from({ length: TEMP_PASSWORD_LENGTH - 4 }, () =>
+    TEMP_PASSWORD_ALPHABET[crypto.randomInt(0, TEMP_PASSWORD_ALPHABET.length)],
+  ).join('');
+  return `Aa1!${tail}`;
+}
+
+async function setTempPassword(req, res, next) {
+  const { id: targetUserId } = req.params;
+  const { reason: rawReason } = req.body || {};
+  const ctx = extractRequestContext(req);
+
+  try {
+    const reason = normalizeReason(rawReason);
+    if (!reason) {
+      throw AppError.badRequest(
+        `A reason of at least ${REASON_MIN} characters is required.`,
+        'REASON_REQUIRED',
+      );
+    }
+    if (req.user.id === targetUserId) {
+      throw AppError.badRequest(
+        'Admins cannot set a temporary password for themselves.',
+        'SELF_TARGET_FORBIDDEN',
+      );
+    }
+
+    const target = await db('users').where({ id: targetUserId }).first();
+    if (!target) throw AppError.notFound('User not found.');
+
+    const tempPassword = generateTempPassword();
+    const passwordHash = await bcrypt.hash(tempPassword, 12);
+
+    await db('users').where({ id: target.id }).update({
+      password_hash: passwordHash,
+      must_change_password: true,
+      password_changed_at: db.fn.now(),
+      updated_at: db.fn.now(),
+    });
+
+    // Kill every existing session — old access tokens stay valid until
+    // their JWT expiry but cannot be rotated, so the window collapses
+    // to one access-token TTL.
+    const refreshTokensRevoked = await db('refresh_tokens')
+      .where({ user_id: target.id }).del();
+
+    await logAdminAction({
+      admin_user_id: req.user.id,
+      target_user_id: target.id,
+      action: 'temp_password_set',
+      reason,
+      result: 'success',
+      // NEVER include the plaintext password or the hash here.
+      metadata: {
+        refresh_tokens_revoked: refreshTokensRevoked,
+        password_length: TEMP_PASSWORD_LENGTH,
+      },
+      ...ctx,
+    }, { swallow: true });
+
+    // Plaintext is returned ONLY in this response. We do not persist it
+    // anywhere, do not log it, do not include the hash. The super_admin
+    // copies it from the UI and hands it to the user out-of-band.
+    ok(res, {
+      success: true,
+      temporary_password: tempPassword,
+      message: 'Share this password with the user via a secure channel. It will not be shown again.',
+    });
+  } catch (err) { next(err); }
+}
+
 async function setVerified(req, res, next) {
   try {
     const { verified } = req.body;
@@ -335,4 +438,5 @@ module.exports = {
   listUsers, getUser, updateUser, updateStatus, setVerified, deleteUser, sendMessage,
   sendResetLink,
   forcePasswordChange,
+  setTempPassword,
 };
