@@ -110,6 +110,17 @@ async function resolveQuickplugSwipeQuota(businessId) {
 // older deployments don't crash on insert.
 async function hiringNotify(recipientId, title, type, linkedEntity, route, body) {
   try {
+    // Idempotency guard — when both linkedEntity and route are
+    // provided, skip if a notification with the same
+    // (recipient, entity, route) triple already exists. Prevents
+    // duplicate "job posted" rows on retries / hot-reloads / repeat
+    // createJob fan-outs for the same job.
+    if (linkedEntity && route) {
+      const existing = await db('notifications')
+        .where({ recipient_id: recipientId, linked_entity: linkedEntity, destination_route: route })
+        .first();
+      if (existing) return;
+    }
     const row = {
       recipient_id: recipientId,
       notification_type: type || 'in_app',
@@ -580,11 +591,11 @@ async function createJob(req, res, next) {
           salary || null,
         ].filter((p) => p && String(p).trim().length > 0);
         await notifyAllAdmins(
-          `New job posted by ${businessName}`,
+          `${businessName} posted a new job`,
           'in_app',
           job.id,
           'job',
-          subtitleParts.join(' · '),
+          subtitleParts.join(' • '),
         );
       } catch (e) { console.error('[Admin job notify]', e.message); }
     })();
@@ -598,12 +609,21 @@ async function createJob(req, res, next) {
         const biz = await db('businesses').where({ id: bizId }).first();
         const businessName = biz?.name || 'a business';
         const subtitleParts = [title, location || null, salary || null].filter(Boolean);
-        const notifTitle = `New job posted by ${businessName}`;
-        const notifBody  = subtitleParts.join(' · ');
+        const notifTitle = `${businessName} posted a new job`;
+        const notifBody  = subtitleParts.join(' • ');
 
         const titleNeedle = `%${(title || '').toLowerCase().trim()}%`;
         const catNeedle   = category ? `%${category.toLowerCase().trim()}%` : null;
         const empType     = employment_type ? employment_type.toLowerCase().trim() : null;
+
+        // Already-applied dedup — never notify a candidate about a job
+        // they have already applied to. The job is brand-new so the set
+        // is typically empty, but the filter is defensive against
+        // re-create / replay scenarios.
+        const appliedRows = await db('applications')
+          .where({ job_id: job.id })
+          .select('candidate_id');
+        const appliedIds = appliedRows.map((r) => r.candidate_id);
 
         const baseQ = db('candidates')
           .leftJoin('users', 'candidates.user_id', 'users.id')
@@ -611,6 +631,9 @@ async function createJob(req, res, next) {
           .where('users.status', 'active');
 
         const matchedCandidates = await baseQ.clone()
+          .modify((q) => {
+            if (appliedIds.length) q.whereNotIn('candidates.id', appliedIds);
+          })
           .andWhere(b => {
             b.whereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [titleNeedle]);
             if (catNeedle) b.orWhereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [catNeedle]);
@@ -633,6 +656,9 @@ async function createJob(req, res, next) {
         if (open_to_international) {
           const intlCandidates = await baseQ.clone()
             .where('candidates.available_to_relocate', true)
+            .modify((q) => {
+              if (appliedIds.length) q.whereNotIn('candidates.id', appliedIds);
+            })
             .andWhere(b => {
               b.whereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [titleNeedle]);
               if (catNeedle) b.orWhereRaw('LOWER(TRIM(candidates.role)) LIKE ?', [catNeedle]);
@@ -642,7 +668,7 @@ async function createJob(req, res, next) {
           for (const ic of intlCandidates) {
             if (notified.has(ic.cand_id)) continue;
             try { await db('matches').insert({ candidate_id: ic.cand_id, job_id: job.id, status: 'pending' }); } catch (_) {}
-            await hiringNotify(ic.user_id, `International opportunity: ${title} at ${businessName}`, 'in_app', job.id, 'job', notifBody);
+            await hiringNotify(ic.user_id, notifTitle, 'in_app', job.id, 'job', notifBody);
           }
         }
       } catch (e) { console.error('[Match notify]', e.message); }
