@@ -140,7 +140,7 @@ async function createPost(req, res, next) {
     // Insert multi-media items if provided
     const mediaItems = [];
     if (Array.isArray(media) && media.length > 0) {
-      for (let i = 0; i < Math.min(media.length, 5); i++) {
+      for (let i = 0; i < Math.min(media.length, 10); i++) {
         const m = media[i];
         if (m.url && m.media_type) {
           const [row] = await db('post_media').insert({
