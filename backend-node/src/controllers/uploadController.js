@@ -2,14 +2,28 @@ const AppError = require('../utils/AppError');
 const { ok } = require('../utils/response');
 const storage = require('../storage');
 
-// Allowed audio MIME types — guard against arbitrary file uploads.
-// Extensions are normalised server-side; we never trust the client filename.
+// Client-declared MIME allowlist. The first guard checks the
+// `Content-Type` header multer parsed from the multipart part — but a
+// malicious client can send any header, so we ALSO sniff the actual
+// file bytes (see _detectAudioMime below) before accepting the upload.
 const ALLOWED_AUDIO_MIME = new Set([
   'audio/m4a',
   'audio/mp4',
   'audio/aac',
   'audio/x-m4a',
   'audio/mpeg', // mp3 fallback
+]);
+
+// Server-trusted MIME — what file-type's magic-byte sniffer is allowed
+// to return. file-type emits `audio/x-m4a` for files whose ftyp brand
+// is `M4A ` (the iOS / Android recorder default) and `audio/mp4` for
+// the generic `mp42`/`isom` brand. Both are valid AAC-in-MP4 audio
+// for our purposes.
+const SNIFFED_AUDIO_MIME = new Set([
+  'audio/x-m4a', // ftyp brand 'M4A ' — iOS record_darwin default
+  'audio/mp4',   // ftyp brand 'mp42' / 'isom' — generic AAC-in-MP4
+  'audio/aac',   // raw AAC stream
+  'audio/mpeg',  // mp3
 ]);
 
 const MIME_TO_EXT = {
@@ -21,6 +35,19 @@ const MIME_TO_EXT = {
 };
 
 /**
+ * Magic-byte sniffer using the `file-type` package. Returns `null`
+ * when the buffer can't be identified at all (binary garbage / empty).
+ *
+ * `file-type` v22 is ESM-only — required via dynamic `import()` so
+ * this CommonJS module loads it on demand without a bundler.
+ */
+async function _detectAudioMime(buffer) {
+  const { fileTypeFromBuffer } = await import('file-type');
+  const detected = await fileTypeFromBuffer(buffer);
+  return detected || null;
+}
+
+/**
  * POST /v1/uploads/audio
  *
  * Multipart form-data with field `file`. Returns the public URL the
@@ -29,6 +56,13 @@ const MIME_TO_EXT = {
  * Optional `duration_ms` form field carries the client-side measured
  * duration so the receiver doesn't have to decode the file just to
  * render the bubble timer.
+ *
+ * Three validation gates, in order:
+ *   1. Client-declared MIME header is in [ALLOWED_AUDIO_MIME].
+ *   2. File size ≤ 5MB (also enforced by multer at the route layer).
+ *   3. Magic-byte sniff of the buffer matches an audio format from
+ *      [SNIFFED_AUDIO_MIME]. This catches MIME-spoofed uploads
+ *      (e.g. a `.exe` with `Content-Type: audio/m4a`).
  */
 async function uploadAudio(req, res, next) {
   try {
@@ -36,18 +70,35 @@ async function uploadAudio(req, res, next) {
       throw AppError.badRequest('Missing audio file under field "file".');
     }
     const { mimetype, size, buffer } = req.file;
+
+    // Gate 1 — client-declared MIME
     if (!ALLOWED_AUDIO_MIME.has(mimetype)) {
       throw AppError.badRequest(
         `Unsupported audio type: ${mimetype}. Use M4A/AAC/MP3.`,
+        'INVALID_MEDIA_TYPE',
       );
     }
-    // Hard ceiling per audio file. 60s @ 64kbps ≈ 480KB; 5MB is 10×
-    // headroom for users who somehow send higher-bitrate clips.
+
+    // Gate 2 — size cap. 60s @ 64kbps ≈ 480KB; 5MB is 10× headroom.
     if (size > 5 * 1024 * 1024) {
-      throw AppError.badRequest('Audio file too large (max 5MB).');
+      throw AppError.badRequest(
+        'Audio file too large (max 5MB).',
+        'AUDIO_FILE_TOO_LARGE',
+      );
     }
 
-    const ext = MIME_TO_EXT[mimetype] || 'bin';
+    // Gate 3 — magic-byte sniff. Trust the buffer, not the header.
+    const sniffed = await _detectAudioMime(buffer);
+    if (!sniffed || !SNIFFED_AUDIO_MIME.has(sniffed.mime)) {
+      throw AppError.badRequest(
+        sniffed
+          ? `File contents look like ${sniffed.mime} (.${sniffed.ext}), not an audio recording.`
+          : 'File contents are not a recognized audio format.',
+        'INVALID_AUDIO_FILE',
+      );
+    }
+
+    const ext = MIME_TO_EXT[mimetype] || sniffed.ext || 'bin';
     const url = await storage.save(buffer, {
       ext,
       mimeType: mimetype,
