@@ -955,6 +955,9 @@ async function listMessages(req, res, next) {
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
+        'messages.attachment_type', 'messages.audio_url',
+        'messages.audio_duration_ms', 'messages.audio_size_bytes',
+        'messages.audio_mime_type',
         'users.name as sender_name', 'users.user_type as sender_type'
       )
       .orderBy('messages.created_at', 'desc')
@@ -1042,22 +1045,46 @@ async function sendMessage(req, res, next) {
       .where({ id: req.params.id, candidate_id: candidate.id }).first();
     if (!conv) throw AppError.notFound('Conversation not found.');
 
-    const { body } = req.body;
-    if (!body || !body.trim()) throw AppError.badRequest('Message body is required.');
+    const {
+      body,
+      attachment_type,
+      audio_url,
+      audio_duration_ms,
+      audio_size_bytes,
+      audio_mime_type,
+    } = req.body;
 
+    const isAudio = attachment_type === 'audio';
+    if (isAudio && (!audio_url || typeof audio_url !== 'string')) {
+      throw AppError.badRequest('audio_url is required for audio messages.');
+    }
+    // Text messages still require a body. Audio messages may carry an
+    // optional caption (kept) or no body at all.
+    if (!isAudio && (!body || !body.trim())) {
+      throw AppError.badRequest('Message body is required.');
+    }
+
+    const cleanBody = (body && body.trim()) || '';
     const [msg] = await db('messages').insert({
       conversation_id: conv.id,
       sender_id: userId,
-      body: body.trim(),
+      body: cleanBody,
+      attachment_type: isAudio ? 'audio' : 'text',
+      audio_url: isAudio ? audio_url : null,
+      audio_duration_ms: isAudio && Number.isFinite(+audio_duration_ms) ? +audio_duration_ms : null,
+      audio_size_bytes: isAudio && Number.isFinite(+audio_size_bytes) ? +audio_size_bytes : null,
+      audio_mime_type: isAudio ? (audio_mime_type || null) : null,
     }).returning('*');
 
-    // Update conversation last_message
+    // Conversation last_message — audio rows show a glyph since the
+    // body preview would otherwise be empty.
+    const preview = isAudio ? '🎤 Voice message' : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
-      last_message: body.trim().slice(0, 200),
+      last_message: preview,
       updated_at: db.fn.now(),
     });
 
-    console.log(`[BACKEND CREATE] candidate→business msgId=${msg.id} convId=${conv.id} candidateUserId=${userId} businessId=${conv.business_id || 'null'} body="${msg.body}"`);
+    console.log(`[BACKEND CREATE] candidate→business msgId=${msg.id} convId=${conv.id} candidateUserId=${userId} businessId=${conv.business_id || 'null'} type=${msg.attachment_type} body="${msg.body}"`);
 
     // Notify the business — use hiringNotify so `notification.new` is
     // published on the SSE bus; otherwise BusinessNotificationsProvider
@@ -1075,7 +1102,7 @@ async function sendMessage(req, res, next) {
     try {
       await notifyAllAdmins(
         `Message: ${candidate.name} → ${bizNameForAdmin || 'business'}`,
-        'in_app', conv.id, 'message', body.trim().slice(0, 80),
+        'in_app', conv.id, 'message', preview.slice(0, 80),
       );
     } catch (e) { /* best-effort */ }
 
@@ -1088,6 +1115,11 @@ async function sendMessage(req, res, next) {
         id: msg.id,
         conversation_id: conv.id,
         body: msg.body,
+        attachment_type: msg.attachment_type,
+        audio_url: msg.audio_url,
+        audio_duration_ms: msg.audio_duration_ms,
+        audio_size_bytes: msg.audio_size_bytes,
+        audio_mime_type: msg.audio_mime_type,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,

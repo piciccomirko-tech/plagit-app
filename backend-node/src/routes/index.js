@@ -10,6 +10,9 @@ router.use('/presence', require('./presence'));
 // Push notifications (APNS / FCM)
 router.use('/devices', require('./devices'));
 
+// Media uploads (voice messages today, future image/video)
+router.use('/uploads', require('./uploads'));
+
 // Candidate
 router.use('/candidate', require('./candidate'));
 

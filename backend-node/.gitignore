@@ -3,6 +3,10 @@ node_modules/
 dist/
 *.log
 
+# Local storage adapter (voice messages, future media). Dev-only —
+# prod uses S3, see src/storage/README.md.
+uploads/
+
 # Push provider credentials — must NEVER be committed
 firebase-admin*.json
 service-account*.json
