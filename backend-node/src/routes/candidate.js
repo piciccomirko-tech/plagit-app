@@ -41,6 +41,9 @@ router.get('/conversations/:id/messages', c.listMessages);
 router.post('/conversations/:id/messages', c.sendMessage);
 router.post('/conversations/:id/messages/ack-delivered', c.ackMessagesDelivered);
 router.post('/conversations/:id/typing', c.sendTyping);
+// Reactions — one per user per message; POST upserts, DELETE removes.
+router.post('/messages/:messageId/reactions', c.addMessageReaction);
+router.delete('/messages/:messageId/reactions', c.removeMessageReaction);
 
 // Notifications
 router.get('/notifications', c.listCandidateNotifications);

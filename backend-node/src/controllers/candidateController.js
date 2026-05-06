@@ -986,7 +986,29 @@ async function listMessages(req, res, next) {
       }
     }
 
-    paginated(res, msgs, { page: +page, limit: +limit, total });
+    // Hydrate reactions for the returned message slice. One round
+    // trip keyed by message ids so we don't issue N+1 queries.
+    const ids = msgs.map((m) => m.id);
+    const reactionRows = ids.length === 0
+      ? []
+      : await db('message_reactions')
+          .whereIn('message_id', ids)
+          .select('message_id', 'user_id', 'emoji', 'created_at');
+    const reactionsByMsg = new Map();
+    for (const r of reactionRows) {
+      if (!reactionsByMsg.has(r.message_id)) reactionsByMsg.set(r.message_id, []);
+      reactionsByMsg.get(r.message_id).push({
+        user_id: r.user_id,
+        emoji: r.emoji,
+        created_at: r.created_at,
+      });
+    }
+    const enriched = msgs.map((m) => ({
+      ...m,
+      reactions: reactionsByMsg.get(m.id) || [],
+    }));
+
+    paginated(res, enriched, { page: +page, limit: +limit, total });
   } catch (err) { next(err); }
 }
 
@@ -1132,6 +1154,75 @@ async function sendMessage(req, res, next) {
     }, audience);
 
     ok(res, msg);
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /candidate/messages/:messageId/reactions — Add or update reaction
+// ---------------------------------------------------------------------------
+// One reaction per user per message. UPSERT replaces the emoji if the
+// user already reacted; the schema-level UNIQUE (message_id, user_id)
+// makes this race-safe. Access is gated by conversation membership —
+// a candidate can only react to messages inside their own threads.
+async function addMessageReaction(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+    const emoji = req.body && typeof req.body.emoji === 'string'
+      ? req.body.emoji
+      : null;
+    if (!emoji || emoji.length === 0 || emoji.length > 32) {
+      throw AppError.badRequest('Invalid emoji.');
+    }
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    // Membership check: does this message live in a conversation the
+    // candidate is part of?
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_reactions')
+      .insert({ message_id: messageId, user_id: userId, emoji })
+      .onConflict(['message_id', 'user_id'])
+      .merge({ emoji, updated_at: db.fn.now() });
+
+    ok(res, { message_id: messageId, user_id: userId, emoji });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /candidate/messages/:messageId/reactions — Remove own reaction
+// ---------------------------------------------------------------------------
+// Removes only the actor's own row. Other users' reactions on the same
+// message are untouched.
+async function removeMessageReaction(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_reactions')
+      .where({ message_id: messageId, user_id: userId })
+      .delete();
+
+    ok(res, { message_id: messageId, user_id: userId, removed: true });
   } catch (err) { next(err); }
 }
 
@@ -1893,6 +1984,7 @@ module.exports = {
   listApplications, getApplication, withdrawApplication,
   listInterviews, getInterview, respondToInterview,
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, archiveConversation,
+  addMessageReaction, removeMessageReaction,
   updateProfile, uploadPhoto, uploadCV, parseCV,
   listCommunityPosts,
   nearbyJobs, quickjobsDeck, quickjobsSwipe,

@@ -1150,7 +1150,30 @@ async function listMessages(req, res, next) {
         }, [`user:${candidateUserId}`]);
       }
     }
-    paginated(res, msgs, { page: +page, limit: +limit, total });
+
+    // Hydrate reactions for the returned message slice. One round
+    // trip keyed by message ids so we don't issue N+1 queries.
+    const ids = msgs.map((m) => m.id);
+    const reactionRows = ids.length === 0
+      ? []
+      : await db('message_reactions')
+          .whereIn('message_id', ids)
+          .select('message_id', 'user_id', 'emoji', 'created_at');
+    const reactionsByMsg = new Map();
+    for (const r of reactionRows) {
+      if (!reactionsByMsg.has(r.message_id)) reactionsByMsg.set(r.message_id, []);
+      reactionsByMsg.get(r.message_id).push({
+        user_id: r.user_id,
+        emoji: r.emoji,
+        created_at: r.created_at,
+      });
+    }
+    const enriched = msgs.map((m) => ({
+      ...m,
+      reactions: reactionsByMsg.get(m.id) || [],
+    }));
+
+    paginated(res, enriched, { page: +page, limit: +limit, total });
   } catch (err) { next(err); }
 }
 
@@ -1284,6 +1307,64 @@ async function sendMessage(req, res, next) {
       sender_role: 'business',
     }, audience);
     ok(res, msg);
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /business/messages/:messageId/reactions — Add or update reaction
+// ---------------------------------------------------------------------------
+// Mirror of the candidate-side endpoint. One reaction per user per
+// message, UPSERT-based. Access gated by conversation membership —
+// the business can only react to messages inside its own threads.
+async function addMessageReaction(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const messageId = req.params.messageId;
+    const emoji = req.body && typeof req.body.emoji === 'string'
+      ? req.body.emoji
+      : null;
+    if (!emoji || emoji.length === 0 || emoji.length > 32) {
+      throw AppError.badRequest('Invalid emoji.');
+    }
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_reactions')
+      .insert({ message_id: messageId, user_id: req.user.id, emoji })
+      .onConflict(['message_id', 'user_id'])
+      .merge({ emoji, updated_at: db.fn.now() });
+
+    ok(res, { message_id: messageId, user_id: req.user.id, emoji });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /business/messages/:messageId/reactions — Remove own reaction
+// ---------------------------------------------------------------------------
+async function removeMessageReaction(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const messageId = req.params.messageId;
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_reactions')
+      .where({ message_id: messageId, user_id: req.user.id })
+      .delete();
+
+    ok(res, { message_id: messageId, user_id: req.user.id, removed: true });
   } catch (err) { next(err); }
 }
 
@@ -1950,6 +2031,7 @@ module.exports = {
   listApplicants, updateApplicantStatus,
   listInterviews, scheduleInterview, updateInterviewStatus,
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, startConversation, archiveConversation,
+  addMessageReaction, removeMessageReaction,
   getCandidateProfile,
   listNotifications, markNotificationRead, markAllNotificationsRead,
   deleteNotification, deleteAllNotifications,
