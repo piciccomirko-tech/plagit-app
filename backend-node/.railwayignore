@@ -1,0 +1,16 @@
+# Files excluded from `railway up` deploys.
+#
+# Railway zips the working directory and uploads it; without this list,
+# untracked dev helpers and local-only test scaffolding would ride along
+# into the production filesystem. None of them is auto-executed by the
+# server, but keeping them out of prod keeps the surface tight and
+# avoids accidental discovery.
+
+# Local DB-recovery helper, never committed.
+.knexfile_recon.js
+
+# Destructive local seed-reset script — must NEVER live on prod.
+scripts/reset_nobu_test_data.sh
+
+# Integration tests are run locally and on CI, not on prod runtime.
+tests/
