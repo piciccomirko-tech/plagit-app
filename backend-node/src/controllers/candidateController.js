@@ -2,6 +2,7 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
+const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
 
@@ -1191,6 +1192,13 @@ async function sendMessage(req, res, next) {
       );
     } catch (e) { /* best-effort */ }
 
+    // Phase 3D — build the same compact reply envelope that listMessages
+    // produces, so the POST response and SSE message.new event carry it
+    // immediately. Without this, the sender's just-sent bubble and the
+    // peer's incoming bubble both render with an empty quote until the
+    // next thread refetch (where the LEFT JOIN finally fills it in).
+    const replyEnvelope = await buildReplyEnvelope(msg.reply_to_message_id);
+
     // Realtime broadcast
     const audience = ['role:admin', `user:${userId}`];
     if (businessUserId) audience.push(`user:${businessUserId}`);
@@ -1210,6 +1218,7 @@ async function sendMessage(req, res, next) {
         delivered_at: msg.delivered_at || null,
         is_read: !!msg.is_read,
         reply_to_message_id: msg.reply_to_message_id || null,
+        reply_to: replyEnvelope,
       },
       conversation_id: conv.id,
       sender_user_id: userId,
@@ -1217,7 +1226,7 @@ async function sendMessage(req, res, next) {
       sender_role: 'candidate',
     }, audience);
 
-    ok(res, msg);
+    ok(res, { ...msg, reply_to: replyEnvelope });
   } catch (err) { next(err); }
 }
 

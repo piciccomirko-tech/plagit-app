@@ -2,6 +2,7 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
+const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 
 // ---------------------------------------------------------------------------
@@ -1337,6 +1338,10 @@ async function sendMessage(req, res, next) {
         'in_app', conv.id, 'message', preview.slice(0, 80),
       );
     } catch (e) { /* best-effort */ }
+    // Phase 3D — see candidateController.sendMessage for the full
+    // rationale. Build the compact reply envelope once and reuse it
+    // across both the POST response and the SSE message.new payload.
+    const replyEnvelope = await buildReplyEnvelope(msg.reply_to_message_id);
     // Realtime broadcast
     const audience = ['role:admin', `user:${req.user.id}`];
     if (candidateUserId) audience.push(`user:${candidateUserId}`);
@@ -1356,13 +1361,14 @@ async function sendMessage(req, res, next) {
         delivered_at: msg.delivered_at || null,
         is_read: !!msg.is_read,
         reply_to_message_id: msg.reply_to_message_id || null,
+        reply_to: replyEnvelope,
       },
       conversation_id: conv.id,
       sender_user_id: req.user.id,
       recipient_user_id: candidateUserId,
       sender_role: 'business',
     }, audience);
-    ok(res, msg);
+    ok(res, { ...msg, reply_to: replyEnvelope });
   } catch (err) { next(err); }
 }
 
