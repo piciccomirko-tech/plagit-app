@@ -42,6 +42,7 @@ async function buildReplyEnvelope(replyToId) {
  * "📅 Interview" instead of an empty body. */
 function _bodyPreviewFor(parent) {
   if (parent.attachment_type === 'audio') return '🎤 Voice message';
+  if (parent.attachment_type === 'image') return '🖼 Photo';
   if (parent.attachment_type === 'entity_share') {
     switch (parent.shared_entity_type) {
       case 'profile_candidate':

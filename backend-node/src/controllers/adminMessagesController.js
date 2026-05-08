@@ -66,6 +66,11 @@ async function thread(req, res, next) {
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
         'messages.attachment_type',
+        'messages.audio_url', 'messages.audio_duration_ms',
+        'messages.audio_size_bytes', 'messages.audio_mime_type',
+        'messages.image_url', 'messages.image_size_bytes',
+        'messages.image_mime_type', 'messages.image_width',
+        'messages.image_height',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -122,6 +127,7 @@ async function thread(req, res, next) {
  *  keep the three implementations in sync. */
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
   if (attachmentType === 'audio') return '🎤 Voice message';
+  if (attachmentType === 'image') return '🖼 Photo';
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
   }

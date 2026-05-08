@@ -1131,6 +1131,9 @@ async function listMessages(req, res, next) {
         'messages.attachment_type', 'messages.audio_url',
         'messages.audio_duration_ms', 'messages.audio_size_bytes',
         'messages.audio_mime_type',
+        'messages.image_url', 'messages.image_size_bytes',
+        'messages.image_mime_type', 'messages.image_width',
+        'messages.image_height',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -1285,17 +1288,28 @@ async function sendMessage(req, res, next) {
       audio_duration_ms,
       audio_size_bytes,
       audio_mime_type,
+      image_url,
+      image_size_bytes,
+      image_mime_type,
+      image_width,
+      image_height,
       reply_to_message_id,
       shared_entity_type,
       shared_entity_id,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
+    const isImage = attachment_type === 'image';
     const isEntityShare = attachment_type === 'entity_share';
     if (isAudio && (!audio_url || typeof audio_url !== 'string')) {
       throw AppError.badRequest('audio_url is required for audio messages.');
     }
-    if (!isAudio && !isEntityShare && (!body || !body.trim())) {
+    if (isImage) {
+      if (!image_url || typeof image_url !== 'string' || !image_url.startsWith('/uploads/image/')) {
+        throw AppError.badRequest('image_url is required and must come from /v1/uploads/image.');
+      }
+    }
+    if (!isAudio && !isImage && !isEntityShare && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
     }
 
@@ -1338,9 +1352,11 @@ async function sendMessage(req, res, next) {
     const cleanBody = (body && body.trim()) || '';
     const dbAttachmentType = isAudio
       ? 'audio'
-      : isEntityShare
-        ? 'entity_share'
-        : 'text';
+      : isImage
+        ? 'image'
+        : isEntityShare
+          ? 'entity_share'
+          : 'text';
     const [msg] = await db('messages').insert({
       conversation_id: conv.id,
       sender_id: req.user.id,
@@ -1350,6 +1366,11 @@ async function sendMessage(req, res, next) {
       audio_duration_ms: isAudio && Number.isFinite(+audio_duration_ms) ? +audio_duration_ms : null,
       audio_size_bytes: isAudio && Number.isFinite(+audio_size_bytes) ? +audio_size_bytes : null,
       audio_mime_type: isAudio ? (audio_mime_type || null) : null,
+      image_url: isImage ? image_url : null,
+      image_size_bytes: isImage && Number.isFinite(+image_size_bytes) ? +image_size_bytes : null,
+      image_mime_type: isImage ? (image_mime_type || null) : null,
+      image_width: isImage && Number.isFinite(+image_width) ? +image_width : null,
+      image_height: isImage && Number.isFinite(+image_height) ? +image_height : null,
       reply_to_message_id: replyToId,
       shared_entity_type: isEntityShare ? shared_entity_type : null,
       // Persist the canonical id resolved by the envelope (e.g.
@@ -1359,9 +1380,11 @@ async function sendMessage(req, res, next) {
 
     const preview = isAudio
       ? '🎤 Voice message'
-      : isEntityShare
-        ? _entitySharePreview(shared_entity_type)
-        : cleanBody.slice(0, 200);
+      : isImage
+        ? '🖼 Photo'
+        : isEntityShare
+          ? _entitySharePreview(shared_entity_type)
+          : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1405,6 +1428,11 @@ async function sendMessage(req, res, next) {
         audio_duration_ms: msg.audio_duration_ms,
         audio_size_bytes: msg.audio_size_bytes,
         audio_mime_type: msg.audio_mime_type,
+        image_url: msg.image_url || null,
+        image_size_bytes: msg.image_size_bytes || null,
+        image_mime_type: msg.image_mime_type || null,
+        image_width: msg.image_width || null,
+        image_height: msg.image_height || null,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,
@@ -2142,6 +2170,7 @@ async function quickplugSwipe(req, res, next) {
 /** See candidateController._replyBodyPreview — keep in sync. */
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
   if (attachmentType === 'audio') return '🎤 Voice message';
+  if (attachmentType === 'image') return '🖼 Photo';
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
   }

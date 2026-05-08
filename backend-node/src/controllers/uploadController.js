@@ -118,4 +118,109 @@ async function uploadAudio(req, res, next) {
   }
 }
 
-module.exports = { uploadAudio };
+// ─────────────────────────────────────────────────────────────────
+// Image uploads — Phase 5 (Photos + Camera chat plugs).
+//
+// Same three-gate pattern as uploadAudio (declared MIME → size → magic
+// sniff). 10MB cap covers HEIC/JPEG photos straight from the iPhone
+// camera roll without forcing a downscale on the client.
+// ─────────────────────────────────────────────────────────────────
+
+const ALLOWED_IMAGE_MIME = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+]);
+
+const SNIFFED_IMAGE_MIME = new Set([
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+]);
+
+const IMAGE_MIME_TO_EXT = {
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/heic': 'heic',
+  'image/heif': 'heic',
+};
+
+const IMAGE_MAX_BYTES = 10 * 1024 * 1024; // 10MB
+
+/**
+ * POST /v1/uploads/image
+ *
+ * Multipart form-data with field `file`. Optional form fields:
+ *   - `width` (int) — client-decoded image width in pixels
+ *   - `height` (int) — client-decoded image height in pixels
+ *
+ * Carries width/height so the receiver bubble can size its
+ * placeholder before the bytes finish loading (no layout jump).
+ */
+async function uploadImage(req, res, next) {
+  try {
+    if (!req.file) {
+      throw AppError.badRequest('Missing image file under field "file".');
+    }
+    const { mimetype, size, buffer } = req.file;
+
+    if (!ALLOWED_IMAGE_MIME.has(mimetype)) {
+      throw AppError.badRequest(
+        `Unsupported image type: ${mimetype}. Use JPEG/PNG/WEBP/HEIC.`,
+        'INVALID_MEDIA_TYPE',
+      );
+    }
+
+    if (size > IMAGE_MAX_BYTES) {
+      throw AppError.badRequest(
+        'Image file too large (max 10MB).',
+        'IMAGE_FILE_TOO_LARGE',
+      );
+    }
+
+    const sniffed = await _detectFileType(buffer);
+    if (!sniffed || !SNIFFED_IMAGE_MIME.has(sniffed.mime)) {
+      throw AppError.badRequest(
+        sniffed
+          ? `File contents look like ${sniffed.mime} (.${sniffed.ext}), not an image.`
+          : 'File contents are not a recognized image format.',
+        'INVALID_IMAGE_FILE',
+      );
+    }
+
+    const ext = IMAGE_MIME_TO_EXT[mimetype] || sniffed.ext || 'bin';
+    const url = await storage.save(buffer, {
+      ext,
+      mimeType: mimetype,
+      kind: 'image',
+    });
+
+    const width = parseInt(req.body?.width, 10);
+    const height = parseInt(req.body?.height, 10);
+    ok(res, {
+      image_url: url,
+      image_size_bytes: size,
+      image_mime_type: mimetype,
+      image_width: Number.isFinite(width) ? width : null,
+      image_height: Number.isFinite(height) ? height : null,
+      driver: storage.driverName(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** Generic magic-byte sniff — same `file-type` library used for audio. */
+async function _detectFileType(buffer) {
+  const { fileTypeFromBuffer } = await import('file-type');
+  return (await fileTypeFromBuffer(buffer)) || null;
+}
+
+module.exports = { uploadAudio, uploadImage };
