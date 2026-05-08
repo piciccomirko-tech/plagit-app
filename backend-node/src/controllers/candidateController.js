@@ -1054,6 +1054,10 @@ async function listMessages(req, res, next) {
         'messages.image_url', 'messages.image_size_bytes',
         'messages.image_mime_type', 'messages.image_width',
         'messages.image_height',
+        'messages.document_url', 'messages.document_size_bytes',
+        'messages.document_mime_type', 'messages.document_filename',
+        'messages.location_lat', 'messages.location_lng',
+        'messages.location_address',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -1225,6 +1229,13 @@ async function sendMessage(req, res, next) {
       image_mime_type,
       image_width,
       image_height,
+      document_url,
+      document_size_bytes,
+      document_mime_type,
+      document_filename,
+      location_lat,
+      location_lng,
+      location_address,
       reply_to_message_id,
       shared_entity_type,
       shared_entity_id,
@@ -1232,6 +1243,8 @@ async function sendMessage(req, res, next) {
 
     const isAudio = attachment_type === 'audio';
     const isImage = attachment_type === 'image';
+    const isDocument = attachment_type === 'document';
+    const isLocation = attachment_type === 'location';
     const isEntityShare = attachment_type === 'entity_share';
     if (isAudio && (!audio_url || typeof audio_url !== 'string')) {
       throw AppError.badRequest('audio_url is required for audio messages.');
@@ -1245,9 +1258,46 @@ async function sendMessage(req, res, next) {
         throw AppError.badRequest('image_url is required and must come from /v1/uploads/image.');
       }
     }
-    // Text messages still require a body. Audio / image / entity-share
-    // rows can carry an optional caption (kept) or no body at all.
-    if (!isAudio && !isImage && !isEntityShare && (!body || !body.trim())) {
+    // Document guard: same origin check as image — URL must come from
+    // /uploads/document/ so we can't be tricked into rendering a
+    // bubble pointing at an attacker-controlled host.
+    if (isDocument) {
+      if (!document_url || typeof document_url !== 'string' || !document_url.startsWith('/uploads/document/')) {
+        throw AppError.badRequest('document_url is required and must come from /v1/uploads/document.');
+      }
+    }
+    // Location guard: require both lat/lng to be finite numbers in
+    // the WGS-84 valid range. Sending NaN, Infinity, strings or out-
+    // of-range values short-circuits before the insert so we don't
+    // store dangling coords. `location_address` is optional — Sprint 3
+    // ships without client-side reverse-geocoding.
+    let locLat = null;
+    let locLng = null;
+    if (isLocation) {
+      // Reject null/undefined explicitly first — `Number(null) === 0`
+      // would otherwise pass the in-range check and silently store
+      // the equator/Greenwich coordinate.
+      if (location_lat === null || location_lat === undefined) {
+        throw AppError.badRequest('location_lat is required.');
+      }
+      if (location_lng === null || location_lng === undefined) {
+        throw AppError.badRequest('location_lng is required.');
+      }
+      const parsedLat = typeof location_lat === 'number' ? location_lat : Number(location_lat);
+      const parsedLng = typeof location_lng === 'number' ? location_lng : Number(location_lng);
+      if (!Number.isFinite(parsedLat) || parsedLat < -90 || parsedLat > 90) {
+        throw AppError.badRequest('location_lat must be a finite number in [-90, 90].');
+      }
+      if (!Number.isFinite(parsedLng) || parsedLng < -180 || parsedLng > 180) {
+        throw AppError.badRequest('location_lng must be a finite number in [-180, 180].');
+      }
+      locLat = parsedLat;
+      locLng = parsedLng;
+    }
+    // Text messages still require a body. Audio / image / document /
+    // location / entity-share rows can carry an optional caption
+    // (kept) or no body at all.
+    if (!isAudio && !isImage && !isDocument && !isLocation && !isEntityShare && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
     }
 
@@ -1301,9 +1351,13 @@ async function sendMessage(req, res, next) {
       ? 'audio'
       : isImage
         ? 'image'
-        : isEntityShare
-          ? 'entity_share'
-          : 'text';
+        : isDocument
+          ? 'document'
+          : isLocation
+            ? 'location'
+            : isEntityShare
+              ? 'entity_share'
+              : 'text';
     const [msg] = await db('messages').insert({
       conversation_id: conv.id,
       sender_id: userId,
@@ -1318,6 +1372,15 @@ async function sendMessage(req, res, next) {
       image_mime_type: isImage ? (image_mime_type || null) : null,
       image_width: isImage && Number.isFinite(+image_width) ? +image_width : null,
       image_height: isImage && Number.isFinite(+image_height) ? +image_height : null,
+      document_url: isDocument ? document_url : null,
+      document_size_bytes: isDocument && Number.isFinite(+document_size_bytes) ? +document_size_bytes : null,
+      document_mime_type: isDocument ? (document_mime_type || null) : null,
+      document_filename: isDocument ? (document_filename || null) : null,
+      location_lat: isLocation ? locLat : null,
+      location_lng: isLocation ? locLng : null,
+      location_address: isLocation && typeof location_address === 'string' && location_address.trim().length > 0
+        ? location_address.trim().slice(0, 500)
+        : null,
       reply_to_message_id: replyToId,
       shared_entity_type: isEntityShare ? shared_entity_type : null,
       // Persist the canonical id resolved by the envelope (e.g.
@@ -1333,9 +1396,13 @@ async function sendMessage(req, res, next) {
       ? '🎤 Voice message'
       : isImage
         ? '🖼 Photo'
-        : isEntityShare
-          ? _entitySharePreview(shared_entity_type)
-          : cleanBody.slice(0, 200);
+        : isDocument
+          ? '📄 Document'
+          : isLocation
+            ? '📍 Location'
+            : isEntityShare
+              ? _entitySharePreview(shared_entity_type)
+              : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1389,6 +1456,13 @@ async function sendMessage(req, res, next) {
         image_mime_type: msg.image_mime_type || null,
         image_width: msg.image_width || null,
         image_height: msg.image_height || null,
+        document_url: msg.document_url || null,
+        document_size_bytes: msg.document_size_bytes || null,
+        document_mime_type: msg.document_mime_type || null,
+        document_filename: msg.document_filename || null,
+        location_lat: msg.location_lat == null ? null : msg.location_lat,
+        location_lng: msg.location_lng == null ? null : msg.location_lng,
+        location_address: msg.location_address || null,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,
@@ -2237,6 +2311,8 @@ async function updateMatchStatus(req, res, next) {
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
+  if (attachmentType === 'document') return '📄 Document';
+  if (attachmentType === 'location') return '📍 Location';
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
   }

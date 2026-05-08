@@ -1,7 +1,11 @@
 const router = require('express').Router();
 const multer = require('multer');
 const { authenticate } = require('../middleware/auth');
-const { uploadAudio, uploadImage } = require('../controllers/uploadController');
+const {
+  uploadAudio,
+  uploadImage,
+  uploadDocument,
+} = require('../controllers/uploadController');
 
 // In-memory parsing — controller hands the buffer to the storage
 // adapter, which writes to disk / S3. Limits guard against oversize
@@ -23,9 +27,20 @@ const imageUpload = multer({
   },
 });
 
+// Document cap is 20MB — covers a long CV or contract PDF. Same
+// pattern as audio/image, controller does the strict gating.
+const documentUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 20 * 1024 * 1024,
+    files: 1,
+  },
+});
+
 router.use(authenticate);
 
 router.post('/audio', audioUpload.single('file'), uploadAudio);
 router.post('/image', imageUpload.single('file'), uploadImage);
+router.post('/document', documentUpload.single('file'), uploadDocument);
 
 module.exports = router;

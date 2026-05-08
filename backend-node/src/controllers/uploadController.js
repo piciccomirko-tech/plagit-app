@@ -223,4 +223,153 @@ async function _detectFileType(buffer) {
   return (await fileTypeFromBuffer(buffer)) || null;
 }
 
-module.exports = { uploadAudio, uploadImage };
+// ─────────────────────────────────────────────────────────────────
+// Document uploads — Sprint 3 (Document chat plug).
+//
+// Same three-gate pattern as audio/image. 20MB cap covers a long CV
+// or a contract PDF without being abuseable as a generic file dump.
+//
+// Allowlist intentionally narrow: PDF + DOC + DOCX + TXT only. Skip
+// XLS/XLSX for now — they aren't part of the recruitment use case
+// the chat plug targets and they have their own lookalike-malware
+// concerns (macro-enabled spreadsheets).
+// ─────────────────────────────────────────────────────────────────
+
+const ALLOWED_DOCUMENT_MIME = new Set([
+  'application/pdf',
+  'application/msword', // .doc
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+  'text/plain',
+]);
+
+// What `file-type` is allowed to return after sniffing the buffer.
+// DOCX is a ZIP container under the hood — `file-type` v22 reports
+// the OOXML mime when the inner _rels marks it as a Word document,
+// but on older docs (or stripped zips) it falls back to plain
+// `application/zip`. We accept either, gated by the declared MIME.
+const SNIFFED_DOCUMENT_MIME = new Set([
+  'application/pdf',
+  'application/x-cfb', // OLE compound — DOC files
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+  'application/zip', // DOCX inner container — only OK when declared mime IS docx
+]);
+
+const DOCUMENT_MIME_TO_EXT = {
+  'application/pdf': 'pdf',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'text/plain': 'txt',
+};
+
+const DOCUMENT_MAX_BYTES = 20 * 1024 * 1024; // 20MB
+
+/**
+ * Heuristic for plain-text bodies: file-type can't sniff `text/plain`
+ * (no magic bytes) so we run a simple structural check on the first
+ * 1KB. A genuine UTF-8/ASCII document has zero NUL bytes; a binary
+ * blob mislabelled as text/plain almost always has at least one. This
+ * isn't a perfect classifier but catches the obvious abuse.
+ */
+function _looksLikePlainText(buffer) {
+  const sample = buffer.slice(0, Math.min(buffer.length, 1024));
+  for (let i = 0; i < sample.length; i++) {
+    if (sample[i] === 0x00) return false;
+  }
+  return true;
+}
+
+/**
+ * POST /v1/uploads/document
+ *
+ * Multipart form-data with field `file`. Optional form field:
+ *   - `filename` (string) — original filename the sender's OS reported.
+ *     Persisted so the receiver bubble can show "Curriculum.pdf"
+ *     instead of the storage adapter's randomly-generated UUID. The
+ *     filename never enters the storage path itself — we always save
+ *     under `<uuid>.<ext>` to avoid path-traversal and to deduplicate.
+ */
+async function uploadDocument(req, res, next) {
+  try {
+    if (!req.file) {
+      throw AppError.badRequest('Missing document file under field "file".');
+    }
+    const { mimetype, size, buffer, originalname } = req.file;
+
+    if (!ALLOWED_DOCUMENT_MIME.has(mimetype)) {
+      throw AppError.badRequest(
+        `Unsupported document type: ${mimetype}. Use PDF/DOC/DOCX/TXT.`,
+        'INVALID_MEDIA_TYPE',
+      );
+    }
+
+    if (size > DOCUMENT_MAX_BYTES) {
+      throw AppError.badRequest(
+        'Document file too large (max 20MB).',
+        'DOCUMENT_FILE_TOO_LARGE',
+      );
+    }
+
+    // Plain-text bypasses the magic-byte sniff (text has no magic) and
+    // goes through a NUL-byte heuristic instead. Everything else must
+    // match the SNIFFED_DOCUMENT_MIME allowlist.
+    if (mimetype === 'text/plain') {
+      if (!_looksLikePlainText(buffer)) {
+        throw AppError.badRequest(
+          'File contents are not plain text.',
+          'INVALID_DOCUMENT_FILE',
+        );
+      }
+    } else {
+      const sniffed = await _detectFileType(buffer);
+      if (!sniffed || !SNIFFED_DOCUMENT_MIME.has(sniffed.mime)) {
+        throw AppError.badRequest(
+          sniffed
+            ? `File contents look like ${sniffed.mime} (.${sniffed.ext}), not a document.`
+            : 'File contents are not a recognized document format.',
+          'INVALID_DOCUMENT_FILE',
+        );
+      }
+      // DOCX edge case: file-type reports plain ZIP for stripped or
+      // legacy variants. Only accept when the declared MIME matches.
+      if (
+        sniffed.mime === 'application/zip' &&
+        mimetype !==
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ) {
+        throw AppError.badRequest(
+          'File contents are a ZIP archive, not a recognized document.',
+          'INVALID_DOCUMENT_FILE',
+        );
+      }
+    }
+
+    const ext = DOCUMENT_MIME_TO_EXT[mimetype] || 'bin';
+    const url = await storage.save(buffer, {
+      ext,
+      mimeType: mimetype,
+      kind: 'document',
+    });
+
+    // Filename precedence: explicit `filename` form field, then the
+    // multipart `originalname`, then a generic fallback. We never
+    // pull the name from the storage URL (that's a UUID).
+    const declaredName =
+      typeof req.body?.filename === 'string' && req.body.filename.trim().length > 0
+        ? req.body.filename.trim()
+        : null;
+    const filename = declaredName || originalname || `document.${ext}`;
+
+    ok(res, {
+      document_url: url,
+      document_size_bytes: size,
+      document_mime_type: mimetype,
+      document_filename: filename,
+      driver: storage.driverName(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+module.exports = { uploadAudio, uploadImage, uploadDocument };

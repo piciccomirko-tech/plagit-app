@@ -43,6 +43,8 @@ async function buildReplyEnvelope(replyToId) {
 function _bodyPreviewFor(parent) {
   if (parent.attachment_type === 'audio') return '🎤 Voice message';
   if (parent.attachment_type === 'image') return '🖼 Photo';
+  if (parent.attachment_type === 'document') return '📄 Document';
+  if (parent.attachment_type === 'location') return '📍 Location';
   if (parent.attachment_type === 'entity_share') {
     switch (parent.shared_entity_type) {
       case 'profile_candidate':

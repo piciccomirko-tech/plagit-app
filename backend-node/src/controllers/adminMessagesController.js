@@ -71,6 +71,10 @@ async function thread(req, res, next) {
         'messages.image_url', 'messages.image_size_bytes',
         'messages.image_mime_type', 'messages.image_width',
         'messages.image_height',
+        'messages.document_url', 'messages.document_size_bytes',
+        'messages.document_mime_type', 'messages.document_filename',
+        'messages.location_lat', 'messages.location_lng',
+        'messages.location_address',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -128,6 +132,8 @@ async function thread(req, res, next) {
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
+  if (attachmentType === 'document') return '📄 Document';
+  if (attachmentType === 'location') return '📍 Location';
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
   }
