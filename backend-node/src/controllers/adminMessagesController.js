@@ -54,17 +54,53 @@ async function thread(req, res, next) {
 
     const { page = 1, limit = 200 } = req.query;
     const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
-    const msgs = await db('messages')
+    // Phase 3D — surface reply preview for the admin thread viewer.
+    // Same LEFT JOIN approach as candidate / business listMessages.
+    const rawMsgs = await db('messages')
       .leftJoin('users', 'messages.sender_id', 'users.id')
+      .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
+      .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
+        'messages.reply_to_message_id',
         'users.name as sender_name', 'users.user_type as sender_type',
+        'replied.body as reply_body',
+        'replied.attachment_type as reply_attachment_type',
+        'replied.audio_duration_ms as reply_audio_duration_ms',
+        'replied_user.user_type as reply_sender_type',
+        'replied_user.name as reply_sender_name',
       )
       .orderBy('messages.created_at', 'asc')
       .limit(+limit)
       .offset((+page - 1) * +limit);
+
+    const msgs = rawMsgs.map((m) => {
+      const {
+        reply_body,
+        reply_attachment_type,
+        reply_audio_duration_ms,
+        reply_sender_type,
+        reply_sender_name,
+        ...rest
+      } = m;
+      let replyTo = null;
+      if (m.reply_to_message_id && reply_attachment_type !== null) {
+        const isVoice = reply_attachment_type === 'audio';
+        replyTo = {
+          id: m.reply_to_message_id,
+          sender_type: reply_sender_type || null,
+          sender_name: reply_sender_name || null,
+          attachment_type: reply_attachment_type,
+          body_preview: isVoice
+            ? '🎤 Voice message'
+            : (reply_body || '').slice(0, 200),
+          audio_duration_ms: reply_audio_duration_ms || null,
+        };
+      }
+      return { ...rest, reply_to: replyTo };
+    });
 
     ok(res, { conversation: conv, messages: msgs, pagination: { page: +page, limit: +limit, total } });
   } catch (e) { next(e); }

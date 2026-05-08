@@ -1115,7 +1115,13 @@ async function listMessages(req, res, next) {
     // chronological order for the client. Previous ASC+offset query
     // silently truncated long threads to the oldest page once total > limit,
     // making the chat appear "stuck" while admin (limit=200) saw newer rows.
+    // Phase 3D — same LEFT JOIN trick as candidate side to surface a
+    // compact reply preview (id / sender_type / attachment_type /
+    // body / audio_duration_ms) for every message that points at a
+    // parent.
     const msgs = (await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
+      .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
+      .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
@@ -1123,7 +1129,13 @@ async function listMessages(req, res, next) {
         'messages.attachment_type', 'messages.audio_url',
         'messages.audio_duration_ms', 'messages.audio_size_bytes',
         'messages.audio_mime_type',
+        'messages.reply_to_message_id',
         'users.name as sender_name', 'users.user_type as sender_type',
+        'replied.body as reply_body',
+        'replied.attachment_type as reply_attachment_type',
+        'replied.audio_duration_ms as reply_audio_duration_ms',
+        'replied_user.user_type as reply_sender_type',
+        'replied_user.name as reply_sender_name',
       )
       .orderBy('messages.created_at', 'desc').limit(+limit).offset((+page - 1) * +limit)).reverse();
 
@@ -1168,10 +1180,35 @@ async function listMessages(req, res, next) {
         created_at: r.created_at,
       });
     }
-    const enriched = msgs.map((m) => ({
-      ...m,
-      reactions: reactionsByMsg.get(m.id) || [],
-    }));
+    const enriched = msgs.map((m) => {
+      const {
+        reply_body,
+        reply_attachment_type,
+        reply_audio_duration_ms,
+        reply_sender_type,
+        reply_sender_name,
+        ...rest
+      } = m;
+      let replyTo = null;
+      if (m.reply_to_message_id && reply_attachment_type !== null) {
+        const isVoice = reply_attachment_type === 'audio';
+        replyTo = {
+          id: m.reply_to_message_id,
+          sender_type: reply_sender_type || null,
+          sender_name: reply_sender_name || null,
+          attachment_type: reply_attachment_type,
+          body_preview: isVoice
+            ? '🎤 Voice message'
+            : (reply_body || '').slice(0, 200),
+          audio_duration_ms: reply_audio_duration_ms || null,
+        };
+      }
+      return {
+        ...rest,
+        reply_to: replyTo,
+        reactions: reactionsByMsg.get(m.id) || [],
+      };
+    });
 
     paginated(res, enriched, { page: +page, limit: +limit, total });
   } catch (err) { next(err); }
@@ -1234,6 +1271,7 @@ async function sendMessage(req, res, next) {
       audio_duration_ms,
       audio_size_bytes,
       audio_mime_type,
+      reply_to_message_id,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
@@ -1242,6 +1280,22 @@ async function sendMessage(req, res, next) {
     }
     if (!isAudio && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
+    }
+
+    // Phase 3D — same-conversation reply guard. Mirror of
+    // candidateController.sendMessage.
+    let replyToId = null;
+    if (reply_to_message_id !== undefined && reply_to_message_id !== null) {
+      if (typeof reply_to_message_id !== 'string' || reply_to_message_id.length === 0) {
+        throw AppError.badRequest('Invalid reply_to_message_id.');
+      }
+      const target = await db('messages')
+        .where({ id: reply_to_message_id, conversation_id: conv.id })
+        .first();
+      if (!target) {
+        throw AppError.badRequest('Reply target message not found in this conversation.');
+      }
+      replyToId = target.id;
     }
 
     const cleanBody = (body && body.trim()) || '';
@@ -1254,6 +1308,7 @@ async function sendMessage(req, res, next) {
       audio_duration_ms: isAudio && Number.isFinite(+audio_duration_ms) ? +audio_duration_ms : null,
       audio_size_bytes: isAudio && Number.isFinite(+audio_size_bytes) ? +audio_size_bytes : null,
       audio_mime_type: isAudio ? (audio_mime_type || null) : null,
+      reply_to_message_id: replyToId,
     }).returning('*');
 
     const preview = isAudio ? '🎤 Voice message' : cleanBody.slice(0, 200);
@@ -1300,6 +1355,7 @@ async function sendMessage(req, res, next) {
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,
         is_read: !!msg.is_read,
+        reply_to_message_id: msg.reply_to_message_id || null,
       },
       conversation_id: conv.id,
       sender_user_id: req.user.id,
