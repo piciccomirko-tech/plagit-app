@@ -3,6 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
+const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 
 // ---------------------------------------------------------------------------
@@ -1131,10 +1132,13 @@ async function listMessages(req, res, next) {
         'messages.audio_duration_ms', 'messages.audio_size_bytes',
         'messages.audio_mime_type',
         'messages.reply_to_message_id',
+        'messages.shared_entity_type',
+        'messages.shared_entity_id',
         'users.name as sender_name', 'users.user_type as sender_type',
         'replied.body as reply_body',
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
+        'replied.shared_entity_type as reply_shared_entity_type',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
       )
@@ -1181,32 +1185,41 @@ async function listMessages(req, res, next) {
         created_at: r.created_at,
       });
     }
+    // Phase 4 — batch-fetch entity-share envelopes for the page.
+    // Mirror of the candidate-side enrichment, with viewerRole='business'.
+    const shareItems = msgs
+      .filter((m) => m.attachment_type === 'entity_share' && m.shared_entity_id)
+      .map((m) => ({ type: m.shared_entity_type, id: m.shared_entity_id }));
+    const shareEnvelopes = await batchEntityShareEnvelopes(shareItems, 'business');
+
     const enriched = msgs.map((m) => {
       const {
         reply_body,
         reply_attachment_type,
         reply_audio_duration_ms,
+        reply_shared_entity_type,
         reply_sender_type,
         reply_sender_name,
         ...rest
       } = m;
       let replyTo = null;
       if (m.reply_to_message_id && reply_attachment_type !== null) {
-        const isVoice = reply_attachment_type === 'audio';
         replyTo = {
           id: m.reply_to_message_id,
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
           attachment_type: reply_attachment_type,
-          body_preview: isVoice
-            ? '🎤 Voice message'
-            : (reply_body || '').slice(0, 200),
+          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
           audio_duration_ms: reply_audio_duration_ms || null,
         };
       }
+      const sharedEntity = m.attachment_type === 'entity_share' && m.shared_entity_id
+        ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
+        : null;
       return {
         ...rest,
         reply_to: replyTo,
+        shared_entity: sharedEntity,
         reactions: reactionsByMsg.get(m.id) || [],
       };
     });
@@ -1273,14 +1286,37 @@ async function sendMessage(req, res, next) {
       audio_size_bytes,
       audio_mime_type,
       reply_to_message_id,
+      shared_entity_type,
+      shared_entity_id,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
+    const isEntityShare = attachment_type === 'entity_share';
     if (isAudio && (!audio_url || typeof audio_url !== 'string')) {
       throw AppError.badRequest('audio_url is required for audio messages.');
     }
-    if (!isAudio && (!body || !body.trim())) {
+    if (!isAudio && !isEntityShare && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
+    }
+
+    // Phase 4 — entity-share guard. Mirror of
+    // candidateController.sendMessage.
+    let entityEnvelope = null;
+    if (isEntityShare) {
+      if (!isSupportedShareType(shared_entity_type)) {
+        throw AppError.badRequest('Invalid shared_entity_type.');
+      }
+      if (typeof shared_entity_id !== 'string' || shared_entity_id.length === 0) {
+        throw AppError.badRequest('Invalid shared_entity_id.');
+      }
+      entityEnvelope = await buildEntityShareEnvelope({
+        type: shared_entity_type,
+        id: shared_entity_id,
+        viewerRole: 'business',
+      });
+      if (!entityEnvelope) {
+        throw AppError.badRequest('Shared entity not found.');
+      }
     }
 
     // Phase 3D — same-conversation reply guard. Mirror of
@@ -1300,19 +1336,32 @@ async function sendMessage(req, res, next) {
     }
 
     const cleanBody = (body && body.trim()) || '';
+    const dbAttachmentType = isAudio
+      ? 'audio'
+      : isEntityShare
+        ? 'entity_share'
+        : 'text';
     const [msg] = await db('messages').insert({
       conversation_id: conv.id,
       sender_id: req.user.id,
       body: cleanBody,
-      attachment_type: isAudio ? 'audio' : 'text',
+      attachment_type: dbAttachmentType,
       audio_url: isAudio ? audio_url : null,
       audio_duration_ms: isAudio && Number.isFinite(+audio_duration_ms) ? +audio_duration_ms : null,
       audio_size_bytes: isAudio && Number.isFinite(+audio_size_bytes) ? +audio_size_bytes : null,
       audio_mime_type: isAudio ? (audio_mime_type || null) : null,
       reply_to_message_id: replyToId,
+      shared_entity_type: isEntityShare ? shared_entity_type : null,
+      // Persist the canonical id resolved by the envelope (e.g.
+      // businesses.id) even when the client passed users.id.
+      shared_entity_id: isEntityShare ? entityEnvelope.id : null,
     }).returning('*');
 
-    const preview = isAudio ? '🎤 Voice message' : cleanBody.slice(0, 200);
+    const preview = isAudio
+      ? '🎤 Voice message'
+      : isEntityShare
+        ? _entitySharePreview(shared_entity_type)
+        : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1362,13 +1411,16 @@ async function sendMessage(req, res, next) {
         is_read: !!msg.is_read,
         reply_to_message_id: msg.reply_to_message_id || null,
         reply_to: replyEnvelope,
+        shared_entity_type: msg.shared_entity_type || null,
+        shared_entity_id: msg.shared_entity_id || null,
+        shared_entity: entityEnvelope,
       },
       conversation_id: conv.id,
       sender_user_id: req.user.id,
       recipient_user_id: candidateUserId,
       sender_role: 'business',
     }, audience);
-    ok(res, { ...msg, reply_to: replyEnvelope });
+    ok(res, { ...msg, reply_to: replyEnvelope, shared_entity: entityEnvelope });
   } catch (err) { next(err); }
 }
 
@@ -2085,6 +2137,30 @@ async function quickplugSwipe(req, res, next) {
       ...postQuota,
     });
   } catch (err) { next(err); }
+}
+
+/** See candidateController._replyBodyPreview — keep in sync. */
+function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+  if (attachmentType === 'audio') return '🎤 Voice message';
+  if (attachmentType === 'entity_share') {
+    return _entitySharePreview(sharedEntityType);
+  }
+  return (body || '').slice(0, 200);
+}
+
+/** See candidateController._entitySharePreview — keep in sync. */
+function _entitySharePreview(type) {
+  switch (type) {
+    case 'profile_candidate':
+    case 'profile_business':
+      return '📋 Profile';
+    case 'job':
+      return '💼 Job';
+    case 'interview':
+      return '📅 Interview';
+    default:
+      return '📎 Shared item';
+  }
 }
 
 module.exports = {

@@ -3,6 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
+const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
 
@@ -456,11 +457,17 @@ async function listJobs(req, res, next) {
 // ---------------------------------------------------------------------------
 async function getJob(req, res, next) {
   try {
+    // Phase 4 — drop the hardcoded `status='active'` filter that was
+    // 404-ing chat-shared paused/closed jobs. The detail endpoint is
+    // read-only; rendering a non-active job is fine and the UI can
+    // disable the Apply CTA based on the returned `status` field.
+    // The list endpoints (`listJobs`, `featuredJobs`,
+    // `listBusinessJobsForConversation`) keep their own
+    // status='active' filters so the discovery surfaces stay clean.
     const job = await db('jobs')
       .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
       .leftJoin('users as biz_users', 'businesses.user_id', 'biz_users.id')
       .where('jobs.id', req.params.id)
-      .where('jobs.status', 'active')
       .select(
         'jobs.*',
         'businesses.name as business_name', 'businesses.initials as business_initials',
@@ -932,6 +939,84 @@ async function listConversations(req, res, next) {
 // ---------------------------------------------------------------------------
 // GET /candidate/conversations/:id/messages — Messages in a conversation
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// GET /candidate/conversations/:id/business-jobs
+// ---------------------------------------------------------------------------
+// Surfaces jobs posted by the business on the OTHER side of a chat
+// conversation. Used by the chat Job picker (Phase 4) so a candidate
+// can only share jobs that are relevant to the current thread —
+// avoids "candidate shares a random job from another business".
+// Auth: candidate must own the conversation. Returns active jobs
+// only (status='active'), most recent first.
+async function listBusinessJobsForConversation(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Candidate profile required.');
+    const conv = await db('conversations')
+      .where({ id: req.params.id, candidate_id: candidate.id })
+      .first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+    if (!conv.business_id) { ok(res, []); return; }
+
+    const rows = await db('jobs')
+      .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
+      .where('jobs.business_id', conv.business_id)
+      .where('jobs.status', 'active')
+      .select(
+        'jobs.id',
+        'jobs.title',
+        'jobs.location',
+        'jobs.employment_type',
+        'jobs.salary',
+        'jobs.is_urgent',
+        'jobs.is_featured',
+        'jobs.created_at',
+        'businesses.name as business_name',
+      )
+      .orderBy('jobs.created_at', 'desc');
+    ok(res, rows);
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// GET /candidate/conversations/:id/business-interviews
+// ---------------------------------------------------------------------------
+// Mirror of listBusinessJobsForConversation but for interviews.
+// Used by the chat Interview picker (Phase 4) so a candidate can
+// only share interviews tied to the business at the other side of
+// THIS thread (interviews where interviews.candidate_id = me AND
+// jobs.business_id = conv.business_id). Most recent first.
+async function listInterviewsForConversation(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Candidate profile required.');
+    const conv = await db('conversations')
+      .where({ id: req.params.id, candidate_id: candidate.id })
+      .first();
+    if (!conv) throw AppError.notFound('Conversation not found.');
+    if (!conv.business_id) { ok(res, []); return; }
+
+    const rows = await db('interviews')
+      .leftJoin('jobs', 'interviews.job_id', 'jobs.id')
+      .leftJoin('businesses', 'jobs.business_id', 'businesses.id')
+      .where('interviews.candidate_id', candidate.id)
+      .where('jobs.business_id', conv.business_id)
+      .select(
+        'interviews.id',
+        'interviews.scheduled_at',
+        'interviews.interview_type',
+        'interviews.status',
+        'interviews.location',
+        'jobs.title as job_title',
+        'businesses.name as business_name',
+      )
+      .orderBy('interviews.scheduled_at', 'desc');
+    ok(res, rows);
+  } catch (err) { next(err); }
+}
+
 async function listMessages(req, res, next) {
   try {
     const userId = req.user.id;
@@ -967,10 +1052,13 @@ async function listMessages(req, res, next) {
         'messages.audio_duration_ms', 'messages.audio_size_bytes',
         'messages.audio_mime_type',
         'messages.reply_to_message_id',
+        'messages.shared_entity_type',
+        'messages.shared_entity_id',
         'users.name as sender_name', 'users.user_type as sender_type',
         'replied.body as reply_body',
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
+        'replied.shared_entity_type as reply_shared_entity_type',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
       )
@@ -1017,11 +1105,19 @@ async function listMessages(req, res, next) {
         created_at: r.created_at,
       });
     }
+    // Phase 4 — batch-fetch entity-share envelopes for the page.
+    // One grouped query per type at most (4 max), avoiding N+1.
+    const shareItems = msgs
+      .filter((m) => m.attachment_type === 'entity_share' && m.shared_entity_id)
+      .map((m) => ({ type: m.shared_entity_type, id: m.shared_entity_id }));
+    const shareEnvelopes = await batchEntityShareEnvelopes(shareItems, 'candidate');
+
     const enriched = msgs.map((m) => {
       const {
         reply_body,
         reply_attachment_type,
         reply_audio_duration_ms,
+        reply_shared_entity_type,
         reply_sender_type,
         reply_sender_name,
         ...rest
@@ -1032,21 +1128,25 @@ async function listMessages(req, res, next) {
       // reply_to_message_id present + reply_to absent).
       let replyTo = null;
       if (m.reply_to_message_id && reply_attachment_type !== null) {
-        const isVoice = reply_attachment_type === 'audio';
         replyTo = {
           id: m.reply_to_message_id,
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
           attachment_type: reply_attachment_type,
-          body_preview: isVoice
-            ? '🎤 Voice message'
-            : (reply_body || '').slice(0, 200),
+          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
           audio_duration_ms: reply_audio_duration_ms || null,
         };
       }
+      // Attach the entity-share envelope when this row is itself an
+      // entity share. Missing entity (deleted after send) → null →
+      // client renders a "no longer available" fallback.
+      const sharedEntity = m.attachment_type === 'entity_share' && m.shared_entity_id
+        ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
+        : null;
       return {
         ...rest,
         reply_to: replyTo,
+        shared_entity: sharedEntity,
         reactions: reactionsByMsg.get(m.id) || [],
       };
     });
@@ -1118,16 +1218,45 @@ async function sendMessage(req, res, next) {
       audio_size_bytes,
       audio_mime_type,
       reply_to_message_id,
+      shared_entity_type,
+      shared_entity_id,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
+    const isEntityShare = attachment_type === 'entity_share';
     if (isAudio && (!audio_url || typeof audio_url !== 'string')) {
       throw AppError.badRequest('audio_url is required for audio messages.');
     }
-    // Text messages still require a body. Audio messages may carry an
-    // optional caption (kept) or no body at all.
-    if (!isAudio && (!body || !body.trim())) {
+    // Text messages still require a body. Audio + entity-share rows
+    // can carry an optional caption (kept) or no body at all.
+    if (!isAudio && !isEntityShare && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
+    }
+
+    // Phase 4 — entity-share guard. The (type, id) pair must reference
+    // an entity that exists in this DB; otherwise the bubble would
+    // render an empty card on the receiver and we'd have a dangling
+    // polymorphic pointer in `messages`.
+    let entityEnvelope = null;
+    if (isEntityShare) {
+      if (!isSupportedShareType(shared_entity_type)) {
+        throw AppError.badRequest('Invalid shared_entity_type.');
+      }
+      if (typeof shared_entity_id !== 'string' || shared_entity_id.length === 0) {
+        throw AppError.badRequest('Invalid shared_entity_id.');
+      }
+      // viewerRole 'candidate' here just for the existence lookup —
+      // the real per-recipient envelope is rebuilt at listMessages
+      // time. Since the lookup itself is read-only, the route field
+      // resolved here is harmless.
+      entityEnvelope = await buildEntityShareEnvelope({
+        type: shared_entity_type,
+        id: shared_entity_id,
+        viewerRole: 'candidate',
+      });
+      if (!entityEnvelope) {
+        throw AppError.badRequest('Shared entity not found.');
+      }
     }
 
     // Phase 3D — reply support. If the client provides
@@ -1150,21 +1279,36 @@ async function sendMessage(req, res, next) {
     }
 
     const cleanBody = (body && body.trim()) || '';
+    const dbAttachmentType = isAudio
+      ? 'audio'
+      : isEntityShare
+        ? 'entity_share'
+        : 'text';
     const [msg] = await db('messages').insert({
       conversation_id: conv.id,
       sender_id: userId,
       body: cleanBody,
-      attachment_type: isAudio ? 'audio' : 'text',
+      attachment_type: dbAttachmentType,
       audio_url: isAudio ? audio_url : null,
       audio_duration_ms: isAudio && Number.isFinite(+audio_duration_ms) ? +audio_duration_ms : null,
       audio_size_bytes: isAudio && Number.isFinite(+audio_size_bytes) ? +audio_size_bytes : null,
       audio_mime_type: isAudio ? (audio_mime_type || null) : null,
       reply_to_message_id: replyToId,
+      shared_entity_type: isEntityShare ? shared_entity_type : null,
+      // Persist the canonical id resolved by the envelope (e.g.
+      // candidates.id) even when the client passed users.id. This
+      // keeps the DB row consistent with what listMessages will
+      // look up later.
+      shared_entity_id: isEntityShare ? entityEnvelope.id : null,
     }).returning('*');
 
-    // Conversation last_message — audio rows show a glyph since the
-    // body preview would otherwise be empty.
-    const preview = isAudio ? '🎤 Voice message' : cleanBody.slice(0, 200);
+    // Conversation last_message — audio + entity-share rows show a
+    // glyph since the body preview would otherwise be empty.
+    const preview = isAudio
+      ? '🎤 Voice message'
+      : isEntityShare
+        ? _entitySharePreview(shared_entity_type)
+        : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1219,6 +1363,9 @@ async function sendMessage(req, res, next) {
         is_read: !!msg.is_read,
         reply_to_message_id: msg.reply_to_message_id || null,
         reply_to: replyEnvelope,
+        shared_entity_type: msg.shared_entity_type || null,
+        shared_entity_id: msg.shared_entity_id || null,
+        shared_entity: entityEnvelope,
       },
       conversation_id: conv.id,
       sender_user_id: userId,
@@ -1226,7 +1373,7 @@ async function sendMessage(req, res, next) {
       sender_role: 'candidate',
     }, audience);
 
-    ok(res, { ...msg, reply_to: replyEnvelope });
+    ok(res, { ...msg, reply_to: replyEnvelope, shared_entity: entityEnvelope });
   } catch (err) { next(err); }
 }
 
@@ -2051,7 +2198,94 @@ async function updateMatchStatus(req, res, next) {
   } catch (err) { next(err); }
 }
 
+/** Compact one-liner for an inline reply quote — same logic as
+ *  `messageReplyEnvelope._bodyPreviewFor` but operates on the flat
+ *  columns that the listMessages LEFT JOIN exposes (no extra round
+ *  trip). Keep the two implementations in sync if you change either. */
+function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+  if (attachmentType === 'audio') return '🎤 Voice message';
+  if (attachmentType === 'entity_share') {
+    return _entitySharePreview(sharedEntityType);
+  }
+  return (body || '').slice(0, 200);
+}
+
+/** Glyph + label used as `conversations.last_message` when the
+ *  outgoing message is an entity share. Mirrors the icons used by
+ *  the Flutter EntityShareBubble so the inbox preview matches what
+ *  the user sees in the thread. */
+function _entitySharePreview(type) {
+  switch (type) {
+    case 'profile_candidate':
+    case 'profile_business':
+      return '📋 Profile';
+    case 'job':
+      return '💼 Job';
+    case 'interview':
+      return '📅 Interview';
+    default:
+      return '📎 Shared item';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// GET /candidate/businesses/:id — Public-ish business profile
+// ---------------------------------------------------------------------------
+// Surfaced primarily to support EntityShareBubble navigation when a
+// candidate taps a shared business profile card. Returns a curated
+// subset of `businesses` + the owner-user's photo. Lookup tolerates
+// both `businesses.id` and `businesses.user_id` so the route works
+// regardless of which identifier the share envelope persisted.
+async function getBusinessProfile(req, res, next) {
+  try {
+    const id = req.params.id;
+    if (!id) throw AppError.badRequest('Business id required.');
+    const row = await db('businesses')
+      .leftJoin('users', 'businesses.user_id', 'users.id')
+      .where(function () {
+        this.where('businesses.id', id).orWhere('businesses.user_id', id);
+      })
+      .select(
+        'businesses.id',
+        'businesses.user_id',
+        'businesses.name',
+        'businesses.venue_type',
+        'businesses.location',
+        'businesses.languages',
+        'businesses.website',
+        'businesses.is_verified',
+        'businesses.avatar_hue',
+        'businesses.latitude',
+        'businesses.longitude',
+        'users.photo_url',
+        'users.email',
+        'users.phone',
+      )
+      .first();
+    if (!row) throw AppError.notFound('Business not found.');
+    ok(res, {
+      id: row.id,
+      user_id: row.user_id,
+      name: row.name,
+      venue_type: row.venue_type,
+      location: row.location,
+      languages: row.languages,
+      website: row.website || null,
+      is_verified: !!row.is_verified,
+      avatar_hue: row.avatar_hue,
+      latitude: row.latitude,
+      longitude: row.longitude,
+      photo_url: row.photo_url || null,
+      email: row.email || null,
+      phone: row.phone || null,
+    });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
+  getBusinessProfile,
+  listBusinessJobsForConversation,
+  listInterviewsForConversation,
   profile, home, featuredJobs,
   listJobs, getJob, applyToJob,
   listApplications, getApplication, withdrawApplication,

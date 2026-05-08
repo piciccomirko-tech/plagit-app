@@ -13,6 +13,11 @@ router.post('/cv', c.uploadCV);
 router.post('/cv/parse', c.parseCV);
 router.get('/home', c.home);
 
+// Phase 4 — public business profile lookup (used by chat
+// EntityShareBubble navigation when a candidate taps a shared
+// business profile card).
+router.get('/businesses/:id', c.getBusinessProfile);
+
 // Jobs
 router.get('/jobs/nearby', c.nearbyJobs);
 router.get('/jobs/featured', c.featuredJobs);
@@ -38,6 +43,10 @@ router.patch('/interviews/:id/respond', c.respondToInterview);
 router.get('/conversations', c.listConversations);
 router.delete('/conversations/:id', c.archiveConversation);
 router.get('/conversations/:id/messages', c.listMessages);
+// Phase 4 — Job picker scope guard. Candidate-side picker shows
+// only jobs from the business at the other end of THIS thread.
+router.get('/conversations/:id/business-jobs', c.listBusinessJobsForConversation);
+router.get('/conversations/:id/business-interviews', c.listInterviewsForConversation);
 router.post('/conversations/:id/messages', c.sendMessage);
 router.post('/conversations/:id/messages/ack-delivered', c.ackMessagesDelivered);
 router.post('/conversations/:id/typing', c.sendTyping);

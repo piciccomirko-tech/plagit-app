@@ -2,6 +2,7 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const { log } = require('../services/logService');
 const AppError = require('../utils/AppError');
+const { batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 
 async function list(req, res, next) {
   try {
@@ -64,11 +65,15 @@ async function thread(req, res, next) {
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
+        'messages.attachment_type',
         'messages.reply_to_message_id',
+        'messages.shared_entity_type',
+        'messages.shared_entity_id',
         'users.name as sender_name', 'users.user_type as sender_type',
         'replied.body as reply_body',
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
+        'replied.shared_entity_type as reply_shared_entity_type',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
       )
@@ -76,34 +81,64 @@ async function thread(req, res, next) {
       .limit(+limit)
       .offset((+page - 1) * +limit);
 
+    // Phase 4 — batch entity-share envelopes for the admin viewer.
+    const shareItems = rawMsgs
+      .filter((m) => m.attachment_type === 'entity_share' && m.shared_entity_id)
+      .map((m) => ({ type: m.shared_entity_type, id: m.shared_entity_id }));
+    const shareEnvelopes = await batchEntityShareEnvelopes(shareItems, 'admin');
+
     const msgs = rawMsgs.map((m) => {
       const {
         reply_body,
         reply_attachment_type,
         reply_audio_duration_ms,
+        reply_shared_entity_type,
         reply_sender_type,
         reply_sender_name,
         ...rest
       } = m;
       let replyTo = null;
       if (m.reply_to_message_id && reply_attachment_type !== null) {
-        const isVoice = reply_attachment_type === 'audio';
         replyTo = {
           id: m.reply_to_message_id,
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
           attachment_type: reply_attachment_type,
-          body_preview: isVoice
-            ? '🎤 Voice message'
-            : (reply_body || '').slice(0, 200),
+          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
           audio_duration_ms: reply_audio_duration_ms || null,
         };
       }
-      return { ...rest, reply_to: replyTo };
+      const sharedEntity = m.attachment_type === 'entity_share' && m.shared_entity_id
+        ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
+        : null;
+      return { ...rest, reply_to: replyTo, shared_entity: sharedEntity };
     });
 
     ok(res, { conversation: conv, messages: msgs, pagination: { page: +page, limit: +limit, total } });
   } catch (e) { next(e); }
+}
+
+/** See candidateController._replyBodyPreview / _entitySharePreview —
+ *  keep the three implementations in sync. */
+function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+  if (attachmentType === 'audio') return '🎤 Voice message';
+  if (attachmentType === 'entity_share') {
+    return _entitySharePreview(sharedEntityType);
+  }
+  return (body || '').slice(0, 200);
+}
+function _entitySharePreview(type) {
+  switch (type) {
+    case 'profile_candidate':
+    case 'profile_business':
+      return '📋 Profile';
+    case 'job':
+      return '💼 Job';
+    case 'interview':
+      return '📅 Interview';
+    default:
+      return '📎 Shared item';
+  }
 }
 
 module.exports = { list, updateStatus, remove, thread };
