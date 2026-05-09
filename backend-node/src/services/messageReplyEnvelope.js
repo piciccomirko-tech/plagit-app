@@ -22,18 +22,24 @@ async function buildReplyEnvelope(replyToId) {
       'messages.audio_duration_ms',
       'messages.shared_entity_type',
       'messages.shared_entity_id',
+      'messages.deleted_for_everyone_at',
       'users.name as sender_name',
       'users.user_type as sender_type',
     )
     .first();
   if (!parent) return null;
+  // Sprint 4C — when the parent has been tombstoned, surface the same
+  // "This message was deleted" placeholder the listMessages enrichment
+  // produces, and force the attachment_type so the bubble can branch
+  // its render without inspecting the raw timestamp.
+  const isTombstoned = parent.deleted_for_everyone_at != null;
   return {
     id: parent.id,
     sender_type: parent.sender_type || null,
     sender_name: parent.sender_name || null,
-    attachment_type: parent.attachment_type,
-    body_preview: _bodyPreviewFor(parent),
-    audio_duration_ms: parent.audio_duration_ms || null,
+    attachment_type: isTombstoned ? 'deleted' : parent.attachment_type,
+    body_preview: isTombstoned ? 'This message was deleted' : _bodyPreviewFor(parent),
+    audio_duration_ms: isTombstoned ? null : (parent.audio_duration_ms || null),
   };
 }
 

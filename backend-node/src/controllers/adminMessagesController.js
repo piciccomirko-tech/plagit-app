@@ -75,6 +75,7 @@ async function thread(req, res, next) {
         'messages.document_mime_type', 'messages.document_filename',
         'messages.location_lat', 'messages.location_lng',
         'messages.location_address',
+        'messages.deleted_for_everyone_at',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -95,6 +96,20 @@ async function thread(req, res, next) {
       .filter((m) => m.attachment_type === 'entity_share' && m.shared_entity_id)
       .map((m) => ({ type: m.shared_entity_type, id: m.shared_entity_id }));
     const shareEnvelopes = await batchEntityShareEnvelopes(shareItems, 'admin');
+
+    // Sprint 4A — admin's own stars (private). Same per-user pattern as
+    // candidate/business: admin only sees their own stars in the thread,
+    // never other users'. Surfaces `is_starred_by_me` to keep the
+    // payload shape stable across all 3 viewer roles.
+    const ids = rawMsgs.map((m) => m.id);
+    const starredIds = ids.length === 0
+      ? new Set()
+      : new Set(
+          (await db('message_stars')
+            .whereIn('message_id', ids)
+            .where('user_id', req.user.id)
+            .pluck('message_id')),
+        );
 
     const msgs = rawMsgs.map((m) => {
       const {
@@ -120,7 +135,12 @@ async function thread(req, res, next) {
       const sharedEntity = m.attachment_type === 'entity_share' && m.shared_entity_id
         ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
         : null;
-      return { ...rest, reply_to: replyTo, shared_entity: sharedEntity };
+      return {
+        ...rest,
+        reply_to: replyTo,
+        shared_entity: sharedEntity,
+        is_starred_by_me: starredIds.has(m.id),
+      };
     });
 
     ok(res, { conversation: conv, messages: msgs, pagination: { page: +page, limit: +limit, total } });
@@ -130,6 +150,7 @@ async function thread(req, res, next) {
 /** See candidateController._replyBodyPreview / _entitySharePreview —
  *  keep the three implementations in sync. */
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+  if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
   if (attachmentType === 'document') return '📄 Document';

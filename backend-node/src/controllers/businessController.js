@@ -1112,7 +1112,18 @@ async function listMessages(req, res, next) {
     const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
     if (!conv) throw AppError.notFound('Conversation not found.');
     const { page = 1, limit = 200 } = req.query;
-    const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
+    // Sprint 4C — count must mirror the same `message_hides` filter
+    // applied to the SELECT below; otherwise pagination thinks there
+    // are more rows than the caller will ever see.
+    const total = await db('messages')
+      .where({ conversation_id: conv.id })
+      .whereNotExists(function () {
+        this.select(db.raw('1'))
+          .from('message_hides')
+          .whereRaw('message_hides.message_id = messages.id')
+          .where('message_hides.user_id', req.user.id);
+      })
+      .count('* as c').first().then(r => +r.c);
     // Pull the LATEST `limit` messages (desc + offset), then reverse to
     // chronological order for the client. Previous ASC+offset query
     // silently truncated long threads to the oldest page once total > limit,
@@ -1125,6 +1136,13 @@ async function listMessages(req, res, next) {
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
       .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
+      // Sprint 4C — exclude rows the caller has hidden via delete-for-me.
+      .whereNotExists(function () {
+        this.select(db.raw('1'))
+          .from('message_hides')
+          .whereRaw('message_hides.message_id = messages.id')
+          .where('message_hides.user_id', req.user.id);
+      })
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
@@ -1138,6 +1156,7 @@ async function listMessages(req, res, next) {
         'messages.document_mime_type', 'messages.document_filename',
         'messages.location_lat', 'messages.location_lng',
         'messages.location_address',
+        'messages.deleted_for_everyone_at',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -1146,6 +1165,7 @@ async function listMessages(req, res, next) {
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
         'replied.shared_entity_type as reply_shared_entity_type',
+        'replied.deleted_for_everyone_at as reply_deleted_for_everyone_at',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
       )
@@ -1192,6 +1212,15 @@ async function listMessages(req, res, next) {
         created_at: r.created_at,
       });
     }
+    // Sprint 4A — caller's own stars in a single batch (private).
+    const starredIds = ids.length === 0
+      ? new Set()
+      : new Set(
+          (await db('message_stars')
+            .whereIn('message_id', ids)
+            .where('user_id', req.user.id)
+            .pluck('message_id')),
+        );
     // Phase 4 — batch-fetch entity-share envelopes for the page.
     // Mirror of the candidate-side enrichment, with viewerRole='business'.
     const shareItems = msgs
@@ -1205,29 +1234,62 @@ async function listMessages(req, res, next) {
         reply_attachment_type,
         reply_audio_duration_ms,
         reply_shared_entity_type,
+        reply_deleted_for_everyone_at,
         reply_sender_type,
         reply_sender_name,
         ...rest
       } = m;
       let replyTo = null;
       if (m.reply_to_message_id && reply_attachment_type !== null) {
+        // Sprint 4C — tombstone parent reads "This message was deleted".
+        const parentDeleted = reply_deleted_for_everyone_at != null;
         replyTo = {
           id: m.reply_to_message_id,
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
-          attachment_type: reply_attachment_type,
-          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
-          audio_duration_ms: reply_audio_duration_ms || null,
+          attachment_type: parentDeleted ? 'deleted' : reply_attachment_type,
+          body_preview: parentDeleted
+            ? 'This message was deleted'
+            : _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
+          audio_duration_ms: parentDeleted ? null : (reply_audio_duration_ms || null),
         };
       }
-      const sharedEntity = m.attachment_type === 'entity_share' && m.shared_entity_id
+      // Sprint 4C — tombstone payload: strip body + media URLs so the
+      // bubble can't accidentally render the original content.
+      const isTombstoned = m.deleted_for_everyone_at != null;
+      const tombstoneOverrides = isTombstoned
+        ? {
+            body: '',
+            audio_url: null,
+            audio_duration_ms: null,
+            audio_size_bytes: null,
+            audio_mime_type: null,
+            image_url: null,
+            image_size_bytes: null,
+            image_mime_type: null,
+            image_width: null,
+            image_height: null,
+            document_url: null,
+            document_size_bytes: null,
+            document_mime_type: null,
+            document_filename: null,
+            location_lat: null,
+            location_lng: null,
+            location_address: null,
+            shared_entity_type: null,
+            shared_entity_id: null,
+          }
+        : {};
+      const sharedEntity = !isTombstoned && m.attachment_type === 'entity_share' && m.shared_entity_id
         ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
         : null;
       return {
         ...rest,
+        ...tombstoneOverrides,
         reply_to: replyTo,
         shared_entity: sharedEntity,
-        reactions: reactionsByMsg.get(m.id) || [],
+        reactions: isTombstoned ? [] : (reactionsByMsg.get(m.id) || []),
+        is_starred_by_me: !isTombstoned && starredIds.has(m.id),
       };
     });
 
@@ -1570,6 +1632,242 @@ async function removeMessageReaction(req, res, next) {
       .delete();
 
     ok(res, { message_id: messageId, user_id: req.user.id, removed: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /business/messages/:messageId/star — Star a message (per-user)
+// ---------------------------------------------------------------------------
+// Mirror of candidateController.starMessage. Stars are private —
+// only the caller sees them. No realtime broadcast.
+async function starMessage(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const messageId = req.params.messageId;
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_stars')
+      .insert({ message_id: messageId, user_id: req.user.id })
+      .onConflict(['message_id', 'user_id'])
+      .ignore();
+
+    ok(res, { message_id: messageId, user_id: req.user.id, starred: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /business/messages/:messageId/star — Unstar own star
+// ---------------------------------------------------------------------------
+async function unstarMessage(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const messageId = req.params.messageId;
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_stars')
+      .where({ message_id: messageId, user_id: req.user.id })
+      .delete();
+
+    ok(res, { message_id: messageId, user_id: req.user.id, starred: false });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 4C — Delete actions, mirror of candidateController. See the
+// candidate-side comment for the design rationale.
+// ---------------------------------------------------------------------------
+
+const DELETE_FOR_EVERYONE_WINDOW_MS = 15 * 60 * 1000;
+
+async function hideMessageForMe(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const messageId = req.params.messageId;
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_hides')
+      .insert({ message_id: messageId, user_id: req.user.id })
+      .onConflict(['message_id', 'user_id'])
+      .ignore();
+
+    ok(res, { message_id: messageId, user_id: req.user.id, hidden: true });
+  } catch (err) { next(err); }
+}
+
+async function deleteMessageForEveryone(req, res, next) {
+  try {
+    const bizId = await getBizId(req.user.id);
+    const messageId = req.params.messageId;
+
+    const msg = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select(
+        'messages.id',
+        'messages.sender_id',
+        'messages.created_at',
+        'messages.deleted_for_everyone_at',
+        'messages.conversation_id',
+        'conversations.candidate_id',
+      )
+      .first();
+    if (!msg) throw AppError.notFound('Message not found.');
+
+    if (msg.sender_id !== req.user.id) {
+      throw AppError.forbidden(
+        'You can only delete your own messages for everyone.',
+        'NOT_SENDER',
+      );
+    }
+    if (msg.deleted_for_everyone_at) {
+      ok(res, { message_id: messageId, deleted_for_everyone: true });
+      return;
+    }
+    const ageMs = Date.now() - new Date(msg.created_at).getTime();
+    if (ageMs > DELETE_FOR_EVERYONE_WINDOW_MS) {
+      throw AppError.badRequest(
+        'You can only delete a message for everyone within 15 minutes of sending.',
+        'DELETE_WINDOW_EXPIRED',
+      );
+    }
+
+    const deletedAt = new Date().toISOString();
+    await db.transaction(async (trx) => {
+      await trx('messages')
+        .where({ id: messageId })
+        .update({ deleted_for_everyone_at: deletedAt, updated_at: deletedAt });
+      await trx('message_reactions').where({ message_id: messageId }).delete();
+    });
+
+    let peerUserId = null;
+    if (msg.candidate_id) {
+      const cand = await db('candidates').where({ id: msg.candidate_id }).select('user_id').first();
+      if (cand) peerUserId = cand.user_id;
+    }
+    const audience = ['role:admin', `user:${req.user.id}`];
+    if (peerUserId) audience.push(`user:${peerUserId}`);
+    bus.publish('message.deleted_for_everyone', {
+      message_id: messageId,
+      conversation_id: msg.conversation_id,
+      deleted_for_everyone_at: deletedAt,
+      sender_user_id: req.user.id,
+    }, audience);
+
+    ok(res, { message_id: messageId, deleted_for_everyone: true, deleted_for_everyone_at: deletedAt });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 4E4 — Report a message. Mirror of candidateController.
+// See that file for the full design rationale (reuse the platform
+// `reports` table with type='message', no migration, allowlist for
+// categories, notes mandatory only for 'other', tombstone reportable,
+// notifyAllAdmins best-effort).
+// ---------------------------------------------------------------------------
+
+const ALLOWED_REPORT_CATEGORIES_BIZ = new Set([
+  'spam',
+  'harassment',
+  'scam',
+  'inappropriate',
+  'other',
+]);
+const REPORT_NOTES_MAX_LEN_BIZ = 1000;
+
+async function reportMessage(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+    const { category, notes } = req.body || {};
+
+    if (typeof category !== 'string' || !ALLOWED_REPORT_CATEGORIES_BIZ.has(category)) {
+      throw AppError.badRequest(
+        'Invalid report category. Use spam / harassment / scam / inappropriate / other.',
+        'INVALID_REPORT_CATEGORY',
+      );
+    }
+    let cleanNotes = null;
+    if (notes != null) {
+      if (typeof notes !== 'string') {
+        throw AppError.badRequest('Notes must be a string.');
+      }
+      cleanNotes = notes.trim();
+      if (cleanNotes.length === 0) cleanNotes = null;
+      if (cleanNotes != null && cleanNotes.length > REPORT_NOTES_MAX_LEN_BIZ) {
+        throw AppError.badRequest(
+          'Notes too long (max 1000 characters).',
+          'REPORT_NOTES_TOO_LONG',
+        );
+      }
+    }
+    if (category === 'other' && cleanNotes == null) {
+      throw AppError.badRequest(
+        'Notes are required when reporting as "other".',
+        'REPORT_OTHER_NOTES_REQUIRED',
+      );
+    }
+
+    const bizId = await getBizId(userId);
+    const msg = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.business_id', bizId)
+      .select('messages.id', 'messages.body', 'messages.attachment_type')
+      .first();
+    if (!msg) throw AppError.notFound('Message not found.');
+
+    const [report] = await db('reports')
+      .insert({
+        title: 'Message report',
+        type: 'message',
+        reported_entity: messageId,
+        reporter: userId,
+        reason: category,
+        summary: cleanNotes,
+      })
+      .returning(['id', 'status', 'created_at']);
+
+    try {
+      const preview = (msg.body || '').slice(0, 80);
+      await notifyAllAdmins(
+        `Message reported (${category})`,
+        'in_app',
+        report.id,
+        'report',
+        preview,
+      );
+    } catch (e) {
+      console.warn('[reportMessage] notifyAllAdmins failed:', e.message);
+    }
+
+    ok(res, {
+      report_id: report.id,
+      status: report.status || 'open',
+      message_id: messageId,
+      category,
+    });
   } catch (err) { next(err); }
 }
 
@@ -2232,6 +2530,7 @@ async function quickplugSwipe(req, res, next) {
 
 /** See candidateController._replyBodyPreview — keep in sync. */
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+  if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
   if (attachmentType === 'document') return '📄 Document';
@@ -2264,6 +2563,9 @@ module.exports = {
   listInterviews, scheduleInterview, updateInterviewStatus,
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, startConversation, archiveConversation,
   addMessageReaction, removeMessageReaction,
+  starMessage, unstarMessage,
+  hideMessageForMe, deleteMessageForEveryone,
+  reportMessage,
   getCandidateProfile,
   listNotifications, markNotificationRead, markAllNotificationsRead,
   deleteNotification, deleteAllNotifications,

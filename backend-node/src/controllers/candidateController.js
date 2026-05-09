@@ -1029,7 +1029,19 @@ async function listMessages(req, res, next) {
     if (!conv) throw AppError.notFound('Conversation not found.');
 
     const { page = 1, limit = 200 } = req.query;
-    const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
+    // Sprint 4C — count must mirror the same `message_hides` filter
+    // applied to the SELECT below; otherwise pagination thinks there
+    // are more rows than the caller will ever see and infinite-scroll
+    // misbehaves on threads with hidden messages.
+    const total = await db('messages')
+      .where({ conversation_id: conv.id })
+      .whereNotExists(function () {
+        this.select(db.raw('1'))
+          .from('message_hides')
+          .whereRaw('message_hides.message_id = messages.id')
+          .where('message_hides.user_id', userId);
+      })
+      .count('* as c').first().then(r => +r.c);
 
     // Pull the LATEST `limit` messages (desc + offset), then reverse to
     // chronological order for the client. Previous behaviour was ASC + offset
@@ -1045,6 +1057,14 @@ async function listMessages(req, res, next) {
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
       .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
+      // Sprint 4C — exclude rows the caller has hidden via
+      // delete-for-me. Other participants and admin are unaffected.
+      .whereNotExists(function () {
+        this.select(db.raw('1'))
+          .from('message_hides')
+          .whereRaw('message_hides.message_id = messages.id')
+          .where('message_hides.user_id', userId);
+      })
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',
@@ -1058,6 +1078,7 @@ async function listMessages(req, res, next) {
         'messages.document_mime_type', 'messages.document_filename',
         'messages.location_lat', 'messages.location_lng',
         'messages.location_address',
+        'messages.deleted_for_everyone_at',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
         'messages.shared_entity_id',
@@ -1066,6 +1087,7 @@ async function listMessages(req, res, next) {
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
         'replied.shared_entity_type as reply_shared_entity_type',
+        'replied.deleted_for_everyone_at as reply_deleted_for_everyone_at',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
       )
@@ -1112,6 +1134,18 @@ async function listMessages(req, res, next) {
         created_at: r.created_at,
       });
     }
+    // Sprint 4A — hydrate the caller's own stars in a single batch.
+    // Stars are private: each user only sees their own, so we
+    // filter by user_id here at fetch time and surface a flat
+    // `is_starred_by_me` boolean per row.
+    const starredIds = ids.length === 0
+      ? new Set()
+      : new Set(
+          (await db('message_stars')
+            .whereIn('message_id', ids)
+            .where('user_id', userId)
+            .pluck('message_id')),
+        );
     // Phase 4 — batch-fetch entity-share envelopes for the page.
     // One grouped query per type at most (4 max), avoiding N+1.
     const shareItems = msgs
@@ -1125,6 +1159,7 @@ async function listMessages(req, res, next) {
         reply_attachment_type,
         reply_audio_duration_ms,
         reply_shared_entity_type,
+        reply_deleted_for_everyone_at,
         reply_sender_type,
         reply_sender_name,
         ...rest
@@ -1135,26 +1170,67 @@ async function listMessages(req, res, next) {
       // reply_to_message_id present + reply_to absent).
       let replyTo = null;
       if (m.reply_to_message_id && reply_attachment_type !== null) {
+        // Sprint 4C — when the parent has been tombstoned the reply
+        // preview must read "This message was deleted" instead of
+        // the original body. The attachment_type is forced to
+        // 'deleted' so the bubble can branch its rendering without
+        // peeking at extra fields.
+        const parentDeleted = reply_deleted_for_everyone_at != null;
         replyTo = {
           id: m.reply_to_message_id,
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
-          attachment_type: reply_attachment_type,
-          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
-          audio_duration_ms: reply_audio_duration_ms || null,
+          attachment_type: parentDeleted ? 'deleted' : reply_attachment_type,
+          body_preview: parentDeleted
+            ? 'This message was deleted'
+            : _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
+          audio_duration_ms: parentDeleted ? null : (reply_audio_duration_ms || null),
         };
       }
+      // Sprint 4C — tombstone payload. Once a message has been
+      // deleted-for-everyone we still ship the row (so the bubble
+      // index stays stable + the reply quote can still resolve to
+      // it), but we strip the body and any media URLs so the bubble
+      // renders "This message was deleted" without leaking the
+      // original content. The `deleted_for_everyone_at` flag tells
+      // the client to switch render branches.
+      const isTombstoned = m.deleted_for_everyone_at != null;
+      const tombstoneOverrides = isTombstoned
+        ? {
+            body: '',
+            audio_url: null,
+            audio_duration_ms: null,
+            audio_size_bytes: null,
+            audio_mime_type: null,
+            image_url: null,
+            image_size_bytes: null,
+            image_mime_type: null,
+            image_width: null,
+            image_height: null,
+            document_url: null,
+            document_size_bytes: null,
+            document_mime_type: null,
+            document_filename: null,
+            location_lat: null,
+            location_lng: null,
+            location_address: null,
+            shared_entity_type: null,
+            shared_entity_id: null,
+          }
+        : {};
       // Attach the entity-share envelope when this row is itself an
       // entity share. Missing entity (deleted after send) → null →
       // client renders a "no longer available" fallback.
-      const sharedEntity = m.attachment_type === 'entity_share' && m.shared_entity_id
+      const sharedEntity = !isTombstoned && m.attachment_type === 'entity_share' && m.shared_entity_id
         ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
         : null;
       return {
         ...rest,
+        ...tombstoneOverrides,
         reply_to: replyTo,
         shared_entity: sharedEntity,
-        reactions: reactionsByMsg.get(m.id) || [],
+        reactions: isTombstoned ? [] : (reactionsByMsg.get(m.id) || []),
+        is_starred_by_me: !isTombstoned && starredIds.has(m.id),
       };
     });
 
@@ -1549,6 +1625,316 @@ async function removeMessageReaction(req, res, next) {
       .delete();
 
     ok(res, { message_id: messageId, user_id: userId, removed: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// POST /candidate/messages/:messageId/star — Star a message (per-user)
+// ---------------------------------------------------------------------------
+// Idempotent: re-tapping Star while already starred is a no-op (UNIQUE
+// constraint + ON CONFLICT DO NOTHING). Stars are private — only the
+// caller sees them. No realtime broadcast.
+//
+// Membership gate: same pattern as reactions — the message must live
+// inside a conversation the candidate is part of.
+async function starMessage(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_stars')
+      .insert({ message_id: messageId, user_id: userId })
+      .onConflict(['message_id', 'user_id'])
+      .ignore();
+
+    ok(res, { message_id: messageId, user_id: userId, starred: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /candidate/messages/:messageId/star — Unstar own star
+// ---------------------------------------------------------------------------
+// Removes only the actor's own star row. Idempotent — DELETE on a
+// missing row returns 0 affected rows but resolves with success
+// (the desired end state — "I don't have a star here" — is already
+// true).
+async function unstarMessage(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_stars')
+      .where({ message_id: messageId, user_id: userId })
+      .delete();
+
+    ok(res, { message_id: messageId, user_id: userId, starred: false });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 4C — Delete actions for chat messages.
+//
+// Two distinct flavours:
+//   1. POST   /candidate/messages/:id/hide   — soft-hide for this user.
+//   2. DELETE /candidate/messages/:id        — tombstone for everyone,
+//      sender-only, gated to a 15-minute window after `created_at`.
+//
+// The 15-minute window is a hard product rule (no per-account override
+// in Sprint 4). Constant lives next to the handlers so the value is
+// visible at the call site instead of buried in shared config.
+// ---------------------------------------------------------------------------
+
+const DELETE_FOR_EVERYONE_WINDOW_MS = 15 * 60 * 1000;
+
+// ---------------------------------------------------------------------------
+// POST /candidate/messages/:messageId/hide — Hide a message for me only
+// ---------------------------------------------------------------------------
+// Idempotent: re-hiding an already-hidden message is a no-op (UNIQUE
+// constraint + ON CONFLICT DO NOTHING). Other participants and admin
+// keep seeing the message normally.
+async function hideMessageForMe(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    const allowed = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select('messages.id')
+      .first();
+    if (!allowed) throw AppError.notFound('Message not found.');
+
+    await db('message_hides')
+      .insert({ message_id: messageId, user_id: userId })
+      .onConflict(['message_id', 'user_id'])
+      .ignore();
+
+    ok(res, { message_id: messageId, user_id: userId, hidden: true });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// DELETE /candidate/messages/:messageId — Delete for everyone
+// ---------------------------------------------------------------------------
+// Two gates, both 4xx:
+//   • NOT_SENDER (403)         — only the original sender can tombstone
+//   • DELETE_WINDOW_EXPIRED    — outside 15 min from created_at
+//
+// On success we set deleted_for_everyone_at, drop reactions on this
+// row (mirror of WhatsApp UX — the message no longer exists, the
+// reactions don't either), and emit message.deleted_for_everyone on
+// the SSE bus so peer clients can flip their bubble to a tombstone
+// without waiting for the next poll.
+async function deleteMessageForEveryone(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    const msg = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select(
+        'messages.id',
+        'messages.sender_id',
+        'messages.created_at',
+        'messages.deleted_for_everyone_at',
+        'messages.conversation_id',
+        'conversations.business_id',
+      )
+      .first();
+    if (!msg) throw AppError.notFound('Message not found.');
+
+    if (msg.sender_id !== userId) {
+      throw AppError.forbidden(
+        'You can only delete your own messages for everyone.',
+        'NOT_SENDER',
+      );
+    }
+    // Idempotent: already tombstoned → no-op success.
+    if (msg.deleted_for_everyone_at) {
+      ok(res, { message_id: messageId, deleted_for_everyone: true });
+      return;
+    }
+    const ageMs = Date.now() - new Date(msg.created_at).getTime();
+    if (ageMs > DELETE_FOR_EVERYONE_WINDOW_MS) {
+      throw AppError.badRequest(
+        'You can only delete a message for everyone within 15 minutes of sending.',
+        'DELETE_WINDOW_EXPIRED',
+      );
+    }
+
+    const deletedAt = new Date().toISOString();
+    await db.transaction(async (trx) => {
+      await trx('messages')
+        .where({ id: messageId })
+        .update({ deleted_for_everyone_at: deletedAt, updated_at: deletedAt });
+      // Mirror WhatsApp UX: reactions on a tombstone are confusing,
+      // remove them. The message_reactions schema-level cascade does
+      // NOT fire (we keep the messages row alive) — explicit DELETE.
+      await trx('message_reactions').where({ message_id: messageId }).delete();
+    });
+
+    // Realtime: peer can flip bubble to tombstone immediately. Even
+    // when SSE is disabled client-side (current state), we still emit
+    // so the bus → fan-out pipeline stays exercised.
+    let peerUserId = null;
+    if (msg.business_id) {
+      const biz = await db('businesses').where({ id: msg.business_id }).select('user_id').first();
+      if (biz) peerUserId = biz.user_id;
+    }
+    const audience = ['role:admin', `user:${userId}`];
+    if (peerUserId) audience.push(`user:${peerUserId}`);
+    bus.publish('message.deleted_for_everyone', {
+      message_id: messageId,
+      conversation_id: msg.conversation_id,
+      deleted_for_everyone_at: deletedAt,
+      sender_user_id: userId,
+    }, audience);
+
+    ok(res, { message_id: messageId, deleted_for_everyone: true, deleted_for_everyone_at: deletedAt });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// Sprint 4E4 — Report a message.
+// ---------------------------------------------------------------------------
+// Reuses the platform-level `reports` table (type='message'). No new
+// migration: the schema already accepts `type='message'` in its CHECK
+// constraint, and the generic columns map cleanly:
+//
+//   reports.reported_entity ← message.id
+//   reports.reporter        ← caller's user id (uuid as string)
+//   reports.reason          ← category (spam | harassment | scam |
+//                              inappropriate | other)
+//   reports.summary         ← optional notes (mandatory for 'other')
+//
+// Tombstoned messages are reportable on purpose — the audit trail for
+// safety reviews shouldn't disappear just because the sender deleted
+// the message client-side.
+//
+// `notifyAllAdmins` is best-effort; a notify failure is logged but
+// never blocks the report from persisting.
+// ---------------------------------------------------------------------------
+
+const ALLOWED_REPORT_CATEGORIES = new Set([
+  'spam',
+  'harassment',
+  'scam',
+  'inappropriate',
+  'other',
+]);
+const REPORT_NOTES_MAX_LEN = 1000;
+
+async function reportMessage(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const messageId = req.params.messageId;
+    const { category, notes } = req.body || {};
+
+    if (typeof category !== 'string' || !ALLOWED_REPORT_CATEGORIES.has(category)) {
+      throw AppError.badRequest(
+        'Invalid report category. Use spam / harassment / scam / inappropriate / other.',
+        'INVALID_REPORT_CATEGORY',
+      );
+    }
+    let cleanNotes = null;
+    if (notes != null) {
+      if (typeof notes !== 'string') {
+        throw AppError.badRequest('Notes must be a string.');
+      }
+      cleanNotes = notes.trim();
+      if (cleanNotes.length === 0) cleanNotes = null;
+      if (cleanNotes != null && cleanNotes.length > REPORT_NOTES_MAX_LEN) {
+        throw AppError.badRequest(
+          'Notes too long (max 1000 characters).',
+          'REPORT_NOTES_TOO_LONG',
+        );
+      }
+    }
+    if (category === 'other' && cleanNotes == null) {
+      throw AppError.badRequest(
+        'Notes are required when reporting as "other".',
+        'REPORT_OTHER_NOTES_REQUIRED',
+      );
+    }
+
+    const candidate = await db('candidates').where({ user_id: userId }).first();
+    if (!candidate) throw AppError.notFound('Message not found.');
+
+    // Membership gate — same pattern as star/delete: caller must be
+    // a participant in the conversation that owns this message.
+    const msg = await db('messages')
+      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+      .where('messages.id', messageId)
+      .where('conversations.candidate_id', candidate.id)
+      .select('messages.id', 'messages.body', 'messages.attachment_type')
+      .first();
+    if (!msg) throw AppError.notFound('Message not found.');
+
+    const [report] = await db('reports')
+      .insert({
+        title: 'Message report',
+        type: 'message',
+        reported_entity: messageId,
+        reporter: userId,
+        reason: category,
+        summary: cleanNotes,
+        // Severity stays at table default ('medium'); admin can bump
+        // it during triage. Status defaults to 'open'.
+      })
+      .returning(['id', 'status', 'created_at']);
+
+    // Best-effort admin fan-out. Never let a notify failure roll the
+    // report back — it already persisted.
+    try {
+      const preview = (msg.body || '').slice(0, 80);
+      await notifyAllAdmins(
+        `Message reported (${category})`,
+        'in_app',
+        report.id,
+        'report',
+        preview,
+      );
+    } catch (e) {
+      console.warn('[reportMessage] notifyAllAdmins failed:', e.message);
+    }
+
+    ok(res, {
+      report_id: report.id,
+      status: report.status || 'open',
+      message_id: messageId,
+      category,
+    });
   } catch (err) { next(err); }
 }
 
@@ -2309,6 +2695,7 @@ async function updateMatchStatus(req, res, next) {
  *  columns that the listMessages LEFT JOIN exposes (no extra round
  *  trip). Keep the two implementations in sync if you change either. */
 function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+  if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
   if (attachmentType === 'document') return '📄 Document';
@@ -2401,6 +2788,9 @@ module.exports = {
   listInterviews, getInterview, respondToInterview,
   listConversations, listMessages, sendMessage, sendTyping, ackMessagesDelivered, archiveConversation,
   addMessageReaction, removeMessageReaction,
+  starMessage, unstarMessage,
+  hideMessageForMe, deleteMessageForEveryone,
+  reportMessage,
   updateProfile, uploadPhoto, uploadCV, parseCV,
   listCommunityPosts,
   nearbyJobs, quickjobsDeck, quickjobsSwipe,

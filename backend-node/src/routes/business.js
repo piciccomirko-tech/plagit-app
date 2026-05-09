@@ -51,6 +51,18 @@ router.post('/conversations/:id/typing', c.sendTyping);
 router.post('/messages/:messageId/reactions', c.addMessageReaction);
 router.delete('/messages/:messageId/reactions', c.removeMessageReaction);
 
+// Stars — per-user bookmark; POST is idempotent, DELETE removes own.
+router.post('/messages/:messageId/star', c.starMessage);
+router.delete('/messages/:messageId/star', c.unstarMessage);
+
+// Delete actions — soft-hide for me; tombstone for everyone (sender + 15min).
+router.post('/messages/:messageId/hide', c.hideMessageForMe);
+router.delete('/messages/:messageId', c.deleteMessageForEveryone);
+
+// Report a message — Sprint 4E4. Persists into the platform-level
+// `reports` table with type='message' and notifies admins.
+router.post('/messages/:messageId/report', c.reportMessage);
+
 // Candidates
 router.get('/candidates/nearby', c.nearbyCandidates);
 router.get('/candidates/:id', c.getCandidateProfile);
