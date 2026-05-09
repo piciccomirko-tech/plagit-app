@@ -54,7 +54,13 @@ async function thread(req, res, next) {
     if (!conv) throw AppError.notFound('Conversation not found.');
 
     const { page = 1, limit = 200 } = req.query;
-    const total = await db('messages').where({ conversation_id: conv.id }).count('* as c').first().then(r => +r.c);
+    // Sprint 4F — exclude synthetic 'reaction' rows from the admin
+    // thread viewer too. They drive unread/last_message bookkeeping
+    // for end users but are not real chat bubbles.
+    const total = await db('messages')
+      .where({ conversation_id: conv.id })
+      .whereNot('attachment_type', 'reaction')
+      .count('* as c').first().then(r => +r.c);
     // Phase 3D — surface reply preview for the admin thread viewer.
     // Same LEFT JOIN approach as candidate / business listMessages.
     const rawMsgs = await db('messages')
@@ -62,6 +68,7 @@ async function thread(req, res, next) {
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
       .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
+      .whereNot('messages.attachment_type', 'reaction')
       .select(
         'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
         'messages.sender_id', 'messages.created_at',

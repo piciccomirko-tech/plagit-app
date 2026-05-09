@@ -1117,6 +1117,10 @@ async function listMessages(req, res, next) {
     // are more rows than the caller will ever see.
     const total = await db('messages')
       .where({ conversation_id: conv.id })
+      // Sprint 4F — synthetic 'reaction' rows drive unread/last_message
+      // bookkeeping but never render as bubbles. Filter from total so
+      // pagination matches the SELECT below.
+      .whereNot('attachment_type', 'reaction')
       .whereNotExists(function () {
         this.select(db.raw('1'))
           .from('message_hides')
@@ -1136,6 +1140,9 @@ async function listMessages(req, res, next) {
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
       .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
+      // Sprint 4F — synthetic 'reaction' rows are bookkeeping only,
+      // never rendered as chat bubbles.
+      .whereNot('messages.attachment_type', 'reaction')
       // Sprint 4C — exclude rows the caller has hidden via delete-for-me.
       .whereNotExists(function () {
         this.select(db.raw('1'))
@@ -1585,7 +1592,7 @@ async function sendMessage(req, res, next) {
 // the business can only react to messages inside its own threads.
 async function addMessageReaction(req, res, next) {
   try {
-    const bizId = await getBizId(req.user.id);
+    const userId = req.user.id;
     const messageId = req.params.messageId;
     const emoji = req.body && typeof req.body.emoji === 'string'
       ? req.body.emoji
@@ -1594,20 +1601,89 @@ async function addMessageReaction(req, res, next) {
       throw AppError.badRequest('Invalid emoji.');
     }
 
-    const allowed = await db('messages')
+    const biz = await db('businesses').where({ user_id: userId }).first();
+    if (!biz) throw AppError.badRequest('Business profile not found.');
+
+    // Membership + locate original sender + conversation in one
+    // round-trip. See candidateController.addMessageReaction for
+    // the full design rationale (Sprint 4F).
+    const target = await db('messages')
       .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
       .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select('messages.id')
+      .where('conversations.business_id', biz.id)
+      .select(
+        'messages.id as msg_id',
+        'messages.sender_id as msg_sender_id',
+        'conversations.id as conv_id',
+        'conversations.candidate_id as conv_candidate_id',
+      )
       .first();
-    if (!allowed) throw AppError.notFound('Message not found.');
+    if (!target) throw AppError.notFound('Message not found.');
+
+    const existing = await db('message_reactions')
+      .where({ message_id: messageId, user_id: userId })
+      .select('emoji')
+      .first();
 
     await db('message_reactions')
-      .insert({ message_id: messageId, user_id: req.user.id, emoji })
+      .insert({ message_id: messageId, user_id: userId, emoji })
       .onConflict(['message_id', 'user_id'])
       .merge({ emoji, updated_at: db.fn.now() });
 
-    ok(res, { message_id: messageId, user_id: req.user.id, emoji });
+    // Sprint 4F — surface the reaction on the peer's inbox / home.
+    // Same pattern as candidateController: synthetic
+    // attachment_type='reaction' message bumps unread + last_message
+    // and emits message.new SSE; the bell is intentionally untouched
+    // (no notification.new). Self-react and emoji re-tap are silent.
+    const emojiChanged = !existing || existing.emoji !== emoji;
+    const isSelfReact = String(target.msg_sender_id) === String(userId);
+    let peerUserId = null;
+    if (target.conv_candidate_id) {
+      const cand = await db('candidates')
+        .where({ id: target.conv_candidate_id })
+        .select('user_id')
+        .first();
+      peerUserId = cand?.user_id || null;
+    }
+
+    if (emojiChanged && !isSelfReact && peerUserId) {
+      const preview = `${biz.name} reacted to your message`;
+      const [synth] = await db('messages').insert({
+        conversation_id: target.conv_id,
+        sender_id: userId,
+        body: preview,
+        attachment_type: 'reaction',
+        is_read: false,
+        reply_to_message_id: messageId,
+      }).returning('*');
+
+      await db('conversations').where({ id: target.conv_id }).update({
+        last_message: preview,
+        updated_at: db.fn.now(),
+      });
+
+      const audience = ['role:admin', `user:${userId}`, `user:${peerUserId}`];
+      console.log(`[SSE EMIT] type=message.new(reaction) convId=${target.conv_id} reactorUserId=${userId} peerUserId=${peerUserId} emoji=${emoji}`);
+      bus.publish('message.new', {
+        message: {
+          id: synth.id,
+          conversation_id: target.conv_id,
+          body: preview,
+          attachment_type: 'reaction',
+          sender_id: userId,
+          created_at: synth.created_at,
+          is_read: false,
+          reply_to_message_id: messageId,
+        },
+        conversation_id: target.conv_id,
+        sender_user_id: userId,
+        recipient_user_id: peerUserId,
+        sender_role: 'business',
+        kind: 'reaction',
+      }, audience);
+    }
+
+    ok(res, { message_id: messageId, user_id: userId, emoji });
   } catch (err) { next(err); }
 }
 
