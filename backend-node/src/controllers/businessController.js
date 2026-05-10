@@ -5,6 +5,7 @@ const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
+const storage = require('../storage');
 
 // ---------------------------------------------------------------------------
 // Business Quick Plug daily swipe cap
@@ -1387,12 +1388,13 @@ async function sendMessage(req, res, next) {
       throw AppError.badRequest('audio_url is required for audio messages.');
     }
     if (isImage) {
-      if (!image_url || typeof image_url !== 'string' || !image_url.startsWith('/uploads/image/')) {
+      // See candidateController.sendMessage for design rationale.
+      if (!image_url || typeof image_url !== 'string' || !storage.isOwnedUrl(image_url)) {
         throw AppError.badRequest('image_url is required and must come from /v1/uploads/image.');
       }
     }
     if (isDocument) {
-      if (!document_url || typeof document_url !== 'string' || !document_url.startsWith('/uploads/document/')) {
+      if (!document_url || typeof document_url !== 'string' || !storage.isOwnedUrl(document_url)) {
         throw AppError.badRequest('document_url is required and must come from /v1/uploads/document.');
       }
     }

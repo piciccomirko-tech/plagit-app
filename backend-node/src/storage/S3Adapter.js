@@ -108,6 +108,13 @@ class S3Adapter extends StorageAdapter {
     return 's3';
   }
 
+  isOwnedUrl(url) {
+    if (typeof url !== 'string' || url.length === 0) return false;
+    // _keyFromUrl returns null for any URL we did not issue —
+    // exactly the boolean signal we need.
+    return this._keyFromUrl(url) != null;
+  }
+
   // ── helpers ────────────────────────────────────────────────────
 
   _publicUrlFor(key) {

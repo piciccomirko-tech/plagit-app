@@ -57,6 +57,11 @@ class LocalDiskAdapter extends StorageAdapter {
     return 'local';
   }
 
+  isOwnedUrl(url) {
+    if (typeof url !== 'string' || url.length === 0) return false;
+    return url.startsWith(this.publicPrefix + '/');
+  }
+
   // Exposed so app.js can mount express.static at the right base.
   staticConfig() {
     return { baseDir: this.baseDir, publicPrefix: this.publicPrefix };

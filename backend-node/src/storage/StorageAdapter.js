@@ -39,6 +39,25 @@ class StorageAdapter {
   driverName() {
     throw new Error('driverName() not implemented');
   }
+
+  /**
+   * True if [url] was issued by `save()` on THIS adapter — i.e. it
+   * points to our own storage namespace and is safe to accept as a
+   * sendMessage attachment. Used by chat controllers to gate
+   * `image_url` / `document_url` so a malicious client can't inject
+   * a third-party http URL into a chat bubble.
+   *
+   * The previous guard (`url.startsWith('/uploads/image/')`) only
+   * matched the LocalDiskAdapter shape and silently rejected every
+   * S3/R2 URL the production adapter emits — that's the bug fix
+   * that motivates this method.
+   *
+   * @param {string} url
+   * @returns {boolean}
+   */
+  isOwnedUrl(url) {
+    throw new Error('isOwnedUrl() not implemented');
+  }
 }
 
 module.exports = StorageAdapter;

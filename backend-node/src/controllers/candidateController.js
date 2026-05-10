@@ -6,6 +6,7 @@ const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
+const storage = require('../storage');
 
 // ---------------------------------------------------------------------------
 // Candidate Quick Jobs daily swipe cap
@@ -1344,7 +1345,13 @@ async function sendMessage(req, res, next) {
     // data:) is rejected so a malicious client can't inject a bubble
     // that renders content from a third-party origin.
     if (isImage) {
-      if (!image_url || typeof image_url !== 'string' || !image_url.startsWith('/uploads/image/')) {
+      // image_url MUST be one this storage adapter issued — works for
+      // both LocalDiskAdapter (`/uploads/image/...`) in dev and
+      // S3Adapter (R2/AWS https URL) in production. Previous guard
+      // only matched the local-disk shape and silently rejected
+      // every prod upload — see fix(messaging): accept S3/R2 URLs
+      // in image+document message guards.
+      if (!image_url || typeof image_url !== 'string' || !storage.isOwnedUrl(image_url)) {
         throw AppError.badRequest('image_url is required and must come from /v1/uploads/image.');
       }
     }
@@ -1352,7 +1359,7 @@ async function sendMessage(req, res, next) {
     // /uploads/document/ so we can't be tricked into rendering a
     // bubble pointing at an attacker-controlled host.
     if (isDocument) {
-      if (!document_url || typeof document_url !== 'string' || !document_url.startsWith('/uploads/document/')) {
+      if (!document_url || typeof document_url !== 'string' || !storage.isOwnedUrl(document_url)) {
         throw AppError.badRequest('document_url is required and must come from /v1/uploads/document.');
       }
     }
