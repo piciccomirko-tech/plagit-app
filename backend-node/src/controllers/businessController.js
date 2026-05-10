@@ -2150,12 +2150,61 @@ async function nearbyCandidates(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// Mirror of candidateController._AVATAR_MIME_TO_EXT — kept inline.
+const _AVATAR_MIME_TO_EXT = {
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/heic': 'heic',
+  'image/heif': 'heic',
+};
+const _AVATAR_MAX_BYTES = 4 * 1024 * 1024;
+
 async function uploadPhoto(req, res, next) {
   try {
     const { photo } = req.body;
-    const photoUrl = (photo && photo.trim()) ? photo : null;
-    if (photoUrl && photoUrl.length > 4 * 1024 * 1024) throw AppError.badRequest('Photo too large.');
-    await db('users').where({ id: req.user.id }).update({ photo_url: photoUrl, updated_at: db.fn.now() });
+
+    if (!photo || typeof photo !== 'string' || !photo.trim()) {
+      await db('users').where({ id: req.user.id }).update({
+        photo_url: null,
+        updated_at: db.fn.now(),
+      });
+      return ok(res, { photo_url: null });
+    }
+
+    const trimmed = photo.trim();
+    let photoUrl;
+
+    if (trimmed.startsWith('data:image')) {
+      // See candidateController.uploadPhoto for the full design rationale.
+      const m = trimmed.match(/^data:([a-zA-Z0-9.+/-]+);base64,(.*)$/);
+      if (!m) throw AppError.badRequest('Invalid photo data URI.');
+      const mime = m[1].toLowerCase();
+      let buffer;
+      try {
+        buffer = Buffer.from(m[2], 'base64');
+      } catch (_) {
+        throw AppError.badRequest('Invalid photo base64 payload.');
+      }
+      if (buffer.length === 0) {
+        throw AppError.badRequest('Empty photo payload.');
+      }
+      if (buffer.length > _AVATAR_MAX_BYTES) {
+        throw AppError.badRequest('Photo too large. Please choose a smaller image.');
+      }
+      const ext = _AVATAR_MIME_TO_EXT[mime] || 'jpg';
+      photoUrl = await storage.save(buffer, { ext, mimeType: mime, kind: 'avatar' });
+    } else if (trimmed.startsWith('https://') && storage.isOwnedUrl(trimmed)) {
+      photoUrl = trimmed;
+    } else {
+      throw AppError.badRequest('Invalid photo. Provide a data:image URI or an owned HTTPS URL.');
+    }
+
+    await db('users').where({ id: req.user.id }).update({
+      photo_url: photoUrl,
+      updated_at: db.fn.now(),
+    });
     ok(res, { photo_url: photoUrl });
   } catch (err) { next(err); }
 }

@@ -2578,14 +2578,71 @@ Return ONLY the JSON, no markdown, no explanation.`
   } catch (err) { next(err); }
 }
 
+// Mirror of uploadController.IMAGE_MIME_TO_EXT — kept inline so the
+// uploadPhoto helper doesn't need to import the chat upload module.
+const _AVATAR_MIME_TO_EXT = {
+  'image/jpeg': 'jpg',
+  'image/jpg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/heic': 'heic',
+  'image/heif': 'heic',
+};
+const _AVATAR_MAX_BYTES = 4 * 1024 * 1024; // 4MB raw decoded
+
 async function uploadPhoto(req, res, next) {
   try {
     const { photo } = req.body;
-    // Empty string = remove photo
-    const photoUrl = (photo && photo.trim()) ? photo : null;
-    if (photoUrl && photoUrl.length > 4 * 1024 * 1024) throw AppError.badRequest('Photo too large. Please choose a smaller image.');
 
-    await db('users').where({ id: req.user.id }).update({ photo_url: photoUrl, updated_at: db.fn.now() });
+    // Empty / null = remove photo (existing behaviour kept).
+    if (!photo || typeof photo !== 'string' || !photo.trim()) {
+      await db('users').where({ id: req.user.id }).update({
+        photo_url: null,
+        updated_at: db.fn.now(),
+      });
+      return ok(res, { photo_url: null });
+    }
+
+    const trimmed = photo.trim();
+    let photoUrl;
+
+    if (trimmed.startsWith('data:image')) {
+      // Legacy client path — Flutter posts a base64 data URI inline.
+      // Decode + upload to R2 + persist HTTPS URL so `users.photo_url`
+      // is never a 600+KB inline blob (root cause of ProfilePhoto
+      // flicker on iPhone real devices).
+      const m = trimmed.match(/^data:([a-zA-Z0-9.+/-]+);base64,(.*)$/);
+      if (!m) throw AppError.badRequest('Invalid photo data URI.');
+      const mime = m[1].toLowerCase();
+      let buffer;
+      try {
+        buffer = Buffer.from(m[2], 'base64');
+      } catch (_) {
+        throw AppError.badRequest('Invalid photo base64 payload.');
+      }
+      if (buffer.length === 0) {
+        throw AppError.badRequest('Empty photo payload.');
+      }
+      if (buffer.length > _AVATAR_MAX_BYTES) {
+        throw AppError.badRequest('Photo too large. Please choose a smaller image.');
+      }
+      const ext = _AVATAR_MIME_TO_EXT[mime] || 'jpg';
+      photoUrl = await storage.save(buffer, { ext, mimeType: mime, kind: 'avatar' });
+    } else if (trimmed.startsWith('https://') && storage.isOwnedUrl(trimmed)) {
+      // Forward-compat: future Flutter / admin clients may upload via
+      // a separate multipart endpoint and pass the resulting URL here.
+      // Only OWNED URLs (issued by our storage adapter) are accepted —
+      // an arbitrary http(s):// is silently rejected so a malicious
+      // caller can't pin a third-party image into a user record.
+      photoUrl = trimmed;
+    } else {
+      throw AppError.badRequest('Invalid photo. Provide a data:image URI or an owned HTTPS URL.');
+    }
+
+    await db('users').where({ id: req.user.id }).update({
+      photo_url: photoUrl,
+      updated_at: db.fn.now(),
+    });
     ok(res, { photo_url: photoUrl });
   } catch (err) { next(err); }
 }
