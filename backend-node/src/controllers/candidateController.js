@@ -1093,6 +1093,7 @@ async function listMessages(req, res, next) {
         'messages.document_mime_type', 'messages.document_filename',
         'messages.location_lat', 'messages.location_lng',
         'messages.location_address',
+        'messages.album_image_urls',
         'messages.deleted_for_everyone_at',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
@@ -1102,6 +1103,7 @@ async function listMessages(req, res, next) {
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
         'replied.shared_entity_type as reply_shared_entity_type',
+        'replied.album_image_urls as reply_album_image_urls',
         'replied.deleted_for_everyone_at as reply_deleted_for_everyone_at',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
@@ -1174,6 +1176,7 @@ async function listMessages(req, res, next) {
         reply_attachment_type,
         reply_audio_duration_ms,
         reply_shared_entity_type,
+        reply_album_image_urls,
         reply_deleted_for_everyone_at,
         reply_sender_type,
         reply_sender_name,
@@ -1198,7 +1201,7 @@ async function listMessages(req, res, next) {
           attachment_type: parentDeleted ? 'deleted' : reply_attachment_type,
           body_preview: parentDeleted
             ? 'This message was deleted'
-            : _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
+            : _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type, reply_album_image_urls),
           audio_duration_ms: parentDeleted ? null : (reply_audio_duration_ms || null),
         };
       }
@@ -1231,8 +1234,9 @@ async function listMessages(req, res, next) {
             location_address: null,
             shared_entity_type: null,
             shared_entity_id: null,
+            album_image_urls: null,
           }
-        : {};
+        : { album_image_urls: _normalizeAlbumUrls(m.album_image_urls) };
       // Attach the entity-share envelope when this row is itself an
       // entity share. Missing entity (deleted after send) → null →
       // client renders a "no longer available" fallback.
@@ -1330,6 +1334,7 @@ async function sendMessage(req, res, next) {
       reply_to_message_id,
       shared_entity_type,
       shared_entity_id,
+      album_image_urls,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
@@ -1337,6 +1342,30 @@ async function sendMessage(req, res, next) {
     const isDocument = attachment_type === 'document';
     const isLocation = attachment_type === 'location';
     const isEntityShare = attachment_type === 'entity_share';
+    const isAlbum = attachment_type === 'album';
+    // Album guard: ordered jsonb array of HTTPS R2/S3 URLs, all
+    // produced by /v1/uploads/image. Cap of 6 mirrors the picker UX
+    // and keeps a single bubble manageable. Same defense-in-depth as
+    // the single-image path — `storage.isOwnedUrl()` rejects any
+    // third-party origin, `data:` URI, file:// scheme, etc.
+    let cleanAlbumUrls = null;
+    if (isAlbum) {
+      if (!Array.isArray(album_image_urls)) {
+        throw AppError.badRequest('album_image_urls is required and must be an array.');
+      }
+      if (album_image_urls.length === 0) {
+        throw AppError.badRequest('album_image_urls cannot be empty.');
+      }
+      if (album_image_urls.length > 6) {
+        throw AppError.badRequest('album_image_urls cannot contain more than 6 photos.');
+      }
+      for (const u of album_image_urls) {
+        if (!u || typeof u !== 'string' || !storage.isOwnedUrl(u)) {
+          throw AppError.badRequest('Every album_image_urls entry must come from /v1/uploads/image.');
+        }
+      }
+      cleanAlbumUrls = album_image_urls;
+    }
     if (isAudio && (!audio_url || typeof audio_url !== 'string')) {
       throw AppError.badRequest('audio_url is required for audio messages.');
     }
@@ -1394,7 +1423,7 @@ async function sendMessage(req, res, next) {
     // Text messages still require a body. Audio / image / document /
     // location / entity-share rows can carry an optional caption
     // (kept) or no body at all.
-    if (!isAudio && !isImage && !isDocument && !isLocation && !isEntityShare && (!body || !body.trim())) {
+    if (!isAudio && !isImage && !isDocument && !isLocation && !isEntityShare && !isAlbum && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
     }
 
@@ -1454,7 +1483,9 @@ async function sendMessage(req, res, next) {
             ? 'location'
             : isEntityShare
               ? 'entity_share'
-              : 'text';
+              : isAlbum
+                ? 'album'
+                : 'text';
     const [msg] = await db('messages').insert({
       conversation_id: conv.id,
       sender_id: userId,
@@ -1485,6 +1516,10 @@ async function sendMessage(req, res, next) {
       // keeps the DB row consistent with what listMessages will
       // look up later.
       shared_entity_id: isEntityShare ? entityEnvelope.id : null,
+      // Album: ordered jsonb array, knex pg auto-casts JS arrays via
+      // JSON.stringify on jsonb columns, so the column round-trips as
+      // a real array on SELECT.
+      album_image_urls: isAlbum ? JSON.stringify(cleanAlbumUrls) : null,
     }).returning('*');
 
     // Conversation last_message — non-text rows show a glyph since
@@ -1499,7 +1534,9 @@ async function sendMessage(req, res, next) {
             ? '📍 Location'
             : isEntityShare
               ? _entitySharePreview(shared_entity_type)
-              : cleanBody.slice(0, 200);
+              : isAlbum
+                ? `📷 Album · ${cleanAlbumUrls.length} photo${cleanAlbumUrls.length === 1 ? '' : 's'}`
+                : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1560,6 +1597,7 @@ async function sendMessage(req, res, next) {
         location_lat: msg.location_lat == null ? null : msg.location_lat,
         location_lng: msg.location_lng == null ? null : msg.location_lng,
         location_address: msg.location_address || null,
+        album_image_urls: _normalizeAlbumUrls(msg.album_image_urls),
         sender_id: msg.sender_id,
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,
@@ -2851,7 +2889,7 @@ async function updateMatchStatus(req, res, next) {
  *  `messageReplyEnvelope._bodyPreviewFor` but operates on the flat
  *  columns that the listMessages LEFT JOIN exposes (no extra round
  *  trip). Keep the two implementations in sync if you change either. */
-function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrls) {
   if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
@@ -2860,7 +2898,30 @@ function _replyBodyPreview(attachmentType, body, sharedEntityType) {
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
   }
+  if (attachmentType === 'album') {
+    const urls = _normalizeAlbumUrls(albumImageUrls);
+    const len = Array.isArray(urls) ? urls.length : 0;
+    return `📷 Album · ${len} photo${len === 1 ? '' : 's'}`;
+  }
   return (body || '').slice(0, 200);
+}
+
+/** pg's jsonb adapter sometimes hands us back the array pre-parsed,
+ *  sometimes a JSON string (depends on driver path / .returning('*')
+ *  vs .select). Normalize once so downstream consumers (SSE payload,
+ *  reply preview, listMessages enrichment) all see a real Array. */
+function _normalizeAlbumUrls(value) {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  return null;
 }
 
 /** Glyph + label used as `conversations.last_message` when the

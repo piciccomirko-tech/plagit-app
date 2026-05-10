@@ -22,6 +22,7 @@ async function buildReplyEnvelope(replyToId) {
       'messages.audio_duration_ms',
       'messages.shared_entity_type',
       'messages.shared_entity_id',
+      'messages.album_image_urls',
       'messages.deleted_for_everyone_at',
       'users.name as sender_name',
       'users.user_type as sender_type',
@@ -51,6 +52,18 @@ function _bodyPreviewFor(parent) {
   if (parent.attachment_type === 'image') return '🖼 Photo';
   if (parent.attachment_type === 'document') return '📄 Document';
   if (parent.attachment_type === 'location') return '📍 Location';
+  if (parent.attachment_type === 'album') {
+    // album_image_urls is a jsonb array of HTTPS R2/S3 URLs (cap 6,
+    // enforced at write time by the controllers). pg may surface it
+    // pre-parsed (Array) or as a JSON string depending on the driver
+    // path — handle both so quoting a freshly-sent album doesn't crash.
+    let urls = parent.album_image_urls;
+    if (typeof urls === 'string') {
+      try { urls = JSON.parse(urls); } catch (_) { urls = null; }
+    }
+    const len = Array.isArray(urls) ? urls.length : 0;
+    return `📷 Album · ${len} photo${len === 1 ? '' : 's'}`;
+  }
   if (parent.attachment_type === 'entity_share') {
     switch (parent.shared_entity_type) {
       case 'profile_candidate':

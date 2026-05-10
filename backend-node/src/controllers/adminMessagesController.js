@@ -82,6 +82,7 @@ async function thread(req, res, next) {
         'messages.document_mime_type', 'messages.document_filename',
         'messages.location_lat', 'messages.location_lng',
         'messages.location_address',
+        'messages.album_image_urls',
         'messages.deleted_for_everyone_at',
         'messages.reply_to_message_id',
         'messages.shared_entity_type',
@@ -91,6 +92,7 @@ async function thread(req, res, next) {
         'replied.attachment_type as reply_attachment_type',
         'replied.audio_duration_ms as reply_audio_duration_ms',
         'replied.shared_entity_type as reply_shared_entity_type',
+        'replied.album_image_urls as reply_album_image_urls',
         'replied_user.user_type as reply_sender_type',
         'replied_user.name as reply_sender_name',
       )
@@ -124,6 +126,7 @@ async function thread(req, res, next) {
         reply_attachment_type,
         reply_audio_duration_ms,
         reply_shared_entity_type,
+        reply_album_image_urls,
         reply_sender_type,
         reply_sender_name,
         ...rest
@@ -135,7 +138,7 @@ async function thread(req, res, next) {
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
           attachment_type: reply_attachment_type,
-          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type),
+          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type, reply_album_image_urls),
           audio_duration_ms: reply_audio_duration_ms || null,
         };
       }
@@ -144,6 +147,7 @@ async function thread(req, res, next) {
         : null;
       return {
         ...rest,
+        album_image_urls: _normalizeAlbumUrls(m.album_image_urls),
         reply_to: replyTo,
         shared_entity: sharedEntity,
         is_starred_by_me: starredIds.has(m.id),
@@ -156,7 +160,7 @@ async function thread(req, res, next) {
 
 /** See candidateController._replyBodyPreview / _entitySharePreview —
  *  keep the three implementations in sync. */
-function _replyBodyPreview(attachmentType, body, sharedEntityType) {
+function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrls) {
   if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
@@ -165,7 +169,27 @@ function _replyBodyPreview(attachmentType, body, sharedEntityType) {
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
   }
+  if (attachmentType === 'album') {
+    const urls = _normalizeAlbumUrls(albumImageUrls);
+    const len = Array.isArray(urls) ? urls.length : 0;
+    return `📷 Album · ${len} photo${len === 1 ? '' : 's'}`;
+  }
   return (body || '').slice(0, 200);
+}
+
+/** See candidateController._normalizeAlbumUrls — keep in sync. */
+function _normalizeAlbumUrls(value) {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  return null;
 }
 function _entitySharePreview(type) {
   switch (type) {
