@@ -905,6 +905,12 @@ async function listConversations(req, res, next) {
 
     let base = db('conversations')
       .leftJoin('businesses', 'conversations.business_id', 'businesses.id')
+      // Owner user of the business — its `photo_url` is the brand
+      // logo Elena should see in the chat list / header on her side.
+      // Mirror of the business-side query, which already joins
+      // `users` on `candidates.user_id` to expose
+      // `candidate_photo_url`.
+      .leftJoin('users as biz_users', 'businesses.user_id', 'biz_users.id')
       .leftJoin('jobs', 'conversations.job_id', 'jobs.id')
       .where('conversations.candidate_id', candidate.id)
       .whereNot('conversations.status', 'archived');
@@ -918,6 +924,7 @@ async function listConversations(req, res, next) {
         'businesses.name as business_name', 'businesses.initials as business_initials',
         'businesses.is_verified as business_verified', 'businesses.avatar_hue as business_avatar_hue',
         'businesses.country_code as business_country_code',
+        'biz_users.photo_url as business_photo_url',
         'jobs.title as job_title'
       )
       .orderBy('conversations.updated_at', 'desc')
