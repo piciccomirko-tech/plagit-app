@@ -3,6 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const { log } = require('../services/logService');
 const AppError = require('../utils/AppError');
 const { batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
+const { isAlbumColumnPresent } = require('../services/schemaFeatureFlags');
 
 async function list(req, res, next) {
   try {
@@ -63,39 +64,45 @@ async function thread(req, res, next) {
       .count('* as c').first().then(r => +r.c);
     // Phase 3D — surface reply preview for the admin thread viewer.
     // Same LEFT JOIN approach as candidate / business listMessages.
+    // Album column is guarded so a redeploy that races ahead of the
+    // migrate step doesn't 500 the admin thread.
+    const albumReady = await isAlbumColumnPresent();
+    const selectCols = [
+      'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
+      'messages.sender_id', 'messages.created_at',
+      'messages.attachment_type',
+      'messages.audio_url', 'messages.audio_duration_ms',
+      'messages.audio_size_bytes', 'messages.audio_mime_type',
+      'messages.image_url', 'messages.image_size_bytes',
+      'messages.image_mime_type', 'messages.image_width',
+      'messages.image_height',
+      'messages.document_url', 'messages.document_size_bytes',
+      'messages.document_mime_type', 'messages.document_filename',
+      'messages.location_lat', 'messages.location_lng',
+      'messages.location_address',
+      'messages.deleted_for_everyone_at',
+      'messages.reply_to_message_id',
+      'messages.shared_entity_type',
+      'messages.shared_entity_id',
+      'users.name as sender_name', 'users.user_type as sender_type',
+      'replied.body as reply_body',
+      'replied.attachment_type as reply_attachment_type',
+      'replied.audio_duration_ms as reply_audio_duration_ms',
+      'replied.shared_entity_type as reply_shared_entity_type',
+      'replied_user.user_type as reply_sender_type',
+      'replied_user.name as reply_sender_name',
+    ];
+    if (albumReady) {
+      selectCols.push('messages.album_image_urls');
+      selectCols.push('replied.album_image_urls as reply_album_image_urls');
+    }
     const rawMsgs = await db('messages')
       .leftJoin('users', 'messages.sender_id', 'users.id')
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
       .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
       .where('messages.conversation_id', conv.id)
       .whereNot('messages.attachment_type', 'reaction')
-      .select(
-        'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
-        'messages.sender_id', 'messages.created_at',
-        'messages.attachment_type',
-        'messages.audio_url', 'messages.audio_duration_ms',
-        'messages.audio_size_bytes', 'messages.audio_mime_type',
-        'messages.image_url', 'messages.image_size_bytes',
-        'messages.image_mime_type', 'messages.image_width',
-        'messages.image_height',
-        'messages.document_url', 'messages.document_size_bytes',
-        'messages.document_mime_type', 'messages.document_filename',
-        'messages.location_lat', 'messages.location_lng',
-        'messages.location_address',
-        'messages.album_image_urls',
-        'messages.deleted_for_everyone_at',
-        'messages.reply_to_message_id',
-        'messages.shared_entity_type',
-        'messages.shared_entity_id',
-        'users.name as sender_name', 'users.user_type as sender_type',
-        'replied.body as reply_body',
-        'replied.attachment_type as reply_attachment_type',
-        'replied.audio_duration_ms as reply_audio_duration_ms',
-        'replied.shared_entity_type as reply_shared_entity_type',
-        'replied.album_image_urls as reply_album_image_urls',
-        'replied_user.user_type as reply_sender_type',
-        'replied_user.name as reply_sender_name',
-      )
+      .select(...selectCols)
       .orderBy('messages.created_at', 'asc')
       .limit(+limit)
       .offset((+page - 1) * +limit);
@@ -147,7 +154,9 @@ async function thread(req, res, next) {
         : null;
       return {
         ...rest,
-        album_image_urls: _normalizeAlbumUrls(m.album_image_urls),
+        // Pre-migration: m.album_image_urls is undefined; ship null
+        // so every admin payload always carries the field.
+        album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
         reply_to: replyTo,
         shared_entity: sharedEntity,
         is_starred_by_me: starredIds.has(m.id),

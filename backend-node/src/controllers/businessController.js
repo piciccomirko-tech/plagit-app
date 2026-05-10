@@ -3,6 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
+const { isAlbumColumnPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -1129,6 +1130,11 @@ async function listMessages(req, res, next) {
           .where('message_hides.user_id', req.user.id);
       })
       .count('* as c').first().then(r => +r.c);
+    // See candidateController.listMessages — guard the album SELECT
+    // so a redeploy that races ahead of `migrate:latest` doesn't 500
+    // the inbox.
+    const albumReady = await isAlbumColumnPresent();
+
     // Pull the LATEST `limit` messages (desc + offset), then reverse to
     // chronological order for the client. Previous ASC+offset query
     // silently truncated long threads to the oldest page once total > limit,
@@ -1137,6 +1143,36 @@ async function listMessages(req, res, next) {
     // compact reply preview (id / sender_type / attachment_type /
     // body / audio_duration_ms) for every message that points at a
     // parent.
+    const selectCols = [
+      'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
+      'messages.sender_id', 'messages.created_at',
+      'messages.attachment_type', 'messages.audio_url',
+      'messages.audio_duration_ms', 'messages.audio_size_bytes',
+      'messages.audio_mime_type',
+      'messages.image_url', 'messages.image_size_bytes',
+      'messages.image_mime_type', 'messages.image_width',
+      'messages.image_height',
+      'messages.document_url', 'messages.document_size_bytes',
+      'messages.document_mime_type', 'messages.document_filename',
+      'messages.location_lat', 'messages.location_lng',
+      'messages.location_address',
+      'messages.deleted_for_everyone_at',
+      'messages.reply_to_message_id',
+      'messages.shared_entity_type',
+      'messages.shared_entity_id',
+      'users.name as sender_name', 'users.user_type as sender_type',
+      'replied.body as reply_body',
+      'replied.attachment_type as reply_attachment_type',
+      'replied.audio_duration_ms as reply_audio_duration_ms',
+      'replied.shared_entity_type as reply_shared_entity_type',
+      'replied.deleted_for_everyone_at as reply_deleted_for_everyone_at',
+      'replied_user.user_type as reply_sender_type',
+      'replied_user.name as reply_sender_name',
+    ];
+    if (albumReady) {
+      selectCols.push('messages.album_image_urls');
+      selectCols.push('replied.album_image_urls as reply_album_image_urls');
+    }
     const msgs = (await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
       .leftJoin('users as replied_user', 'replied.sender_id', 'replied_user.id')
@@ -1151,34 +1187,7 @@ async function listMessages(req, res, next) {
           .whereRaw('message_hides.message_id = messages.id')
           .where('message_hides.user_id', req.user.id);
       })
-      .select(
-        'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
-        'messages.sender_id', 'messages.created_at',
-        'messages.attachment_type', 'messages.audio_url',
-        'messages.audio_duration_ms', 'messages.audio_size_bytes',
-        'messages.audio_mime_type',
-        'messages.image_url', 'messages.image_size_bytes',
-        'messages.image_mime_type', 'messages.image_width',
-        'messages.image_height',
-        'messages.document_url', 'messages.document_size_bytes',
-        'messages.document_mime_type', 'messages.document_filename',
-        'messages.location_lat', 'messages.location_lng',
-        'messages.location_address',
-        'messages.album_image_urls',
-        'messages.deleted_for_everyone_at',
-        'messages.reply_to_message_id',
-        'messages.shared_entity_type',
-        'messages.shared_entity_id',
-        'users.name as sender_name', 'users.user_type as sender_type',
-        'replied.body as reply_body',
-        'replied.attachment_type as reply_attachment_type',
-        'replied.audio_duration_ms as reply_audio_duration_ms',
-        'replied.shared_entity_type as reply_shared_entity_type',
-        'replied.album_image_urls as reply_album_image_urls',
-        'replied.deleted_for_everyone_at as reply_deleted_for_everyone_at',
-        'replied_user.user_type as reply_sender_type',
-        'replied_user.name as reply_sender_name',
-      )
+      .select(...selectCols)
       .orderBy('messages.created_at', 'desc').limit(+limit).offset((+page - 1) * +limit)).reverse();
 
     // Flip unread peer messages to read and broadcast to the sender.
@@ -1291,7 +1300,11 @@ async function listMessages(req, res, next) {
             shared_entity_id: null,
             album_image_urls: null,
           }
-        : { album_image_urls: _normalizeAlbumUrls(m.album_image_urls) };
+        : {
+            // Pre-migration: column wasn't selected; ship null so
+            // every payload always carries the field for the client.
+            album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+          };
       const sharedEntity = !isTombstoned && m.attachment_type === 'entity_share' && m.shared_entity_id
         ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
         : null;
@@ -1393,6 +1406,13 @@ async function sendMessage(req, res, next) {
     // Album guard: see candidateController.sendMessage for design.
     let cleanAlbumUrls = null;
     if (isAlbum) {
+      // Pre-migration safety — see candidateController.sendMessage.
+      if (!(await isAlbumColumnPresent())) {
+        throw AppError.unavailable(
+          'Album messages are temporarily unavailable. Please try again in a moment.',
+          'ALBUM_NOT_READY',
+        );
+      }
       if (!Array.isArray(album_image_urls)) {
         throw AppError.badRequest('album_image_urls is required and must be an array.');
       }
@@ -1498,7 +1518,7 @@ async function sendMessage(req, res, next) {
               : isAlbum
                 ? 'album'
                 : 'text';
-    const [msg] = await db('messages').insert({
+    const insertData = {
       conversation_id: conv.id,
       sender_id: req.user.id,
       body: cleanBody,
@@ -1526,9 +1546,12 @@ async function sendMessage(req, res, next) {
       // Persist the canonical id resolved by the envelope (e.g.
       // businesses.id) even when the client passed users.id.
       shared_entity_id: isEntityShare ? entityEnvelope.id : null,
-      // Album: jsonb array. See candidateController.sendMessage.
-      album_image_urls: isAlbum ? JSON.stringify(cleanAlbumUrls) : null,
-    }).returning('*');
+    };
+    // Album: jsonb array. See candidateController.sendMessage.
+    if (await isAlbumColumnPresent()) {
+      insertData.album_image_urls = isAlbum ? JSON.stringify(cleanAlbumUrls) : null;
+    }
+    const [msg] = await db('messages').insert(insertData).returning('*');
 
     const preview = isAudio
       ? '🎤 Voice message'

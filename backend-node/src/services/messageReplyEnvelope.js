@@ -9,24 +9,30 @@
 //   - the parent row is missing (FK ON DELETE SET NULL race)
 
 const db = require('../config/db');
+const { isAlbumColumnPresent } = require('./schemaFeatureFlags');
 
 async function buildReplyEnvelope(replyToId) {
   if (!replyToId) return null;
+  const albumReady = await isAlbumColumnPresent();
+  // SELECT clause is built dynamically: when the album column has not
+  // been added yet (deploy that races ahead of `migrate:latest`), we
+  // skip naming it so pg doesn't 42703 the whole reply quote out.
+  const cols = [
+    'messages.id',
+    'messages.body',
+    'messages.attachment_type',
+    'messages.audio_duration_ms',
+    'messages.shared_entity_type',
+    'messages.shared_entity_id',
+    'messages.deleted_for_everyone_at',
+    'users.name as sender_name',
+    'users.user_type as sender_type',
+  ];
+  if (albumReady) cols.splice(6, 0, 'messages.album_image_urls');
   const parent = await db('messages')
     .leftJoin('users', 'messages.sender_id', 'users.id')
     .where('messages.id', replyToId)
-    .select(
-      'messages.id',
-      'messages.body',
-      'messages.attachment_type',
-      'messages.audio_duration_ms',
-      'messages.shared_entity_type',
-      'messages.shared_entity_id',
-      'messages.album_image_urls',
-      'messages.deleted_for_everyone_at',
-      'users.name as sender_name',
-      'users.user_type as sender_type',
-    )
+    .select(...cols)
     .first();
   if (!parent) return null;
   // Sprint 4C — when the parent has been tombstoned, surface the same
