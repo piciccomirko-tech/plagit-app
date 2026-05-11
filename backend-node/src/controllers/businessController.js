@@ -1409,6 +1409,8 @@ async function sendMessage(req, res, next) {
       shared_entity_type,
       shared_entity_id,
       album_image_urls,
+      forwarded_from_message_id,
+      is_forwarded,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
@@ -1518,6 +1520,48 @@ async function sendMessage(req, res, next) {
       replyToId = target.id;
     }
 
+    // Forward support. Mirror of candidateController — see there for
+    // full rationale. The business is allowed to forward FROM any
+    // conversation they own (i.e. any business_id matching `bizId`).
+    let forwardSourceId = null;
+    let forwardFlag = false;
+    if (forwarded_from_message_id !== undefined && forwarded_from_message_id !== null) {
+      if (typeof forwarded_from_message_id !== 'string' || forwarded_from_message_id.length === 0) {
+        throw AppError.badRequest('Invalid forwarded_from_message_id.');
+      }
+      if (is_forwarded !== true) {
+        throw AppError.badRequest('forwarded_from_message_id requires is_forwarded=true.');
+      }
+      if (!(await isForwardedColumnsPresent())) {
+        throw AppError.unavailable(
+          'Message forwarding is temporarily unavailable. Please try again in a moment.',
+          'FORWARD_NOT_READY',
+        );
+      }
+      const source = await db('messages')
+        .leftJoin('conversations', 'conversations.id', 'messages.conversation_id')
+        .where('messages.id', forwarded_from_message_id)
+        .select(
+          'messages.id',
+          'messages.deleted_for_everyone_at',
+          'conversations.business_id',
+        )
+        .first();
+      if (!source) {
+        throw AppError.notFound('Forward source message not found.');
+      }
+      if (source.business_id !== bizId) {
+        throw AppError.forbidden('You cannot forward messages from a conversation you are not part of.');
+      }
+      if (source.deleted_for_everyone_at != null) {
+        throw AppError.badRequest('Cannot forward a deleted message.');
+      }
+      forwardSourceId = source.id;
+      forwardFlag = true;
+    } else if (is_forwarded === true) {
+      throw AppError.badRequest('is_forwarded=true requires forwarded_from_message_id.');
+    }
+
     const cleanBody = (body && body.trim()) || '';
     const dbAttachmentType = isAudio
       ? 'audio'
@@ -1564,6 +1608,15 @@ async function sendMessage(req, res, next) {
     // Album: jsonb array. See candidateController.sendMessage.
     if (await isAlbumColumnPresent()) {
       insertData.album_image_urls = isAlbum ? JSON.stringify(cleanAlbumUrls) : null;
+    }
+    // Forward fields. Mirror of candidateController. The auth +
+    // FORWARD_NOT_READY guard above already gates `forwardFlag` to
+    // false when the columns are missing, so by the time we reach
+    // the INSERT either we have both fields ready or the row is a
+    // plain legacy send.
+    if (await isForwardedColumnsPresent()) {
+      insertData.forwarded_from_message_id = forwardSourceId;
+      insertData.is_forwarded = forwardFlag;
     }
     const [msg] = await db('messages').insert(insertData).returning('*');
 
@@ -1636,6 +1689,9 @@ async function sendMessage(req, res, next) {
         location_lng: msg.location_lng == null ? null : msg.location_lng,
         location_address: msg.location_address || null,
         album_image_urls: _normalizeAlbumUrls(msg.album_image_urls),
+        // Forward metadata — see candidateController.sendMessage.
+        forwarded_from_message_id: msg.forwarded_from_message_id || null,
+        is_forwarded: !!msg.is_forwarded,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,

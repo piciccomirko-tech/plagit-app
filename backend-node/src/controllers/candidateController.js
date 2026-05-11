@@ -1365,6 +1365,8 @@ async function sendMessage(req, res, next) {
       shared_entity_type,
       shared_entity_id,
       album_image_urls,
+      forwarded_from_message_id,
+      is_forwarded,
     } = req.body;
 
     const isAudio = attachment_type === 'audio';
@@ -1513,6 +1515,71 @@ async function sendMessage(req, res, next) {
       replyToId = target.id;
     }
 
+    // Forward support. The two fields travel together: either both
+    // present (real forward) or both absent (legacy send). Anything
+    // in between is a client bug, rejected upfront so we never end
+    // up with a half-tagged row.
+    //
+    // Auth: the source message must belong to a conversation the
+    // CURRENT user is a participant of — otherwise the user could
+    // forward content from a stranger's thread. Sender of the new
+    // row is always `userId` (req.user.id), so spoofing the sender
+    // identity is impossible by construction; we just validate the
+    // SOURCE link here.
+    let forwardSourceId = null;
+    let forwardFlag = false;
+    if (forwarded_from_message_id !== undefined && forwarded_from_message_id !== null) {
+      if (typeof forwarded_from_message_id !== 'string' || forwarded_from_message_id.length === 0) {
+        throw AppError.badRequest('Invalid forwarded_from_message_id.');
+      }
+      if (is_forwarded !== true) {
+        throw AppError.badRequest('forwarded_from_message_id requires is_forwarded=true.');
+      }
+      // Defensive guard: if the columns haven't been migrated in
+      // yet, refuse politely instead of pretending the field was
+      // accepted then silently dropping it on INSERT.
+      if (!(await isForwardedColumnsPresent())) {
+        throw AppError.unavailable(
+          'Message forwarding is temporarily unavailable. Please try again in a moment.',
+          'FORWARD_NOT_READY',
+        );
+      }
+      // Resolve source + verify the candidate has access to it. The
+      // candidate is allowed to forward FROM any conversation they
+      // own (their thread with any business), not just the current
+      // one — so we look up by the source's conversation.candidate_id
+      // matching the local candidate row.
+      const source = await db('messages')
+        .leftJoin('conversations', 'conversations.id', 'messages.conversation_id')
+        .where('messages.id', forwarded_from_message_id)
+        .select(
+          'messages.id',
+          'messages.deleted_for_everyone_at',
+          'conversations.candidate_id',
+        )
+        .first();
+      if (!source) {
+        throw AppError.notFound('Forward source message not found.');
+      }
+      if (source.candidate_id !== candidate.id) {
+        // Caller is not a participant of the source conversation.
+        // Surface as 403 so the client knows it's an auth problem,
+        // not a missing-row problem.
+        throw AppError.forbidden('You cannot forward messages from a conversation you are not part of.');
+      }
+      if (source.deleted_for_everyone_at != null) {
+        throw AppError.badRequest('Cannot forward a deleted message.');
+      }
+      forwardSourceId = source.id;
+      forwardFlag = true;
+    } else if (is_forwarded === true) {
+      // Client asked for is_forwarded=true without the FK — reject
+      // so we never end up with "Forwarded" labels on rows that
+      // have no provenance. The Flutter side guarantees both fields
+      // together; this is purely belt-and-suspenders.
+      throw AppError.badRequest('is_forwarded=true requires forwarded_from_message_id.');
+    }
+
     const cleanBody = (body && body.trim()) || '';
     const dbAttachmentType = isAudio
       ? 'audio'
@@ -1565,6 +1632,16 @@ async function sendMessage(req, res, next) {
     // reject the whole row otherwise.
     if (await isAlbumColumnPresent()) {
       insertData.album_image_urls = isAlbum ? JSON.stringify(cleanAlbumUrls) : null;
+    }
+    // Forward fields: only include in INSERT when the columns are
+    // present. The auth/validation block above already gated on
+    // isForwardedColumnsPresent() before letting forwardFlag become
+    // true, so by the time we reach the INSERT either the columns
+    // exist (and we set them) or `forwardFlag === false` so we
+    // skip silently and the row lands as a legacy non-forwarded msg.
+    if (await isForwardedColumnsPresent()) {
+      insertData.forwarded_from_message_id = forwardSourceId;
+      insertData.is_forwarded = forwardFlag;
     }
     const [msg] = await db('messages').insert(insertData).returning('*');
 
@@ -1644,6 +1721,10 @@ async function sendMessage(req, res, next) {
         location_lng: msg.location_lng == null ? null : msg.location_lng,
         location_address: msg.location_address || null,
         album_image_urls: _normalizeAlbumUrls(msg.album_image_urls),
+        // Forward metadata in the SSE payload — pre-migration these
+        // simply read as undefined on `msg` and degrade to null/false.
+        forwarded_from_message_id: msg.forwarded_from_message_id || null,
+        is_forwarded: !!msg.is_forwarded,
         sender_id: msg.sender_id,
         created_at: msg.created_at,
         delivered_at: msg.delivered_at || null,
