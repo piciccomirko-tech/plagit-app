@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const { log } = require('../services/logService');
 const AppError = require('../utils/AppError');
 const { batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
-const { isAlbumColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isForwardedColumnsPresent } = require('../services/schemaFeatureFlags');
 
 async function list(req, res, next) {
   try {
@@ -67,6 +67,8 @@ async function thread(req, res, next) {
     // Album column is guarded so a redeploy that races ahead of the
     // migrate step doesn't 500 the admin thread.
     const albumReady = await isAlbumColumnPresent();
+    // Forward columns (migration 041, not yet applied). Same pattern.
+    const forwardReady = await isForwardedColumnsPresent();
     const selectCols = [
       'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
       'messages.sender_id', 'messages.created_at',
@@ -95,6 +97,10 @@ async function thread(req, res, next) {
     if (albumReady) {
       selectCols.push('messages.album_image_urls');
       selectCols.push('replied.album_image_urls as reply_album_image_urls');
+    }
+    if (forwardReady) {
+      selectCols.push('messages.forwarded_from_message_id');
+      selectCols.push('messages.is_forwarded');
     }
     const rawMsgs = await db('messages')
       .leftJoin('users', 'messages.sender_id', 'users.id')
@@ -157,6 +163,11 @@ async function thread(req, res, next) {
         // Pre-migration: m.album_image_urls is undefined; ship null
         // so every admin payload always carries the field.
         album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+        // Pre-migration: forward fields default to null/false. Once
+        // migration 041 lands, the runtime probe flips this on
+        // within 30s without a backend restart.
+        forwarded_from_message_id: forwardReady ? (m.forwarded_from_message_id || null) : null,
+        is_forwarded: forwardReady ? !!m.is_forwarded : false,
         reply_to: replyTo,
         shared_entity: sharedEntity,
         is_starred_by_me: starredIds.has(m.id),

@@ -21,6 +21,7 @@ const db = require('../config/db');
 
 const _cache = {
   album_image_urls: { present: null, lastCheckedAt: 0 },
+  forwarded_columns: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -53,4 +54,30 @@ async function isAlbumColumnPresent() {
   return result;
 }
 
-module.exports = { isAlbumColumnPresent };
+/// Pair-probe for the forward sprint columns. We treat them as ONE
+/// readiness signal — only return TRUE when BOTH `forwarded_from_message_id`
+/// and `is_forwarded` are present. Either-alone is impossible in
+/// practice (migration 041 adds both atomically), but the strict gate
+/// keeps the controller code from having to track two separate flags.
+async function isForwardedColumnsPresent() {
+  const entry = _cache.forwarded_columns;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  const [hasFk, hasFlag] = await Promise.all([
+    _probe('forwarded_from_message_id'),
+    _probe('is_forwarded'),
+  ]);
+  const result = hasFk && hasFlag;
+  entry.present = result;
+  entry.lastCheckedAt = now;
+  if (result) {
+    // eslint-disable-next-line no-console
+    console.log('[schemaFeatureFlags] messages.forwarded_from_message_id + is_forwarded are now PRESENT');
+  }
+  return result;
+}
+
+module.exports = { isAlbumColumnPresent, isForwardedColumnsPresent };

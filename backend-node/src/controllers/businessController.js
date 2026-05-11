@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isForwardedColumnsPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -1134,6 +1134,8 @@ async function listMessages(req, res, next) {
     // so a redeploy that races ahead of `migrate:latest` doesn't 500
     // the inbox.
     const albumReady = await isAlbumColumnPresent();
+    // Forward columns (migration 041, not yet applied). Same pattern.
+    const forwardReady = await isForwardedColumnsPresent();
 
     // Pull the LATEST `limit` messages (desc + offset), then reverse to
     // chronological order for the client. Previous ASC+offset query
@@ -1172,6 +1174,10 @@ async function listMessages(req, res, next) {
     if (albumReady) {
       selectCols.push('messages.album_image_urls');
       selectCols.push('replied.album_image_urls as reply_album_image_urls');
+    }
+    if (forwardReady) {
+      selectCols.push('messages.forwarded_from_message_id');
+      selectCols.push('messages.is_forwarded');
     }
     const msgs = (await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
@@ -1299,11 +1305,19 @@ async function listMessages(req, res, next) {
             shared_entity_type: null,
             shared_entity_id: null,
             album_image_urls: null,
+            // See candidateController.listMessages — tombstoned rows
+            // lose the "Forwarded" label.
+            forwarded_from_message_id: null,
+            is_forwarded: false,
           }
         : {
             // Pre-migration: column wasn't selected; ship null so
             // every payload always carries the field for the client.
             album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+            // Pre-migration: forward fields default to null/false so
+            // the Flutter side reads the legacy shape consistently.
+            forwarded_from_message_id: forwardReady ? (m.forwarded_from_message_id || null) : null,
+            is_forwarded: forwardReady ? !!m.is_forwarded : false,
           };
       const sharedEntity = !isTombstoned && m.attachment_type === 'entity_share' && m.shared_entity_id
         ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)

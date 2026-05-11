@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isForwardedColumnsPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
@@ -1060,6 +1060,8 @@ async function listMessages(req, res, next) {
     // instance that hasn't run `migrate:latest` yet — guard the SELECT
     // so pre-migration listMessages doesn't 500 the inbox.
     const albumReady = await isAlbumColumnPresent();
+    // Forward columns (migration 041, not yet applied). Same pattern.
+    const forwardReady = await isForwardedColumnsPresent();
 
     // Pull the LATEST `limit` messages (desc + offset), then reverse to
     // chronological order for the client. Previous behaviour was ASC + offset
@@ -1099,6 +1101,10 @@ async function listMessages(req, res, next) {
     if (albumReady) {
       selectCols.push('messages.album_image_urls');
       selectCols.push('replied.album_image_urls as reply_album_image_urls');
+    }
+    if (forwardReady) {
+      selectCols.push('messages.forwarded_from_message_id');
+      selectCols.push('messages.is_forwarded');
     }
     const msgs = (await db('messages')
       .leftJoin('users', 'messages.sender_id', 'users.id')
@@ -1244,11 +1250,22 @@ async function listMessages(req, res, next) {
             shared_entity_type: null,
             shared_entity_id: null,
             album_image_urls: null,
+            // Tombstoned rows lose the "Forwarded" label — once the
+            // body is gone, the metadata about its provenance has no
+            // surface to render on.
+            forwarded_from_message_id: null,
+            is_forwarded: false,
           }
         : {
             // Pre-migration: column wasn't selected, m.album_image_urls
             // is undefined → ship null so clients always see the field.
             album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+            // Pre-migration: forward fields don't exist yet → ship the
+            // legacy default shape so the Flutter side never sees an
+            // undefined key. Once migration 041 lands, the runtime
+            // probe flips this on within 30s without a restart.
+            forwarded_from_message_id: forwardReady ? (m.forwarded_from_message_id || null) : null,
+            is_forwarded: forwardReady ? !!m.is_forwarded : false,
           };
       // Attach the entity-share envelope when this row is itself an
       // entity share. Missing entity (deleted after send) → null →
