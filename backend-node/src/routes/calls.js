@@ -9,6 +9,7 @@
 const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 const c = require('../controllers/callController');
+const cs = require('../controllers/callSignalController');
 
 router.use(authenticate);
 
@@ -21,5 +22,10 @@ router.post('/:id/decline', c.decline);
 
 // Either participant
 router.post('/:id/end', c.end);
+
+// WebRTC signaling (Step E1) — REST in, SSE fan-out via call.signal.*
+router.post('/:id/signal/offer',  cs.submitOffer);
+router.post('/:id/signal/answer', cs.submitAnswer);
+router.post('/:id/signal/ice',    cs.submitIce);
 
 module.exports = router;
