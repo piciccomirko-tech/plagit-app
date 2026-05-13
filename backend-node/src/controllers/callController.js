@@ -34,6 +34,7 @@
 const db = require('../config/db');
 const { ok, created } = require('../utils/response');
 const AppError = require('../utils/AppError');
+const { bus } = require('../services/realtime/eventBus');
 
 // ── State machine ──────────────────────────────────────────────────
 const STATUS = Object.freeze({
@@ -66,6 +67,52 @@ function assertTransition(from, to) {
       'CALL_INVALID_TRANSITION',
     );
   }
+}
+
+// ── Realtime publish ───────────────────────────────────────────────
+//
+// Map of DB status → SSE event type. One-to-one because we already
+// model six terminal/non-terminal states and the Flutter side wants
+// the same vocabulary.
+const EVENT_TYPE_BY_STATUS = Object.freeze({
+  [STATUS.RINGING]:  'call.ringing',
+  [STATUS.ACCEPTED]: 'call.accepted',
+  [STATUS.DECLINED]: 'call.declined',
+  [STATUS.MISSED]:   'call.missed',
+  [STATUS.ENDED]:    'call.ended',
+  [STATUS.FAILED]:   'call.failed',
+});
+
+// Compact, JSON-safe call payload — only what the Flutter UI needs
+// to render the call_log_bubble + incoming/outgoing screens. The DB
+// row stays the source of truth; this snapshot is intentionally
+// minimal so we don't leak internals over SSE.
+function buildCallPayload(row) {
+  return {
+    callId:         row.id,
+    conversationId: row.conversation_id,
+    callerId:       row.caller_id,
+    calleeId:       row.callee_id,
+    type:           row.type,
+    status:         row.status,
+    createdAt:      row.created_at ? new Date(row.created_at).toISOString() : null,
+    acceptedAt:     row.accepted_at ? new Date(row.accepted_at).toISOString() : null,
+    endedAt:        row.ended_at ? new Date(row.ended_at).toISOString() : null,
+    durationS:      row.duration_s || 0,
+  };
+}
+
+// Publish the call's CURRENT status to both participants. Audience
+// is computed from the row itself so we never accidentally include
+// a third party — this is the privacy boundary for the call event.
+function publishCallEvent(row) {
+  const eventType = EVENT_TYPE_BY_STATUS[row.status];
+  if (!eventType) return null; // unknown status — defensive no-op
+  const audience = [
+    `user:${row.caller_id}`,
+    `user:${row.callee_id}`,
+  ];
+  return bus.publish(eventType, { call: buildCallPayload(row) }, audience);
 }
 
 // ── Participant resolver ───────────────────────────────────────────
@@ -190,6 +237,10 @@ async function initiate(req, res, next) {
       })
       .returning('*');
 
+    // SSE fan-out to both participants. `call.ringing` is the trigger
+    // the Flutter side uses to push the incoming-call screen.
+    publishCallEvent(row);
+
     return created(res, { call: row });
   } catch (err) { next(err); }
 }
@@ -213,6 +264,9 @@ async function accept(req, res, next) {
     }
 
     if (call.status === STATUS.ACCEPTED) {
+      // Idempotent re-accept: no state change, no event. The client
+      // already received the original call.accepted; re-publishing
+      // would cause double-handling on flaky retries.
       return ok(res, { call });
     }
     assertTransition(call.status, STATUS.ACCEPTED);
@@ -225,6 +279,8 @@ async function accept(req, res, next) {
         updated_at: db.fn.now(),
       })
       .returning('*');
+
+    publishCallEvent(updated);
 
     return ok(res, { call: updated });
   } catch (err) { next(err); }
@@ -248,6 +304,7 @@ async function decline(req, res, next) {
     }
 
     if (call.status === STATUS.DECLINED) {
+      // Idempotent re-decline — see accept handler for rationale.
       return ok(res, { call });
     }
     assertTransition(call.status, STATUS.DECLINED);
@@ -260,6 +317,8 @@ async function decline(req, res, next) {
         updated_at: db.fn.now(),
       })
       .returning('*');
+
+    publishCallEvent(updated);
 
     return ok(res, { call: updated });
   } catch (err) { next(err); }
@@ -325,6 +384,10 @@ async function end(req, res, next) {
         updated_at: db.fn.now(),
       })
       .returning('*');
+
+    // One of call.missed / call.ended / call.failed, depending on
+    // the transition we just executed.
+    publishCallEvent(updated);
 
     return ok(res, { call: updated });
   } catch (err) { next(err); }
