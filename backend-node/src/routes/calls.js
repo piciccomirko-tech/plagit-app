@@ -1,0 +1,25 @@
+/**
+ * Call lifecycle routes — voice + video MVP (Step A).
+ *
+ * Mounted at /v1/calls (see src/routes/index.js). All four endpoints
+ * require a valid JWT — the controller layer then verifies the user
+ * is a participant of the conversation / the callee, where relevant.
+ */
+
+const router = require('express').Router();
+const { authenticate } = require('../middleware/auth');
+const c = require('../controllers/callController');
+
+router.use(authenticate);
+
+// Caller side
+router.post('/initiate', c.initiate);
+
+// Callee side
+router.post('/:id/accept',  c.accept);
+router.post('/:id/decline', c.decline);
+
+// Either participant
+router.post('/:id/end', c.end);
+
+module.exports = router;

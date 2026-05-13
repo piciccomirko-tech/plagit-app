@@ -22,6 +22,9 @@ router.use('/business', require('./business'));
 // Social Feed (shared by candidate + business)
 router.use('/feed', require('./feed'));
 
+// Voice + Video calls (WebRTC P2P MVP — Step A: REST only, no SSE yet)
+router.use('/calls', require('./calls'));
+
 // Subscriptions
 router.use('/subscription', require('./subscription'));
 
