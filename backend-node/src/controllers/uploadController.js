@@ -279,6 +279,106 @@ function _looksLikePlainText(buffer) {
   return true;
 }
 
+// ─────────────────────────────────────────────────────────────────
+// Video uploads — Sprint Video Posts (Mirko 2026-05-16).
+//
+// Same three-gate pattern as audio/image/document. 50 MB cap covers
+// ~15-20 sec of 1080p iPhone video without forcing a re-encode on the
+// client. `image_picker.pickVideo()` can ask for a `maxDuration` but
+// iOS doesn't honor it on every device — the server-side hard cap is
+// the only safety net we can rely on.
+// ─────────────────────────────────────────────────────────────────
+
+const ALLOWED_VIDEO_MIME = new Set([
+  'video/mp4',
+  'video/quicktime', // iPhone .mov
+  'video/x-m4v',
+]);
+
+const SNIFFED_VIDEO_MIME = new Set([
+  'video/mp4',
+  'video/quicktime',
+  'video/x-m4v',
+]);
+
+const VIDEO_MIME_TO_EXT = {
+  'video/mp4': 'mp4',
+  'video/quicktime': 'mov',
+  'video/x-m4v': 'm4v',
+};
+
+const VIDEO_MAX_BYTES = 50 * 1024 * 1024; // 50 MB
+
+/**
+ * POST /v1/uploads/video
+ *
+ * Multipart form-data with field `file`. Optional form fields:
+ *   - `duration_ms` (int) — client-measured video duration so the feed
+ *     can render the duration overlay without decoding bytes.
+ *   - `width` (int), `height` (int) — client-decoded video dimensions
+ *     so the receiver can size the placeholder before bytes finish
+ *     loading (no layout jump on slow networks).
+ *
+ * Three validation gates — mirror of [uploadImage]:
+ *   1. Client-declared MIME header is in [ALLOWED_VIDEO_MIME].
+ *   2. File size ≤ 50 MB (also enforced by multer at the route layer).
+ *   3. Magic-byte sniff of the buffer matches [SNIFFED_VIDEO_MIME].
+ */
+async function uploadVideo(req, res, next) {
+  try {
+    if (!req.file) {
+      throw AppError.badRequest('Missing video file under field "file".');
+    }
+    const { mimetype, size, buffer } = req.file;
+
+    if (!ALLOWED_VIDEO_MIME.has(mimetype)) {
+      throw AppError.badRequest(
+        `Unsupported video type: ${mimetype}. Use MP4/MOV/M4V.`,
+        'INVALID_MEDIA_TYPE',
+      );
+    }
+
+    if (size > VIDEO_MAX_BYTES) {
+      throw AppError.badRequest(
+        'Video file too large (max 50MB).',
+        'VIDEO_FILE_TOO_LARGE',
+      );
+    }
+
+    const sniffed = await _detectFileType(buffer);
+    if (!sniffed || !SNIFFED_VIDEO_MIME.has(sniffed.mime)) {
+      throw AppError.badRequest(
+        sniffed
+          ? `File contents look like ${sniffed.mime} (.${sniffed.ext}), not a video.`
+          : 'File contents are not a recognized video format.',
+        'INVALID_VIDEO_FILE',
+      );
+    }
+
+    const ext = VIDEO_MIME_TO_EXT[mimetype] || sniffed.ext || 'bin';
+    const url = await storage.save(buffer, {
+      ext,
+      mimeType: mimetype,
+      kind: 'video',
+    });
+
+    const durationMs = parseInt(req.body?.duration_ms, 10);
+    const width = parseInt(req.body?.width, 10);
+    const height = parseInt(req.body?.height, 10);
+    ok(res, {
+      video_url: url,
+      video_size_bytes: size,
+      video_mime_type: mimetype,
+      video_duration_ms: Number.isFinite(durationMs) ? durationMs : null,
+      video_width: Number.isFinite(width) ? width : null,
+      video_height: Number.isFinite(height) ? height : null,
+      driver: storage.driverName(),
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 /**
  * POST /v1/uploads/document
  *
@@ -372,4 +472,4 @@ async function uploadDocument(req, res, next) {
   }
 }
 
-module.exports = { uploadAudio, uploadImage, uploadDocument };
+module.exports = { uploadAudio, uploadImage, uploadVideo, uploadDocument };

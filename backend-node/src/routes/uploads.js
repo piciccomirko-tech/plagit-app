@@ -4,6 +4,7 @@ const { authenticate } = require('../middleware/auth');
 const {
   uploadAudio,
   uploadImage,
+  uploadVideo,
   uploadDocument,
 } = require('../controllers/uploadController');
 
@@ -37,10 +38,23 @@ const documentUpload = multer({
   },
 });
 
+// Video cap is 50MB — covers ~15-20 sec of 1080p iPhone footage. The
+// controller re-validates size + MIME + magic bytes, so this multer
+// guard is just an early bail to avoid buffering oversize uploads in
+// memory. `image_picker.pickVideo()` should compress on the client.
+const videoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 50 * 1024 * 1024,
+    files: 1,
+  },
+});
+
 router.use(authenticate);
 
 router.post('/audio', audioUpload.single('file'), uploadAudio);
 router.post('/image', imageUpload.single('file'), uploadImage);
+router.post('/video', videoUpload.single('file'), uploadVideo);
 router.post('/document', documentUpload.single('file'), uploadDocument);
 
 module.exports = router;
