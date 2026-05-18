@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isForwardedColumnsPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isForwardedColumnsPresent, isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -1157,6 +1157,8 @@ async function listMessages(req, res, next) {
     const albumReady = await isAlbumColumnPresent();
     // Forward columns (migration 041, not yet applied). Same pattern.
     const forwardReady = await isForwardedColumnsPresent();
+    // Call-log metadata column (migration 046, Step 3A). Same gate.
+    const callLogReady = await isCallLogColumnPresent();
 
     // Pull the LATEST `limit` messages (desc + offset), then reverse to
     // chronological order for the client. Previous ASC+offset query
@@ -1199,6 +1201,9 @@ async function listMessages(req, res, next) {
     if (forwardReady) {
       selectCols.push('messages.forwarded_from_message_id');
       selectCols.push('messages.is_forwarded');
+    }
+    if (callLogReady) {
+      selectCols.push('messages.call_log_metadata');
     }
     const msgs = (await db('messages').leftJoin('users', 'messages.sender_id', 'users.id')
       .leftJoin('messages as replied', 'messages.reply_to_message_id', 'replied.id')
@@ -1330,6 +1335,7 @@ async function listMessages(req, res, next) {
             // lose the "Forwarded" label.
             forwarded_from_message_id: null,
             is_forwarded: false,
+            call_log_metadata: null,
           }
         : {
             // Pre-migration: column wasn't selected; ship null so
@@ -1339,6 +1345,10 @@ async function listMessages(req, res, next) {
             // the Flutter side reads the legacy shape consistently.
             forwarded_from_message_id: forwardReady ? (m.forwarded_from_message_id || null) : null,
             is_forwarded: forwardReady ? !!m.is_forwarded : false,
+            // Call-log metadata (mig 046, Step 3A). Same pre-migration
+            // gate — ships null until the column is live, then the
+            // JSONB blob flows through to `CallLogBubble`.
+            call_log_metadata: callLogReady ? (m.call_log_metadata || null) : null,
           };
       const sharedEntity = !isTombstoned && m.attachment_type === 'entity_share' && m.shared_entity_id
         ? (shareEnvelopes.get(`${m.shared_entity_type}:${m.shared_entity_id}`) || null)
