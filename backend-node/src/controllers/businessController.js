@@ -135,8 +135,16 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route, body)
       is_read: false,
     };
     if (body) row.body = body;
-    await db('notifications').insert(row);
+    // Step 4A — capture the inserted row's stable id so the SSE
+    // payload can carry it. Flutter consumers (notifications providers
+    // + push handler) use this id as the canonical dedup key across
+    // SSE / polling / future FCM. `.returning('id')` is a no-op on
+    // older drivers that ignore it, so behaviour stays identical when
+    // postgres returns null.
+    const inserted = await db('notifications').insert(row).returning('id');
+    const notificationId = (inserted && inserted[0] && inserted[0].id) || null;
     bus.publish('notification.new', {
+      id: notificationId,
       recipient_user_id: recipientId,
       title,
       body: body || null,
@@ -847,7 +855,10 @@ async function updateApplicantStatus(req, res, next) {
         const inserted = await db('notifications').insert(row).returning(['id', 'title', 'body']);
         const ins = inserted[0] || {};
         console.log(`[STATUS-DBG] notification inserted id=${ins.id} title="${ins.title}" body="${ins.body}"`);
+        // Step 4A — propagate the stable id to the SSE payload so
+        // Flutter can dedup against future FCM tap deliveries.
         bus.publish('notification.new', {
+          id: ins.id || null,
           recipient_user_id: fullApp.user_id,
           title,
           body,

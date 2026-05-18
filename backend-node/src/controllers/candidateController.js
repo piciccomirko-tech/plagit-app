@@ -99,8 +99,14 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route, body)
       is_read: false,
     };
     if (body) row.body = body;
-    await db('notifications').insert(row);
+    // Step 4A — capture the inserted row's stable id so the SSE
+    // payload can carry it. Flutter consumers (notifications providers
+    // + push handler) use this id as the canonical dedup key across
+    // SSE / polling / future FCM. Mirror of businessController.hiringNotify.
+    const inserted = await db('notifications').insert(row).returning('id');
+    const notificationId = (inserted && inserted[0] && inserted[0].id) || null;
     bus.publish('notification.new', {
+      id: notificationId,
       recipient_user_id: recipientId,
       title,
       body: body || null,
