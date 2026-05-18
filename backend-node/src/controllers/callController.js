@@ -215,10 +215,16 @@ async function publicCallSnapshot(row) {
 // Helper is exported via `_internal` for unit testing; the call site
 // from `publishCallEvent` lands in 3A.2 (not wired yet in this step).
 async function maybeInsertCallLogMessage(row) {
-  // Gate: only insert for the 'missed' status. Declined / ended /
-  // failed return without touching the DB so this helper is safe to
-  // call from any terminal-state branch.
-  if (row.status !== STATUS.MISSED) return null;
+  // Gate: insert for `missed` (caller cancelled pre-pickup) AND
+  // `ended` (call was answered and then hung up). Other terminal
+  // states stay no-op:
+  //   • `declined` → product decision α 2026-05-18: no callee bubble
+  //   • `failed`   → technical error, surfaced via SSE only
+  // Ringing/accepted are non-terminal and never reach this branch
+  // (publishCallEvent only fires on terminal status transitions).
+  const isMissed = row.status === STATUS.MISSED;
+  const isAnswered = row.status === STATUS.ENDED;
+  if (!isMissed && !isAnswered) return null;
 
   // Gate: schema readiness. Skip cleanly when the column doesn't
   // exist yet (the cache TTL re-probes every 30s, so the runtime
@@ -227,7 +233,7 @@ async function maybeInsertCallLogMessage(row) {
 
   const callId = row.id;
   const callType = row.type;   // 'audio' | 'video'
-  const callStatus = row.status; // 'missed'
+  const callStatus = row.status; // 'missed' | 'ended'
 
   // Idempotency guard — one chat row per callId. The check uses the
   // JSONB `->>` text extract operator with a parameter so old rows
@@ -240,6 +246,14 @@ async function maybeInsertCallLogMessage(row) {
     .whereRaw("call_log_metadata->>'callId' = ?", [callId])
     .first();
   if (existing) return existing;
+
+  // Real elapsed time the call lasted while accepted. The state
+  // machine computes `duration_s` only on the `accepted → ended`
+  // transition (see `end()` below); missed rows always carry 0.
+  // We ship it through the JSONB blob so the Flutter `CallLogBubble`
+  // can render "8 sec" / "1 min 05 sec" on answered rows without
+  // touching the row's other columns.
+  const durationS = Number.isFinite(row.duration_s) ? row.duration_s : 0;
 
   const metadata = {
     callId,
@@ -254,6 +268,7 @@ async function maybeInsertCallLogMessage(row) {
     endedAt: row.ended_at
       ? new Date(row.ended_at).toISOString()
       : null,
+    durationS,
   };
 
   const [inserted] = await db('messages')
