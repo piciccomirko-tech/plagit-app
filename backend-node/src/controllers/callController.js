@@ -259,8 +259,8 @@ async function maybeInsertCallLogMessage(row) {
   const [inserted] = await db('messages')
     .insert({
       conversation_id: row.conversation_id,
-      sender_user_id: row.caller_id, // caller is the "author" of the missed call
-      body: '',                       // call_log rows carry no body text
+      sender_id: row.caller_id, // caller is the "author" of the missed call
+      body: '',                  // call_log rows carry no body text
       attachment_type: 'call_log',
       call_log_metadata: metadata,
     })
@@ -290,6 +290,17 @@ async function publishCallEvent(row) {
   } catch (_) {
     // Swallow: identity enrichment is best-effort. The call lifecycle
     // event MUST still ship even if the identity join fails.
+  }
+  // Step 3A.2 — persist a call-log chat row when the transition is
+  // `ringing → missed` (caller cancelled before pickup). The helper
+  // self-filters on status, so declined / ended / failed pass through
+  // as no-ops. Wrapped in try/catch so a DB hiccup never blocks the
+  // SSE publish below — the publish is the user-visible signal.
+  try {
+    await maybeInsertCallLogMessage(row);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('[callController] maybeInsertCallLogMessage failed:', e.message);
   }
   return bus.publish(eventType, { call: buildCallPayload(row, identities) }, audience);
 }
