@@ -14,12 +14,30 @@ const StorageAdapter = require('./StorageAdapter');
  * Switch to S3Adapter when shipping to production. See README.md.
  */
 class LocalDiskAdapter extends StorageAdapter {
-  constructor({ baseDir, publicPrefix } = {}) {
+  constructor({ baseDir, publicPrefix, publicBaseUrl } = {}) {
     super();
     // Default: <project-root>/uploads — sibling to src/, ignored via .gitignore.
     this.baseDir =
       baseDir || path.resolve(__dirname, '..', '..', 'uploads');
     this.publicPrefix = publicPrefix || '/uploads';
+    // Optional absolute origin (`http://localhost:3000` in dev) prepended
+    // to every returned URL so consumers (Flutter `ProfilePhoto`, chat
+    // header avatar, etc.) can fetch via `NetworkImage` instead of
+    // trying to resolve a bare `/uploads/...` against the bundled
+    // assets and silently falling back to initials.
+    //
+    // Lookup order:
+    //   1. Constructor override (tests can inject)
+    //   2. `STORAGE_LOCAL_PUBLIC_BASE_URL` env (explicit operator value)
+    //   3. `http://localhost:${PORT || 3000}` (sensible dev default)
+    //
+    // Returned without a trailing slash so concatenation is unambiguous.
+    const envBase =
+      (process.env.STORAGE_LOCAL_PUBLIC_BASE_URL || '').replace(/\/+$/, '');
+    const port = process.env.PORT || '3000';
+    this.publicBaseUrl =
+      (publicBaseUrl !== undefined ? publicBaseUrl : envBase) ||
+      `http://localhost:${port}`;
   }
 
   async save(buffer, { ext, kind = 'audio' }) {
@@ -33,8 +51,9 @@ class LocalDiskAdapter extends StorageAdapter {
     const filename = `${id}.${cleanExt}`;
     const fullPath = path.join(dir, filename);
     await fs.writeFile(fullPath, buffer);
-    // Return a URL the client can later GET via express.static.
-    return `${this.publicPrefix}/${kind}/${filename}`;
+    // Return an ABSOLUTE URL so Flutter's NetworkImage path triggers
+    // correctly. See constructor for the publicBaseUrl resolution order.
+    return `${this.publicBaseUrl}${this.publicPrefix}/${kind}/${filename}`;
   }
 
   async delete(url) {
@@ -59,7 +78,15 @@ class LocalDiskAdapter extends StorageAdapter {
 
   isOwnedUrl(url) {
     if (typeof url !== 'string' || url.length === 0) return false;
-    return url.startsWith(this.publicPrefix + '/');
+    // Accept both the legacy relative form (`/uploads/...`) — old rows
+    // stored before `publicBaseUrl` rollout — and the new absolute
+    // form (`http://localhost:3000/uploads/...`) returned by `save`.
+    if (url.startsWith(this.publicPrefix + '/')) return true;
+    if (this.publicBaseUrl &&
+        url.startsWith(`${this.publicBaseUrl}${this.publicPrefix}/`)) {
+      return true;
+    }
+    return false;
   }
 
   // Exposed so app.js can mount express.static at the right base.
