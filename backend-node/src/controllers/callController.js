@@ -87,7 +87,15 @@ const EVENT_TYPE_BY_STATUS = Object.freeze({
 // to render the call_log_bubble + incoming/outgoing screens. The DB
 // row stays the source of truth; this snapshot is intentionally
 // minimal so we don't leak internals over SSE.
-function buildCallPayload(row) {
+//
+// `identities` is an optional map { userId → identity } produced by
+// `loadCallParticipantIdentities()`. When present, the payload is
+// enriched with `caller` + `callee` objects so the receiver can
+// render the real name + photo instead of generic "Plagit Call".
+// Identities default to null per-side if the lookup row is missing
+// (closed account, partial profile) — the Flutter client falls back
+// to initials in that case.
+function buildCallPayload(row, identities = null) {
   return {
     callId:         row.id,
     conversationId: row.conversation_id,
@@ -99,20 +107,95 @@ function buildCallPayload(row) {
     acceptedAt:     row.accepted_at ? new Date(row.accepted_at).toISOString() : null,
     endedAt:        row.ended_at ? new Date(row.ended_at).toISOString() : null,
     durationS:      row.duration_s || 0,
+    caller:         identities ? (identities[row.caller_id] || null) : null,
+    callee:         identities ? (identities[row.callee_id] || null) : null,
   };
+}
+
+// Resolve display identity for both call participants in a single
+// query. `users.photo_url` is the only canonical photo column; the
+// display name is taken from the profile-level table (candidates /
+// businesses) so brand names diverging from the legal user.name
+// (e.g. "Nobu Restaurant" vs the owner's personal name) render
+// correctly. Falls back gracefully if the profile row is missing.
+async function loadCallParticipantIdentities(callerUserId, calleeUserId) {
+  const ids = [callerUserId, calleeUserId].filter(Boolean);
+  if (ids.length === 0) return {};
+
+  const rows = await db('users')
+    .leftJoin('candidates', 'candidates.user_id', 'users.id')
+    .leftJoin('businesses', 'businesses.user_id', 'users.id')
+    .whereIn('users.id', ids)
+    .select(
+      'users.id as user_id',
+      'users.user_type',
+      'users.name as user_name',
+      'users.initials as user_initials',
+      'users.photo_url',
+      'users.avatar_hue as user_avatar_hue',
+      'candidates.name as candidate_name',
+      'candidates.initials as candidate_initials',
+      'candidates.avatar_hue as candidate_avatar_hue',
+      'businesses.name as business_name',
+      'businesses.initials as business_initials',
+      'businesses.avatar_hue as business_avatar_hue',
+    );
+
+  const out = {};
+  for (const r of rows) {
+    const isBusiness = r.user_type === 'business';
+    const isCandidate = r.user_type === 'candidate';
+    const name =
+      (isBusiness && r.business_name) ||
+      (isCandidate && r.candidate_name) ||
+      r.user_name ||
+      null;
+    const initials =
+      (isBusiness && r.business_initials) ||
+      (isCandidate && r.candidate_initials) ||
+      r.user_initials ||
+      null;
+    const avatarHue =
+      (isBusiness && r.business_avatar_hue) ??
+      (isCandidate && r.candidate_avatar_hue) ??
+      r.user_avatar_hue ??
+      null;
+
+    out[r.user_id] = {
+      id: r.user_id,
+      role: r.user_type || null,
+      name,
+      initials,
+      photoUrl: r.photo_url || null,
+      avatarHue,
+    };
+  }
+  return out;
 }
 
 // Publish the call's CURRENT status to both participants. Audience
 // is computed from the row itself so we never accidentally include
 // a third party — this is the privacy boundary for the call event.
-function publishCallEvent(row) {
+//
+// Enriches the payload with caller + callee identities via a single
+// users+candidates+businesses join. Identity lookup failures are
+// non-fatal: the SSE event still publishes with caller/callee=null
+// and the Flutter UI falls back to initials from the userId.
+async function publishCallEvent(row) {
   const eventType = EVENT_TYPE_BY_STATUS[row.status];
   if (!eventType) return null; // unknown status — defensive no-op
   const audience = [
     `user:${row.caller_id}`,
     `user:${row.callee_id}`,
   ];
-  return bus.publish(eventType, { call: buildCallPayload(row) }, audience);
+  let identities = null;
+  try {
+    identities = await loadCallParticipantIdentities(row.caller_id, row.callee_id);
+  } catch (_) {
+    // Swallow: identity enrichment is best-effort. The call lifecycle
+    // event MUST still ship even if the identity join fails.
+  }
+  return bus.publish(eventType, { call: buildCallPayload(row, identities) }, audience);
 }
 
 // ── Participant resolver ───────────────────────────────────────────
@@ -239,7 +322,7 @@ async function initiate(req, res, next) {
 
     // SSE fan-out to both participants. `call.ringing` is the trigger
     // the Flutter side uses to push the incoming-call screen.
-    publishCallEvent(row);
+    await publishCallEvent(row);
 
     return created(res, { call: row });
   } catch (err) { next(err); }
@@ -280,7 +363,7 @@ async function accept(req, res, next) {
       })
       .returning('*');
 
-    publishCallEvent(updated);
+    await publishCallEvent(updated);
 
     return ok(res, { call: updated });
   } catch (err) { next(err); }
@@ -318,7 +401,7 @@ async function decline(req, res, next) {
       })
       .returning('*');
 
-    publishCallEvent(updated);
+    await publishCallEvent(updated);
 
     return ok(res, { call: updated });
   } catch (err) { next(err); }
@@ -387,7 +470,7 @@ async function end(req, res, next) {
 
     // One of call.missed / call.ended / call.failed, depending on
     // the transition we just executed.
-    publishCallEvent(updated);
+    await publishCallEvent(updated);
 
     return ok(res, { call: updated });
   } catch (err) { next(err); }
