@@ -71,18 +71,35 @@ async function resolveQuickjobSwipeQuota(candidateId) {
 // Helper: create a hiring notification + emit SSE so every subscribed
 // notifications provider (candidate, business, admin) refreshes its
 // badge + list in real time without a pull-to-refresh.
+//
+// `body` is optional and only persisted when the migration that adds
+// the `notifications.body` column has run — wrapped in try/catch so
+// older deployments don't crash on insert. Mirror of
+// `businessController.hiringNotify` 1:1.
 async function hiringNotify(recipientId, title, type, linkedEntity, route, body) {
   try {
-    await db('notifications').insert({
+    // Idempotency guard — when both linkedEntity and route are
+    // provided, skip if a notification with the same
+    // (recipient, entity, route) triple already exists. Prevents
+    // duplicate rows on retries / hot-reloads / repeat fan-outs for
+    // the same domain event (e.g. match created twice on race).
+    if (linkedEntity && route) {
+      const existing = await db('notifications')
+        .where({ recipient_id: recipientId, linked_entity: linkedEntity, destination_route: route })
+        .first();
+      if (existing) return;
+    }
+    const row = {
       recipient_id: recipientId,
       notification_type: type || 'in_app',
       title,
-      body: body || null,
       linked_entity: linkedEntity || null,
       destination_route: route || null,
       delivery_state: 'delivered',
       is_read: false,
-    });
+    };
+    if (body) row.body = body;
+    await db('notifications').insert(row);
     bus.publish('notification.new', {
       recipient_user_id: recipientId,
       title,
@@ -91,7 +108,7 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route, body)
       linked_entity: linkedEntity || null,
       destination_route: route || null,
     }, ['role:admin', `user:${recipientId}`]);
-  } catch (e) { /* ignore */ }
+  } catch (e) { /* ignore if table missing */ }
 }
 
 // Persist a notification row for every admin user so the audit feed
