@@ -173,6 +173,24 @@ async function loadCallParticipantIdentities(callerUserId, calleeUserId) {
   return out;
 }
 
+// Best-effort enrichment helper — wraps a raw `calls` row in the
+// same camelCase, identity-enriched payload shape the SSE channel
+// publishes. Used by the REST handlers so the optimistic Flutter
+// state (set from the POST response before the SSE echo lands)
+// already carries the counterpart identity. Without this, the
+// in-call / outgoing screens flash "Plagit Call" until the SSE
+// arrives ~100-300ms later.
+async function publicCallSnapshot(row) {
+  let identities = null;
+  try {
+    identities = await loadCallParticipantIdentities(row.caller_id, row.callee_id);
+  } catch (_) {
+    // Identity enrichment is best-effort; fall back to the un-enriched
+    // payload rather than failing the whole REST call.
+  }
+  return buildCallPayload(row, identities);
+}
+
 // Publish the call's CURRENT status to both participants. Audience
 // is computed from the row itself so we never accidentally include
 // a third party — this is the privacy boundary for the call event.
@@ -324,7 +342,7 @@ async function initiate(req, res, next) {
     // the Flutter side uses to push the incoming-call screen.
     await publishCallEvent(row);
 
-    return created(res, { call: row });
+    return created(res, { call: await publicCallSnapshot(row) });
   } catch (err) { next(err); }
 }
 
@@ -350,7 +368,7 @@ async function accept(req, res, next) {
       // Idempotent re-accept: no state change, no event. The client
       // already received the original call.accepted; re-publishing
       // would cause double-handling on flaky retries.
-      return ok(res, { call });
+      return ok(res, { call: await publicCallSnapshot(call) });
     }
     assertTransition(call.status, STATUS.ACCEPTED);
 
@@ -365,7 +383,7 @@ async function accept(req, res, next) {
 
     await publishCallEvent(updated);
 
-    return ok(res, { call: updated });
+    return ok(res, { call: await publicCallSnapshot(updated) });
   } catch (err) { next(err); }
 }
 
@@ -388,7 +406,7 @@ async function decline(req, res, next) {
 
     if (call.status === STATUS.DECLINED) {
       // Idempotent re-decline — see accept handler for rationale.
-      return ok(res, { call });
+      return ok(res, { call: await publicCallSnapshot(call) });
     }
     assertTransition(call.status, STATUS.DECLINED);
 
@@ -403,7 +421,7 @@ async function decline(req, res, next) {
 
     await publishCallEvent(updated);
 
-    return ok(res, { call: updated });
+    return ok(res, { call: await publicCallSnapshot(updated) });
   } catch (err) { next(err); }
 }
 
@@ -427,7 +445,7 @@ async function end(req, res, next) {
 
     // Idempotent end on terminal states — return the row as-is.
     if (TERMINAL_STATES.has(call.status)) {
-      return ok(res, { call });
+      return ok(res, { call: await publicCallSnapshot(call) });
     }
 
     const reason = (req.body && req.body.reason) || null;
@@ -472,7 +490,7 @@ async function end(req, res, next) {
     // the transition we just executed.
     await publishCallEvent(updated);
 
-    return ok(res, { call: updated });
+    return ok(res, { call: await publicCallSnapshot(updated) });
   } catch (err) { next(err); }
 }
 
