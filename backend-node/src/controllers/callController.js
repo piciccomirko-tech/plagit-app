@@ -293,6 +293,52 @@ async function maybeInsertCallLogMessage(row) {
     console.warn('[callController] conv preview update failed:', e.message);
   }
 
+  // Step 4 — emit `message.new` so the existing chat/messages
+  // SSE plumbing kicks the Messages-tab + Home-Messages badges
+  // automatically. Same audience pattern as sendMessage so the
+  // Flutter `MessagesProvider` handlers in candidate_providers.dart
+  // (line 364) and business_providers.dart (line 369) reload the
+  // inbox without any code change. The bell channel
+  // (`notification.new`) is intentionally NOT touched — call_log
+  // is a chat event, not a system notification.
+  //
+  // Idempotency: this point is reached ONLY after a fresh INSERT
+  // (the earlier `if (existing) return existing` guard short-circuits
+  // duplicates), so SSE replay / hot reload / backend restart never
+  // produces a double-fire badge bump.
+  try {
+    bus.publish(
+      'message.new',
+      {
+        message: {
+          id: inserted.id,
+          conversation_id: row.conversation_id,
+          body: '',
+          attachment_type: 'call_log',
+          sender_id: row.caller_id,
+          is_read: false,
+          created_at: inserted.created_at,
+          call_log_metadata: metadata,
+        },
+        conversation_id: row.conversation_id,
+        sender_user_id: row.caller_id,
+        recipient_user_id: row.callee_id,
+      },
+      [
+        'role:admin',
+        `user:${row.caller_id}`,
+        `user:${row.callee_id}`,
+      ],
+    );
+  } catch (e) {
+    // Same soft-fail rationale as the conv update: the row exists,
+    // the chat refresh on next pull-to-refresh / app re-open will
+    // surface it anyway. We never want to abort the call lifecycle
+    // because of a bus hiccup.
+    // eslint-disable-next-line no-console
+    console.warn('[callController] message.new emit failed:', e.message);
+  }
+
   return inserted;
 }
 
