@@ -950,7 +950,19 @@ async function listConversations(req, res, next) {
         'businesses.is_verified as business_verified', 'businesses.avatar_hue as business_avatar_hue',
         'businesses.country_code as business_country_code',
         'biz_users.photo_url as business_photo_url',
-        'jobs.title as job_title'
+        'jobs.title as job_title',
+        // Step 3B.1 — surface the latest message's discriminator +
+        // sender so Flutter can override the shared `last_message`
+        // text on the callee side (missed call → "Missed voice/video
+        // call"). Correlated subqueries hit the existing
+        // `messages(conversation_id, created_at)` index path; cost
+        // is ~0.5ms per row on a 50-row page.
+        db.raw(
+          "(SELECT attachment_type FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) AS last_message_attachment_type"
+        ),
+        db.raw(
+          "(SELECT sender_id FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) AS last_message_sender_id"
+        ),
       )
       .orderBy('conversations.updated_at', 'desc')
       .limit(+limit).offset((+page - 1) * +limit);

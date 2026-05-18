@@ -266,6 +266,33 @@ async function maybeInsertCallLogMessage(row) {
     })
     .returning('*');
 
+  // Step 3B.1 — keep the Messages list preview in sync. We write a
+  // CALLER-perspective string (`📞 Voice call` / `📹 Video call`);
+  // the Flutter side overrides it to "Missed voice/video call" on
+  // the callee row by inspecting `last_message_sender_id` exposed in
+  // listConversations. Same emoji-prefix convention the rest of the
+  // app uses (`🎤 Voice message`, `🖼 Photo`, etc.) so the existing
+  // `LastMessagePreview` widget can map 📞/📹 to the right glyph.
+  //
+  // Bumping `updated_at` puts the conversation at the top of the
+  // inbox just like any other new message — without it, the missed
+  // call would be invisible until the next regular message bumps it.
+  const previewText = callType === 'video' ? '📹 Video call' : '📞 Voice call';
+  try {
+    await db('conversations')
+      .where({ id: row.conversation_id })
+      .update({
+        last_message: previewText,
+        updated_at: db.fn.now(),
+      });
+  } catch (e) {
+    // Non-fatal: the chat-side bubble already rendered correctly
+    // because the message row was inserted above. Preview lag is a
+    // soft degradation, not a hard failure.
+    // eslint-disable-next-line no-console
+    console.warn('[callController] conv preview update failed:', e.message);
+  }
+
   return inserted;
 }
 

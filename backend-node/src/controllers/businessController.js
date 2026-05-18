@@ -1106,7 +1106,17 @@ async function listConversations(req, res, next) {
       'candidates.name as candidate_name', 'candidates.initials as candidate_initials',
       'candidates.avatar_hue as candidate_avatar_hue', 'candidates.nationality_code as candidate_nationality_code',
       'users.photo_url as candidate_photo_url',
-      'jobs.title as job_title'
+      'jobs.title as job_title',
+      // Step 3B.1 — symmetric with candidateController.listConversations.
+      // Surface the latest message's discriminator + sender so Flutter
+      // can override the shared `last_message` text on the callee side
+      // (missed call → "Missed voice/video call").
+      db.raw(
+        "(SELECT attachment_type FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) AS last_message_attachment_type"
+      ),
+      db.raw(
+        "(SELECT sender_id FROM messages WHERE conversation_id = conversations.id ORDER BY created_at DESC LIMIT 1) AS last_message_sender_id"
+      ),
     ).orderBy('conversations.updated_at', 'desc').limit(+limit).offset((+page - 1) * +limit);
     for (const row of rows) {
       const unread = await db('messages').where({ conversation_id: row.id, is_read: false }).whereNot('sender_id', req.user.id).count('* as c').first();
