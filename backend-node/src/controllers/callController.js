@@ -35,6 +35,7 @@ const db = require('../config/db');
 const { ok, created } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
+const { isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
 
 // ── State machine ──────────────────────────────────────────────────
 const STATUS = Object.freeze({
@@ -189,6 +190,83 @@ async function publicCallSnapshot(row) {
     // payload rather than failing the whole REST call.
   }
   return buildCallPayload(row, identities);
+}
+
+// ── Step 3A — missed call → chat message ────────────────────────────
+//
+// Persists a single `messages` row whenever a ringing call terminates
+// without being answered (caller cancels: `ringing → missed`). The
+// row carries `attachment_type='call_log'` + a JSONB metadata blob
+// the Flutter side renders as a centred call-log card (see Step 3A.4
+// — `CallLogBubble`).
+//
+// Step 3A scope (intentional limits, expanded in 3B):
+//   • Triggered ONLY for `missed`. Declined / ended / failed do NOT
+//     write a row. (Per product decision α 2026-05-18.)
+//   • Does NOT update `conversations.last_message` — Messages list
+//     preview keeps the previous message until 3B.
+//   • Does NOT emit `message.new` SSE — chat views pull fresh state
+//     via REST on re-open / SSE `ready`; no badge bump in 3A.
+//   • Idempotent on `callId`: SSE replay / hot reload / backend
+//     restart never double-insert.
+//   • Gated by `isCallLogColumnPresent()` so a pre-migration backend
+//     skips silently (zero downtime during deploy → migrate window).
+//
+// Helper is exported via `_internal` for unit testing; the call site
+// from `publishCallEvent` lands in 3A.2 (not wired yet in this step).
+async function maybeInsertCallLogMessage(row) {
+  // Gate: only insert for the 'missed' status. Declined / ended /
+  // failed return without touching the DB so this helper is safe to
+  // call from any terminal-state branch.
+  if (row.status !== STATUS.MISSED) return null;
+
+  // Gate: schema readiness. Skip cleanly when the column doesn't
+  // exist yet (the cache TTL re-probes every 30s, so the runtime
+  // self-heals once `knex migrate:latest` finishes).
+  if (!await isCallLogColumnPresent()) return null;
+
+  const callId = row.id;
+  const callType = row.type;   // 'audio' | 'video'
+  const callStatus = row.status; // 'missed'
+
+  // Idempotency guard — one chat row per callId. The check uses the
+  // JSONB `->>` text extract operator with a parameter so old rows
+  // (with a different callId) and stray inserts can never collide.
+  const existing = await db('messages')
+    .where({
+      conversation_id: row.conversation_id,
+      attachment_type: 'call_log',
+    })
+    .whereRaw("call_log_metadata->>'callId' = ?", [callId])
+    .first();
+  if (existing) return existing;
+
+  const metadata = {
+    callId,
+    callType,
+    callStatus,
+    callerId: row.caller_id,
+    calleeId: row.callee_id,
+    conversationId: row.conversation_id,
+    createdAt: row.created_at
+      ? new Date(row.created_at).toISOString()
+      : null,
+    endedAt: row.ended_at
+      ? new Date(row.ended_at).toISOString()
+      : null,
+  };
+
+  const [inserted] = await db('messages')
+    .insert({
+      conversation_id: row.conversation_id,
+      sender_user_id: row.caller_id, // caller is the "author" of the missed call
+      body: '',                       // call_log rows carry no body text
+      attachment_type: 'call_log',
+      call_log_metadata: metadata,
+    })
+    .returning('*');
+
+  return inserted;
 }
 
 // Publish the call's CURRENT status to both participants. Audience
@@ -500,5 +578,11 @@ module.exports = {
   decline,
   end,
   // Exported for tests:
-  _internal: { STATUS, TERMINAL_STATES, ALLOWED_TRANSITIONS, assertTransition },
+  _internal: {
+    STATUS,
+    TERMINAL_STATES,
+    ALLOWED_TRANSITIONS,
+    assertTransition,
+    maybeInsertCallLogMessage,
+  },
 };

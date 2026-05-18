@@ -22,6 +22,7 @@ const db = require('../config/db');
 const _cache = {
   album_image_urls: { present: null, lastCheckedAt: 0 },
   forwarded_columns: { present: null, lastCheckedAt: 0 },
+  call_log_metadata: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -80,4 +81,31 @@ async function isForwardedColumnsPresent() {
   return result;
 }
 
-module.exports = { isAlbumColumnPresent, isForwardedColumnsPresent };
+/// Probe for the `messages.call_log_metadata` column added by
+/// migration 046 (Calls Step 3A). Same sticky-on-true + 30s re-probe
+/// pattern as the other flags. Used by the call controller to gate
+/// the missed-call message insert during the Railway deploy →
+/// migrate window so a pre-migration backend doesn't 500 on the
+/// JSONB write.
+async function isCallLogColumnPresent() {
+  const entry = _cache.call_log_metadata;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  const result = await _probe('call_log_metadata');
+  entry.present = result;
+  entry.lastCheckedAt = now;
+  if (result) {
+    // eslint-disable-next-line no-console
+    console.log('[schemaFeatureFlags] messages.call_log_metadata is now PRESENT');
+  }
+  return result;
+}
+
+module.exports = {
+  isAlbumColumnPresent,
+  isForwardedColumnsPresent,
+  isCallLogColumnPresent,
+};
