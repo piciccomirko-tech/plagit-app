@@ -21,6 +21,7 @@ const db = require('../config/db');
 
 const _cache = {
   album_image_urls: { present: null, lastCheckedAt: 0 },
+  video_columns: { present: null, lastCheckedAt: 0 },
   forwarded_columns: { present: null, lastCheckedAt: 0 },
   call_log_metadata: { present: null, lastCheckedAt: 0 },
 };
@@ -51,6 +52,34 @@ async function isAlbumColumnPresent() {
     // logs that the schema is now ready (no re-deploy required).
     // eslint-disable-next-line no-console
     console.log('[schemaFeatureFlags] messages.album_image_urls is now PRESENT');
+  }
+  return result;
+}
+
+/// Multi-column probe for video message metadata. Migration 047 adds
+/// all columns together, but the runtime gate stays strict so SELECT /
+/// INSERT paths never name a half-applied schema.
+async function isVideoColumnsPresent() {
+  const entry = _cache.video_columns;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  const checks = await Promise.all([
+    _probe('video_url'),
+    _probe('video_size_bytes'),
+    _probe('video_mime_type'),
+    _probe('video_duration_ms'),
+    _probe('video_width'),
+    _probe('video_height'),
+  ]);
+  const result = checks.every(Boolean);
+  entry.present = result;
+  entry.lastCheckedAt = now;
+  if (result) {
+    // eslint-disable-next-line no-console
+    console.log('[schemaFeatureFlags] messages.video_* columns are now PRESENT');
   }
   return result;
 }
@@ -106,6 +135,7 @@ async function isCallLogColumnPresent() {
 
 module.exports = {
   isAlbumColumnPresent,
+  isVideoColumnsPresent,
   isForwardedColumnsPresent,
   isCallLogColumnPresent,
 };

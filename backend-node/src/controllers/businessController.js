@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isForwardedColumnsPresent, isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -1155,6 +1155,7 @@ async function listMessages(req, res, next) {
     // so a redeploy that races ahead of `migrate:latest` doesn't 500
     // the inbox.
     const albumReady = await isAlbumColumnPresent();
+    const videoReady = await isVideoColumnsPresent();
     // Forward columns (migration 041, not yet applied). Same pattern.
     const forwardReady = await isForwardedColumnsPresent();
     // Call-log metadata column (migration 046, Step 3A). Same gate.
@@ -1197,6 +1198,14 @@ async function listMessages(req, res, next) {
     if (albumReady) {
       selectCols.push('messages.album_image_urls');
       selectCols.push('replied.album_image_urls as reply_album_image_urls');
+    }
+    if (videoReady) {
+      selectCols.push('messages.video_url');
+      selectCols.push('messages.video_size_bytes');
+      selectCols.push('messages.video_mime_type');
+      selectCols.push('messages.video_duration_ms');
+      selectCols.push('messages.video_width');
+      selectCols.push('messages.video_height');
     }
     if (forwardReady) {
       selectCols.push('messages.forwarded_from_message_id');
@@ -1325,6 +1334,12 @@ async function listMessages(req, res, next) {
             document_size_bytes: null,
             document_mime_type: null,
             document_filename: null,
+            video_url: null,
+            video_size_bytes: null,
+            video_mime_type: null,
+            video_duration_ms: null,
+            video_width: null,
+            video_height: null,
             location_lat: null,
             location_lng: null,
             location_address: null,
@@ -1341,6 +1356,12 @@ async function listMessages(req, res, next) {
             // Pre-migration: column wasn't selected; ship null so
             // every payload always carries the field for the client.
             album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+            video_url: videoReady ? (m.video_url || null) : null,
+            video_size_bytes: videoReady ? (m.video_size_bytes || null) : null,
+            video_mime_type: videoReady ? (m.video_mime_type || null) : null,
+            video_duration_ms: videoReady ? (m.video_duration_ms || null) : null,
+            video_width: videoReady ? (m.video_width || null) : null,
+            video_height: videoReady ? (m.video_height || null) : null,
             // Pre-migration: forward fields default to null/false so
             // the Flutter side reads the legacy shape consistently.
             forwarded_from_message_id: forwardReady ? (m.forwarded_from_message_id || null) : null,
@@ -1433,6 +1454,12 @@ async function sendMessage(req, res, next) {
       document_size_bytes,
       document_mime_type,
       document_filename,
+      video_url,
+      video_size_bytes,
+      video_mime_type,
+      video_duration_ms,
+      video_width,
+      video_height,
       location_lat,
       location_lng,
       location_address,
@@ -1447,6 +1474,7 @@ async function sendMessage(req, res, next) {
     const isAudio = attachment_type === 'audio';
     const isImage = attachment_type === 'image';
     const isDocument = attachment_type === 'document';
+    const isVideo = attachment_type === 'video';
     const isLocation = attachment_type === 'location';
     const isEntityShare = attachment_type === 'entity_share';
     const isAlbum = attachment_type === 'album';
@@ -1490,6 +1518,20 @@ async function sendMessage(req, res, next) {
         throw AppError.badRequest('document_url is required and must come from /v1/uploads/document.');
       }
     }
+    if (isVideo) {
+      if (!(await isVideoColumnsPresent())) {
+        throw AppError.unavailable(
+          'Video messages are temporarily unavailable. Please try again in a moment.',
+          'VIDEO_NOT_READY',
+        );
+      }
+      if (!video_url || typeof video_url !== 'string' || !storage.isOwnedUrl(video_url) || !_looksLikeVideoStorageUrl(video_url)) {
+        throw AppError.badRequest('video_url is required and must come from /v1/uploads/video.');
+      }
+      if (!_isAllowedVideoMime(video_mime_type)) {
+        throw AppError.badRequest('Unsupported video type. Use MP4/MOV/M4V.', 'INVALID_MEDIA_TYPE');
+      }
+    }
     // Location guard — same WGS-84 range check as candidateController.
     let locLat = null;
     let locLng = null;
@@ -1511,7 +1553,7 @@ async function sendMessage(req, res, next) {
       locLat = parsedLat;
       locLng = parsedLng;
     }
-    if (!isAudio && !isImage && !isDocument && !isLocation && !isEntityShare && !isAlbum && (!body || !body.trim())) {
+    if (!isAudio && !isImage && !isDocument && !isVideo && !isLocation && !isEntityShare && !isAlbum && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
     }
 
@@ -1600,13 +1642,15 @@ async function sendMessage(req, res, next) {
         ? 'image'
         : isDocument
           ? 'document'
-          : isLocation
-            ? 'location'
-            : isEntityShare
-              ? 'entity_share'
-              : isAlbum
-                ? 'album'
-                : 'text';
+          : isVideo
+            ? 'video'
+            : isLocation
+              ? 'location'
+              : isEntityShare
+                ? 'entity_share'
+                : isAlbum
+                  ? 'album'
+                  : 'text';
     const insertData = {
       conversation_id: conv.id,
       sender_id: req.user.id,
@@ -1640,6 +1684,14 @@ async function sendMessage(req, res, next) {
     if (await isAlbumColumnPresent()) {
       insertData.album_image_urls = isAlbum ? JSON.stringify(cleanAlbumUrls) : null;
     }
+    if (await isVideoColumnsPresent()) {
+      insertData.video_url = isVideo ? video_url : null;
+      insertData.video_size_bytes = isVideo && Number.isFinite(+video_size_bytes) ? +video_size_bytes : null;
+      insertData.video_mime_type = isVideo ? video_mime_type : null;
+      insertData.video_duration_ms = isVideo && Number.isFinite(+video_duration_ms) ? +video_duration_ms : null;
+      insertData.video_width = isVideo && Number.isFinite(+video_width) ? +video_width : null;
+      insertData.video_height = isVideo && Number.isFinite(+video_height) ? +video_height : null;
+    }
     // Forward fields. Mirror of candidateController. The auth +
     // FORWARD_NOT_READY guard above already gates `forwardFlag` to
     // false when the columns are missing, so by the time we reach
@@ -1657,13 +1709,15 @@ async function sendMessage(req, res, next) {
         ? '🖼 Photo'
         : isDocument
           ? '📄 Document'
-          : isLocation
-            ? '📍 Location'
-            : isEntityShare
-              ? _entitySharePreview(shared_entity_type)
-              : isAlbum
-                ? `📷 Album · ${cleanAlbumUrls.length} photo${cleanAlbumUrls.length === 1 ? '' : 's'}`
-                : cleanBody.slice(0, 200);
+          : isVideo
+            ? '🎥 Video'
+            : isLocation
+              ? '📍 Location'
+              : isEntityShare
+                ? _entitySharePreview(shared_entity_type)
+                : isAlbum
+                  ? `📷 Album · ${cleanAlbumUrls.length} photo${cleanAlbumUrls.length === 1 ? '' : 's'}`
+                  : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1716,6 +1770,12 @@ async function sendMessage(req, res, next) {
         document_size_bytes: msg.document_size_bytes || null,
         document_mime_type: msg.document_mime_type || null,
         document_filename: msg.document_filename || null,
+        video_url: msg.video_url || null,
+        video_size_bytes: msg.video_size_bytes || null,
+        video_mime_type: msg.video_mime_type || null,
+        video_duration_ms: msg.video_duration_ms || null,
+        video_width: msg.video_width || null,
+        video_height: msg.video_height || null,
         location_lat: msg.location_lat == null ? null : msg.location_lat,
         location_lng: msg.location_lng == null ? null : msg.location_lng,
         location_address: msg.location_address || null,
@@ -2817,6 +2877,7 @@ function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrl
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
   if (attachmentType === 'document') return '📄 Document';
+  if (attachmentType === 'video') return '🎥 Video';
   if (attachmentType === 'location') return '📍 Location';
   if (attachmentType === 'entity_share') {
     return _entitySharePreview(sharedEntityType);
@@ -2827,6 +2888,25 @@ function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrl
     return `📷 Album · ${len} photo${len === 1 ? '' : 's'}`;
   }
   return (body || '').slice(0, 200);
+}
+
+const _VIDEO_MESSAGE_MIME = new Set([
+  'video/mp4',
+  'video/quicktime',
+  'video/x-m4v',
+]);
+
+function _isAllowedVideoMime(mime) {
+  return typeof mime === 'string' && _VIDEO_MESSAGE_MIME.has(mime);
+}
+
+function _looksLikeVideoStorageUrl(url) {
+  if (typeof url !== 'string') return false;
+  try {
+    return new URL(url).pathname.includes('/video/');
+  } catch (_) {
+    return url.includes('/video/');
+  }
 }
 
 /** See candidateController._normalizeAlbumUrls — keep in sync. */
