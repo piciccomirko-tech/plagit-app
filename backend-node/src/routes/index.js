@@ -19,6 +19,9 @@ router.use('/candidate', require('./candidate'));
 // Business
 router.use('/business', require('./business'));
 
+// Group conversations (mig 049) — role-agnostic, members-only.
+router.use('/groups', require('./group'));
+
 // Social Feed (shared by candidate + business)
 router.use('/feed', require('./feed'));
 

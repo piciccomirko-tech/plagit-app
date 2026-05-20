@@ -25,6 +25,7 @@ const _cache = {
   video_album_columns: { present: null, lastCheckedAt: 0 },
   forwarded_columns: { present: null, lastCheckedAt: 0 },
   call_log_metadata: { present: null, lastCheckedAt: 0 },
+  group_chat: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -114,6 +115,39 @@ async function isVideoAlbumColumnsPresent() {
   return result;
 }
 
+/// Probe for the group-chat schema introduced by migration 049:
+/// the type/name discriminator columns on `conversations` plus the
+/// `conversation_members` table. Same sticky-on-true + 30s reprobe
+/// pattern. Strict gate — only TRUE when ALL three are present, so
+/// controller code branching on group support never half-applies.
+async function isGroupChatColumnsPresent() {
+  const entry = _cache.group_chat;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  try {
+    const [hasType, hasName, hasMembersTable] = await Promise.all([
+      db.schema.hasColumn('conversations', 'type'),
+      db.schema.hasColumn('conversations', 'name'),
+      db.schema.hasTable('conversation_members'),
+    ]);
+    const result = hasType && hasName && hasMembersTable;
+    entry.present = result;
+    entry.lastCheckedAt = now;
+    if (result) {
+      // eslint-disable-next-line no-console
+      console.log('[schemaFeatureFlags] conversations.{type,name} + conversation_members are now PRESENT');
+    }
+    return result;
+  } catch (_) {
+    entry.present = false;
+    entry.lastCheckedAt = now;
+    return false;
+  }
+}
+
 /// Pair-probe for the forward sprint columns. We treat them as ONE
 /// readiness signal — only return TRUE when BOTH `forwarded_from_message_id`
 /// and `is_forwarded` are present. Either-alone is impossible in
@@ -169,4 +203,5 @@ module.exports = {
   isVideoAlbumColumnsPresent,
   isForwardedColumnsPresent,
   isCallLogColumnPresent,
+  isGroupChatColumnsPresent,
 };

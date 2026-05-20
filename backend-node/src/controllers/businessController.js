@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -1121,8 +1121,60 @@ async function listConversations(req, res, next) {
     for (const row of rows) {
       const unread = await db('messages').where({ conversation_id: row.id, is_read: false }).whereNot('sender_id', req.user.id).count('* as c').first();
       row.unread_count = +(unread?.c || 0);
+      row.type = '1v1';
     }
-    paginated(res, rows, { page: +page, limit: +limit, total });
+
+    // mig 049 — append group conversations the business user is a
+    // member of. Mirror of candidateController.listConversations.
+    if (await isGroupChatColumnsPresent()) {
+      const userId = req.user.id;
+      const groupRows = await db('conversations')
+        .innerJoin('conversation_members', function () {
+          this.on('conversation_members.conversation_id', '=', 'conversations.id')
+            .andOn('conversation_members.user_id', '=', db.raw('?', [userId]));
+        })
+        .whereNull('conversation_members.left_at')
+        .where('conversations.type', 'group')
+        .whereNot('conversations.status', 'archived')
+        .select(
+          'conversations.id',
+          'conversations.last_message',
+          'conversations.status',
+          'conversations.is_interview_related',
+          'conversations.updated_at',
+          'conversations.type',
+          'conversations.name',
+          'conversations.avatar_hue',
+          'conversations.created_by_user_id',
+          'conversation_members.last_read_at',
+          db.raw(
+            "(SELECT attachment_type FROM messages WHERE conversation_id = conversations.id AND attachment_type <> 'reaction' ORDER BY created_at DESC LIMIT 1) AS last_message_attachment_type"
+          ),
+          db.raw(
+            "(SELECT sender_id FROM messages WHERE conversation_id = conversations.id AND attachment_type <> 'reaction' ORDER BY created_at DESC LIMIT 1) AS last_message_sender_id"
+          ),
+        )
+        .orderBy('conversations.updated_at', 'desc');
+
+      for (const g of groupRows) {
+        const sinceTs = g.last_read_at || new Date(0).toISOString();
+        const unread = await db('messages')
+          .where('conversation_id', g.id)
+          .where('created_at', '>', sinceTs)
+          .whereNot('sender_id', userId)
+          .whereNot('attachment_type', 'reaction')
+          .count('* as c').first();
+        g.unread_count = +(unread?.c || 0);
+        delete g.last_read_at;
+      }
+
+      rows.push(...groupRows);
+      rows.sort((a, b) =>
+        new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+      );
+    }
+
+    paginated(res, rows, { page: +page, limit: +limit, total: rows.length });
   } catch (err) { next(err); }
 }
 
@@ -1132,8 +1184,21 @@ async function listConversations(req, res, next) {
 async function listMessages(req, res, next) {
   try {
     const bizId = await getBizId(req.user.id);
-    const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
+    // mig 049 — accept group conversations the caller is a member of.
+    // 1:1 path stays gated on business_id ownership.
+    const conv = await db('conversations').where({ id: req.params.id }).first();
     if (!conv) throw AppError.notFound('Conversation not found.');
+    const groupReady = await isGroupChatColumnsPresent();
+    const isGroup = groupReady && conv.type === 'group';
+    if (isGroup) {
+      const myMembership = await db('conversation_members')
+        .where({ conversation_id: conv.id, user_id: req.user.id })
+        .whereNull('left_at')
+        .first();
+      if (!myMembership) throw AppError.notFound('Conversation not found.');
+    } else if (conv.business_id !== bizId) {
+      throw AppError.notFound('Conversation not found.');
+    }
     const { page = 1, limit = 200 } = req.query;
     // Sprint 4C — count must mirror the same `message_hides` filter
     // applied to the SELECT below; otherwise pagination thinks there
@@ -1449,8 +1514,21 @@ async function ackMessagesDelivered(req, res, next) {
 async function sendMessage(req, res, next) {
   try {
     const bizId = await getBizId(req.user.id);
-    const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
+    // mig 049 — accept group conversations the caller is a member of.
+    // 1:1 path stays gated on business_id ownership.
+    const conv = await db('conversations').where({ id: req.params.id }).first();
     if (!conv) throw AppError.notFound('Conversation not found.');
+    const groupReady = await isGroupChatColumnsPresent();
+    const isGroup = groupReady && conv.type === 'group';
+    if (isGroup) {
+      const myMembership = await db('conversation_members')
+        .where({ conversation_id: conv.id, user_id: req.user.id })
+        .whereNull('left_at')
+        .first();
+      if (!myMembership) throw AppError.notFound('Conversation not found.');
+    } else if (conv.business_id !== bizId) {
+      throw AppError.notFound('Conversation not found.');
+    }
     const {
       body,
       attachment_type,
@@ -1803,11 +1881,32 @@ async function sendMessage(req, res, next) {
       updated_at: db.fn.now(),
     });
     console.log(`[BACKEND CREATE] business→candidate msgId=${msg.id} convId=${conv.id} businessUserId=${req.user.id} candidateId=${conv.candidate_id || 'null'} type=${msg.attachment_type} body="${msg.body}"`);
-    // Notify the candidate
+    // Notify the recipient(s). 1:1: single candidate. Group: fan
+    // out via conversation_members minus the sender.
     let candidateUserId = null;
     let candNameForAdmin = null;
     let bizNameForAdmin = null;
-    if (conv.candidate_id) {
+    const groupMemberIds = [];
+    if (isGroup) {
+      const bizUser = await db('users').where({ id: req.user.id }).first();
+      bizNameForAdmin = bizUser?.name || null;
+      const memberRows = await db('conversation_members')
+        .where({ conversation_id: conv.id })
+        .whereNull('left_at')
+        .pluck('user_id');
+      for (const uid of memberRows) {
+        if (uid !== req.user.id) {
+          groupMemberIds.push(uid);
+          hiringNotify(
+            uid,
+            `New message in ${conv.name || 'group'}`,
+            'in_app',
+            conv.id,
+            'message',
+          );
+        }
+      }
+    } else if (conv.candidate_id) {
       const cand = await db('candidates').where({ id: conv.candidate_id }).select('user_id', 'name').first();
       const bizUser = await db('users').where({ id: req.user.id }).first();
       if (cand) {
@@ -1818,8 +1917,11 @@ async function sendMessage(req, res, next) {
       }
     }
     try {
+      const adminPreview = isGroup
+        ? `Group message: ${bizNameForAdmin || 'business'} → ${conv.name || 'group'}`
+        : `Message: ${bizNameForAdmin || 'business'} → ${candNameForAdmin || 'candidate'}`;
       await notifyAllAdmins(
-        `Message: ${bizNameForAdmin || 'business'} → ${candNameForAdmin || 'candidate'}`,
+        adminPreview,
         'in_app', conv.id, 'message', preview.slice(0, 80),
       );
     } catch (e) { /* best-effort */ }
@@ -1827,10 +1929,14 @@ async function sendMessage(req, res, next) {
     // rationale. Build the compact reply envelope once and reuse it
     // across both the POST response and the SSE message.new payload.
     const replyEnvelope = await buildReplyEnvelope(msg.reply_to_message_id);
-    // Realtime broadcast
+    // Realtime broadcast — 1:1 path unchanged; group path fans out.
     const audience = ['role:admin', `user:${req.user.id}`];
-    if (candidateUserId) audience.push(`user:${candidateUserId}`);
-    console.log(`[SSE EMIT] type=message.new convId=${conv.id} senderUserId=${req.user.id} recipientUserId=${candidateUserId || 'null'} audience=${JSON.stringify(audience)}`);
+    if (isGroup) {
+      for (const uid of groupMemberIds) audience.push(`user:${uid}`);
+    } else if (candidateUserId) {
+      audience.push(`user:${candidateUserId}`);
+    }
+    console.log(`[SSE EMIT] type=message.new convId=${conv.id} senderUserId=${req.user.id} ${isGroup ? `groupMembers=${groupMemberIds.length}` : `recipientUserId=${candidateUserId || 'null'}`} audience=${JSON.stringify(audience)}`);
     bus.publish('message.new', {
       message: {
         id: msg.id,
@@ -1877,8 +1983,11 @@ async function sendMessage(req, res, next) {
       },
       conversation_id: conv.id,
       sender_user_id: req.user.id,
-      recipient_user_id: candidateUserId,
+      // 1:1 carries the explicit peer id; groups stay null
+      // (audience field tells subscribers they're recipients).
+      recipient_user_id: isGroup ? null : candidateUserId,
       sender_role: 'business',
+      conversation_type: isGroup ? 'group' : '1v1',
     }, audience);
     ok(res, { ...msg, reply_to: replyEnvelope, shared_entity: entityEnvelope });
   } catch (err) { next(err); }
