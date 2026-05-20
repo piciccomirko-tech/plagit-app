@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
@@ -924,7 +924,20 @@ async function listConversations(req, res, next) {
   try {
     const userId = req.user.id;
     const candidate = await db('candidates').where({ user_id: userId }).first();
-    if (!candidate) { paginated(res, [], { page: 1, limit: 50, total: 0 }); return; }
+    // TEMP DIAG (localReal sound trigger) — prints JWT user + candidate
+    // lookup + matching conv count so we can pinpoint why Cand sim
+    // sees 0 conv while Biz sees the same pair conversation. Remove
+    // once the receiver inbox is confirmed working.
+    if (!candidate) {
+      console.log(`[DIAG cand listConv] userId=${userId} candidate=NOT_FOUND → returning 0 conv`);
+      paginated(res, [], { page: 1, limit: 50, total: 0 });
+      return;
+    }
+    const _diagCount = await db('conversations')
+      .where('conversations.candidate_id', candidate.id)
+      .whereNot('conversations.status', 'archived')
+      .count('* as c').first().then(r => +r.c);
+    console.log(`[DIAG cand listConv] userId=${userId} candidate.id=${candidate.id} name="${candidate.name}" matchingConvCount=${_diagCount}`);
 
     const { page = 1, limit = 50 } = req.query;
 
@@ -1096,6 +1109,9 @@ async function listMessages(req, res, next) {
     // so pre-migration listMessages doesn't 500 the inbox.
     const albumReady = await isAlbumColumnPresent();
     const videoReady = await isVideoColumnsPresent();
+    // Video-album columns (migration 048 — multi-video bubble). Same
+    // zero-downtime gate as the photo album / single-video readiness.
+    const videoAlbumReady = await isVideoAlbumColumnsPresent();
     // Forward columns (migration 041, not yet applied). Same pattern.
     const forwardReady = await isForwardedColumnsPresent();
     // Call-log metadata column (migration 046, Step 3A). Same gate
@@ -1149,6 +1165,11 @@ async function listMessages(req, res, next) {
       selectCols.push('messages.video_duration_ms');
       selectCols.push('messages.video_width');
       selectCols.push('messages.video_height');
+    }
+    if (videoAlbumReady) {
+      selectCols.push('messages.album_video_urls');
+      selectCols.push('messages.album_video_metadata');
+      selectCols.push('replied.album_video_urls as reply_album_video_urls');
     }
     if (forwardReady) {
       selectCols.push('messages.forwarded_from_message_id');
@@ -1243,6 +1264,7 @@ async function listMessages(req, res, next) {
         reply_audio_duration_ms,
         reply_shared_entity_type,
         reply_album_image_urls,
+        reply_album_video_urls,
         reply_deleted_for_everyone_at,
         reply_sender_type,
         reply_sender_name,
@@ -1267,7 +1289,7 @@ async function listMessages(req, res, next) {
           attachment_type: parentDeleted ? 'deleted' : reply_attachment_type,
           body_preview: parentDeleted
             ? 'This message was deleted'
-            : _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type, reply_album_image_urls),
+            : _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type, reply_album_image_urls, reply_album_video_urls),
           audio_duration_ms: parentDeleted ? null : (reply_audio_duration_ms || null),
         };
       }
@@ -1307,6 +1329,8 @@ async function listMessages(req, res, next) {
             shared_entity_type: null,
             shared_entity_id: null,
             album_image_urls: null,
+            album_video_urls: null,
+            album_video_metadata: null,
             // Tombstoned rows lose the "Forwarded" label — once the
             // body is gone, the metadata about its provenance has no
             // surface to render on.
@@ -1318,6 +1342,8 @@ async function listMessages(req, res, next) {
             // Pre-migration: column wasn't selected, m.album_image_urls
             // is undefined → ship null so clients always see the field.
             album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+            album_video_urls: videoAlbumReady ? _normalizeAlbumUrls(m.album_video_urls) : null,
+            album_video_metadata: videoAlbumReady ? _normalizeAlbumMetadata(m.album_video_metadata) : null,
             video_url: videoReady ? (m.video_url || null) : null,
             video_size_bytes: videoReady ? (m.video_size_bytes || null) : null,
             video_mime_type: videoReady ? (m.video_mime_type || null) : null,
@@ -1440,6 +1466,8 @@ async function sendMessage(req, res, next) {
       shared_entity_type,
       shared_entity_id,
       album_image_urls,
+      album_video_urls,
+      album_video_metadata,
       forwarded_from_message_id,
       is_forwarded,
     } = req.body;
@@ -1451,6 +1479,7 @@ async function sendMessage(req, res, next) {
     const isLocation = attachment_type === 'location';
     const isEntityShare = attachment_type === 'entity_share';
     const isAlbum = attachment_type === 'album';
+    const isVideoAlbum = attachment_type === 'video_album';
     // Album guard: ordered jsonb array of HTTPS R2/S3 URLs, all
     // produced by /v1/uploads/image. Cap of 6 mirrors the picker UX
     // and keeps a single bubble manageable. Same defense-in-depth as
@@ -1525,6 +1554,53 @@ async function sendMessage(req, res, next) {
         throw AppError.badRequest('Unsupported video type. Use MP4/MOV/M4V.', 'INVALID_MEDIA_TYPE');
       }
     }
+    // Video-album guard. Mirror of the photo-album branch: validate
+    // count + storage origin + (optional) metadata array shape.
+    let cleanVideoAlbumUrls = null;
+    let cleanVideoAlbumMetadata = null;
+    if (isVideoAlbum) {
+      if (!(await isVideoAlbumColumnsPresent())) {
+        throw AppError.unavailable(
+          'Video album messages are temporarily unavailable. Please try again in a moment.',
+          'VIDEO_ALBUM_NOT_READY',
+        );
+      }
+      if (!Array.isArray(album_video_urls)) {
+        throw AppError.badRequest('album_video_urls is required and must be an array.');
+      }
+      if (album_video_urls.length < 2) {
+        throw AppError.badRequest('album_video_urls must contain at least 2 videos.');
+      }
+      if (album_video_urls.length > 6) {
+        throw AppError.badRequest('album_video_urls cannot contain more than 6 videos.');
+      }
+      for (const u of album_video_urls) {
+        if (!u || typeof u !== 'string' || !storage.isOwnedUrl(u) || !_looksLikeVideoStorageUrl(u)) {
+          throw AppError.badRequest('Every album_video_urls entry must come from /v1/uploads/video.');
+        }
+      }
+      cleanVideoAlbumUrls = album_video_urls;
+      if (album_video_metadata !== undefined && album_video_metadata !== null) {
+        if (!Array.isArray(album_video_metadata)) {
+          throw AppError.badRequest('album_video_metadata must be an array when provided.');
+        }
+        if (album_video_metadata.length !== album_video_urls.length) {
+          throw AppError.badRequest('album_video_metadata length must match album_video_urls length.');
+        }
+        cleanVideoAlbumMetadata = album_video_metadata.map((entry) => {
+          if (entry == null || typeof entry !== 'object') return {};
+          const out = {};
+          if (Number.isFinite(+entry.duration_ms)) out.duration_ms = +entry.duration_ms;
+          if (Number.isFinite(+entry.width)) out.width = +entry.width;
+          if (Number.isFinite(+entry.height)) out.height = +entry.height;
+          if (Number.isFinite(+entry.size_bytes)) out.size_bytes = +entry.size_bytes;
+          if (typeof entry.mime_type === 'string' && entry.mime_type.length <= 64) {
+            out.mime_type = entry.mime_type;
+          }
+          return out;
+        });
+      }
+    }
     // Location guard: require both lat/lng to be finite numbers in
     // the WGS-84 valid range. Sending NaN, Infinity, strings or out-
     // of-range values short-circuits before the insert so we don't
@@ -1556,7 +1632,7 @@ async function sendMessage(req, res, next) {
     // Text messages still require a body. Audio / image / document /
     // location / entity-share rows can carry an optional caption
     // (kept) or no body at all.
-    if (!isAudio && !isImage && !isDocument && !isVideo && !isLocation && !isEntityShare && !isAlbum && (!body || !body.trim())) {
+    if (!isAudio && !isImage && !isDocument && !isVideo && !isLocation && !isEntityShare && !isAlbum && !isVideoAlbum && (!body || !body.trim())) {
       throw AppError.badRequest('Message body is required.');
     }
 
@@ -1685,7 +1761,9 @@ async function sendMessage(req, res, next) {
                 ? 'entity_share'
                 : isAlbum
                   ? 'album'
-                  : 'text';
+                  : isVideoAlbum
+                    ? 'video_album'
+                    : 'text';
     const insertData = {
       conversation_id: conv.id,
       sender_id: userId,
@@ -1733,6 +1811,13 @@ async function sendMessage(req, res, next) {
       insertData.video_width = isVideo && Number.isFinite(+video_width) ? +video_width : null;
       insertData.video_height = isVideo && Number.isFinite(+video_height) ? +video_height : null;
     }
+    // Video album: jsonb arrays. Mirror of the photo-album insert.
+    if (await isVideoAlbumColumnsPresent()) {
+      insertData.album_video_urls = isVideoAlbum ? JSON.stringify(cleanVideoAlbumUrls) : null;
+      insertData.album_video_metadata = isVideoAlbum && cleanVideoAlbumMetadata != null
+        ? JSON.stringify(cleanVideoAlbumMetadata)
+        : null;
+    }
     // Forward fields: only include in INSERT when the columns are
     // present. The auth/validation block above already gated on
     // isForwardedColumnsPresent() before letting forwardFlag become
@@ -1759,9 +1844,11 @@ async function sendMessage(req, res, next) {
               ? '📍 Location'
               : isEntityShare
                 ? _entitySharePreview(shared_entity_type)
-                : isAlbum
-                  ? `📷 Album · ${cleanAlbumUrls.length} photo${cleanAlbumUrls.length === 1 ? '' : 's'}`
-                  : cleanBody.slice(0, 200);
+                : isVideoAlbum
+                  ? `🎥 Album · ${cleanVideoAlbumUrls.length} videos`
+                  : isAlbum
+                    ? `📷 Album · ${cleanAlbumUrls.length} photo${cleanAlbumUrls.length === 1 ? '' : 's'}`
+                    : cleanBody.slice(0, 200);
     await db('conversations').where({ id: conv.id }).update({
       last_message: preview,
       updated_at: db.fn.now(),
@@ -1829,6 +1916,8 @@ async function sendMessage(req, res, next) {
         location_lng: msg.location_lng == null ? null : msg.location_lng,
         location_address: msg.location_address || null,
         album_image_urls: _normalizeAlbumUrls(msg.album_image_urls),
+        album_video_urls: _normalizeAlbumUrls(msg.album_video_urls),
+        album_video_metadata: _normalizeAlbumMetadata(msg.album_video_metadata),
         // Forward metadata in the SSE payload — pre-migration these
         // simply read as undefined on `msg` and degrade to null/false.
         forwarded_from_message_id: msg.forwarded_from_message_id || null,
@@ -3124,7 +3213,7 @@ async function updateMatchStatus(req, res, next) {
  *  `messageReplyEnvelope._bodyPreviewFor` but operates on the flat
  *  columns that the listMessages LEFT JOIN exposes (no extra round
  *  trip). Keep the two implementations in sync if you change either. */
-function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrls) {
+function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrls, albumVideoUrls) {
   if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
@@ -3138,6 +3227,11 @@ function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrl
     const urls = _normalizeAlbumUrls(albumImageUrls);
     const len = Array.isArray(urls) ? urls.length : 0;
     return `📷 Album · ${len} photo${len === 1 ? '' : 's'}`;
+  }
+  if (attachmentType === 'video_album') {
+    const urls = _normalizeAlbumUrls(albumVideoUrls);
+    const len = Array.isArray(urls) ? urls.length : 0;
+    return `🎥 Album · ${len} video${len === 1 ? '' : 's'}`;
   }
   return (body || '').slice(0, 200);
 }
@@ -3166,6 +3260,24 @@ function _looksLikeVideoStorageUrl(url) {
  *  vs .select). Normalize once so downstream consumers (SSE payload,
  *  reply preview, listMessages enrichment) all see a real Array. */
 function _normalizeAlbumUrls(value) {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  return null;
+}
+
+/** Normalize the `album_video_metadata` jsonb column into an array
+ *  of {duration_ms?, width?, height?, size_bytes?, mime_type?} objects.
+ *  Mirror of [_normalizeAlbumUrls] — same defensive parse so the column
+ *  survives any pg adapter path (pre-parsed array vs raw JSON string). */
+function _normalizeAlbumMetadata(value) {
   if (value == null) return null;
   if (Array.isArray(value)) return value;
   if (typeof value === 'string') {

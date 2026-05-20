@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const { log } = require('../services/logService');
 const AppError = require('../utils/AppError');
 const { batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isForwardedColumnsPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent } = require('../services/schemaFeatureFlags');
 
 async function list(req, res, next) {
   try {
@@ -70,6 +70,7 @@ async function thread(req, res, next) {
     // Forward columns (migration 041, not yet applied). Same pattern.
     const forwardReady = await isForwardedColumnsPresent();
     const videoReady = await isVideoColumnsPresent();
+    const videoAlbumReady = await isVideoAlbumColumnsPresent();
     const selectCols = [
       'messages.id', 'messages.body', 'messages.is_read', 'messages.delivered_at',
       'messages.sender_id', 'messages.created_at',
@@ -106,6 +107,11 @@ async function thread(req, res, next) {
       selectCols.push('messages.video_duration_ms');
       selectCols.push('messages.video_width');
       selectCols.push('messages.video_height');
+    }
+    if (videoAlbumReady) {
+      selectCols.push('messages.album_video_urls');
+      selectCols.push('messages.album_video_metadata');
+      selectCols.push('replied.album_video_urls as reply_album_video_urls');
     }
     if (forwardReady) {
       selectCols.push('messages.forwarded_from_message_id');
@@ -149,6 +155,7 @@ async function thread(req, res, next) {
         reply_audio_duration_ms,
         reply_shared_entity_type,
         reply_album_image_urls,
+        reply_album_video_urls,
         reply_sender_type,
         reply_sender_name,
         ...rest
@@ -160,7 +167,7 @@ async function thread(req, res, next) {
           sender_type: reply_sender_type || null,
           sender_name: reply_sender_name || null,
           attachment_type: reply_attachment_type,
-          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type, reply_album_image_urls),
+          body_preview: _replyBodyPreview(reply_attachment_type, reply_body, reply_shared_entity_type, reply_album_image_urls, reply_album_video_urls),
           audio_duration_ms: reply_audio_duration_ms || null,
         };
       }
@@ -172,6 +179,8 @@ async function thread(req, res, next) {
         // Pre-migration: m.album_image_urls is undefined; ship null
         // so every admin payload always carries the field.
         album_image_urls: albumReady ? _normalizeAlbumUrls(m.album_image_urls) : null,
+        album_video_urls: videoAlbumReady ? _normalizeAlbumUrls(m.album_video_urls) : null,
+        album_video_metadata: videoAlbumReady ? _normalizeAlbumMetadata(m.album_video_metadata) : null,
         video_url: videoReady ? (m.video_url || null) : null,
         video_size_bytes: videoReady ? (m.video_size_bytes || null) : null,
         video_mime_type: videoReady ? (m.video_mime_type || null) : null,
@@ -195,7 +204,7 @@ async function thread(req, res, next) {
 
 /** See candidateController._replyBodyPreview / _entitySharePreview —
  *  keep the three implementations in sync. */
-function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrls) {
+function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrls, albumVideoUrls) {
   if (attachmentType === 'deleted') return 'This message was deleted';
   if (attachmentType === 'audio') return '🎤 Voice message';
   if (attachmentType === 'image') return '🖼 Photo';
@@ -210,11 +219,30 @@ function _replyBodyPreview(attachmentType, body, sharedEntityType, albumImageUrl
     const len = Array.isArray(urls) ? urls.length : 0;
     return `📷 Album · ${len} photo${len === 1 ? '' : 's'}`;
   }
+  if (attachmentType === 'video_album') {
+    const urls = _normalizeAlbumUrls(albumVideoUrls);
+    const len = Array.isArray(urls) ? urls.length : 0;
+    return `🎥 Album · ${len} video${len === 1 ? '' : 's'}`;
+  }
   return (body || '').slice(0, 200);
 }
 
 /** See candidateController._normalizeAlbumUrls — keep in sync. */
 function _normalizeAlbumUrls(value) {
+  if (value == null) return null;
+  if (Array.isArray(value)) return value;
+  if (typeof value === 'string') {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : null;
+    } catch (_) {
+      return null;
+    }
+  }
+  return null;
+}
+/** See candidateController._normalizeAlbumMetadata — keep in sync. */
+function _normalizeAlbumMetadata(value) {
   if (value == null) return null;
   if (Array.isArray(value)) return value;
   if (typeof value === 'string') {

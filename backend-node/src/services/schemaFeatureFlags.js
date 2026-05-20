@@ -22,6 +22,7 @@ const db = require('../config/db');
 const _cache = {
   album_image_urls: { present: null, lastCheckedAt: 0 },
   video_columns: { present: null, lastCheckedAt: 0 },
+  video_album_columns: { present: null, lastCheckedAt: 0 },
   forwarded_columns: { present: null, lastCheckedAt: 0 },
   call_log_metadata: { present: null, lastCheckedAt: 0 },
 };
@@ -84,6 +85,35 @@ async function isVideoColumnsPresent() {
   return result;
 }
 
+/// Probe for the video-album columns added by migration 048 (multi-
+/// video album bubble). Same sticky-on-true + 30s re-probe pattern.
+/// Strict gate — only TRUE when BOTH `album_video_urls` and
+/// `album_video_metadata` are present, so the listMessages SELECT and
+/// the sendMessage INSERT either both name the new columns or neither
+/// does. Either-alone is impossible in practice (mig 048 adds them
+/// atomically), but the strict gate keeps controllers from tracking
+/// two flags.
+async function isVideoAlbumColumnsPresent() {
+  const entry = _cache.video_album_columns;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  const [hasUrls, hasMeta] = await Promise.all([
+    _probe('album_video_urls'),
+    _probe('album_video_metadata'),
+  ]);
+  const result = hasUrls && hasMeta;
+  entry.present = result;
+  entry.lastCheckedAt = now;
+  if (result) {
+    // eslint-disable-next-line no-console
+    console.log('[schemaFeatureFlags] messages.album_video_urls + album_video_metadata are now PRESENT');
+  }
+  return result;
+}
+
 /// Pair-probe for the forward sprint columns. We treat them as ONE
 /// readiness signal — only return TRUE when BOTH `forwarded_from_message_id`
 /// and `is_forwarded` are present. Either-alone is impossible in
@@ -136,6 +166,7 @@ async function isCallLogColumnPresent() {
 module.exports = {
   isAlbumColumnPresent,
   isVideoColumnsPresent,
+  isVideoAlbumColumnsPresent,
   isForwardedColumnsPresent,
   isCallLogColumnPresent,
 };
