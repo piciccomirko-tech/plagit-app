@@ -528,9 +528,15 @@ async function updateGroup(req, res, next) {
     if (Object.keys(patch).length === 0) {
       throw AppError.badRequest('No fields to update.');
     }
-    patch.updated_at = db.fn.now();
-
-    await db('conversations').where({ id: convId }).update(patch);
+    // Keep the SSE payload JSON-serializable. `db.fn.now()` is a
+    // knex raw query helper, not a real value — passing it into
+    // bus.publish() blows up `JSON.stringify` with a circular
+    // Timeout/TimersList reference. We bump `updated_at` in the
+    // UPDATE via a separate object and broadcast only the plain
+    // fields the patch carries.
+    await db('conversations')
+      .where({ id: convId })
+      .update({ ...patch, updated_at: db.fn.now() });
 
     const audience = await _audienceForGroup(convId, userId);
     bus.publish(
