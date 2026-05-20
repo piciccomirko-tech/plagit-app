@@ -18,6 +18,9 @@ router.delete('/:id/members/:userId', g.removeGroupMember);
 // Rename / avatar_hue patch (creator-only).
 router.patch('/:id', g.updateGroup);
 
+// Group photo set/clear (creator-only). Body: { group_photo_url: string | null }
+router.put('/:id/photo', g.updateGroupPhoto);
+
 // Mark conversation read up to now (per-user cursor on
 // conversation_members.last_read_at).
 router.post('/:id/read', g.markGroupRead);

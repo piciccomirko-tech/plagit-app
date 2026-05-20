@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
@@ -1057,6 +1057,34 @@ async function listConversations(req, res, next) {
     // backend that booted before the migrate window still returns
     // the legacy 1:1-only list cleanly.
     if (await isGroupChatColumnsPresent()) {
+      // Stage C.2A.2 — append `conversations.group_photo_url` only
+      // when migration 050 has actually applied. Selecting an absent
+      // column on a pre-migrate backend would 500 the whole Messages
+      // list, breaking 1:1 chat too. Same zero-downtime pattern as
+      // the other schema flags (memory: feedback_backend_deploy_race).
+      const groupPhotoReady = await isGroupPhotoColumnPresent();
+      const groupSelectColumns = [
+        'conversations.id',
+        'conversations.last_message',
+        'conversations.status',
+        'conversations.is_interview_related',
+        'conversations.updated_at',
+        'conversations.type',
+        'conversations.name',
+        'conversations.avatar_hue',
+        'conversations.created_by_user_id',
+        'conversation_members.last_read_at',
+        db.raw(
+          "(SELECT attachment_type FROM messages WHERE conversation_id = conversations.id AND attachment_type <> 'reaction' ORDER BY created_at DESC LIMIT 1) AS last_message_attachment_type"
+        ),
+        db.raw(
+          "(SELECT sender_id FROM messages WHERE conversation_id = conversations.id AND attachment_type <> 'reaction' ORDER BY created_at DESC LIMIT 1) AS last_message_sender_id"
+        ),
+      ];
+      if (groupPhotoReady) {
+        groupSelectColumns.push('conversations.group_photo_url');
+      }
+
       const groupRows = await db('conversations')
         .innerJoin('conversation_members', function () {
           this.on('conversation_members.conversation_id', '=', 'conversations.id')
@@ -1065,24 +1093,7 @@ async function listConversations(req, res, next) {
         .whereNull('conversation_members.left_at')
         .where('conversations.type', 'group')
         .whereNot('conversations.status', 'archived')
-        .select(
-          'conversations.id',
-          'conversations.last_message',
-          'conversations.status',
-          'conversations.is_interview_related',
-          'conversations.updated_at',
-          'conversations.type',
-          'conversations.name',
-          'conversations.avatar_hue',
-          'conversations.created_by_user_id',
-          'conversation_members.last_read_at',
-          db.raw(
-            "(SELECT attachment_type FROM messages WHERE conversation_id = conversations.id AND attachment_type <> 'reaction' ORDER BY created_at DESC LIMIT 1) AS last_message_attachment_type"
-          ),
-          db.raw(
-            "(SELECT sender_id FROM messages WHERE conversation_id = conversations.id AND attachment_type <> 'reaction' ORDER BY created_at DESC LIMIT 1) AS last_message_sender_id"
-          ),
-        )
+        .select(...groupSelectColumns)
         .orderBy('conversations.updated_at', 'desc');
 
       for (const g of groupRows) {

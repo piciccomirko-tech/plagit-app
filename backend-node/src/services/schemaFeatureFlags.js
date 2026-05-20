@@ -26,6 +26,7 @@ const _cache = {
   forwarded_columns: { present: null, lastCheckedAt: 0 },
   call_log_metadata: { present: null, lastCheckedAt: 0 },
   group_chat: { present: null, lastCheckedAt: 0 },
+  group_photo_url: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -197,6 +198,35 @@ async function isCallLogColumnPresent() {
   return result;
 }
 
+/// Probe for `conversations.group_photo_url` added by migration 050
+/// (Stage C.2A.2). Independent of [isGroupChatColumnsPresent] so the
+/// group chat feature itself continues to work through the Railway
+/// deploy → migrate window — only the optional photo read/write is
+/// gated. Same sticky-on-true + 30s re-probe pattern as the other
+/// schema flags.
+async function isGroupPhotoColumnPresent() {
+  const entry = _cache.group_photo_url;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  try {
+    const result = await db.schema.hasColumn('conversations', 'group_photo_url');
+    entry.present = result;
+    entry.lastCheckedAt = now;
+    if (result) {
+      // eslint-disable-next-line no-console
+      console.log('[schemaFeatureFlags] conversations.group_photo_url is now PRESENT');
+    }
+    return result;
+  } catch (_) {
+    entry.present = false;
+    entry.lastCheckedAt = now;
+    return false;
+  }
+}
+
 module.exports = {
   isAlbumColumnPresent,
   isVideoColumnsPresent,
@@ -204,4 +234,5 @@ module.exports = {
   isForwardedColumnsPresent,
   isCallLogColumnPresent,
   isGroupChatColumnsPresent,
+  isGroupPhotoColumnPresent,
 };

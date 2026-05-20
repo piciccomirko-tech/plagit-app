@@ -2,7 +2,11 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
-const { isGroupChatColumnsPresent } = require('../services/schemaFeatureFlags');
+const {
+  isGroupChatColumnsPresent,
+  isGroupPhotoColumnPresent,
+} = require('../services/schemaFeatureFlags');
+const storage = require('../storage');
 
 // ---------------------------------------------------------------------------
 // Group conversations (mig 049)
@@ -187,12 +191,35 @@ async function createGroup(req, res, next) {
     }
 
     const userId = req.user.id;
-    const { name, member_user_ids } = req.body;
+    const { name, member_user_ids, group_photo_url } = req.body;
 
     if (typeof name !== 'string' || name.trim().length === 0) {
       throw AppError.badRequest('name is required.');
     }
     const cleanName = name.trim().slice(0, _NAME_MAX_LEN);
+
+    // Optional group photo at create time — Stage C.2A.2. The client
+    // is expected to have uploaded the image via POST /v1/uploads/image
+    // FIRST and pass the resulting HTTPS URL here, so the row stays
+    // small (TEXT URL, never a base64 blob). Only URLs issued by our
+    // storage adapter are accepted — an arbitrary HTTPS pointing at a
+    // third-party host is rejected so a malicious caller can't pin a
+    // remote image into a group record.
+    //
+    // The column itself is gated behind isGroupPhotoColumnPresent so
+    // a backend booted before the migration finished just drops the
+    // field silently — group creation continues to succeed without a
+    // photo, identical to pre-C.2A.2 behaviour.
+    let cleanPhotoUrl = null;
+    if (group_photo_url !== undefined && group_photo_url !== null) {
+      if (typeof group_photo_url !== 'string' ||
+          !storage.isOwnedUrl(group_photo_url)) {
+        throw AppError.badRequest(
+          'group_photo_url must be an HTTPS URL issued by our upload endpoint.',
+        );
+      }
+      cleanPhotoUrl = group_photo_url;
+    }
 
     if (!Array.isArray(member_user_ids)) {
       throw AppError.badRequest('member_user_ids must be an array.');
@@ -221,16 +248,24 @@ async function createGroup(req, res, next) {
 
     const hue = _hashHue(cleanName);
 
+    // Only attempt to write group_photo_url when the column actually
+    // exists — keeps zero-downtime through the migrate window.
+    const photoColumnReady = await isGroupPhotoColumnPresent();
+    const insertPayload = {
+      type: 'group',
+      name: cleanName,
+      avatar_hue: hue,
+      created_by_user_id: userId,
+      status: 'normal',
+      last_message: '',
+    };
+    if (photoColumnReady && cleanPhotoUrl !== null) {
+      insertPayload.group_photo_url = cleanPhotoUrl;
+    }
+
     const newConvId = await db.transaction(async (trx) => {
       const [conv] = await trx('conversations')
-        .insert({
-          type: 'group',
-          name: cleanName,
-          avatar_hue: hue,
-          created_by_user_id: userId,
-          status: 'normal',
-          last_message: '',
-        })
+        .insert(insertPayload)
         .returning('*');
 
       const rows = [
@@ -266,6 +301,12 @@ async function createGroup(req, res, next) {
         name: cleanName,
         avatar_hue: hue,
         created_by_user_id: userId,
+        // Carry photo URL on the broadcast so other clients can
+        // paint the new row's avatar immediately without an extra
+        // GET. Missing key when column not yet present.
+        ...(photoColumnReady && cleanPhotoUrl !== null
+          ? { group_photo_url: cleanPhotoUrl }
+          : {}),
       },
       audience,
     );
@@ -556,6 +597,92 @@ async function updateGroup(req, res, next) {
   }
 }
 
+// PUT /v1/groups/:id/photo — set or clear the group photo.
+//
+// Creator-only in the MVP (same gate as `updateGroup`). Body:
+//   { group_photo_url: string | null }
+//
+// Rules:
+//   • A non-null value must be a string AND pass `storage.isOwnedUrl`
+//     — i.e. an HTTPS URL issued by our upload pipeline. Arbitrary
+//     external URLs are rejected so callers can't pin third-party
+//     images into a group record.
+//   • `null` (or absent — we treat omission as "no change requested",
+//     so the explicit null is required) clears the photo and the
+//     client falls back to the color-hash GroupAvatar.
+//   • Gated behind `isGroupPhotoColumnPresent` so the route returns
+//     503 during the migrate window instead of writing into a column
+//     that doesn't exist yet.
+//
+// Future: when admin promotion exists, swap the creator gate for a
+// membership-role check (role === 'admin'). For now creator IS the
+// only admin so the simpler gate is equivalent.
+async function updateGroupPhoto(req, res, next) {
+  try {
+    if (!(await isGroupChatColumnsPresent())) {
+      throw AppError.unavailable(
+        'Group chats are temporarily unavailable.',
+        'GROUP_NOT_READY',
+      );
+    }
+    if (!(await isGroupPhotoColumnPresent())) {
+      throw AppError.unavailable(
+        'Group photos are temporarily unavailable.',
+        'GROUP_PHOTO_NOT_READY',
+      );
+    }
+    const userId = req.user.id;
+    const convId = req.params.id;
+    const body = req.body || {};
+    if (!Object.prototype.hasOwnProperty.call(body, 'group_photo_url')) {
+      throw AppError.badRequest(
+        'group_photo_url is required (string for set, null for clear).',
+      );
+    }
+    const raw = body.group_photo_url;
+
+    const { conv } = await _resolveMemberConversation(convId, userId);
+    if (conv.created_by_user_id !== userId) {
+      throw AppError.forbidden(
+        'Only the group creator can change the group photo.',
+      );
+    }
+
+    let nextValue;
+    if (raw === null || raw === '') {
+      nextValue = null;
+    } else if (typeof raw === 'string' && storage.isOwnedUrl(raw)) {
+      nextValue = raw;
+    } else {
+      throw AppError.badRequest(
+        'group_photo_url must be an HTTPS URL issued by our upload endpoint, or null.',
+      );
+    }
+
+    await db('conversations')
+      .where({ id: convId })
+      .update({ group_photo_url: nextValue, updated_at: db.fn.now() });
+
+    // Broadcast to the full group audience so every member's
+    // Messages list + open chat header repaint immediately.
+    const audience = await _audienceForGroup(convId, userId);
+    bus.publish(
+      'conversation.updated',
+      {
+        conversation_id: convId,
+        patch: { group_photo_url: nextValue },
+        actor_user_id: userId,
+      },
+      audience,
+    );
+
+    const updated = await db('conversations').where({ id: convId }).first();
+    ok(res, updated);
+  } catch (err) {
+    next(err);
+  }
+}
+
 // POST /v1/groups/:id/read — mark this conversation as read up to
 // now for the caller. Used by the chat view when the user opens
 // the thread; subsequent message.new events bump the unread count
@@ -589,5 +716,6 @@ module.exports = {
   addGroupMember,
   removeGroupMember,
   updateGroup,
+  updateGroupPhoto,
   markGroupRead,
 };
