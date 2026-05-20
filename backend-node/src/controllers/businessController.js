@@ -155,6 +155,52 @@ async function hiringNotify(recipientId, title, type, linkedEntity, route, body)
   } catch (e) { /* ignore if table missing */ }
 }
 
+// ─── Group-aware permission gate (Stage A.1, mig 049) ────────────
+// Symmetric to candidateController._resolveCandidateMessageAccess.
+// Returns `{ target, biz, isGroup }`:
+//   • `target` null when message missing OR caller has no access.
+//   • `biz` is the businesses row for 1:1 paths, null for groups.
+//   • `isGroup` lets callers branch side-effects (e.g. reactions
+//     skip the synthetic "X reacted" row in groups).
+async function _resolveBusinessMessageAccess(messageId, userId) {
+  const target = await db('messages')
+    .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
+    .where('messages.id', messageId)
+    .select(
+      'messages.id as msg_id',
+      'messages.sender_id as msg_sender_id',
+      'messages.created_at as msg_created_at',
+      'messages.attachment_type as msg_attachment_type',
+      'messages.body as msg_body',
+      'messages.deleted_for_everyone_at as msg_deleted_for_everyone_at',
+      'conversations.id as conv_id',
+      'conversations.type as conv_type',
+      'conversations.name as conv_name',
+      'conversations.candidate_id as conv_candidate_id',
+      'conversations.business_id as conv_business_id',
+    )
+    .first();
+  if (!target) return { target: null, biz: null, isGroup: false };
+
+  const groupReady = await isGroupChatColumnsPresent();
+  const isGroup = groupReady && target.conv_type === 'group';
+
+  if (isGroup) {
+    const member = await db('conversation_members')
+      .where({ conversation_id: target.conv_id, user_id: userId })
+      .whereNull('left_at')
+      .first();
+    if (!member) return { target: null, biz: null, isGroup };
+    return { target, biz: null, isGroup };
+  }
+
+  const biz = await db('businesses').where({ user_id: userId }).first();
+  if (!biz || target.conv_business_id !== biz.id) {
+    return { target: null, biz: null, isGroup };
+  }
+  return { target, biz, isGroup };
+}
+
 // Fan-out a single platform event (e.g. "new job posted") to every
 // admin user as their own notification row, so the admin list
 // renders correctly even though the controller does not filter by
@@ -1475,8 +1521,25 @@ async function listMessages(req, res, next) {
 async function ackMessagesDelivered(req, res, next) {
   try {
     const bizId = await getBizId(req.user.id);
-    const conv = await db('conversations').where({ id: req.params.id, business_id: bizId }).first();
+    // mig 049 — group ack is a soft no-op for the MVP (per-user
+    // delivery receipts deferred to Stage D). Members get a clean
+    // 200 + empty array.
+    const conv = await db('conversations').where({ id: req.params.id }).first();
     if (!conv) throw AppError.notFound('Conversation not found.');
+    const groupReady = await isGroupChatColumnsPresent();
+    const isGroup = groupReady && conv.type === 'group';
+    if (isGroup) {
+      const member = await db('conversation_members')
+        .where({ conversation_id: conv.id, user_id: req.user.id })
+        .whereNull('left_at')
+        .first();
+      if (!member) throw AppError.notFound('Conversation not found.');
+      ok(res, { message_ids: [], delivered_at: new Date().toISOString() });
+      return;
+    }
+    if (conv.business_id !== bizId) {
+      throw AppError.notFound('Conversation not found.');
+    }
 
     const ids = Array.isArray(req.body?.message_ids) ? req.body.message_ids.filter(Boolean) : [];
     const deliveredAt = new Date().toISOString();
@@ -2010,23 +2073,9 @@ async function addMessageReaction(req, res, next) {
       throw AppError.badRequest('Invalid emoji.');
     }
 
-    const biz = await db('businesses').where({ user_id: userId }).first();
-    if (!biz) throw AppError.badRequest('Business profile not found.');
-
-    // Membership + locate original sender + conversation in one
-    // round-trip. See candidateController.addMessageReaction for
-    // the full design rationale (Sprint 4F).
-    const target = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', biz.id)
-      .select(
-        'messages.id as msg_id',
-        'messages.sender_id as msg_sender_id',
-        'conversations.id as conv_id',
-        'conversations.candidate_id as conv_candidate_id',
-      )
-      .first();
+    // Group-aware permission gate (mig 049).
+    const { target, biz, isGroup } =
+      await _resolveBusinessMessageAccess(messageId, userId);
     if (!target) throw AppError.notFound('Message not found.');
 
     const existing = await db('message_reactions')
@@ -2038,6 +2087,13 @@ async function addMessageReaction(req, res, next) {
       .insert({ message_id: messageId, user_id: userId, emoji })
       .onConflict(['message_id', 'user_id'])
       .merge({ emoji, updated_at: db.fn.now() });
+
+    // mig 049 — in groups, skip the synthetic "X reacted" row +
+    // last_message bump. Mirror of the candidate-side branch.
+    if (isGroup) {
+      ok(res, { message_id: messageId, user_id: userId, emoji });
+      return;
+    }
 
     // Sprint 4F — surface the reaction on the peer's inbox / home.
     // Same pattern as candidateController: synthetic
@@ -2101,16 +2157,11 @@ async function addMessageReaction(req, res, next) {
 // ---------------------------------------------------------------------------
 async function removeMessageReaction(req, res, next) {
   try {
-    const bizId = await getBizId(req.user.id);
     const messageId = req.params.messageId;
 
-    const allowed = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select('messages.id')
-      .first();
-    if (!allowed) throw AppError.notFound('Message not found.');
+    // Group-aware permission gate (mig 049).
+    const { target } = await _resolveBusinessMessageAccess(messageId, req.user.id);
+    if (!target) throw AppError.notFound('Message not found.');
 
     await db('message_reactions')
       .where({ message_id: messageId, user_id: req.user.id })
@@ -2127,16 +2178,11 @@ async function removeMessageReaction(req, res, next) {
 // only the caller sees them. No realtime broadcast.
 async function starMessage(req, res, next) {
   try {
-    const bizId = await getBizId(req.user.id);
     const messageId = req.params.messageId;
 
-    const allowed = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select('messages.id')
-      .first();
-    if (!allowed) throw AppError.notFound('Message not found.');
+    // Group-aware permission gate (mig 049).
+    const { target } = await _resolveBusinessMessageAccess(messageId, req.user.id);
+    if (!target) throw AppError.notFound('Message not found.');
 
     await db('message_stars')
       .insert({ message_id: messageId, user_id: req.user.id })
@@ -2152,16 +2198,11 @@ async function starMessage(req, res, next) {
 // ---------------------------------------------------------------------------
 async function unstarMessage(req, res, next) {
   try {
-    const bizId = await getBizId(req.user.id);
     const messageId = req.params.messageId;
 
-    const allowed = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select('messages.id')
-      .first();
-    if (!allowed) throw AppError.notFound('Message not found.');
+    // Group-aware permission gate (mig 049).
+    const { target } = await _resolveBusinessMessageAccess(messageId, req.user.id);
+    if (!target) throw AppError.notFound('Message not found.');
 
     await db('message_stars')
       .where({ message_id: messageId, user_id: req.user.id })
@@ -2180,16 +2221,11 @@ const DELETE_FOR_EVERYONE_WINDOW_MS = 15 * 60 * 1000;
 
 async function hideMessageForMe(req, res, next) {
   try {
-    const bizId = await getBizId(req.user.id);
     const messageId = req.params.messageId;
 
-    const allowed = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select('messages.id')
-      .first();
-    if (!allowed) throw AppError.notFound('Message not found.');
+    // Group-aware permission gate (mig 049).
+    const { target } = await _resolveBusinessMessageAccess(messageId, req.user.id);
+    if (!target) throw AppError.notFound('Message not found.');
 
     await db('message_hides')
       .insert({ message_id: messageId, user_id: req.user.id })
@@ -2202,35 +2238,25 @@ async function hideMessageForMe(req, res, next) {
 
 async function deleteMessageForEveryone(req, res, next) {
   try {
-    const bizId = await getBizId(req.user.id);
     const messageId = req.params.messageId;
 
-    const msg = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select(
-        'messages.id',
-        'messages.sender_id',
-        'messages.created_at',
-        'messages.deleted_for_everyone_at',
-        'messages.conversation_id',
-        'conversations.candidate_id',
-      )
-      .first();
-    if (!msg) throw AppError.notFound('Message not found.');
+    // Group-aware permission gate (mig 049). Returns target with
+    // sender_id, created_at, deleted_for_everyone_at, conv fields.
+    const { target, isGroup } =
+      await _resolveBusinessMessageAccess(messageId, req.user.id);
+    if (!target) throw AppError.notFound('Message not found.');
 
-    if (msg.sender_id !== req.user.id) {
+    if (target.msg_sender_id !== req.user.id) {
       throw AppError.forbidden(
         'You can only delete your own messages for everyone.',
         'NOT_SENDER',
       );
     }
-    if (msg.deleted_for_everyone_at) {
+    if (target.msg_deleted_for_everyone_at) {
       ok(res, { message_id: messageId, deleted_for_everyone: true });
       return;
     }
-    const ageMs = Date.now() - new Date(msg.created_at).getTime();
+    const ageMs = Date.now() - new Date(target.msg_created_at).getTime();
     if (ageMs > DELETE_FOR_EVERYONE_WINDOW_MS) {
       throw AppError.badRequest(
         'You can only delete a message for everyone within 15 minutes of sending.',
@@ -2246,16 +2272,25 @@ async function deleteMessageForEveryone(req, res, next) {
       await trx('message_reactions').where({ message_id: messageId }).delete();
     });
 
-    let peerUserId = null;
-    if (msg.candidate_id) {
-      const cand = await db('candidates').where({ id: msg.candidate_id }).select('user_id').first();
-      if (cand) peerUserId = cand.user_id;
-    }
+    // Realtime fan-out. 1:1: sender + candidate peer. Group: every
+    // active member so each client can flip the bubble to a
+    // tombstone immediately.
     const audience = ['role:admin', `user:${req.user.id}`];
-    if (peerUserId) audience.push(`user:${peerUserId}`);
+    if (isGroup) {
+      const memberRows = await db('conversation_members')
+        .where({ conversation_id: target.conv_id })
+        .whereNull('left_at')
+        .pluck('user_id');
+      for (const u of memberRows) {
+        if (u !== req.user.id) audience.push(`user:${u}`);
+      }
+    } else if (target.conv_candidate_id) {
+      const cand = await db('candidates').where({ id: target.conv_candidate_id }).select('user_id').first();
+      if (cand?.user_id) audience.push(`user:${cand.user_id}`);
+    }
     bus.publish('message.deleted_for_everyone', {
       message_id: messageId,
-      conversation_id: msg.conversation_id,
+      conversation_id: target.conv_id,
       deleted_for_everyone_at: deletedAt,
       sender_user_id: req.user.id,
     }, audience);
@@ -2314,14 +2349,9 @@ async function reportMessage(req, res, next) {
       );
     }
 
-    const bizId = await getBizId(userId);
-    const msg = await db('messages')
-      .leftJoin('conversations', 'messages.conversation_id', 'conversations.id')
-      .where('messages.id', messageId)
-      .where('conversations.business_id', bizId)
-      .select('messages.id', 'messages.body', 'messages.attachment_type')
-      .first();
-    if (!msg) throw AppError.notFound('Message not found.');
+    // Group-aware permission gate (mig 049).
+    const { target } = await _resolveBusinessMessageAccess(messageId, userId);
+    if (!target) throw AppError.notFound('Message not found.');
 
     const [report] = await db('reports')
       .insert({
@@ -2335,7 +2365,7 @@ async function reportMessage(req, res, next) {
       .returning(['id', 'status', 'created_at']);
 
     try {
-      const preview = (msg.body || '').slice(0, 80);
+      const preview = (target.msg_body || '').slice(0, 80);
       await notifyAllAdmins(
         `Message reported (${category})`,
         'in_app',
