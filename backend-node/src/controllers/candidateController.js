@@ -1016,6 +1016,13 @@ async function listConversations(req, res, next) {
         'businesses.name as business_name', 'businesses.initials as business_initials',
         'businesses.is_verified as business_verified', 'businesses.avatar_hue as business_avatar_hue',
         'businesses.country_code as business_country_code',
+        // Step C.2/A.2 — expose the business owner's users.id so the
+        // Flutter contact picker can pass a valid `member_user_ids`
+        // entry to POST /v1/groups + POST /v1/groups/:id/members
+        // (both endpoints validate against users.id via the existing
+        // `_resolveMyContactUserIds` contact gate). Same join we
+        // already use for `business_photo_url`, just an extra select.
+        'biz_users.id as business_user_id',
         'biz_users.photo_url as business_photo_url',
         'jobs.title as job_title',
         // Step 3B.1 — surface the latest message's discriminator +

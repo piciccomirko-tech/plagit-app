@@ -1151,6 +1151,13 @@ async function listConversations(req, res, next) {
       'conversations.is_interview_related', 'conversations.updated_at',
       'candidates.name as candidate_name', 'candidates.initials as candidate_initials',
       'candidates.avatar_hue as candidate_avatar_hue', 'candidates.nationality_code as candidate_nationality_code',
+      // Step C.2/A.2 — expose the candidate's users.id so the Flutter
+      // contact picker can pass a valid `member_user_ids` entry to
+      // POST /v1/groups + POST /v1/groups/:id/members (both endpoints
+      // validate against users.id via the existing
+      // `_resolveMyContactUserIds` contact gate). Same join we already
+      // use for `candidate_photo_url`, just an extra select.
+      'users.id as candidate_user_id',
       'users.photo_url as candidate_photo_url',
       'jobs.title as job_title',
       // Step 3B.1 — symmetric with candidateController.listConversations.
