@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent, isUrgentRequestsTablePresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -2753,6 +2753,307 @@ async function availableCandidates(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ---------------------------------------------------------------------------
+// Stage AL.5.2 — Urgent staff requests (CRUD-ish, business-side only)
+//
+// Three endpoints backing the "Need staff today" Business UX:
+//
+//   POST  /business/urgent-requests        — create an open request
+//   GET   /business/urgent-requests        — list own (filterable by status)
+//   PATCH /business/urgent-requests/:id    — cancel or mark filled
+//
+// All three are role-gated to business JWTs (403 candidate/admin) and
+// schema-flag-gated on `urgent_requests` table presence (503 pre-mig).
+//
+// `expires_at` is server-computed at INSERT as `(ends_at OR starts_at)
+// + 4h grace`. The 4h covers shift overrun + tardy candidate replies
+// without keeping stale posts live overnight. PATCH `ends_at`
+// extensions recompute expires_at automatically.
+//
+// Status transitions are one-way:
+//   open → cancelled  ✅   open → filled  ✅
+//   (anything else)   ❌   Terminal states are immutable.
+//
+// `filled_by_candidate_id` is never written by AL.5.2 — manual fill
+// marks the row "filled" without a candidate id. AL.6 will populate
+// the column via the chat-handoff flow without an additional schema
+// change.
+//
+// `expired` is detected lazily on read (filter `expires_at > NOW()`
+// when `include_expired=false`). No cron, no auto status flip. Stale
+// open rows stay in the table with `status='open'` until a future
+// cleanup sprint.
+// ---------------------------------------------------------------------------
+
+const _URGENT_REQUEST_NOT_READY = 'URGENT_REQUESTS_NOT_READY';
+const _URGENT_MAX_NOTES_LENGTH = 500;
+const _URGENT_MAX_LOCATION_LENGTH = 200;
+const _URGENT_MAX_ROLE_LENGTH = 100;
+const _URGENT_MAX_SHIFT_DURATION_MS = 24 * 60 * 60 * 1000;     // single-shift cap
+const _URGENT_MAX_FUTURE_START_MS = 30 * 24 * 60 * 60 * 1000;  // 30 days
+const _URGENT_CLOCK_SKEW_MS = 5 * 60 * 1000;                   // 5 min tolerance
+const _URGENT_EXPIRY_GRACE_MS = 4 * 60 * 60 * 1000;            // 4 h post-end
+const _URGENT_VALID_STATUS_FILTERS = new Set(['open', 'filled', 'expired', 'cancelled']);
+const _URGENT_ALLOWED_PATCH_STATUSES = new Set(['cancelled', 'filled']);
+
+function _parseUrgentIsoTimestamp(raw, field) {
+  if (typeof raw !== 'string' || !raw.trim()) {
+    throw AppError.badRequest(`${field} is required.`);
+  }
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) {
+    throw AppError.badRequest(`${field} must be a valid ISO timestamp.`);
+  }
+  return d;
+}
+
+function _computeUrgentExpiresAt(startsAt, endsAt) {
+  const base = endsAt instanceof Date ? endsAt : startsAt;
+  return new Date(base.getTime() + _URGENT_EXPIRY_GRACE_MS);
+}
+
+async function createUrgentRequest(req, res, next) {
+  try {
+    if (!(await isUrgentRequestsTablePresent())) {
+      throw AppError.unavailable(
+        'Urgent requests are temporarily unavailable. Please try again in a moment.',
+        _URGENT_REQUEST_NOT_READY,
+      );
+    }
+    if (req.user.role !== 'business') {
+      throw AppError.forbidden('Only businesses can create urgent requests.');
+    }
+
+    const body = req.body || {};
+    const roleRaw = typeof body.role === 'string' ? body.role.trim() : '';
+    if (!roleRaw) throw AppError.badRequest('role is required.');
+    if (roleRaw.length > _URGENT_MAX_ROLE_LENGTH) {
+      throw AppError.badRequest(`role must be 1-${_URGENT_MAX_ROLE_LENGTH} characters.`);
+    }
+
+    const startsAt = _parseUrgentIsoTimestamp(body.starts_at, 'starts_at');
+    const now = Date.now();
+    if (startsAt.getTime() < now - _URGENT_CLOCK_SKEW_MS) {
+      throw AppError.badRequest('starts_at cannot be in the past.');
+    }
+    if (startsAt.getTime() > now + _URGENT_MAX_FUTURE_START_MS) {
+      throw AppError.badRequest('starts_at cannot be more than 30 days from now.');
+    }
+
+    let endsAt = null;
+    if (body.ends_at !== undefined && body.ends_at !== null && body.ends_at !== '') {
+      endsAt = _parseUrgentIsoTimestamp(body.ends_at, 'ends_at');
+      if (endsAt.getTime() <= startsAt.getTime()) {
+        throw AppError.badRequest('ends_at must be after starts_at.');
+      }
+      if (endsAt.getTime() - startsAt.getTime() > _URGENT_MAX_SHIFT_DURATION_MS) {
+        throw AppError.badRequest('ends_at cannot be more than 24 hours after starts_at.');
+      }
+    }
+
+    let location = null;
+    if (body.location !== undefined && body.location !== null) {
+      if (typeof body.location !== 'string') {
+        throw AppError.badRequest('location must be a string or null.');
+      }
+      const trimmed = body.location.trim();
+      if (trimmed.length > _URGENT_MAX_LOCATION_LENGTH) {
+        throw AppError.badRequest(`location must be at most ${_URGENT_MAX_LOCATION_LENGTH} characters.`);
+      }
+      location = trimmed || null;
+    }
+
+    let latitude = null;
+    if (body.latitude !== undefined && body.latitude !== null) {
+      const n = Number(body.latitude);
+      if (!Number.isFinite(n) || n < -90 || n > 90) {
+        throw AppError.badRequest('latitude must be a number between -90 and 90.');
+      }
+      latitude = n;
+    }
+    let longitude = null;
+    if (body.longitude !== undefined && body.longitude !== null) {
+      const n = Number(body.longitude);
+      if (!Number.isFinite(n) || n < -180 || n > 180) {
+        throw AppError.badRequest('longitude must be a number between -180 and 180.');
+      }
+      longitude = n;
+    }
+
+    let notes = null;
+    if (body.notes !== undefined && body.notes !== null) {
+      if (typeof body.notes !== 'string') {
+        throw AppError.badRequest('notes must be a string or null.');
+      }
+      const trimmed = body.notes.trim();
+      if (trimmed.length > _URGENT_MAX_NOTES_LENGTH) {
+        throw AppError.badRequest(`notes must be at most ${_URGENT_MAX_NOTES_LENGTH} characters.`);
+      }
+      notes = trimmed || null;
+    }
+
+    // Resolve business defaults — copy location/lat/lng from the
+    // business row when the caller didn't supply them. Keeps urgent
+    // posts useful even when the business UI doesn't prompt for
+    // explicit location entry.
+    const biz = await db('businesses').where({ user_id: req.user.id }).first();
+    if (!biz) throw AppError.badRequest('Business profile not found.');
+    if (location === null) location = biz.location || null;
+    if (latitude === null) latitude = biz.latitude ?? null;
+    if (longitude === null) longitude = biz.longitude ?? null;
+
+    const expiresAt = _computeUrgentExpiresAt(startsAt, endsAt);
+
+    const [row] = await db('urgent_requests').insert({
+      business_id: biz.id,
+      role: roleRaw,
+      location,
+      latitude,
+      longitude,
+      starts_at: startsAt.toISOString(),
+      ends_at: endsAt ? endsAt.toISOString() : null,
+      notes,
+      status: 'open',
+      expires_at: expiresAt.toISOString(),
+    }).returning('*');
+
+    return res.status(201).json({ success: true, data: row });
+  } catch (err) { next(err); }
+}
+
+async function listUrgentRequests(req, res, next) {
+  try {
+    if (!(await isUrgentRequestsTablePresent())) {
+      throw AppError.unavailable(
+        'Urgent requests are temporarily unavailable. Please try again in a moment.',
+        _URGENT_REQUEST_NOT_READY,
+      );
+    }
+    if (req.user.role !== 'business') {
+      throw AppError.forbidden('Only businesses can list urgent requests.');
+    }
+
+    const bizId = await getBizId(req.user.id);
+    const statusRaw = typeof req.query.status === 'string'
+      ? req.query.status.trim() : 'open';
+    const status = _URGENT_VALID_STATUS_FILTERS.has(statusRaw) ? statusRaw : 'open';
+    const includeExpired = req.query.include_expired === 'true'
+      || req.query.include_expired === '1';
+    const cap = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 20, 100));
+
+    let q = db('urgent_requests')
+      .where({ business_id: bizId, status });
+
+    // Lazy expired filter: open + not yet past grace window.
+    if (status === 'open' && !includeExpired) {
+      q = q.where('expires_at', '>', db.fn.now());
+    }
+
+    const orderField = status === 'open' ? 'starts_at' : 'updated_at';
+    const orderDir = status === 'open' ? 'asc' : 'desc';
+    const rows = await q.orderBy(orderField, orderDir).limit(cap);
+
+    ok(res, rows, {
+      total: rows.length,
+      status,
+      include_expired: includeExpired,
+    });
+  } catch (err) { next(err); }
+}
+
+async function updateUrgentRequest(req, res, next) {
+  try {
+    if (!(await isUrgentRequestsTablePresent())) {
+      throw AppError.unavailable(
+        'Urgent requests are temporarily unavailable. Please try again in a moment.',
+        _URGENT_REQUEST_NOT_READY,
+      );
+    }
+    if (req.user.role !== 'business') {
+      throw AppError.forbidden('Only businesses can update urgent requests.');
+    }
+
+    const bizId = await getBizId(req.user.id);
+    const body = req.body || {};
+    if (
+      body.status === undefined
+      && body.ends_at === undefined
+      && body.notes === undefined
+    ) {
+      throw AppError.badRequest('No fields to update.');
+    }
+
+    const existing = await db('urgent_requests')
+      .where({ id: req.params.id, business_id: bizId })
+      .first();
+    if (!existing) throw AppError.notFound('Urgent request not found.');
+
+    // Terminal-state guard — `cancelled`/`filled`/`expired` are
+    // immutable in AL.5.2 (audit-trail clarity).
+    if (existing.status !== 'open') {
+      throw AppError.badRequest('Urgent request is no longer open and cannot be updated.');
+    }
+
+    const updates = { updated_at: db.fn.now() };
+
+    if (body.status !== undefined) {
+      if (!_URGENT_ALLOWED_PATCH_STATUSES.has(body.status)) {
+        throw AppError.badRequest(
+          `Invalid status transition. Allowed: ${[..._URGENT_ALLOWED_PATCH_STATUSES].join(', ')}.`,
+        );
+      }
+      updates.status = body.status;
+    }
+
+    let newEndsAt = null;
+    if (body.ends_at !== undefined) {
+      if (body.ends_at === null || body.ends_at === '') {
+        updates.ends_at = null;
+      } else {
+        newEndsAt = _parseUrgentIsoTimestamp(body.ends_at, 'ends_at');
+        const startsAt = new Date(existing.starts_at);
+        if (newEndsAt.getTime() <= startsAt.getTime()) {
+          throw AppError.badRequest('ends_at must be after starts_at.');
+        }
+        if (newEndsAt.getTime() - startsAt.getTime() > _URGENT_MAX_SHIFT_DURATION_MS) {
+          throw AppError.badRequest('ends_at cannot be more than 24 hours after starts_at.');
+        }
+        updates.ends_at = newEndsAt.toISOString();
+        // Extension recomputes expires_at off the new ends_at.
+        updates.expires_at = _computeUrgentExpiresAt(startsAt, newEndsAt).toISOString();
+      }
+    }
+
+    if (body.notes !== undefined) {
+      if (body.notes === null) {
+        updates.notes = null;
+      } else if (typeof body.notes !== 'string') {
+        throw AppError.badRequest('notes must be a string or null.');
+      } else {
+        const trimmed = body.notes.trim();
+        if (trimmed.length > _URGENT_MAX_NOTES_LENGTH) {
+          throw AppError.badRequest(`notes must be at most ${_URGENT_MAX_NOTES_LENGTH} characters.`);
+        }
+        updates.notes = trimmed || null;
+      }
+    }
+
+    // Optimistic-lock semantics: re-check status='open' inside the
+    // UPDATE WHERE so a concurrent cancel/fill races safely (returns
+    // 0 rows, we surface a 400). Same pattern as the existing
+    // updateJob endpoint.
+    const [row] = await db('urgent_requests')
+      .where({ id: existing.id, business_id: bizId, status: 'open' })
+      .update(updates)
+      .returning('*');
+    if (!row) {
+      throw AppError.badRequest('Urgent request was modified by another request. Please refresh.');
+    }
+
+    ok(res, row);
+  } catch (err) { next(err); }
+}
+
 // Mirror of candidateController._AVATAR_MIME_TO_EXT — kept inline.
 const _AVATAR_MIME_TO_EXT = {
   'image/jpeg': 'jpg',
@@ -3365,6 +3666,7 @@ module.exports = {
   listNotifications, markNotificationRead, markAllNotificationsRead,
   deleteNotification, deleteAllNotifications,
   recentApplicants, nearbyCandidates, availableCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
+  createUrgentRequest, listUrgentRequests, updateUrgentRequest,
   quickplugDeck, quickplugSwipe,
   subscription,
   tryCreateMutualMatch,

@@ -83,6 +83,16 @@ router.get('/recent-applicants', c.recentApplicants);
 router.get('/quickplug/deck', c.quickplugDeck);
 router.post('/quickplug/swipe', c.quickplugSwipe);
 
+// Stage AL.5.2 — Urgent staff requests (business-side CRUD).
+// `expires_at` is server-computed at INSERT as `(ends_at OR
+// starts_at) + 4h`. PATCH supports cancel/fill on `status='open'`
+// rows only; terminal states (cancelled/filled/expired) are
+// immutable. All endpoints are role-gated + schema-flag-gated on
+// the `urgent_requests` table (mig 052).
+router.post('/urgent-requests', c.createUrgentRequest);
+router.get('/urgent-requests', c.listUrgentRequests);
+router.patch('/urgent-requests/:id', c.updateUrgentRequest);
+
 // Subscription
 router.get('/subscription', c.subscription);
 
