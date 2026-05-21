@@ -27,6 +27,7 @@ const _cache = {
   call_log_metadata: { present: null, lastCheckedAt: 0 },
   group_chat: { present: null, lastCheckedAt: 0 },
   group_photo_url: { present: null, lastCheckedAt: 0 },
+  candidate_availability: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -227,6 +228,40 @@ async function isGroupPhotoColumnPresent() {
   }
 }
 
+/// Probe for the Availability Live columns added by migration 051
+/// (Stage AL.1). Strict gate — only TRUE when ALL four new columns
+/// are present, so the AL.2 controller never half-writes during the
+/// Railway deploy -> migrate window. Same sticky-on-true + 30s
+/// re-probe pattern as the other schema flags.
+async function isCandidateAvailabilityColumnsPresent() {
+  const entry = _cache.candidate_availability;
+  if (entry.present === true) return true; // sticky on success
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  try {
+    const [hasState, hasUntil, hasRadius, hasActive] = await Promise.all([
+      db.schema.hasColumn('candidates', 'availability_state'),
+      db.schema.hasColumn('candidates', 'availability_until'),
+      db.schema.hasColumn('candidates', 'preferred_area_radius_km'),
+      db.schema.hasColumn('candidates', 'last_active_at'),
+    ]);
+    const result = hasState && hasUntil && hasRadius && hasActive;
+    entry.present = result;
+    entry.lastCheckedAt = now;
+    if (result) {
+      // eslint-disable-next-line no-console
+      console.log('[schemaFeatureFlags] candidates availability columns are now PRESENT');
+    }
+    return result;
+  } catch (_) {
+    entry.present = false;
+    entry.lastCheckedAt = now;
+    return false;
+  }
+}
+
 module.exports = {
   isAlbumColumnPresent,
   isVideoColumnsPresent,
@@ -235,4 +270,5 @@ module.exports = {
   isCallLogColumnPresent,
   isGroupChatColumnsPresent,
   isGroupPhotoColumnPresent,
+  isCandidateAvailabilityColumnsPresent,
 };

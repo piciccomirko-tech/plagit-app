@@ -13,6 +13,12 @@ router.post('/cv', c.uploadCV);
 router.post('/cv/parse', c.parseCV);
 router.get('/home', c.home);
 
+// Stage AL.2 — Availability Live: structured availability state
+// + preferred_area_radius_km. Candidate-only (controller-side
+// role gate). See db/migrations/051_candidate_availability_state.js
+// for the column contract.
+router.patch('/availability', c.updateAvailability);
+
 // Phase 4 — public business profile lookup (used by chat
 // EntityShareBubble navigation when a candidate taps a shared
 // business profile card).

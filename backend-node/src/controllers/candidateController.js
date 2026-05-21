@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
@@ -3548,6 +3548,168 @@ async function getBusinessProfile(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ---------------------------------------------------------------------------
+// PATCH /candidate/availability — Stage AL.2 Availability Live update
+// ---------------------------------------------------------------------------
+//
+// Body (all fields optional; only provided keys are updated):
+//   {
+//     availability_state?: 'now' | 'today' | 'tomorrow' | 'this_weekend'
+//                        | 'evening_only' | 'full_time' | 'part_time' | null,
+//     availability_until?: ISO timestamp | null,
+//     preferred_area_radius_km?: integer  (1..100)
+//   }
+//
+// Semantics:
+//   - The caller MUST be authenticated as a candidate. Business /
+//     admin JWTs return 403 — this endpoint is scoped to the local
+//     user's own candidate row.
+//   - `availability_state = null` clears the state AND auto-clears
+//     `availability_until` (no orphan expiry).
+//   - When the state is non-null and `availability_until` is omitted,
+//     the existing column value is preserved (no auto-default; the
+//     client UI can compute an absolute expiry from the state + tz
+//     in AL.3 without server-side timezone guessing).
+//   - Updates are LOCAL only — no notifications row, no SSE publish
+//     (the business "available now nearby" list will poll via query
+//     in AL.4; real-time fan-out is a later phase).
+//   - Schema-feature-flag gated: returns 503 during the migrate
+//     window, mirror of `isGroupChatColumnsPresent` pattern.
+const _ALLOWED_AVAILABILITY_STATES = new Set([
+  'now',
+  'today',
+  'tomorrow',
+  'this_weekend',
+  'evening_only',
+  'full_time',
+  'part_time',
+]);
+const _MIN_RADIUS_KM = 1;
+const _MAX_RADIUS_KM = 100;
+
+async function updateAvailability(req, res, next) {
+  try {
+    if (!(await isCandidateAvailabilityColumnsPresent())) {
+      throw AppError.unavailable(
+        'Availability is temporarily unavailable. Please try again in a moment.',
+        'CANDIDATE_AVAILABILITY_NOT_READY',
+      );
+    }
+
+    // Role gate — the path is `/v1/candidate/availability` so a
+    // business / admin JWT reaching here is an explicit mis-use.
+    // We surface 403 with a clear message rather than silently
+    // no-op'ing (which would have been the case via the
+    // WHERE user_id = req.user.id below — no candidate row would
+    // match a business user's id, so 0 rows updated → confusing).
+    // The JWT payload signed by authController.signAccessToken maps
+    // `users.user_type` onto the `role` claim, so we check
+    // `req.user.role` here (not `req.user.user_type` which is
+    // undefined on every authenticated request).
+    if (req.user.role !== 'candidate') {
+      throw AppError.forbidden('Only candidates can update availability.');
+    }
+
+    const body = req.body || {};
+    const patch = {};
+
+    // availability_state — enum membership or null
+    if (Object.prototype.hasOwnProperty.call(body, 'availability_state')) {
+      const v = body.availability_state;
+      if (v === null) {
+        patch.availability_state = null;
+        // Pair: clear the expiry too so we never carry a dangling
+        // timestamp without a state to match it.
+        patch.availability_until = null;
+      } else if (typeof v === 'string' && _ALLOWED_AVAILABILITY_STATES.has(v)) {
+        patch.availability_state = v;
+      } else {
+        throw AppError.badRequest(
+          'availability_state must be one of: '
+            + [..._ALLOWED_AVAILABILITY_STATES].join(', ')
+            + ', or null.',
+        );
+      }
+    }
+
+    // availability_until — ISO timestamp parseable, future, within
+    // a sane horizon. Only honoured when the state was not just
+    // cleared in the block above (the `availability_until` key in
+    // `patch` is already set to null in that case and will not be
+    // overwritten here, because we only enter this branch on an
+    // explicit `availability_until` key in the body).
+    if (Object.prototype.hasOwnProperty.call(body, 'availability_until')) {
+      const v = body.availability_until;
+      if (v === null) {
+        patch.availability_until = null;
+      } else if (typeof v === 'string') {
+        const parsed = new Date(v);
+        if (Number.isNaN(parsed.getTime())) {
+          throw AppError.badRequest(
+            'availability_until must be a valid ISO timestamp or null.',
+          );
+        }
+        // Reject obvious nonsense without enforcing a hard upper
+        // bound — the matching query in AL.4 already filters
+        // `WHERE availability_until > now()` so a past timestamp
+        // simply hides the candidate immediately, which is
+        // user-facing but harmless. We still reject anything more
+        // than 31 days out to keep the table clean.
+        const maxUntil = new Date(Date.now() + 31 * 24 * 60 * 60 * 1000);
+        if (parsed > maxUntil) {
+          throw AppError.badRequest(
+            'availability_until cannot be more than 31 days from now.',
+          );
+        }
+        patch.availability_until = parsed.toISOString();
+      } else {
+        throw AppError.badRequest(
+          'availability_until must be a string ISO timestamp or null.',
+        );
+      }
+    }
+
+    // preferred_area_radius_km — integer in [1, 100]
+    if (Object.prototype.hasOwnProperty.call(body, 'preferred_area_radius_km')) {
+      const v = body.preferred_area_radius_km;
+      if (v === null) {
+        patch.preferred_area_radius_km = null;
+      } else {
+        const n = Number(v);
+        if (!Number.isInteger(n) || n < _MIN_RADIUS_KM || n > _MAX_RADIUS_KM) {
+          throw AppError.badRequest(
+            `preferred_area_radius_km must be an integer between ${_MIN_RADIUS_KM} and ${_MAX_RADIUS_KM}, or null.`,
+          );
+        }
+        patch.preferred_area_radius_km = n;
+      }
+    }
+
+    if (Object.keys(patch).length === 0) {
+      throw AppError.badRequest('No fields to update.');
+    }
+
+    const updated = await db('candidates')
+      .where({ user_id: req.user.id })
+      .update({ ...patch, updated_at: db.fn.now() })
+      .returning([
+        'id',
+        'user_id',
+        'availability_state',
+        'availability_until',
+        'preferred_area_radius_km',
+      ]);
+
+    if (!updated || updated.length === 0) {
+      throw AppError.notFound('Candidate profile not found.');
+    }
+
+    ok(res, updated[0]);
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   getBusinessProfile,
   listBusinessJobsForConversation,
@@ -3567,4 +3729,6 @@ module.exports = {
   listMatches, submitMatchFeedback, updateMatchStatus,
   listCandidateNotifications, candidateUnreadCount, markCandidateNotifRead, markAllCandidateNotifsRead,
   deleteCandidateNotif, deleteAllCandidateNotifs,
+  // Stage AL.2 — Availability Live update endpoint.
+  updateAvailability,
 };
