@@ -4,6 +4,12 @@ const crypto = require('crypto');
 const db = require('../config/db');
 const { ok } = require('../utils/response');
 const AppError = require('../utils/AppError');
+// Phase 5A — admin fan-out helper. Imported lazily inside the
+// registerBusiness handler (require here, deconstruct at call-site)
+// to keep the auth module's top-level cost zero and to make the
+// dependency obvious to grep for future extraction into a shared
+// service file.
+const { notifyAllAdmins } = require('./businessController');
 
 function signAccessToken(user) {
   return jwt.sign(
@@ -316,12 +322,31 @@ async function registerBusiness(req, res, next) {
       status: 'active', avatar_hue: avatarHue, profile_strength: 20,
     }).returning('*');
 
-    await db('businesses').insert({
+    const [newBiz] = await db('businesses').insert({
       user_id: user.id, name: company_name, initials,
       venue_type: venue_type || null, location: location || null,
       required_role: required_role || null, job_type: job_type || null,
       open_to_international: open_to_international || false,
       email: normalizedEmail, avatar_hue: avatarHue,
+    }).returning(['id', 'name']);
+
+    // Phase 5A — fan a "new business registered" row to every admin
+    // user so the admin platform-events feed surfaces the signup in
+    // real time (admin SSE audience already wired in
+    // `notifyAllAdmins` -> `hiringNotify`). Best-effort: any error
+    // is logged but MUST NOT roll back the signup transaction, which
+    // already committed above. The empty .catch() mirrors the same
+    // safety pattern reportMessage uses (businessController.js:2393)
+    // for the same helper.
+    notifyAllAdmins(
+      `New business registered: ${newBiz?.name || company_name}`,
+      'in_app',
+      newBiz?.id || null,
+      'business',
+      location ? `Location: ${location}` : null,
+    ).catch((e) => {
+      // eslint-disable-next-line no-console
+      console.warn('[registerBusiness] notifyAllAdmins failed:', e.message);
     });
 
     const accessToken = signAccessToken(user);

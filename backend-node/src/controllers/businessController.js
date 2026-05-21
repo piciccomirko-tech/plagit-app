@@ -3235,4 +3235,9 @@ module.exports = {
   quickplugDeck, quickplugSwipe,
   subscription,
   tryCreateMutualMatch,
+  // Phase 5A — expose the existing admin fan-out helper so
+  // authController (and any future signup / lifecycle controller)
+  // can hook admin visibility events without duplicating the
+  // hiringNotify-per-admin loop.
+  notifyAllAdmins,
 };
