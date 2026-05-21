@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent, isUrgentRequestsTablePresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
@@ -3717,6 +3717,344 @@ async function updateAvailability(req, res, next) {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Stage AL.5.3 — GET /candidate/urgent-requests
+//
+// Read-only matching endpoint. The candidate sees open, non-expired
+// urgent requests whose role matches their own role context AND whose
+// schedule is compatible with their AL.1 availability_state.
+//
+// Filters (AND-chained, applied SQL-side):
+//   • urgent_requests.status = 'open'
+//   • urgent_requests.expires_at > NOW()
+//   • urgent_requests.starts_at > NOW() - 1h          (1h grace for
+//                                                      shifts barely
+//                                                      under way)
+//   • role hit: candidate primary role (COALESCE
+//     primary_role, role) ILIKE urgent.role  OR  any element of
+//     candidate.additional_roles ILIKE urgent.role
+//
+// Hard-stop (returns empty list with `geo_mode='fallback'`):
+//   • candidate.availability_state IS NULL
+//   • candidate.availability_until is non-null AND <= NOW()
+//   • candidate has no role data at all (role null AND primary_role
+//     null AND additional_roles empty)
+//
+// Per-row scoring (computed in JS after SQL fetch, then re-sorted):
+//   match_score (0–2):
+//     2 → urgent.role ILIKE candidate primary role
+//     1 → urgent.role ILIKE any candidate.additional_roles element
+//     0 → no match (these rows are excluded by the SQL WHERE; only
+//         here for fallback safety if the SQL OR-block widens)
+//   availability_fit (0–5):
+//     5 → state='now'           AND starts_at ≤ NOW + 4h
+//     4 → state='today'         AND starts_at falls on today (UTC)
+//     3 → state='tomorrow'      AND starts_at falls on tomorrow (UTC)
+//     2 → state='this_weekend'  AND starts_at within the upcoming
+//                                 Saturday-Sunday window (7d cap)
+//     1 → state ∈ {evening_only, full_time, part_time}
+//                                 (recurring states match any
+//                                 schedule)
+//     0 → state set but window does not align (row still returned,
+//         just ranked low)
+//
+// Max total = 7 (match=2 + fit=5). Returned for transparency on
+// each row so the Flutter UI (AL.5.5) can branch on the tier.
+//
+// Geo (optional, tiered):
+//   • haversine — when the candidate has users.lat/lng AND the
+//     urgent_request has latitude/longitude: compute distance_km,
+//     filter ≤ effective radius (query `radius` overrides candidate
+//     preferred_area_radius_km; default 10 km), include in sort.
+//   • fallback — any geo data missing: no distance filter,
+//     distance_km is null on every row.
+//   Raw lat/lng never leaks — only the computed distance_km
+//   (rounded to 100 m precision) crosses the boundary.
+//
+// Sort:
+//   1. match_score DESC
+//   2. availability_fit DESC
+//   3. distance_km ASC (NULLS LAST)
+//   4. starts_at ASC
+//   5. created_at DESC
+//
+// No writes, no notifications, no chat handoff, no admin event.
+// AL.5.3 is strictly read-only — verified by the smoke counting
+// `notifications` rows before/after and asserting the
+// `urgent_requests` row hash is unchanged.
+// ---------------------------------------------------------------------------
+
+const _URGENT_NOT_READY = 'URGENT_REQUESTS_NOT_READY';
+const _URGENT_AVAILABILITY_NOT_READY = 'CANDIDATE_AVAILABILITY_NOT_READY';
+const _URGENT_DEFAULT_RADIUS_KM = 10;
+const _URGENT_GRACE_MS = 60 * 60 * 1000;          // 1h past-start grace
+const _URGENT_NOW_WINDOW_MS = 4 * 60 * 60 * 1000; // 'now' = within +4h
+const _URGENT_WEEKEND_LOOKAHEAD_MS = 7 * 24 * 60 * 60 * 1000;
+
+function _haversineKm(lat1, lng1, lat2, lng2) {
+  if ([lat1, lng1, lat2, lng2].some((v) => typeof v !== 'number' || !Number.isFinite(v))) {
+    return null;
+  }
+  const toRad = (d) => (d * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) ** 2
+    + Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+  return Math.min(R * 2 * Math.asin(Math.sqrt(Math.max(0, Math.min(1, a)))), R * Math.PI);
+}
+
+function _sameUtcDay(a, b) {
+  return a.getUTCFullYear() === b.getUTCFullYear()
+    && a.getUTCMonth() === b.getUTCMonth()
+    && a.getUTCDate() === b.getUTCDate();
+}
+
+function _availabilityFitScore(state, startsAt, now) {
+  if (!state) return 0;
+  const ms = startsAt.getTime() - now.getTime();
+  if (state === 'now') {
+    return ms <= _URGENT_NOW_WINDOW_MS && ms >= -_URGENT_GRACE_MS ? 5 : 0;
+  }
+  if (state === 'today') {
+    return _sameUtcDay(startsAt, now) ? 4 : 0;
+  }
+  if (state === 'tomorrow') {
+    const tomorrow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    return _sameUtcDay(startsAt, tomorrow) ? 3 : 0;
+  }
+  if (state === 'this_weekend') {
+    if (ms < -_URGENT_GRACE_MS || ms > _URGENT_WEEKEND_LOOKAHEAD_MS) return 0;
+    const day = startsAt.getUTCDay(); // Sun=0, Sat=6
+    return (day === 0 || day === 6) ? 2 : 0;
+  }
+  if (state === 'evening_only' || state === 'full_time' || state === 'part_time') {
+    return 1;
+  }
+  return 0;
+}
+
+async function listUrgentRequestsForCandidate(req, res, next) {
+  try {
+    if (!(await isUrgentRequestsTablePresent())) {
+      throw AppError.unavailable(
+        'Urgent requests are temporarily unavailable. Please try again in a moment.',
+        _URGENT_NOT_READY,
+      );
+    }
+    if (!(await isCandidateAvailabilityColumnsPresent())) {
+      throw AppError.unavailable(
+        'Availability is temporarily unavailable. Please try again in a moment.',
+        _URGENT_AVAILABILITY_NOT_READY,
+      );
+    }
+    if (req.user.role !== 'candidate') {
+      throw AppError.forbidden('Only candidates can list urgent requests.');
+    }
+
+    // Resolve the candidate row + the user-side geo (lat/lng lives on
+    // `users`, mig 005). Pull every field the matching logic needs in
+    // a single query — no N+1.
+    const cand = await db('candidates')
+      .leftJoin('users', 'users.id', 'candidates.user_id')
+      .where('candidates.user_id', req.user.id)
+      .select(
+        'candidates.id as candidate_id',
+        'candidates.role',
+        'candidates.primary_role',
+        'candidates.additional_roles',
+        'candidates.availability_state',
+        'candidates.availability_until',
+        'candidates.preferred_area_radius_km',
+        'users.latitude as user_latitude',
+        'users.longitude as user_longitude',
+      )
+      .first();
+    if (!cand) throw AppError.notFound('Candidate profile not found.');
+
+    const now = new Date();
+
+    // Hard-stop: no availability set OR expired.
+    const availUntil = cand.availability_until ? new Date(cand.availability_until) : null;
+    const availStateLive = cand.availability_state
+      && (!availUntil || availUntil.getTime() > now.getTime());
+    if (!availStateLive) {
+      return ok(res, [], {
+        total: 0,
+        geo_mode: 'fallback',
+        radius_km: null,
+        availability_state: null,
+      });
+    }
+
+    // Build the effective primary role (COALESCE primary_role, role)
+    // + additional_roles array. If both buckets are empty the
+    // matcher would never hit anything — bail empty defensively.
+    const primaryRoleRaw = (cand.primary_role || cand.role || '').trim();
+    const additionalRoles = Array.isArray(cand.additional_roles)
+      ? cand.additional_roles.map((r) => String(r).trim()).filter(Boolean)
+      : [];
+    if (!primaryRoleRaw && additionalRoles.length === 0) {
+      return ok(res, [], {
+        total: 0,
+        geo_mode: 'fallback',
+        radius_km: null,
+        availability_state: cand.availability_state,
+      });
+    }
+
+    // Limit + radius — both capped to safe bounds.
+    const cap = Math.max(1, Math.min(parseInt(req.query.limit, 10) || 20, 100));
+    const radiusFromQuery = parseFloat(req.query.radius);
+    const radiusKm = Math.max(1, Math.min(
+      Number.isFinite(radiusFromQuery) ? radiusFromQuery
+        : (cand.preferred_area_radius_km || _URGENT_DEFAULT_RADIUS_KM),
+      200,
+    ));
+
+    // Fetch matching rows. SQL handles role filter + status + freshness;
+    // JS computes the score / haversine / final sort. Fetch up to 4x
+    // the cap so JS-side re-ranking has headroom (clamped to 200).
+    const fetchLimit = Math.min(cap * 4, 200);
+    let query = db('urgent_requests as ur')
+      .leftJoin('businesses as b', 'b.id', 'ur.business_id')
+      .where('ur.status', 'open')
+      .where('ur.expires_at', '>', db.fn.now())
+      .where('ur.starts_at', '>', db.raw('NOW() - INTERVAL \'1 hour\''))
+      .andWhere((qb) => {
+        if (primaryRoleRaw) {
+          qb.orWhere('ur.role', 'ILIKE', `%${primaryRoleRaw}%`);
+        }
+        if (additionalRoles.length > 0) {
+          // Pass the array as a parameter, unnest server-side, then
+          // ILIKE each element. Avoids building dynamic OR chains.
+          qb.orWhereRaw(
+            `EXISTS (SELECT 1 FROM unnest(?::text[]) AS ar WHERE ur.role ILIKE ('%' || ar || '%'))`,
+            [additionalRoles],
+          );
+        }
+      })
+      .select(
+        'ur.id', 'ur.role', 'ur.location', 'ur.starts_at', 'ur.ends_at',
+        'ur.expires_at', 'ur.notes', 'ur.business_id',
+        'ur.latitude as ur_latitude', 'ur.longitude as ur_longitude',
+        'ur.created_at',
+        'b.name as business_name',
+        'b.initials as business_initials',
+        'b.location as business_location',
+        'b.is_verified as business_is_verified',
+        'b.avatar_hue as business_avatar_hue',
+      )
+      .orderBy('ur.starts_at', 'asc')
+      .orderBy('ur.created_at', 'desc')
+      .limit(fetchLimit);
+
+    const rows = await query;
+
+    // Geo mode: haversine when BOTH candidate and at least one row
+    // have lat/lng. meta.geo_mode reflects intent ("haversine if
+    // possible") — individual rows without geo still get null
+    // distance_km in haversine mode.
+    const candHasGeo = typeof cand.user_latitude === 'number'
+      && typeof cand.user_longitude === 'number';
+    const geoMode = candHasGeo ? 'haversine' : 'fallback';
+
+    // Score + distance per row.
+    const lowerPrimary = primaryRoleRaw.toLowerCase();
+    const lowerAdditional = additionalRoles.map((s) => s.toLowerCase());
+    const scored = rows.map((r) => {
+      const urRole = (r.role || '').toLowerCase();
+      let matchScore = 0;
+      let matchReason = null;
+      if (lowerPrimary && urRole.includes(lowerPrimary)) {
+        matchScore = 2;
+        matchReason = cand.primary_role ? 'primary_role' : 'role';
+      } else if (lowerAdditional.some((ar) => urRole.includes(ar))) {
+        matchScore = 1;
+        matchReason = 'additional_roles';
+      }
+
+      const startsAt = new Date(r.starts_at);
+      const fit = _availabilityFitScore(cand.availability_state, startsAt, now);
+
+      let distanceKm = null;
+      if (
+        candHasGeo
+        && typeof r.ur_latitude === 'number'
+        && typeof r.ur_longitude === 'number'
+      ) {
+        const d = _haversineKm(
+          cand.user_latitude, cand.user_longitude,
+          r.ur_latitude, r.ur_longitude,
+        );
+        if (d !== null) {
+          distanceKm = Math.round(d * 10) / 10;
+        }
+      }
+
+      return { row: r, startsAt, matchScore, matchReason, fit, distanceKm };
+    });
+
+    // Haversine-mode radius filter — only when we actually have a
+    // distance to compare. Rows without coords in haversine mode
+    // pass through unchanged (graceful degrade per AL.4A
+    // semantics).
+    const filtered = geoMode === 'haversine'
+      ? scored.filter((s) => s.distanceKm === null || s.distanceKm <= radiusKm)
+      : scored;
+
+    // Final sort per spec.
+    filtered.sort((a, b) => {
+      if (b.matchScore !== a.matchScore) return b.matchScore - a.matchScore;
+      if (b.fit !== a.fit) return b.fit - a.fit;
+      const aD = a.distanceKm === null ? Number.POSITIVE_INFINITY : a.distanceKm;
+      const bD = b.distanceKm === null ? Number.POSITIVE_INFINITY : b.distanceKm;
+      if (aD !== bD) return aD - bD;
+      const aS = a.startsAt.getTime();
+      const bS = b.startsAt.getTime();
+      if (aS !== bS) return aS - bS;
+      // created_at DESC tiebreak
+      return new Date(b.row.created_at).getTime() - new Date(a.row.created_at).getTime();
+    });
+
+    const sliced = filtered.slice(0, cap);
+
+    // Privacy projection: NEVER expose raw lat/lng or business
+    // user_id. Only computed distance_km + safe business fields
+    // documented in the AL.5.3 contract.
+    const data = sliced.map(({ row: r, matchScore, matchReason, fit, distanceKm }) => ({
+      id: r.id,
+      role: r.role,
+      starts_at: r.starts_at,
+      ends_at: r.ends_at,
+      expires_at: r.expires_at,
+      notes: r.notes,
+      location: r.location,
+      created_at: r.created_at,
+      business: {
+        id: r.business_id,
+        name: r.business_name,
+        initials: r.business_initials,
+        location: r.business_location,
+        verified: r.business_is_verified === true,
+        avatar_hue: r.business_avatar_hue ?? 0.5,
+      },
+      match_score: matchScore,
+      match_reason: matchReason,
+      role_match_type: matchScore === 2 ? 'primary' : (matchScore === 1 ? 'additional' : 'none'),
+      availability_fit: fit,
+      distance_km: distanceKm,
+    }));
+
+    ok(res, data, {
+      total: data.length,
+      geo_mode: geoMode,
+      radius_km: candHasGeo ? radiusKm : null,
+      availability_state: cand.availability_state,
+    });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   getBusinessProfile,
   listBusinessJobsForConversation,
@@ -3738,4 +4076,6 @@ module.exports = {
   deleteCandidateNotif, deleteAllCandidateNotifs,
   // Stage AL.2 — Availability Live update endpoint.
   updateAvailability,
+  // Stage AL.5.3 — Candidate-side urgent request matching.
+  listUrgentRequestsForCandidate,
 };

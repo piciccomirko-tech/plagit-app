@@ -89,4 +89,10 @@ router.post('/feedback', c.submitMatchFeedback);
 // Community
 router.get('/community', c.listCommunityPosts);
 
+// Stage AL.5.3 — Candidate-side matching for "Staff Needed Today"
+// urgent requests. Read-only; role-gated to candidate JWTs;
+// schema-flag-gated on both `urgent_requests` table (mig 052) and
+// the AL.1 candidate availability columns (mig 051).
+router.get('/urgent-requests', c.listUrgentRequestsForCandidate);
+
 module.exports = router;
