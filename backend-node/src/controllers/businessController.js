@@ -2471,11 +2471,28 @@ async function getCandidateProfile(req, res, next) {
 // ---------------------------------------------------------------------------
 // GET /business/notifications — Business notifications
 // ---------------------------------------------------------------------------
+
+// Phase 4A — messages-surface notification routes ('message' for 1:1
+// chat, 'group' for group lifecycle) must never appear in the bell
+// list per the product rule "Bell for non-chat events only". Mirror
+// of `candidateController._BELL_EXCLUDED_ROUTES`. Rows with NULL
+// destination_route are KEPT (legacy generic notifications).
+const _BELL_EXCLUDED_ROUTES = ['message', 'group'];
+
+function _excludeChatRoutes(qb) {
+  return qb.where(function () {
+    this.whereNull('destination_route')
+      .orWhereNotIn('destination_route', _BELL_EXCLUDED_ROUTES);
+  });
+}
+
 async function listNotifications(req, res, next) {
   try {
     const userId = req.user.id;
     const { page = 1, limit = 50, is_read } = req.query;
-    let base = db('notifications').where({ recipient_id: userId });
+    let base = _excludeChatRoutes(
+      db('notifications').where({ recipient_id: userId }),
+    );
     if (is_read !== undefined) base = base.where('is_read', is_read === 'true');
     const total = await base.clone().count('* as c').first().then(r => +r.c);
     const rows = await base.clone().select('*').orderBy('created_at', 'desc').limit(+limit).offset((+page - 1) * +limit);

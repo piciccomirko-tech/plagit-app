@@ -3209,13 +3209,34 @@ async function respondToInterview(req, res, next) {
 // ---------------------------------------------------------------------------
 // GET /candidate/notifications — Candidate notifications
 // ---------------------------------------------------------------------------
+// Phase 4A — messages-surface notification routes ('message' for 1:1
+// chat, 'group' for group lifecycle) must never appear in the bell
+// list per the product rule "Bell for non-chat events only". Today
+// no rows with these routes are inserted (sendMessage skips, group
+// push is row-less), so this filter is purely defensive — protects
+// the bell from a future controller that accidentally writes the
+// wrong route. Rows with NULL destination_route are KEPT (legacy
+// generic notifications); only the two excluded literals are
+// hidden.
+const _BELL_EXCLUDED_ROUTES = ['message', 'group'];
+
+function _excludeChatRoutes(qb) {
+  return qb.where(function () {
+    this.whereNull('destination_route')
+      .orWhereNotIn('destination_route', _BELL_EXCLUDED_ROUTES);
+  });
+}
+
 async function listCandidateNotifications(req, res, next) {
   try {
     const userId = req.user.id;
     const { page = 1, limit = 30 } = req.query;
-    const total = await db('notifications').where({ recipient_id: userId }).count('* as c').first().then(r => +r.c);
-    const rows = await db('notifications')
-      .where({ recipient_id: userId })
+    const total = await _excludeChatRoutes(
+      db('notifications').where({ recipient_id: userId }),
+    ).count('* as c').first().then(r => +r.c);
+    const rows = await _excludeChatRoutes(
+      db('notifications').where({ recipient_id: userId }),
+    )
       .select('*')
       .orderBy('created_at', 'desc')
       .limit(+limit).offset((+page - 1) * +limit);
@@ -3228,7 +3249,12 @@ async function listCandidateNotifications(req, res, next) {
 // ---------------------------------------------------------------------------
 async function candidateUnreadCount(req, res, next) {
   try {
-    const c = await db('notifications').where({ recipient_id: req.user.id, is_read: false }).count('* as c').first();
+    // Phase 4A — same chat-route exclusion as the bell list so the
+    // unread badge never inflates on a chat event (push delivers the
+    // user-visible signal for those; the message icon owns the badge).
+    const c = await _excludeChatRoutes(
+      db('notifications').where({ recipient_id: req.user.id, is_read: false }),
+    ).count('* as c').first();
     ok(res, { count: +(c?.c || 0) });
   } catch (err) { next(err); }
 }
