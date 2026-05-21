@@ -7,6 +7,12 @@ const {
   isGroupPhotoColumnPresent,
 } = require('../services/schemaFeatureFlags');
 const storage = require('../storage');
+// Phase 5C — admin platform-events fan-out. Same helper that
+// authController already uses (Phase 5A/5B), exported from
+// businessController. Imported lazily-deconstructed here so the
+// dependency stays obvious to grep + a future extraction into a
+// shared service is a single search/replace away.
+const { notifyAllAdmins } = require('./businessController');
 
 // ---------------------------------------------------------------------------
 // Group conversations (mig 049)
@@ -310,6 +316,40 @@ async function createGroup(req, res, next) {
       },
       audience,
     );
+
+    // Phase 5C — fan a "new group created" row to every admin user
+    // so the admin platform-events feed surfaces the creation in
+    // real time (admin SSE audience is also part of the broadcast
+    // above, but the row gives an inspectable history). Same
+    // fire-and-forget IIFE safety as Phase 5A/5B: any failure is
+    // logged but MUST NOT roll back the conversation insert (which
+    // already committed) and MUST NOT block the response. We use
+    // `'group_created'` as the destination_route (distinct from
+    // the messages-surface `'group'` route in the Phase 1 catalog)
+    // so this admin platform event never collides with the
+    // peer-side group-lifecycle events that other phases may wire
+    // through the bell exclusion list.
+    (async () => {
+      try {
+        const actor = await db('users')
+          .where({ id: userId })
+          .select('name')
+          .first();
+        await notifyAllAdmins(
+          `New group created: ${cleanName}`,
+          'in_app',
+          newConvId,
+          'group_created',
+          [
+            actor?.name ? `By ${actor.name}` : null,
+            `${cleanMemberIds.length + 1} members`,
+          ].filter(Boolean).join(' · '),
+        );
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('[createGroup] notifyAllAdmins failed:', e.message);
+      }
+    })();
 
     const conv = await db('conversations').where({ id: newConvId }).first();
     const profiles = await _fetchMemberProfiles([userId, ...cleanMemberIds]);
