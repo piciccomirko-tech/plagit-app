@@ -3,7 +3,7 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
-const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent } = require('../services/schemaFeatureFlags');
+const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
 const storage = require('../storage');
@@ -2620,6 +2620,139 @@ async function nearbyCandidates(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ---------------------------------------------------------------------------
+// GET /business/candidates/available — Stage AL.4A
+//
+// Discovery endpoint for candidates whose AL.1 availability_state is
+// non-null AND non-expired. Two operating modes:
+//
+//   • haversine — business has lat/lng AND candidate has lat/lng:
+//     filters by radius, returns distance_km sorted ascending.
+//   • fallback  — business is missing lat/lng: returns ALL available
+//     candidates (geo data on the candidate side is ignored), sorted
+//     by state priority (now > today > tomorrow > weekend > recurring)
+//     then last_active_at desc. distance_km is null.
+//
+// In haversine mode, candidates without lat/lng are EXCLUDED so the
+// "nearby" promise isn't silently violated. They only surface when
+// the business itself has no geo (fallback mode).
+//
+// Raw lat/lng is NEVER returned — only the computed distance_km. The
+// endpoint is gated by `isCandidateAvailabilityColumnsPresent` so a
+// pre-mig-051 deploy returns 503, not 500.
+// ---------------------------------------------------------------------------
+const _AVAILABILITY_STATE_PRIORITY_SQL = `
+  CASE candidates.availability_state
+    WHEN 'now'          THEN 1
+    WHEN 'today'        THEN 2
+    WHEN 'tomorrow'     THEN 3
+    WHEN 'this_weekend' THEN 4
+    WHEN 'evening_only' THEN 5
+    WHEN 'full_time'    THEN 6
+    WHEN 'part_time'    THEN 7
+    ELSE                     99
+  END AS state_priority`;
+
+async function availableCandidates(req, res, next) {
+  try {
+    if (!(await isCandidateAvailabilityColumnsPresent())) {
+      throw AppError.unavailable(
+        'Availability discovery is temporarily unavailable. Please try again in a moment.',
+        'CANDIDATE_AVAILABILITY_NOT_READY',
+      );
+    }
+    if (req.user.role !== 'business') {
+      throw AppError.forbidden('Only businesses can list available candidates.');
+    }
+
+    const { radius = 10, limit = 30, role } = req.query;
+    const radiusKm = Math.max(1, Math.min(parseFloat(radius) || 10, 200));
+    const cap = Math.max(1, Math.min(parseInt(limit, 10) || 30, 100));
+
+    const biz = await db('businesses').where({ user_id: req.user.id }).first();
+    if (!biz) throw AppError.notFound('Business profile not found.');
+    const hasBizGeo = biz.latitude != null && biz.longitude != null;
+
+    // Common filter: candidate active + availability set + not expired.
+    const applyAvailabilityFilter = (qb) => qb
+      .where('users.user_type', 'candidate')
+      .where('users.status', 'active')
+      .whereNotNull('candidates.availability_state')
+      .where(function () {
+        this.whereNull('candidates.availability_until')
+          .orWhere('candidates.availability_until', '>', db.fn.now());
+      });
+
+    let rows;
+    let geoMode;
+
+    if (hasBizGeo) {
+      let base = db('candidates')
+        .leftJoin('users', 'candidates.user_id', 'users.id')
+        .whereNotNull('users.latitude')
+        .whereNotNull('users.longitude')
+        .select(
+          'candidates.id', 'candidates.name', 'candidates.initials',
+          'candidates.role', 'candidates.location',
+          'candidates.availability_state', 'candidates.availability_until',
+          'candidates.verification_status', 'candidates.avatar_hue',
+          'users.photo_url',
+          db.raw(CANDIDATE_HAVERSINE, [biz.latitude, biz.longitude, biz.latitude]),
+        );
+      base = applyAvailabilityFilter(base);
+      if (role) base = base.whereILike('candidates.role', `%${role}%`);
+
+      const sub = base.as('avail');
+      rows = await db.select('*').from(sub)
+        .where('distance_km', '<=', radiusKm)
+        .orderBy('distance_km', 'asc')
+        .limit(cap);
+      geoMode = 'haversine';
+    } else {
+      let base = db('candidates')
+        .leftJoin('users', 'candidates.user_id', 'users.id')
+        .select(
+          'candidates.id', 'candidates.name', 'candidates.initials',
+          'candidates.role', 'candidates.location',
+          'candidates.availability_state', 'candidates.availability_until',
+          'candidates.verification_status', 'candidates.avatar_hue',
+          'candidates.last_active_at', 'candidates.created_at',
+          'users.photo_url',
+          db.raw(_AVAILABILITY_STATE_PRIORITY_SQL),
+        );
+      base = applyAvailabilityFilter(base);
+      if (role) base = base.whereILike('candidates.role', `%${role}%`);
+
+      rows = await base
+        .orderByRaw('state_priority asc')
+        .orderByRaw('candidates.last_active_at desc nulls last')
+        .orderBy('candidates.created_at', 'desc')
+        .limit(cap);
+      geoMode = 'fallback';
+    }
+
+    // Privacy: never leak raw lat/lng. Only the computed distance_km
+    // (rounded to 100m precision) crosses the boundary.
+    const data = rows.map((r) => ({
+      id: r.id,
+      name: r.name || '',
+      initials: r.initials || '',
+      role: r.role || '',
+      location: r.location || '',
+      photo_url: r.photo_url || null,
+      verified: r.verification_status === 'verified',
+      avatar_hue: r.avatar_hue ?? 0.5,
+      availability_state: r.availability_state,
+      availability_until: r.availability_until || null,
+      distance_km: geoMode === 'haversine' && r.distance_km != null
+        ? Math.round(r.distance_km * 10) / 10
+        : null,
+    }));
+
+    ok(res, data, { total: data.length, geo_mode: geoMode, radius_km: hasBizGeo ? radiusKm : null });
+  } catch (err) { next(err); }
+}
+
 // Mirror of candidateController._AVATAR_MIME_TO_EXT — kept inline.
 const _AVATAR_MIME_TO_EXT = {
   'image/jpeg': 'jpg',
@@ -3231,7 +3364,7 @@ module.exports = {
   getCandidateProfile,
   listNotifications, markNotificationRead, markAllNotificationsRead,
   deleteNotification, deleteAllNotifications,
-  recentApplicants, nearbyCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
+  recentApplicants, nearbyCandidates, availableCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
   quickplugDeck, quickplugSwipe,
   subscription,
   tryCreateMutualMatch,

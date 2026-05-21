@@ -65,6 +65,10 @@ router.post('/messages/:messageId/report', c.reportMessage);
 
 // Candidates
 router.get('/candidates/nearby', c.nearbyCandidates);
+// Stage AL.4A — list candidates with active availability_state.
+// Registered BEFORE `/candidates/:id` so the literal "available" path
+// doesn't get swallowed by the :id param matcher.
+router.get('/candidates/available', c.availableCandidates);
 router.get('/candidates/:id', c.getCandidateProfile);
 
 // Matches
