@@ -28,6 +28,7 @@ const _cache = {
   group_chat: { present: null, lastCheckedAt: 0 },
   group_photo_url: { present: null, lastCheckedAt: 0 },
   candidate_availability: { present: null, lastCheckedAt: 0 },
+  urgent_requests: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -262,6 +263,33 @@ async function isCandidateAvailabilityColumnsPresent() {
   }
 }
 
+/// Probe for the `urgent_requests` table added by migration 052
+/// (Stage AL.5.1). Single-table presence check — no per-column
+/// probe needed since the table is created atomically. Same
+/// sticky-on-true + 30s re-probe pattern as the other flags.
+async function isUrgentRequestsTablePresent() {
+  const entry = _cache.urgent_requests;
+  if (entry.present === true) return true;
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  try {
+    const result = await db.schema.hasTable('urgent_requests');
+    entry.present = result;
+    entry.lastCheckedAt = now;
+    if (result) {
+      // eslint-disable-next-line no-console
+      console.log('[schemaFeatureFlags] urgent_requests table is now PRESENT');
+    }
+    return result;
+  } catch (_) {
+    entry.present = false;
+    entry.lastCheckedAt = now;
+    return false;
+  }
+}
+
 module.exports = {
   isAlbumColumnPresent,
   isVideoColumnsPresent,
@@ -271,4 +299,5 @@ module.exports = {
   isGroupChatColumnsPresent,
   isGroupPhotoColumnPresent,
   isCandidateAvailabilityColumnsPresent,
+  isUrgentRequestsTablePresent,
 };
