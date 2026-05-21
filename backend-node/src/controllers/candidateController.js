@@ -316,6 +316,13 @@ async function profile(req, res, next) {
       start_date: candidate?.start_date || null,
       available_to_relocate: candidate?.available_to_relocate || false,
       verification_status: candidate?.verification_status || 'new',
+      // Stage AL.3.1 — Availability Live state (AL.1 columns). The
+      // candidate row is SELECT *'d so these fields are pulled even
+      // pre-migration; absent columns simply render as null. The
+      // Flutter card hydrates from these on cold start.
+      availability_state: candidate?.availability_state ?? null,
+      availability_until: candidate?.availability_until ?? null,
+      preferred_area_radius_km: candidate?.preferred_area_radius_km ?? null,
       created_at: user.created_at,
       // Subscription
       subscription_plan: user.subscription_plan || 'free',
