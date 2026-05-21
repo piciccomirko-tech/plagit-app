@@ -271,13 +271,13 @@ async function registerCandidate(req, res, next) {
     }).returning('*');
 
     // Create candidate record
-    await db('candidates').insert({
+    const [newCand] = await db('candidates').insert({
       user_id: user.id, name, initials,
       role: role || null, location: location || null,
       experience: experience || null, languages: languages || null,
       job_type: job_type || null,
       verification_status: 'new', avatar_hue: avatarHue,
-    });
+    }).returning(['id', 'name']);
 
     // Calculate initial profile strength
     let strength = 20;
@@ -288,6 +288,22 @@ async function registerCandidate(req, res, next) {
     if (languages) strength += 15;
     strength = Math.min(strength, 100);
     await db('users').where({ id: user.id }).update({ profile_strength: strength });
+
+    // Phase 5B — fan a "new candidate registered" row to every admin
+    // user, mirror of the Phase 5A business-signup wiring. Same
+    // fire-and-forget safety: any notify failure is logged but
+    // MUST NOT roll back the signup (which has already committed
+    // above) and MUST NOT block the registration response.
+    notifyAllAdmins(
+      `New candidate registered: ${newCand?.name || name}`,
+      'in_app',
+      newCand?.id || null,
+      'candidate',
+      location ? `Location: ${location}` : null,
+    ).catch((e) => {
+      // eslint-disable-next-line no-console
+      console.warn('[registerCandidate] notifyAllAdmins failed:', e.message);
+    });
 
     // Auto-login: issue tokens
     const accessToken = signAccessToken(user);
