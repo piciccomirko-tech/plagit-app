@@ -39,6 +39,16 @@ const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { isChatRequestsTablePresent } = require('../services/schemaFeatureFlags');
+// Stage AL.6.2 — reuse the existing per-recipient notify helper so
+// the chat-request gate hooks the standard `notification.new` SSE
+// channel + push pipeline without duplicating the dedupe + insert
+// + bus.publish plumbing. hiringNotify is exported from
+// businessController (since AL.5.8). Its built-in
+// (recipient_id, linked_entity, destination_route) triple dedupe
+// handles idempotent retries automatically: the helper short-
+// circuits BEFORE the INSERT and BEFORE the SSE publish, so a
+// retry produces zero side effects.
+const { hiringNotify } = require('./businessController');
 
 const _EXPIRY_DAYS = 7;
 const _COOLDOWN_DAYS = 7;
@@ -314,10 +324,35 @@ async function createChatRequest(req, res, next) {
       .select(..._PROFILE_JOINS)
       .first();
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       data: _shapeRow(enriched),
     });
+
+    // Stage AL.6.2 — fire a single deduped "New chat request"
+    // notification onto the recipient's bell. Fire-and-forget IIFE
+    // matches the Phase 5A/B/C precedent: the 201 response is
+    // already on the wire, the chat_request row is committed; a
+    // notify glitch must not roll back either. hiringNotify dedupe
+    // (recipient_id, linked_entity, destination_route) absorbs any
+    // edge double-call without duplicating the row or re-publishing
+    // SSE. This branch is NOT reached by the bypass paths
+    // (existing conversation / accepted request) — those already
+    // `return res.status(200)...` above. Cooldown and duplicate-
+    // pending throw before reaching here.
+    const requesterDisplayName = inserted.requester_role === 'candidate'
+      ? ((enriched && enriched.candidate_name) || 'A candidate').trim()
+      : ((enriched && enriched.business_name) || 'A business').trim();
+    const notifyBody = `${requesterDisplayName} wants to chat with you`;
+    // ignore: no-floating-promises — intentional fire-and-forget
+    hiringNotify(
+      inserted.recipient_user_id,
+      'New chat request',
+      'in_app',
+      inserted.id,
+      'chat_request_received',
+      notifyBody,
+    ).catch(() => { /* notify is best-effort; the chat_request row is the canonical record */ });
   } catch (err) { next(err); }
 }
 
@@ -498,6 +533,30 @@ async function respondToChatRequest(req, res, next) {
       .first();
 
     ok(res, _shapeRow(enriched));
+
+    // Stage AL.6.2 — notify the requester when their pending request
+    // flips to accepted. Silent on deny/cancel per decision #3.
+    // Skip on idempotent retries (`result.idempotent === true`) per
+    // decision #4: hiringNotify dedupe would absorb the call anyway,
+    // but short-circuiting at the controller level saves a DB SELECT
+    // + avoids any chance of re-publishing SSE. Terminal-state
+    // collisions (409) throw inside the transaction and never reach
+    // this branch.
+    if (action === 'accept' && !result.idempotent) {
+      const accepterDisplayName = result.row.recipient_role === 'candidate'
+        ? ((enriched && enriched.candidate_name) || 'The candidate').trim()
+        : ((enriched && enriched.business_name) || 'The business').trim();
+      const notifyBody = `${accepterDisplayName} accepted your chat request`;
+      // ignore: no-floating-promises — intentional fire-and-forget
+      hiringNotify(
+        result.row.requester_user_id,
+        'Chat request accepted',
+        'in_app',
+        result.row.id,
+        'chat_request_accepted',
+        notifyBody,
+      ).catch(() => { /* notify is best-effort; conversation is the canonical signal */ });
+    }
   } catch (err) { next(err); }
 }
 
