@@ -48,7 +48,10 @@ const { isChatRequestsTablePresent } = require('../services/schemaFeatureFlags')
 // handles idempotent retries automatically: the helper short-
 // circuits BEFORE the INSERT and BEFORE the SSE publish, so a
 // retry produces zero side effects.
-const { hiringNotify } = require('./businessController');
+// Stage AL.6.5 — also pull `notifyAllAdmins` from the same module
+// so we can fan a single audit notification out to every admin row
+// on create + accept (decision #6, type `chat_request_audit`).
+const { hiringNotify, notifyAllAdmins } = require('./businessController');
 
 const _EXPIRY_DAYS = 7;
 const _COOLDOWN_DAYS = 7;
@@ -353,6 +356,40 @@ async function createChatRequest(req, res, next) {
       'chat_request_received',
       notifyBody,
     ).catch(() => { /* notify is best-effort; the chat_request row is the canonical record */ });
+
+    // Stage AL.6.5 — admin audit fanout.
+    //
+    // Single deduped audit notification onto every admin row. The
+    // recipient-side hiringNotify above is the user-visible bell;
+    // this is the admin observability surface (decision #6, type
+    // `chat_request_audit`). Copy is intentionally terse audit
+    // style — "{candidate} → {business}" — and EN-only per
+    // decision #7. We pass the chat_request id as `linked_entity`
+    // so the per-admin hiringNotify dedupe absorbs any double-call
+    // (same retry semantics as AL.6.2 user-side notify).
+    //
+    // Bypass paths (existing conversation / existing accepted
+    // request) early-return with 200 BEFORE reaching this branch,
+    // so duplicate POSTs from a settled pair never generate an
+    // audit notification (smoke item #5). Cooldown / duplicate-
+    // pending throw before we get here too.
+    const candName = ((enriched && enriched.candidate_name) || 'A candidate').trim();
+    const bizName  = ((enriched && enriched.business_name)  || 'A business').trim();
+    const auditTitle = `${candName} → ${bizName}`;
+    // Route key carries the lifecycle event suffix so that the
+    // `(recipient_id, linked_entity, route)` dedup triple in
+    // hiringNotify does NOT absorb the later `chat_request_audit_accepted`
+    // call as a duplicate of the create-side audit. Both keys are
+    // collapsed back to a single deepLink target by the Flutter
+    // NotificationTypeCatalog (→ /admin/chat-requests).
+    // ignore: no-floating-promises — intentional fire-and-forget
+    notifyAllAdmins(
+      auditTitle,
+      'in_app',
+      inserted.id,
+      'chat_request_audit_created',
+      null,
+    ).catch(() => { /* audit is best-effort; the chat_request row is canonical */ });
   } catch (err) { next(err); }
 }
 
@@ -556,6 +593,40 @@ async function respondToChatRequest(req, res, next) {
         'chat_request_accepted',
         notifyBody,
       ).catch(() => { /* notify is best-effort; conversation is the canonical signal */ });
+
+      // Stage AL.6.5 — admin audit fanout on accept.
+      //
+      // Same guard as the user-side notify: only fire on
+      // non-idempotent accept. The `!result.idempotent` short-
+      // circuit ensures retries don't double-notify admins.
+      // Silent on deny / cancel per decision #6 (Mirko's spec).
+      //
+      // Audit copy mirrors the create-side direction-first style
+      // but flips it to "{recipient} accepted {requester}" so the
+      // admin can read the action at a glance without opening
+      // the row.
+      const acceptedByName = result.row.recipient_role === 'candidate'
+        ? ((enriched && enriched.candidate_name) || 'The candidate').trim()
+        : ((enriched && enriched.business_name)  || 'The business').trim();
+      const requesterName = result.row.requester_role === 'candidate'
+        ? ((enriched && enriched.candidate_name) || 'a candidate').trim()
+        : ((enriched && enriched.business_name)  || 'a business').trim();
+      const auditTitle = `${acceptedByName} accepted ${requesterName}`;
+      // Route key carries `_accepted` suffix so the dedup triple
+      // is distinct from the create-side `chat_request_audit_created`
+      // entry — both events on the same chat_request must persist.
+      // Retry idempotency is still preserved: a second accept PATCH
+      // returns early via `!result.idempotent` BEFORE reaching this
+      // branch, so the dedup is on the actual lifecycle event, not
+      // on the notification key.
+      // ignore: no-floating-promises — intentional fire-and-forget
+      notifyAllAdmins(
+        auditTitle,
+        'in_app',
+        result.row.id,
+        'chat_request_audit_accepted',
+        null,
+      ).catch(() => { /* audit is best-effort */ });
     }
   } catch (err) { next(err); }
 }

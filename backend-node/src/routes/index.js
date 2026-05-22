@@ -50,5 +50,7 @@ router.use('/admin/logs', require('./adminLogs'));
 router.use('/admin/settings', require('./adminSettings'));
 // Stage AL.5.9 — Admin read-only urgent requests visibility.
 router.use('/admin/urgent-requests', require('./adminUrgentRequests'));
+// Stage AL.6.5 — Admin read-only chat requests audit.
+router.use('/admin/chat-requests', require('./adminChatRequests'));
 
 module.exports = router;
