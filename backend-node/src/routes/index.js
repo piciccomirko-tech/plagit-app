@@ -52,5 +52,7 @@ router.use('/admin/settings', require('./adminSettings'));
 router.use('/admin/urgent-requests', require('./adminUrgentRequests'));
 // Stage AL.6.5 — Admin read-only chat requests audit.
 router.use('/admin/chat-requests', require('./adminChatRequests'));
+// Phase 3.2 — push token registration foundation.
+router.use('/push', require('./push'));
 
 module.exports = router;
