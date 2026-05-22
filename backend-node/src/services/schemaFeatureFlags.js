@@ -29,6 +29,7 @@ const _cache = {
   group_photo_url: { present: null, lastCheckedAt: 0 },
   candidate_availability: { present: null, lastCheckedAt: 0 },
   urgent_requests: { present: null, lastCheckedAt: 0 },
+  chat_requests: { present: null, lastCheckedAt: 0 },
 };
 
 const _RECHECK_INTERVAL_MS = 30 * 1000;
@@ -290,6 +291,34 @@ async function isUrgentRequestsTablePresent() {
   }
 }
 
+/// Probe for the `chat_requests` table added by migration 053
+/// (Stage AL.6.1). Same sticky-on-true + 30s re-probe pattern as the
+/// other flags. Used by the Candidate + Business chat-request
+/// endpoints to surface a clean 503 when the table is missing on a
+/// pre-mig deploy.
+async function isChatRequestsTablePresent() {
+  const entry = _cache.chat_requests;
+  if (entry.present === true) return true;
+  const now = Date.now();
+  if (entry.present === false && (now - entry.lastCheckedAt) < _RECHECK_INTERVAL_MS) {
+    return false;
+  }
+  try {
+    const result = await db.schema.hasTable('chat_requests');
+    entry.present = result;
+    entry.lastCheckedAt = now;
+    if (result) {
+      // eslint-disable-next-line no-console
+      console.log('[schemaFeatureFlags] chat_requests table is now PRESENT');
+    }
+    return result;
+  } catch (_) {
+    entry.present = false;
+    entry.lastCheckedAt = now;
+    return false;
+  }
+}
+
 module.exports = {
   isAlbumColumnPresent,
   isVideoColumnsPresent,
@@ -300,4 +329,5 @@ module.exports = {
   isGroupPhotoColumnPresent,
   isCandidateAvailabilityColumnsPresent,
   isUrgentRequestsTablePresent,
+  isChatRequestsTablePresent,
 };

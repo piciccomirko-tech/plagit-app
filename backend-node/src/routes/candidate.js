@@ -102,4 +102,14 @@ router.get('/urgent-requests', c.listUrgentRequestsForCandidate);
 // path so Express doesn't swallow the literal route as a param.
 router.post('/urgent-requests/:id/accept', c.acceptUrgentRequest);
 
+// Stage AL.6.1 — Chat Request Gate / Mutual Chat Consent.
+// Shared controller — dispatches based on req.user.role. Candidate
+// initiates with POST { business_id, message? }. Recipient (Business
+// in this direction) responds via PATCH { action: 'accept' | 'deny' }.
+// Requester cancels with PATCH { action: 'cancel' }.
+const chatRequests = require('../controllers/chatRequestsController');
+router.post('/chat-requests', chatRequests.createChatRequest);
+router.get('/chat-requests', chatRequests.listChatRequests);
+router.patch('/chat-requests/:id', chatRequests.respondToChatRequest);
+
 module.exports = router;

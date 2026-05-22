@@ -93,6 +93,17 @@ router.post('/urgent-requests', c.createUrgentRequest);
 router.get('/urgent-requests', c.listUrgentRequests);
 router.patch('/urgent-requests/:id', c.updateUrgentRequest);
 
+// Stage AL.6.1 — Chat Request Gate / Mutual Chat Consent.
+// Mirror of the candidate-side routes; shared controller dispatches
+// based on req.user.role. Business initiates with POST { candidate_id,
+// message? }. Recipient (Candidate in this direction) responds via
+// PATCH { action: 'accept' | 'deny' }. Requester cancels with PATCH
+// { action: 'cancel' }.
+const chatRequests = require('../controllers/chatRequestsController');
+router.post('/chat-requests', chatRequests.createChatRequest);
+router.get('/chat-requests', chatRequests.listChatRequests);
+router.patch('/chat-requests/:id', chatRequests.respondToChatRequest);
+
 // Subscription
 router.get('/subscription', c.subscription);
 
