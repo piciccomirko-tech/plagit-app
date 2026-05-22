@@ -8,6 +8,14 @@ const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelope
 const { scoreCandidateForJob } = require('../services/matchScoring');
 const { rankJobs } = require('../services/jobRanking');
 const storage = require('../storage');
+// Stage AL.5.8 — reuse the businessController fanout helper so a
+// successful AL.5.6 accept can fire a single deduped "Elena accepted
+// your urgent shift" notification onto the business owner's bell
+// without duplicating the insert + bus.publish plumbing here.
+// Lazy `require` would be safer against circular imports, but
+// businessController doesn't import candidateController (verified —
+// only references in comments), so the top-level form is fine.
+const { hiringNotify: _hiringNotify } = require('./businessController');
 
 // ---------------------------------------------------------------------------
 // Candidate Quick Jobs daily swipe cap
@@ -4138,7 +4146,7 @@ async function acceptUrgentRequest(req, res, next) {
       const cand = await trx('candidates')
         .where({ user_id: req.user.id })
         .select(
-          'id', 'role', 'primary_role', 'additional_roles',
+          'id', 'name', 'role', 'primary_role', 'additional_roles',
           'availability_state', 'availability_until',
         )
         .first();
@@ -4158,7 +4166,7 @@ async function acceptUrgentRequest(req, res, next) {
           .first();
         const biz = await trx('businesses').where({ id: ur.business_id }).first();
         if (existing) {
-          return { ur, biz, conversation: existing, created: false };
+          return { ur, biz, conversation: existing, created: false, candidateName: cand.name };
         }
         // Edge: row filled by us but no conversation (data drift /
         // archived after fill). Heal silently by creating one — the
@@ -4167,7 +4175,7 @@ async function acceptUrgentRequest(req, res, next) {
           business_id: ur.business_id,
           candidate_id: cand.id,
         }).returning('*');
-        return { ur, biz, conversation: created, created: true };
+        return { ur, biz, conversation: created, created: true, candidateName: cand.name };
       }
 
       // Terminal-state guards (status != 'open').
@@ -4272,7 +4280,13 @@ async function acceptUrgentRequest(req, res, next) {
       }
 
       const biz = await trx('businesses').where({ id: ur.business_id }).first();
-      return { ur: urFilled, biz, conversation, created: conversationCreated };
+      return {
+        ur: urFilled,
+        biz,
+        conversation,
+        created: conversationCreated,
+        candidateName: cand.name,
+      };
     });
 
     ok(res, {
@@ -4296,6 +4310,39 @@ async function acceptUrgentRequest(req, res, next) {
         },
       },
     });
+
+    // Stage AL.5.8 — fan a single deduped "Elena accepted your
+    // urgent shift" notification onto the business owner's bell.
+    // Fire-and-forget IIFE matches the Phase 5A/B/C precedent:
+    // notify failures must NEVER roll back the accept (transaction
+    // already committed) or block the response (already sent above).
+    //
+    // `hiringNotify` is idempotent on the `(recipient_id,
+    // linked_entity, destination_route)` triple, so:
+    //   • same candidate retrying accept (200 idempotent path) →
+    //     second call short-circuits inside hiringNotify, no
+    //     duplicate row, no second SSE
+    //   • the audience token list `[role:admin, user:<bizUserId>]`
+    //     is inherited from the helper; the admin token is harmless
+    //     until AL.5.9 wires admin urgent visibility (no admin
+    //     handler subscribes today)
+    const bizUserId = result.biz?.user_id;
+    if (bizUserId) {
+      const candName = (result.candidateName || '').trim() || 'A candidate';
+      const role = (result.ur.role || '').trim();
+      const body = role
+        ? `${candName} accepted your ${role} urgent shift`
+        : `${candName} accepted your urgent shift`;
+      // ignore: no-floating-promises — intentional fire-and-forget
+      _hiringNotify(
+        bizUserId,
+        'Urgent shift accepted',
+        'in_app',
+        result.ur.id,
+        'urgent_request_accepted',
+        body,
+      ).catch(() => { /* notify is best-effort; chat is the canonical signal */ });
+    }
   } catch (err) { next(err); }
 }
 

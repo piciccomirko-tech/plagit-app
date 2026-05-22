@@ -3675,4 +3675,9 @@ module.exports = {
   // can hook admin visibility events without duplicating the
   // hiringNotify-per-admin loop.
   notifyAllAdmins,
+  // Stage AL.5.8 — expose the granular per-recipient notify helper
+  // so candidateController.acceptUrgentRequest can fire-and-forget
+  // a single business-side notification without duplicating the
+  // dedupe + bus.publish plumbing.
+  hiringNotify,
 };
