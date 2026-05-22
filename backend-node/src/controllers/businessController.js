@@ -2917,6 +2917,25 @@ async function createUrgentRequest(req, res, next) {
       expires_at: expiresAt.toISOString(),
     }).returning('*');
 
+    // Stage AL.5.9 — fan a single deduped "New urgent shift posted"
+    // notification onto every admin's bell. Fire-and-forget IIFE
+    // matches the Phase 5A/B/C precedent: notify failures must NEVER
+    // roll back the insert (DB write already committed) or block the
+    // 201 response (sent below). hiringNotify dedupe on
+    // (recipient, linked_entity, destination_route) — per-admin row,
+    // safe against retries.
+    (async () => {
+      try {
+        await notifyAllAdmins(
+          'New urgent shift posted',
+          'in_app',
+          row.id,
+          'urgent_request_created',
+          `${biz.name || 'A business'} · ${roleRaw}`,
+        );
+      } catch (_) { /* best-effort; row is the canonical record */ }
+    })();
+
     return res.status(201).json({ success: true, data: row });
   } catch (err) { next(err); }
 }

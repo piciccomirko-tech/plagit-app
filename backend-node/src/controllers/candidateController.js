@@ -4342,6 +4342,28 @@ async function acceptUrgentRequest(req, res, next) {
         'urgent_request_accepted',
         body,
       ).catch(() => { /* notify is best-effort; chat is the canonical signal */ });
+
+      // Stage AL.5.9 — also fan onto every admin's bell so the audit
+      // feed reflects the lifecycle event. notifyAllAdmins loops admin
+      // users and calls hiringNotify per recipient, reusing the same
+      // (recipient_id, linked_entity, destination_route) dedupe.
+      // Same urgent_request_accepted route as the business notify
+      // above — collisions are PER-RECIPIENT, not global, so each
+      // admin gets exactly one row.
+      const adminBody = role
+        ? `${candName} → ${result.biz?.name || 'business'} (${role})`
+        : `${candName} → ${result.biz?.name || 'business'}`;
+      (async () => {
+        try {
+          await notifyAllAdmins(
+            'Urgent shift accepted',
+            'in_app',
+            result.ur.id,
+            'urgent_request_accepted',
+            adminBody,
+          );
+        } catch (_) { /* best-effort; admin audit is a polish */ }
+      })();
     }
   } catch (err) { next(err); }
 }

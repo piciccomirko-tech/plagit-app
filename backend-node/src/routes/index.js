@@ -48,5 +48,7 @@ router.use('/admin/featured', require('./adminFeatured'));
 router.use('/admin/matches', require('./adminMatches'));
 router.use('/admin/logs', require('./adminLogs'));
 router.use('/admin/settings', require('./adminSettings'));
+// Stage AL.5.9 — Admin read-only urgent requests visibility.
+router.use('/admin/urgent-requests', require('./adminUrgentRequests'));
 
 module.exports = router;
