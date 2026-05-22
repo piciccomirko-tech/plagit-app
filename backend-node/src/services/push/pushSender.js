@@ -55,8 +55,18 @@ function getAdmin() {
 
 async function getTokensForUser(userId) {
   try {
+    // Phase 3.5 — only target active tokens. The `revoked_at IS NULL`
+    // filter respects the P3.2 soft-revoke contract: a device that
+    // logged out (or whose token came back as `not-registered` from
+    // FCM, see dispatchOne below) stays in the table for audit but
+    // never receives another push until re-registration clears the
+    // revocation. Admin opt-out is already enforced client-side
+    // (P3.3 DeviceService skips register for role='admin'), so no
+    // additional role filter is needed here — admin user_ids simply
+    // return zero rows.
     const rows = await db('device_tokens')
       .where({ user_id: userId })
+      .whereNull('revoked_at')
       .select('token', 'platform', 'app_version');
     return rows;
   } catch (_) {
@@ -130,9 +140,17 @@ async function dispatchOne({ token, platform }, payload) {
       code === 'messaging/invalid-argument'
     ) {
       try {
-        await db('device_tokens').where({ token }).del();
+        // Phase 3.5 — soft-revoke instead of hard-delete (P3.2
+        // contract). The row stays for audit; getTokensForUser
+        // above filters it out on subsequent sends so we never
+        // re-attempt this token. If the device comes back online
+        // and Flutter re-registers, P3.2 register-token endpoint
+        // clears revoked_at and the token reactivates.
+        await db('device_tokens')
+          .where({ token })
+          .update({ revoked_at: db.fn.now(), updated_at: db.fn.now() });
         // eslint-disable-next-line no-console
-        console.log(`[push:cleanup] removed stale token=${short(token)}`);
+        console.log(`[push:revoke] revoked stale token=${short(token)}`);
       } catch (_) { /* best-effort */ }
     }
     return { ok: false, mode: 'live', code };
