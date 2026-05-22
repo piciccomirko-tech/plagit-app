@@ -4055,6 +4055,250 @@ async function listUrgentRequestsForCandidate(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ---------------------------------------------------------------------------
+// POST /candidate/urgent-requests/:id/accept — Stage AL.5.6 chat handoff
+//
+// Atomically transitions an urgent_request from 'open' → 'filled' on
+// behalf of the calling candidate AND creates (or reuses) the 1:1
+// candidate↔business conversation in the same transaction. Returns
+// the conversation id + the updated urgent_request so the Flutter UI
+// can navigate to chat without an extra round-trip.
+//
+// The candidate's acceptance is treated as their consent for THIS
+// specific shift's conversation; the business already consented by
+// posting the urgent_request publicly. AL.5.6 therefore does NOT
+// engage the (future) general chat-request consent gate — when that
+// sprint ships, urgent-request-spawned conversations will be
+// exempted via the `urgent_requests.filled_by_candidate_id` link.
+//
+// Race safety:
+//   • SELECT ... FOR UPDATE on the urgent_request row prevents two
+//     candidates from filling the same shift concurrently.
+//   • The UPDATE re-asserts `status='open'` so even if the row was
+//     flipped between SELECT and UPDATE (shouldn't happen with the
+//     lock, defensive) we surface a 409 instead of silently
+//     overwriting.
+//   • Whole thing wraps `knex.transaction` so any failure rolls back
+//     both the fill AND any conversation insert.
+//
+// Idempotency:
+//   • Same candidate tapping accept twice → 200 with
+//     `conversation_created: false` and the existing conversation
+//     id. No status change (the row is already 'filled' by them).
+//   • Different candidate after the row is filled → 409
+//     URGENT_REQUEST_ALREADY_FILLED.
+//
+// Visibility (don't leak existence — 404 catches all of):
+//   • urgent_request not found
+//   • candidate has no `availability_state` or it has expired
+//   • candidate has no role data at all
+//   • role doesn't match urgent_request.role (per AL.5.3 matcher:
+//     primary_role / role substring OR additional_roles array
+//     element substring, all case-insensitive)
+//
+// No notifications, no admin event, no push payload, no system
+// message inserted into the conversation. AL.5.8 will add the
+// "Elena accepted your urgent shift" fan-out.
+// ---------------------------------------------------------------------------
+async function acceptUrgentRequest(req, res, next) {
+  try {
+    if (!(await isUrgentRequestsTablePresent())) {
+      throw AppError.unavailable(
+        'Urgent requests are temporarily unavailable. Please try again in a moment.',
+        _URGENT_NOT_READY,
+      );
+    }
+    if (!(await isCandidateAvailabilityColumnsPresent())) {
+      throw AppError.unavailable(
+        'Availability is temporarily unavailable. Please try again in a moment.',
+        _URGENT_AVAILABILITY_NOT_READY,
+      );
+    }
+    if (req.user.role !== 'candidate') {
+      throw AppError.forbidden('Only candidates can accept urgent requests.');
+    }
+
+    const result = await db.transaction(async (trx) => {
+      // Lock the urgent_request row first so concurrent accepts queue
+      // behind us and see the post-update state.
+      const ur = await trx('urgent_requests')
+        .where({ id: req.params.id })
+        .forUpdate()
+        .first();
+      if (!ur) {
+        throw AppError.notFound(
+          'Urgent request not found.',
+          'URGENT_REQUEST_NOT_FOUND',
+        );
+      }
+
+      // Resolve the calling candidate row + the AL.1 availability
+      // fields under the same transaction so the matcher reads a
+      // consistent view.
+      const cand = await trx('candidates')
+        .where({ user_id: req.user.id })
+        .select(
+          'id', 'role', 'primary_role', 'additional_roles',
+          'availability_state', 'availability_until',
+        )
+        .first();
+      if (!cand) {
+        throw AppError.notFound(
+          'Urgent request not found.',
+          'URGENT_REQUEST_NOT_FOUND',
+        );
+      }
+
+      // Idempotent retry path — same candidate, already filled by
+      // them. Return the existing conversation, never re-fill.
+      if (ur.status === 'filled' && ur.filled_by_candidate_id === cand.id) {
+        const existing = await trx('conversations')
+          .where({ business_id: ur.business_id, candidate_id: cand.id })
+          .whereNot('status', 'archived')
+          .first();
+        const biz = await trx('businesses').where({ id: ur.business_id }).first();
+        if (existing) {
+          return { ur, biz, conversation: existing, created: false };
+        }
+        // Edge: row filled by us but no conversation (data drift /
+        // archived after fill). Heal silently by creating one — the
+        // semantic invariant stays "accept → chat exists".
+        const [created] = await trx('conversations').insert({
+          business_id: ur.business_id,
+          candidate_id: cand.id,
+        }).returning('*');
+        return { ur, biz, conversation: created, created: true };
+      }
+
+      // Terminal-state guards (status != 'open').
+      if (ur.status === 'filled') {
+        throw AppError.conflict(
+          'This shift was already accepted by another candidate.',
+          'URGENT_REQUEST_ALREADY_FILLED',
+        );
+      }
+      if (ur.status === 'cancelled') {
+        throw AppError.conflict(
+          'This shift was cancelled by the business.',
+          'URGENT_REQUEST_CANCELLED',
+        );
+      }
+      // 'expired' as a literal status doesn't auto-flip (per AL.5.2
+      // design: lazy filter on read), but a stale `expires_at`
+      // closes the window the same way.
+      const expiresAtMs = new Date(ur.expires_at).getTime();
+      if (Number.isFinite(expiresAtMs) && expiresAtMs < Date.now()) {
+        // 410 Gone — the resource existed but is now permanently
+        // closed via timeout. Distinct from 409 Conflict (cancelled
+        // / already-filled, which are state collisions, not
+        // temporal closure).
+        throw new AppError(
+          'This shift has expired.',
+          410,
+          'URGENT_REQUEST_EXPIRED',
+        );
+      }
+
+      // Visibility re-check — same matcher AL.5.3 applies on the
+      // candidate-side GET. Returning 404 here prevents enumerating
+      // urgent_request ids outside the caller's role/availability
+      // scope.
+      const availLive = (cand.availability_state || '').length > 0
+        && (!cand.availability_until
+            || new Date(cand.availability_until).getTime() > Date.now());
+      if (!availLive) {
+        throw AppError.notFound(
+          'Urgent request not found.',
+          'URGENT_REQUEST_NOT_FOUND',
+        );
+      }
+      const primaryRoleRaw = (cand.primary_role || cand.role || '').trim().toLowerCase();
+      const additionalRoles = Array.isArray(cand.additional_roles)
+        ? cand.additional_roles.map((r) => String(r).trim().toLowerCase()).filter(Boolean)
+        : [];
+      const urRoleLower = (ur.role || '').toLowerCase();
+      let roleMatched = false;
+      if (primaryRoleRaw && urRoleLower.includes(primaryRoleRaw)) {
+        roleMatched = true;
+      } else if (additionalRoles.length > 0) {
+        roleMatched = additionalRoles.some((ar) => urRoleLower.includes(ar));
+      }
+      if (!roleMatched) {
+        throw AppError.notFound(
+          'Urgent request not found.',
+          'URGENT_REQUEST_NOT_FOUND',
+        );
+      }
+
+      // Atomic fill — second-layer optimistic lock via WHERE clause.
+      const updated = await trx('urgent_requests')
+        .where({ id: ur.id, status: 'open' })
+        .update({
+          status: 'filled',
+          filled_by_candidate_id: cand.id,
+          updated_at: trx.fn.now(),
+        })
+        .returning('*');
+      if (!updated || updated.length === 0) {
+        // Lost the race despite the FOR UPDATE (shouldn't happen,
+        // defensive). Surface a clean conflict.
+        throw AppError.conflict(
+          'This shift was already accepted by another candidate.',
+          'URGENT_REQUEST_ALREADY_FILLED',
+        );
+      }
+      const urFilled = updated[0];
+
+      // Find-or-create the 1:1 conversation. Mirrors the existing
+      // businessController.startConversation reuse logic (whereNot
+      // status='archived'). `job_id` is intentionally NULL: urgent
+      // requests don't link to a job posting; the conversation
+      // belongs to the candidate↔business pair.
+      const existing = await trx('conversations')
+        .where({ business_id: ur.business_id, candidate_id: cand.id })
+        .whereNot('status', 'archived')
+        .first();
+      let conversation;
+      let conversationCreated = false;
+      if (existing) {
+        conversation = existing;
+      } else {
+        const [created] = await trx('conversations').insert({
+          business_id: ur.business_id,
+          candidate_id: cand.id,
+        }).returning('*');
+        conversation = created;
+        conversationCreated = true;
+      }
+
+      const biz = await trx('businesses').where({ id: ur.business_id }).first();
+      return { ur: urFilled, biz, conversation, created: conversationCreated };
+    });
+
+    ok(res, {
+      conversation_id: result.conversation.id,
+      conversation_created: result.created,
+      urgent_request: {
+        id: result.ur.id,
+        role: result.ur.role,
+        starts_at: result.ur.starts_at,
+        ends_at: result.ur.ends_at,
+        expires_at: result.ur.expires_at,
+        status: result.ur.status,
+        filled_by_candidate_id: result.ur.filled_by_candidate_id,
+        updated_at: result.ur.updated_at,
+        business: {
+          id: result.biz?.id ?? result.ur.business_id,
+          name: result.biz?.name ?? '',
+          initials: result.biz?.initials ?? '',
+          verified: result.biz?.is_verified === true,
+          avatar_hue: result.biz?.avatar_hue ?? 0.5,
+        },
+      },
+    });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   getBusinessProfile,
   listBusinessJobsForConversation,
@@ -4078,4 +4322,6 @@ module.exports = {
   updateAvailability,
   // Stage AL.5.3 — Candidate-side urgent request matching.
   listUrgentRequestsForCandidate,
+  // Stage AL.5.6 — Urgent request accept + chat handoff.
+  acceptUrgentRequest,
 };

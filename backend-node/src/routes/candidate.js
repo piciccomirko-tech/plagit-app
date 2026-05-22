@@ -95,4 +95,11 @@ router.get('/community', c.listCommunityPosts);
 // the AL.1 candidate availability columns (mig 051).
 router.get('/urgent-requests', c.listUrgentRequestsForCandidate);
 
+// Stage AL.5.6 — Accept an open matching urgent request. Atomic:
+// flips status 'open' → 'filled', sets filled_by_candidate_id,
+// creates (or reuses) the 1:1 candidate↔business conversation. The
+// :id segment is registered AFTER the literal `/urgent-requests`
+// path so Express doesn't swallow the literal route as a param.
+router.post('/urgent-requests/:id/accept', c.acceptUrgentRequest);
+
 module.exports = router;
