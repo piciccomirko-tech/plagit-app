@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
+const { bus } = require('../services/realtime/eventBus');
 
 // Helper: create a feed notification (fire-and-forget)
 async function notify(recipientId, actorId, actionType, postId, preview) {
@@ -172,18 +173,40 @@ async function toggleLike(req, res, next) {
     const userId = req.user.id;
 
     const existing = await db('post_likes').where({ post_id: postId, user_id: userId }).first();
+    let liked;
     if (existing) {
       await db('post_likes').where({ id: existing.id }).del();
       await db('feed_posts').where({ id: postId }).decrement('like_count', 1);
-      ok(res, { liked: false });
+      liked = false;
     } else {
       await db('post_likes').insert({ post_id: postId, user_id: userId });
       await db('feed_posts').where({ id: postId }).increment('like_count', 1);
       // Notify post author
       const post = await db('feed_posts').where({ id: postId }).select('user_id', 'body').first();
       if (post) notify(post.user_id, userId, 'like', postId, post.body);
-      ok(res, { liked: true });
+      liked = true;
     }
+
+    // Read back the authoritative like_count so the broadcast carries
+    // the post-toggle absolute value (every receiver overwrites their
+    // local count). Wrapped in try/catch so the response isn't blocked
+    // if the bus or the read-back fails — the optimistic UI on the
+    // sender already aligned to `liked`.
+    try {
+      const row = await db('feed_posts').where({ id: postId }).select('like_count').first();
+      bus.publish(
+        'feed.like.updated',
+        {
+          post_id: postId,
+          like_count: row ? Number(row.like_count) : null,
+          liked,          // state after this toggle, for the actor
+          user_id: userId, // actor — receivers use this to skip echo
+        },
+        ['topic:feed'],
+      );
+    } catch (_) { /* never block the response on bus errors */ }
+
+    ok(res, { liked });
   } catch (err) { next(err); }
 }
 
@@ -243,14 +266,28 @@ async function addComment(req, res, next) {
     const cand = await db('candidates').where({ user_id: userId }).first();
     const biz = await db('businesses').where({ user_id: userId }).first();
 
-    ok(res, {
+    const responseRow = {
       id: comment.id, body: comment.body, created_at: comment.created_at,
       user_id: userId,
       author_name: user.name, author_type: user.user_type,
       author_photo_url: user.photo_url, author_avatar_hue: user.avatar_hue,
       author_verified: user.is_verified,
       author_initials: cand?.initials || biz?.initials || user.name.slice(0, 2).toUpperCase(),
-    });
+    };
+
+    // Broadcast to every authenticated SSE listener so other viewers of
+    // this post (Candidate or Business) refresh their open comments
+    // sheet without restart. Payload is the persisted comment row plus
+    // `post_id` so the Flutter side can scope the refetch.
+    try {
+      bus.publish(
+        'feed.comment.new',
+        { post_id: postId, comment: responseRow },
+        ['topic:feed'],
+      );
+    } catch (_) { /* never block the response on bus errors */ }
+
+    ok(res, responseRow);
   } catch (err) { next(err); }
 }
 

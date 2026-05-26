@@ -49,12 +49,22 @@ const bus = new RealtimeBus();
  * True if the given user matches the audience tokens of an event.
  * @param {{id: string, role: string}} user
  * @param {string[]} audience
+ *
+ * Supported tokens:
+ *   - 'user:<id>'   → single recipient
+ *   - 'role:admin'  → every connected admin
+ *   - 'topic:feed'  → every authenticated user connected to SSE. Used
+ *                     by the public community-feed surface (new
+ *                     comments) where the audience is not scoped to a
+ *                     specific user or role. Bypasses Chat audience
+ *                     model on purpose — feed events are public.
  */
 function audienceMatches(user, audience) {
   if (!user || !Array.isArray(audience) || audience.length === 0) return false;
   for (const token of audience) {
     if (token === `user:${user.id}`) return true;
     if (token === 'role:admin' && user.role === 'admin') return true;
+    if (token === 'topic:feed' && user.id) return true;
   }
   return false;
 }
