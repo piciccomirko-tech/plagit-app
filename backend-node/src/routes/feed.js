@@ -12,6 +12,7 @@ router.get('/following', c.listFollowing);
 router.get('/', c.listPosts);
 router.post('/', c.createPost);
 router.post('/:id/like', c.toggleLike);
+router.post('/:id/repost', c.toggleRepost);
 router.get('/:id/comments', c.listComments);
 router.post('/:id/comments', c.addComment);
 router.delete('/:id', c.deletePost);

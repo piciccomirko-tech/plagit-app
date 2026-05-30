@@ -33,7 +33,7 @@ function postSelect() {
 const POST_COLUMNS = [
   'feed_posts.id', 'feed_posts.body', 'feed_posts.image_url', 'feed_posts.video_url', 'feed_posts.location',
   'feed_posts.tag', 'feed_posts.role_category', 'feed_posts.like_count', 'feed_posts.comment_count',
-  'feed_posts.view_count', 'feed_posts.save_count',
+  'feed_posts.view_count', 'feed_posts.save_count', 'feed_posts.repost_count',
   'feed_posts.latitude', 'feed_posts.longitude', 'feed_posts.created_at',
   'feed_posts.user_id',
   'users.name as author_name', 'users.user_type as author_type',
@@ -83,33 +83,93 @@ async function listPosts(req, res, next) {
       }
     }
 
-    const total = await base.clone().count('feed_posts.id as c').first().then(r => +r.c);
-    const rows = await base.clone()
-      .select(POST_COLUMNS)
-      .orderBy('feed_posts.created_at', 'desc')
-      .limit(+limit).offset((+page - 1) * +limit);
+    const offset = (+page - 1) * +limit;
+    // True reshare: include repost-items only in the main "For You" feed
+    // (following/nearby stay originals-only for MVP).
+    const includeReposts = tab !== 'following' && tab !== 'nearby';
 
-    // Attach media, liked-by-me, and following flags
+    // Shared content columns = original post + author (everything EXCEPT
+    // feed_posts.id, which differs per branch so the repost-item gets a
+    // distinct list key). Both UNION branches MUST select the same columns
+    // in the same order.
+    const sharedCols = POST_COLUMNS.slice(1);
+    const originalSel = [
+      db.raw('feed_posts.id as id'),
+      ...sharedCols,
+      db.raw('feed_posts.created_at as sort_ts'),
+      db.raw('false as is_repost'),
+      db.raw('CAST(NULL AS uuid) as repost_id'),
+      db.raw('CAST(NULL AS uuid) as reposted_by_user_id'),
+      db.raw('CAST(NULL AS varchar) as reposted_by_name'),
+      db.raw('CAST(NULL AS text) as reposted_by_avatar'),
+      db.raw('CAST(NULL AS timestamptz) as reposted_at'),
+      db.raw('feed_posts.id as original_post_id'),
+    ];
+
+    let total, rows;
+    if (!includeReposts) {
+      total = await base.clone().count('feed_posts.id as c').first().then(r => +r.c);
+      rows = await base.clone()
+        .select(originalSel)
+        .orderBy('feed_posts.created_at', 'desc')
+        .limit(+limit).offset(offset);
+    } else {
+      // Repost-items branch: ORIGINAL post content + reposter metadata,
+      // ordered by repost time. Same tag/role filters on the original post.
+      let rb = postSelect()
+        .join('feed_post_reposts', 'feed_post_reposts.post_id', 'feed_posts.id')
+        .leftJoin('users as reposter', 'feed_post_reposts.user_id', 'reposter.id');
+      if (tag) rb = rb.where('feed_posts.tag', tag);
+      if (role) rb = rb.whereILike('feed_posts.role_category', `%${role}%`);
+      const repostSel = [
+        db.raw('feed_post_reposts.id as id'),
+        ...sharedCols,
+        db.raw('feed_post_reposts.created_at as sort_ts'),
+        db.raw('true as is_repost'),
+        db.raw('feed_post_reposts.id as repost_id'),
+        db.raw('feed_post_reposts.user_id as reposted_by_user_id'),
+        db.raw('reposter.name as reposted_by_name'),
+        db.raw('reposter.photo_url as reposted_by_avatar'),
+        db.raw('feed_post_reposts.created_at as reposted_at'),
+        db.raw('feed_posts.id as original_post_id'),
+      ];
+      const oc = await base.clone().count('feed_posts.id as c').first().then(r => +r.c);
+      const rc = await rb.clone().count('feed_post_reposts.id as c').first().then(r => +r.c);
+      total = oc + rc;
+      const unionSub = db.unionAll([
+        base.clone().select(originalSel),
+        rb.clone().select(repostSel),
+      ], true);
+      rows = await db.select('*').from(unionSub.as('feed'))
+        .orderBy('sort_ts', 'desc')
+        .orderBy('id', 'desc')
+        .limit(+limit).offset(offset);
+    }
+
+    // Attach media, liked-by-me, and following flags (keyed on the ORIGINAL
+    // post id, so repost-items reflect the original post's media/state)
     const myFollows = await db('user_follows').where({ follower_id: userId }).select('followed_id').then(r => new Set(r.map(f => f.followed_id)));
     for (const row of rows) {
       // Attach media array (new multi-media, falls back to legacy image_url/video_url)
-      const media = await db('post_media').where({ post_id: row.id }).orderBy('sort_order').select('id', 'media_type', 'url', 'sort_order');
+      const media = await db('post_media').where({ post_id: row.original_post_id }).orderBy('sort_order').select('id', 'media_type', 'url', 'sort_order');
       if (media.length > 0) {
         row.media = media;
       } else if (row.image_url || row.video_url) {
         // Legacy single-media compat
         row.media = [];
-        if (row.image_url) row.media.push({ id: row.id + '-img', media_type: 'photo', url: row.image_url, sort_order: 0 });
-        if (row.video_url) row.media.push({ id: row.id + '-vid', media_type: 'video', url: row.video_url, sort_order: 1 });
+        if (row.image_url) row.media.push({ id: row.original_post_id + '-img', media_type: 'photo', url: row.image_url, sort_order: 0 });
+        if (row.video_url) row.media.push({ id: row.original_post_id + '-vid', media_type: 'video', url: row.video_url, sort_order: 1 });
       } else {
         row.media = [];
       }
     }
     const mySaves = await db('post_saves').where({ user_id: userId }).select('post_id').then(r => new Set(r.map(s => s.post_id)));
+    const myReposts = await db('feed_post_reposts').where({ user_id: userId }).select('post_id').then(r => new Set(r.map(s => s.post_id)));
     for (const row of rows) {
-      const liked = await db('post_likes').where({ post_id: row.id, user_id: userId }).first();
+      const liked = await db('post_likes').where({ post_id: row.original_post_id, user_id: userId }).first();
       row.is_liked = !!liked;
-      row.is_saved = mySaves.has(row.id);
+      row.is_saved = mySaves.has(row.original_post_id);
+      row.is_reposted_by_me = myReposts.has(row.original_post_id);
       row.is_following = row.user_id ? myFollows.has(row.user_id) : false;
       row.is_own = row.user_id === userId;
     }
@@ -154,6 +214,7 @@ async function createPost(req, res, next) {
 
     const full = await postSelect().where('feed_posts.id', post.id).select(POST_COLUMNS).first();
     full.is_liked = false;
+    full.is_reposted_by_me = false;
     full.is_following = false;
     full.is_own = true;
     full.media = mediaItems.length > 0 ? mediaItems : (
@@ -537,4 +598,33 @@ async function recordView(req, res, next) {
   } catch (err) { next(err); }
 }
 
-module.exports = { listPosts, createPost, toggleLike, listComments, addComment, deletePost, seedFeed, followUser, unfollowUser, listFollowing, listFeedNotifications, unreadNotifCount, markNotifRead, markAllNotifsRead, savePost, unsavePost, recordView };
+// ---------------------------------------------------------------------------
+// POST /feed/:id/repost — Toggle repost (engagement counter + per-viewer flag)
+// ---------------------------------------------------------------------------
+// Mirrors toggleLike: idempotent via UNIQUE(post_id, user_id) on
+// feed_post_reposts. Toggle on = insert + increment; toggle off = delete +
+// decrement (clamped at 0 via GREATEST). NOT a reshare — never injects the
+// post into anyone's feed.
+async function toggleRepost(req, res, next) {
+  try {
+    const postId = req.params.id;
+    const userId = req.user.id;
+
+    const existing = await db('feed_post_reposts').where({ post_id: postId, user_id: userId }).first();
+    let reposted;
+    if (existing) {
+      await db('feed_post_reposts').where({ id: existing.id }).del();
+      await db('feed_posts').where({ id: postId }).update({ repost_count: db.raw('GREATEST(repost_count - 1, 0)') });
+      reposted = false;
+    } else {
+      await db('feed_post_reposts').insert({ post_id: postId, user_id: userId });
+      await db('feed_posts').where({ id: postId }).increment('repost_count', 1);
+      reposted = true;
+    }
+
+    const updated = await db('feed_posts').where({ id: postId }).select('repost_count').first();
+    return ok(res, { reposted, repost_count: updated ? updated.repost_count : 0 });
+  } catch (err) { next(err); }
+}
+
+module.exports = { listPosts, createPost, toggleLike, toggleRepost, listComments, addComment, deletePost, seedFeed, followUser, unfollowUser, listFollowing, listFeedNotifications, unreadNotifCount, markNotifRead, markAllNotifsRead, savePost, unsavePost, recordView };
