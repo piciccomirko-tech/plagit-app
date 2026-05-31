@@ -645,14 +645,101 @@ async function toggleRepost(req, res, next) {
       await db('feed_posts').where({ id: postId }).update({ repost_count: db.raw('GREATEST(repost_count - 1, 0)') });
       reposted = false;
     } else {
+      // Block reposting your own post (only on the INSERT path, so an
+      // undo of any pre-existing self-repost row above still works).
+      const post = await db('feed_posts').where({ id: postId }).select('user_id').first();
+      if (post && post.user_id === userId) throw AppError.badRequest('You cannot repost your own post.');
       await db('feed_post_reposts').insert({ post_id: postId, user_id: userId });
       await db('feed_posts').where({ id: postId }).increment('repost_count', 1);
       reposted = true;
     }
 
     const updated = await db('feed_posts').where({ id: postId }).select('repost_count').first();
-    return ok(res, { reposted, repost_count: updated ? updated.repost_count : 0 });
+    const repostCount = updated ? Number(updated.repost_count) : 0;
+
+    // LIVE propagation so the OTHER user's feed reflects the (un)repost
+    // without a refresh. Mirrors the like/comment/post broadcast pattern:
+    // wrapped in try/catch so a bus or read-back error never blocks the
+    // response (the sender already aligned optimistically).
+    try {
+      if (reposted) {
+        // Build the SAME repost feed-item shape listPosts emits (the UNION
+        // repost branch + media/liked hydration), filtered to THIS one repost
+        // row, so the receiver's CommunityPost.fromBackend renders a correct
+        // card with the "X reposted Y's post" banner.
+        const repostItem = await buildRepostItem(postId, userId);
+        if (repostItem) {
+          repostItem.repost_count = repostCount;
+          bus.publish('feed.repost.created', { post: repostItem }, ['topic:feed']);
+        } else {
+          // Hydration failed — fall back to a lightweight refetch on the client.
+          bus.publish('feed.repost.created', { original_post_id: postId }, ['topic:feed']);
+        }
+      } else {
+        // Removal keyed by the ORIGINAL post id + reposter so the receiver
+        // can drop the matching repost-item (never the original).
+        bus.publish(
+          'feed.repost.deleted',
+          { original_post_id: postId, reposted_by_user_id: userId },
+          ['topic:feed'],
+        );
+      }
+    } catch (_) { /* never block the response on bus errors */ }
+
+    return ok(res, { reposted, repost_count: repostCount });
   } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
+// Helper: assemble a single repost feed-item (post_id + reposter) in the SAME
+// shape listPosts emits for a repost row, so the SSE payload parses cleanly via
+// the Flutter CommunityPost.fromBackend repost branch. Returns null if the
+// repost row or original post can no longer be hydrated.
+// ---------------------------------------------------------------------------
+async function buildRepostItem(postId, reposterId) {
+  const sharedCols = POST_COLUMNS.slice(1);
+  const repostSel = [
+    db.raw('feed_post_reposts.id as id'),
+    ...sharedCols,
+    db.raw('true as is_repost'),
+    db.raw('feed_post_reposts.id as repost_id'),
+    db.raw('feed_post_reposts.user_id as reposted_by_user_id'),
+    db.raw('COALESCE(reposter_business.name, reposter.name) as reposted_by_name'),
+    db.raw('reposter.photo_url as reposted_by_avatar'),
+    db.raw('feed_post_reposts.created_at as reposted_at'),
+    db.raw('feed_posts.id as original_post_id'),
+  ];
+  const row = await postSelect()
+    .join('feed_post_reposts', 'feed_post_reposts.post_id', 'feed_posts.id')
+    .leftJoin({ reposter: 'users' }, 'feed_post_reposts.user_id', 'reposter.id')
+    .leftJoin({ reposter_business: 'businesses' }, function () {
+      this.on('reposter.id', '=', 'reposter_business.user_id').andOn('reposter.user_type', '=', db.raw("'business'"));
+    })
+    .where('feed_post_reposts.post_id', postId)
+    .where('feed_post_reposts.user_id', reposterId)
+    .select(repostSel)
+    .first();
+  if (!row) return null;
+
+  // Attach media (keyed on the ORIGINAL post id), mirroring listPosts.
+  const media = await db('post_media').where({ post_id: row.original_post_id }).orderBy('sort_order').select('id', 'media_type', 'url', 'sort_order');
+  if (media.length > 0) {
+    row.media = media;
+  } else if (row.image_url || row.video_url) {
+    row.media = [];
+    if (row.image_url) row.media.push({ id: row.original_post_id + '-img', media_type: 'photo', url: row.image_url, sort_order: 0 });
+    if (row.video_url) row.media.push({ id: row.original_post_id + '-vid', media_type: 'video', url: row.video_url, sort_order: 1 });
+  } else {
+    row.media = [];
+  }
+  // Per-viewer flags are broadcast-neutral — each receiver recomputes their
+  // own is_liked/is_saved on next load(); seed false so fromBackend is happy.
+  row.is_liked = false;
+  row.is_saved = false;
+  row.is_reposted_by_me = false;
+  row.is_following = false;
+  row.is_own = false;
+  return row;
 }
 
 module.exports = { listPosts, createPost, toggleLike, toggleRepost, listComments, addComment, deletePost, seedFeed, followUser, unfollowUser, listFollowing, listFeedNotifications, unreadNotifCount, markNotifRead, markAllNotifsRead, savePost, unsavePost, recordView };
