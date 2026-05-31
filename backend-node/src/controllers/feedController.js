@@ -188,14 +188,16 @@ async function createPost(req, res, next) {
   try {
     const userId = req.user.id;
     const { body, image_url, video_url, media, location, tag, role_category, latitude, longitude } = req.body;
-    if (!body || !body.trim()) throw AppError.badRequest('Post body is required.');
+    const hasMedia = (Array.isArray(media) && media.length > 0) || !!image_url || !!video_url;
+    const text = (body || '').trim();
+    if (!text && !hasMedia) throw AppError.badRequest('Add a caption or at least one photo or video.');
 
     // Legacy single-media compat
     if (image_url && image_url.length > 4 * 1024 * 1024) throw AppError.badRequest('Image too large.');
     const processedVideoUrl = video_url && video_url.startsWith('data:video/') && video_url.length > 10 * 1024 * 1024 ? null : (video_url || null);
 
     const [post] = await db('feed_posts').insert({
-      user_id: userId, body: body.trim(),
+      user_id: userId, body: text,
       image_url: image_url || null, video_url: processedVideoUrl, location: location || null,
       tag: tag || null, role_category: role_category || null,
       latitude: latitude || null, longitude: longitude || null,
@@ -204,7 +206,7 @@ async function createPost(req, res, next) {
     // Insert multi-media items if provided
     const mediaItems = [];
     if (Array.isArray(media) && media.length > 0) {
-      for (let i = 0; i < Math.min(media.length, 10); i++) {
+      for (let i = 0; i < Math.min(media.length, 6); i++) {
         const m = media[i];
         if (m.url && m.media_type) {
           const [row] = await db('post_media').insert({
@@ -224,6 +226,18 @@ async function createPost(req, res, next) {
       image_url ? [{ id: post.id + '-img', media_type: 'photo', url: image_url, sort_order: 0 }] :
       processedVideoUrl ? [{ id: post.id + '-vid', media_type: 'video', url: processedVideoUrl, sort_order: 0 }] : []
     );
+
+    // Broadcast to every authenticated SSE listener so the other role's
+    // feed surfaces the new post live without restart. Payload is the
+    // same full post object returned to the client.
+    try {
+      bus.publish(
+        'feed.post.created',
+        { post: full },
+        ['topic:feed'],
+      );
+    } catch (_) { /* never block the response on bus errors */ }
+
     ok(res, full);
   } catch (err) { next(err); }
 }
@@ -365,6 +379,17 @@ async function deletePost(req, res, next) {
     const post = await db('feed_posts').where({ id: postId, user_id: userId }).first();
     if (!post) throw AppError.notFound('Post not found or not yours.');
     await db('feed_posts').where({ id: postId }).update({ status: 'deleted', updated_at: db.fn.now() });
+
+    // Broadcast to every authenticated SSE listener so the other role's
+    // feed removes the deleted post live without restart.
+    try {
+      bus.publish(
+        'feed.post.deleted',
+        { post_id: postId, id: postId },
+        ['topic:feed'],
+      );
+    } catch (_) { /* never block the response on bus errors */ }
+
     ok(res, { success: true });
   } catch (err) { next(err); }
 }
