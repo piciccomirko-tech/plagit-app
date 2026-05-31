@@ -118,7 +118,10 @@ async function listPosts(req, res, next) {
       // ordered by repost time. Same tag/role filters on the original post.
       let rb = postSelect()
         .join('feed_post_reposts', 'feed_post_reposts.post_id', 'feed_posts.id')
-        .leftJoin('users as reposter', 'feed_post_reposts.user_id', 'reposter.id');
+        .leftJoin({ reposter: 'users' }, 'feed_post_reposts.user_id', 'reposter.id')
+        .leftJoin({ reposter_business: 'businesses' }, function () {
+          this.on('reposter.id', '=', 'reposter_business.user_id').andOn('reposter.user_type', '=', db.raw("'business'"));
+        });
       if (tag) rb = rb.where('feed_posts.tag', tag);
       if (role) rb = rb.whereILike('feed_posts.role_category', `%${role}%`);
       const repostSel = [
@@ -128,7 +131,7 @@ async function listPosts(req, res, next) {
         db.raw('true as is_repost'),
         db.raw('feed_post_reposts.id as repost_id'),
         db.raw('feed_post_reposts.user_id as reposted_by_user_id'),
-        db.raw('reposter.name as reposted_by_name'),
+        db.raw('COALESCE(reposter_business.name, reposter.name) as reposted_by_name'),
         db.raw('reposter.photo_url as reposted_by_avatar'),
         db.raw('feed_post_reposts.created_at as reposted_at'),
         db.raw('feed_posts.id as original_post_id'),
