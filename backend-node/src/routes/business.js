@@ -109,6 +109,7 @@ router.get('/subscription', c.subscription);
 
 // Notifications
 router.get('/notifications', c.listNotifications);
+router.get('/notifications/count', c.notificationsUnreadCount);
 router.patch('/notifications/read-all', c.markAllNotificationsRead);
 router.patch('/notifications/:id/read', c.markNotificationRead);
 router.delete('/notifications/:id', c.deleteNotification);

@@ -2502,6 +2502,23 @@ async function listNotifications(req, res, next) {
 }
 
 // ---------------------------------------------------------------------------
+// GET /business/notifications/count — unread bell badge count
+// ---------------------------------------------------------------------------
+// Symmetric to candidateController.candidateUnreadCount: same response
+// shape ({ count }), same bell-route exclusion (chat/group events drive
+// the messages icon, not the bell), scoped to the calling user's own
+// rows (recipient_id = req.user.id) — the same per-user ownership every
+// other business notification endpoint uses.
+async function notificationsUnreadCount(req, res, next) {
+  try {
+    const c = await _excludeChatRoutes(
+      db('notifications').where({ recipient_id: req.user.id, is_read: false }),
+    ).count('* as c').first();
+    ok(res, { count: +(c?.c || 0) });
+  } catch (err) { next(err); }
+}
+
+// ---------------------------------------------------------------------------
 // PATCH /business/notifications/:id/read — Mark notification as read
 // ---------------------------------------------------------------------------
 async function markNotificationRead(req, res, next) {
@@ -3703,7 +3720,7 @@ module.exports = {
   hideMessageForMe, deleteMessageForEveryone,
   reportMessage,
   getCandidateProfile,
-  listNotifications, markNotificationRead, markAllNotificationsRead,
+  listNotifications, notificationsUnreadCount, markNotificationRead, markAllNotificationsRead,
   deleteNotification, deleteAllNotifications,
   recentApplicants, nearbyCandidates, availableCandidates, listJobMatches, submitMatchFeedback, updateMatchStatus,
   createUrgentRequest, listUrgentRequests, updateUrgentRequest,
