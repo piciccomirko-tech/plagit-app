@@ -36,6 +36,11 @@ const { ok, created } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 const { isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
+// Stage N1-3 — reuse the shared notify helper (persist + `notification.new`
+// SSE + (recipient_id, linked_entity, destination_route) dedupe) for the
+// missed-call bell notification. No import cycle: businessController does
+// not require callController. Same precedent as candidate/chatRequests.
+const { hiringNotify } = require('./businessController');
 
 // ── State machine ──────────────────────────────────────────────────
 const STATUS = Object.freeze({
@@ -365,6 +370,32 @@ async function maybeInsertCallLogMessage(row) {
 // users+candidates+businesses join. Identity lookup failures are
 // non-fatal: the SSE event still publishes with caller/callee=null
 // and the Flutter UI falls back to initials from the userId.
+// Stage N1-3 — persist a missed-call BELL notification. Self-filters on
+// `missed` so declined / ended / failed pass through as no-ops (mirrors
+// maybeInsertCallLogMessage's gate, but for the bell surface instead of
+// the chat-log bubble). On `ringing → missed` the CALLEE is the party who
+// missed the call, so they are the recipient. hiringNotify provides
+// persist + `notification.new` SSE + the (recipient_id, linked_entity,
+// destination_route) dedupe, so a retried/replayed terminal transition
+// never doubles the row. route 'call_missed' is NOT in the bell-excluded
+// set, so it surfaces on the bell + unread count (unlike the chat-stream
+// 'message' call-log row). linked_entity = call id (per-call dedupe).
+async function maybeNotifyMissedCall(row, identities) {
+  if (row.status !== STATUS.MISSED) return;
+  const callerName = (identities
+    && identities[row.caller_id]
+    && identities[row.caller_id].name) || 'Someone';
+  const kind = row.type === 'video' ? 'video' : 'voice';
+  await hiringNotify(
+    row.callee_id,
+    'Missed call',
+    'in_app',
+    row.id,
+    'call_missed',
+    `Missed ${kind} call from ${callerName}`,
+  );
+}
+
 async function publishCallEvent(row) {
   const eventType = EVENT_TYPE_BY_STATUS[row.status];
   if (!eventType) return null; // unknown status — defensive no-op
@@ -389,6 +420,15 @@ async function publishCallEvent(row) {
   } catch (e) {
     // eslint-disable-next-line no-console
     console.warn('[callController] maybeInsertCallLogMessage failed:', e.message);
+  }
+  // Stage N1-3 — bell notification for missed calls (self-filtering).
+  // Best-effort: a notify hiccup must never block the SSE publish below,
+  // which is still the primary realtime signal.
+  try {
+    await maybeNotifyMissedCall(row, identities);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.warn('[callController] maybeNotifyMissedCall failed:', e.message);
   }
   return bus.publish(eventType, { call: buildCallPayload(row, identities) }, audience);
 }
@@ -683,5 +723,6 @@ module.exports = {
     ALLOWED_TRANSITIONS,
     assertTransition,
     maybeInsertCallLogMessage,
+    maybeNotifyMissedCall,
   },
 };
