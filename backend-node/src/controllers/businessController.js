@@ -6,6 +6,7 @@ const { buildReplyEnvelope } = require('../services/messageReplyEnvelope');
 const { isAlbumColumnPresent, isVideoColumnsPresent, isVideoAlbumColumnsPresent, isForwardedColumnsPresent, isCallLogColumnPresent, isGroupChatColumnsPresent, isGroupPhotoColumnPresent, isCandidateAvailabilityColumnsPresent, isUrgentRequestsTablePresent } = require('../services/schemaFeatureFlags');
 const { buildEntityShareEnvelope, isSupportedShareType, batchEntityShareEnvelopes } = require('../services/entityShareEnvelope');
 const { scoreCandidateAgainstBusinessJobs } = require('../services/matchScoring');
+const urgentMatching = require('../services/urgentMatching');
 const storage = require('../storage');
 
 // ---------------------------------------------------------------------------
@@ -2934,6 +2935,26 @@ async function createUrgentRequest(req, res, next) {
           `${biz.name || 'A business'} · ${roleRaw}`,
         );
       } catch (_) { /* best-effort; row is the canonical record */ }
+    })();
+
+    // Stage N1-1 — fan a deduped "urgent shift match" notification onto
+    // every compatible + available candidate's bell (route
+    // 'urgent_request_match'). Reuses the AL.5.3 matcher primitives via
+    // the urgentMatching service, with two caps: 25/10 per request and 5
+    // per candidate per UTC day. Fire-and-forget IIFE — same precedent as
+    // the admin fan-out above: a notify glitch must never roll back the
+    // committed insert or block the 201. hiringNotify is passed by
+    // injection so the service stays free of a businessController import
+    // cycle, and its (recipient, linked_entity, route) dedupe absorbs any
+    // retry without duplicate rows or re-published SSE.
+    (async () => {
+      try {
+        await urgentMatching.notifyMatchingCandidatesForUrgentRequest(
+          row,
+          hiringNotify,
+          { businessName: biz.name },
+        );
+      } catch (_) { /* best-effort; the urgent_request row is canonical */ }
     })();
 
     return res.status(201).json({ success: true, data: row });
