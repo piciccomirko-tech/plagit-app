@@ -60,6 +60,64 @@ function uniqueUserIds(audience) {
   return [...ids];
 }
 
+// Stage N5.1 — admin-only notification routes NEVER push. These are
+// platform-audit feeds fanned to admins (desktop panel, not push). The
+// event audience also carries a `user:<adminId>` token, so the
+// `role:admin` skip in uniqueUserIds is not enough on its own.
+const ADMIN_ONLY_ROUTES = new Set([
+  'chat_request_audit_created',
+  'chat_request_audit_accepted',
+  'urgent_request_created',
+]);
+
+// Stage N5.1 — defence-in-depth: never deliver a real push to an admin
+// recipient, whatever the route. The client-side opt-out (DeviceService
+// skips register for role='admin') is NOT authoritative — a stale admin
+// token must still never receive a push. Single grouped query, no
+// per-recipient round-trip. Fails OPEN on a DB hiccup (returns the input)
+// so a transient error never silently drops legitimate user pushes; the
+// ADMIN_ONLY_ROUTES denylist above still blocks the audit feeds anyway.
+async function filterOutAdmins(userIds) {
+  if (!userIds.length) return userIds;
+  try {
+    const admins = await db('users')
+      .whereIn('id', userIds)
+      .where('user_type', 'admin')
+      .pluck('id');
+    if (!admins.length) return userIds;
+    const adminSet = new Set(admins);
+    const kept = userIds.filter((id) => !adminSet.has(id));
+    // Safe log: count only — no ids / tokens / PII.
+    // eslint-disable-next-line no-console
+    console.log(`[push:skip-admin] dropped ${userIds.length - kept.length} admin recipient(s)`);
+    return kept;
+  } catch (_) {
+    return userIds;
+  }
+}
+
+// Resolve the final user ids that should receive a real push for this
+// event: PUSH_TYPES gate → admin-only-route denylist → audience user ids →
+// drop admins → drop the message sender. Returns [] when nothing should be
+// pushed. Extracted so the policy is unit-testable without the bus or the
+// FCM sender.
+async function resolvePushRecipients(evt) {
+  if (!evt || !PUSH_TYPES.has(evt.type)) return [];
+  const route = evt.type === 'notification.new'
+    ? (evt.payload && evt.payload.destination_route) : null;
+  if (route && ADMIN_ONLY_ROUTES.has(route)) {
+    // eslint-disable-next-line no-console
+    console.log(`[push:skip-admin-route] route=${route} (admin-only, no push)`);
+    return [];
+  }
+  const targets = uniqueUserIds(evt.audience);
+  if (targets.length === 0) return [];
+  const senderId = evt.type === 'message.new'
+    ? (evt.payload && evt.payload.sender_user_id) : null;
+  const nonAdmin = await filterOutAdmins(targets);
+  return nonAdmin.filter((uid) => uid !== senderId);
+}
+
 async function buildPayload(type, payload) {
   switch (type) {
     case 'message.new': {
@@ -193,22 +251,14 @@ async function buildPayload(type, payload) {
 function start() {
   bus.on('event', async (evt) => {
     try {
-      if (!evt || !PUSH_TYPES.has(evt.type)) return;
-      const targets = uniqueUserIds(evt.audience);
-      if (targets.length === 0) return;
+      // Stage N5.1 — recipient resolution (incl. admin-only-route skip +
+      // admin-recipient drop + message-sender suppression) is centralized
+      // in resolvePushRecipients so SSE-echo and audit feeds never push.
+      const recipients = await resolvePushRecipients(evt);
+      if (recipients.length === 0) return;
       const payload = await buildPayload(evt.type, evt.payload || {});
       if (!payload) return;
-
-      // `message.new` echoes to the sender too (so SSE can refresh lists);
-      // suppress the push for the sender to avoid self-notifications.
-      const senderId =
-        evt.type === 'message.new' ? evt.payload?.sender_user_id : null;
-
-      await Promise.all(
-        targets
-          .filter((uid) => uid !== senderId)
-          .map((uid) => sendToUser(uid, payload))
-      );
+      await Promise.all(recipients.map((uid) => sendToUser(uid, payload)));
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('[push:subscriber] failed:', err.message);
@@ -218,4 +268,8 @@ function start() {
   console.log('[push:subscriber] started');
 }
 
-module.exports = { start };
+module.exports = {
+  start,
+  // Exported for tests:
+  _internal: { resolvePushRecipients, filterOutAdmins, ADMIN_ONLY_ROUTES },
+};
