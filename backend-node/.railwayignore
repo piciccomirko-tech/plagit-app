@@ -14,3 +14,14 @@ scripts/reset_nobu_test_data.sh
 
 # Integration tests are run locally and on CI, not on prod runtime.
 tests/
+
+# --- 2026-06-05 N5.6-B safety prep: tighten the `railway up` package ---
+# Planning runbook — documentation only, not needed on the prod runtime.
+RUNBOOK_N5.6-B.md
+
+# Local smoke/dev helpers — run locally only, keep the prod surface tight.
+scripts/smoke_*.js
+scripts/migrate_legacy_photo_uri.js
+
+# (Already excluded above: .knexfile_recon.js, scripts/reset_nobu_test_data.sh, tests/
+#  — which covers tests/integration/urgentRequestNotifications.test.js.)
