@@ -3,10 +3,13 @@ const db = require('../../config/db');
 /**
  * Push notification sender.
  *
- * Provider strategy:
- *   • If `FCM_SERVICE_ACCOUNT_JSON` is set, the firebase-admin SDK is lazily
- *     initialised on first dispatch and used to send to FCM tokens (iOS via
- *     APNS bridge, Android natively).
+ * Provider strategy (N5.6-B safe default):
+ *   • Real delivery is OFF unless `PUSH_REAL_ENABLED === 'true'`. This lets us
+ *     deploy with `FCM_SERVICE_ACCOUNT_JSON` already present on the host and
+ *     still stay in LOG MODE until we opt in on purpose.
+ *   • When opted in AND `FCM_SERVICE_ACCOUNT_JSON` is set, the firebase-admin
+ *     SDK is lazily initialised on first dispatch and used to send to FCM
+ *     tokens (iOS via APNS bridge, Android natively).
  *   • Otherwise we run in LOG MODE — every dispatched payload is printed as
  *     `[push:log]` so the bus → fan-out pipeline is verifiable in dev
  *     without provider credentials.
@@ -23,6 +26,12 @@ let _admin = null;
 let _adminInitFailed = false;
 
 function resolveMode() {
+  // N5.6-B safety kill-switch: real push is OFF by default. We can deploy with
+  // FCM_SERVICE_ACCOUNT_JSON already present on the host and still stay in LOG
+  // MODE — real delivery requires an explicit PUSH_REAL_ENABLED=true opt-in.
+  // Flip it (and only it) when we deliberately want production push.
+  if (process.env.PUSH_REAL_ENABLED !== 'true') return 'log';
+  // Opted in, but we still need at least one provider credential to go live.
   if (process.env.FCM_SERVICE_ACCOUNT_JSON || process.env.APNS_AUTH_KEY) {
     return 'live';
   }
@@ -202,4 +211,4 @@ async function sendToUser(userId, payload) {
   return { sent, tokens: devices.length };
 }
 
-module.exports = { sendToUser, MODE };
+module.exports = { sendToUser, MODE, resolveMode };
