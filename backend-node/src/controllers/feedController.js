@@ -149,13 +149,39 @@ async function listPosts(req, res, next) {
         .limit(+limit).offset(offset);
     }
 
-    // Attach media, liked-by-me, and following flags (keyed on the ORIGINAL
-    // post id, so repost-items reflect the original post's media/state)
+    // Batch hydration (no N+1): media + the caller's likes for the whole page
+    // are fetched in ONE whereIn query each, then assigned in a single JS pass.
+    // Keyed on the ORIGINAL post id so repost-items reflect the original post's
+    // media/state. (Payload shape is unchanged vs the previous per-post version.)
     const myFollows = await db('user_follows').where({ follower_id: userId }).select('followed_id').then(r => new Set(r.map(f => f.followed_id)));
+    const mySaves = await db('post_saves').where({ user_id: userId }).select('post_id').then(r => new Set(r.map(s => s.post_id)));
+    const myReposts = await db('feed_post_reposts').where({ user_id: userId }).select('post_id').then(r => new Set(r.map(s => s.post_id)));
+
+    const origIds = [...new Set(rows.map(r => r.original_post_id))];
+
+    // One query for all media on the page, grouped by post_id (sort_order kept).
+    const mediaByPost = new Map();
+    if (origIds.length > 0) {
+      const allMedia = await db('post_media')
+        .whereIn('post_id', origIds)
+        .orderBy('sort_order')
+        .select('id', 'post_id', 'media_type', 'url', 'sort_order');
+      for (const m of allMedia) {
+        if (!mediaByPost.has(m.post_id)) mediaByPost.set(m.post_id, []);
+        mediaByPost.get(m.post_id).push({ id: m.id, media_type: m.media_type, url: m.url, sort_order: m.sort_order });
+      }
+    }
+
+    // One query for the caller's likes across the whole page.
+    const likedSet = new Set();
+    if (origIds.length > 0) {
+      const likedRows = await db('post_likes').whereIn('post_id', origIds).where({ user_id: userId }).select('post_id');
+      for (const l of likedRows) likedSet.add(l.post_id);
+    }
+
     for (const row of rows) {
-      // Attach media array (new multi-media, falls back to legacy image_url/video_url)
-      const media = await db('post_media').where({ post_id: row.original_post_id }).orderBy('sort_order').select('id', 'media_type', 'url', 'sort_order');
-      if (media.length > 0) {
+      const media = mediaByPost.get(row.original_post_id);
+      if (media && media.length > 0) {
         row.media = media;
       } else if (row.image_url || row.video_url) {
         // Legacy single-media compat
@@ -165,12 +191,7 @@ async function listPosts(req, res, next) {
       } else {
         row.media = [];
       }
-    }
-    const mySaves = await db('post_saves').where({ user_id: userId }).select('post_id').then(r => new Set(r.map(s => s.post_id)));
-    const myReposts = await db('feed_post_reposts').where({ user_id: userId }).select('post_id').then(r => new Set(r.map(s => s.post_id)));
-    for (const row of rows) {
-      const liked = await db('post_likes').where({ post_id: row.original_post_id, user_id: userId }).first();
-      row.is_liked = !!liked;
+      row.is_liked = likedSet.has(row.original_post_id);
       row.is_saved = mySaves.has(row.original_post_id);
       row.is_reposted_by_me = myReposts.has(row.original_post_id);
       row.is_following = row.user_id ? myFollows.has(row.user_id) : false;
