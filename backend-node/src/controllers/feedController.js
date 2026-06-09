@@ -214,6 +214,11 @@ async function listPosts(req, res, next) {
       row.media = row.media.map(it => ({ ...it, url: publicMediaUrl(it.id, it.url, req) }));
       row.image_url = publicMediaUrl(row.original_post_id + '-img', row.image_url, req);
       row.video_url = publicMediaUrl(row.original_post_id + '-vid', row.video_url, req);
+      // Avatars: base64 → proxy URL (shorter cache); http(s) avatars untouched.
+      row.author_photo_url = publicMediaUrl('user-' + row.user_id + '-photo', row.author_photo_url, req);
+      if (row.reposted_by_user_id) {
+        row.reposted_by_avatar = publicMediaUrl('user-' + row.reposted_by_user_id + '-photo', row.reposted_by_avatar, req);
+      }
       row.is_liked = likedSet.has(row.original_post_id);
       row.is_saved = mySaves.has(row.original_post_id);
       row.is_reposted_by_me = myReposts.has(row.original_post_id);
@@ -274,6 +279,7 @@ async function createPost(req, res, next) {
     full.media = (full.media || []).map(it => ({ ...it, url: publicMediaUrl(it.id, it.url, req) }));
     full.image_url = publicMediaUrl(post.id + '-img', full.image_url, req);
     full.video_url = publicMediaUrl(post.id + '-vid', full.video_url, req);
+    full.author_photo_url = publicMediaUrl('user-' + full.user_id + '-photo', full.author_photo_url, req);
 
     // Broadcast to every authenticated SSE listener so the other role's
     // feed surfaces the new post live without restart. Payload is the
@@ -363,6 +369,8 @@ async function listComments(req, res, next) {
       )
       .orderBy('post_comments.created_at', 'asc')
       .limit(+limit).offset((+page - 1) * +limit);
+    // Avatars: base64 → proxy URL; http(s) untouched.
+    for (const r of rows) r.author_photo_url = publicMediaUrl('user-' + r.user_id + '-photo', r.author_photo_url, req);
     paginated(res, rows, { page: +page, limit: +limit, total });
   } catch (err) { next(err); }
 }
@@ -400,6 +408,7 @@ async function addComment(req, res, next) {
       author_verified: user.is_verified,
       author_initials: cand?.initials || biz?.initials || user.name.slice(0, 2).toUpperCase(),
     };
+    responseRow.author_photo_url = publicMediaUrl('user-' + userId + '-photo', responseRow.author_photo_url, req);
 
     // Broadcast to every authenticated SSE listener so other viewers of
     // this post (Candidate or Business) refresh their open comments
@@ -801,7 +810,13 @@ async function getFeedMedia(req, res, next) {
   try {
     const { mediaId } = req.params;
     let raw = null;
-    if (mediaId.endsWith('-img') || mediaId.endsWith('-vid')) {
+    let isAvatar = false;
+    if (mediaId.startsWith('user-') && mediaId.endsWith('-photo')) {
+      isAvatar = true;
+      const uid = mediaId.slice(5, -6); // strip 'user-' … '-photo'
+      const u = await db('users').where({ id: uid }).select('photo_url').first();
+      raw = u ? u.photo_url : null;
+    } else if (mediaId.endsWith('-img') || mediaId.endsWith('-vid')) {
       const postId = mediaId.slice(0, -4);
       const col = mediaId.endsWith('-img') ? 'image_url' : 'video_url';
       const post = await db('feed_posts').where({ id: postId, status: 'active' }).select(col).first();
@@ -828,7 +843,9 @@ async function getFeedMedia(req, res, next) {
     const payload = raw.slice(comma + 1);
     const buf = isB64 ? Buffer.from(payload, 'base64') : Buffer.from(decodeURIComponent(payload));
     res.set('Content-Type', mime);
-    res.set('Cache-Control', 'public, max-age=86400, immutable');
+    // Avatars share a stable user id but their photo can change → cacheable but
+    // NOT immutable. Post media is content-addressed → safe to mark immutable.
+    res.set('Cache-Control', isAvatar ? 'public, max-age=86400' : 'public, max-age=86400, immutable');
     res.set('X-Content-Type-Options', 'nosniff');
     res.set('Content-Security-Policy', "default-src 'none'");
     return res.send(buf);
