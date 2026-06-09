@@ -25,10 +25,11 @@ function asBool(value, fallback = false) {
 }
 
 const flags = {
-  rankingEnabled:    asBool(process.env.BOOST_RANKING_ENABLED,    false),
-  rankingLog:        asBool(process.env.BOOST_RANKING_LOG,        false),
-  cronEnabled:       asBool(process.env.BOOST_CRON_ENABLED,       false),
-  activationEnabled: asBool(process.env.BOOST_ACTIVATION_ENABLED, false),
+  rankingEnabled:       asBool(process.env.BOOST_RANKING_ENABLED,    false),
+  rankingLog:           asBool(process.env.BOOST_RANKING_LOG,        false),
+  cronEnabled:          asBool(process.env.BOOST_CRON_ENABLED,       false),
+  activationEnabled:    asBool(process.env.BOOST_ACTIVATION_ENABLED, false),
+  callRingSweepEnabled: asBool(process.env.CALL_RING_SWEEP_ENABLED,  false),
 };
 
 module.exports = flags;

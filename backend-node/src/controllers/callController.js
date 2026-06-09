@@ -711,11 +711,46 @@ async function end(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ── GET /v1/calls/active ───────────────────────────────────────────
+//
+// Returns the single non-terminal (ringing) call for the requesting
+// user where they are either caller or callee, created in the last
+// 90 seconds. Used by the Flutter side on cold-start (CallKit VoIP
+// push wakes the app → app fetches call state to hydrate CallProvider
+// before SSE reconnects). Returns 404 when there is no active call.
+//
+// 90s freshness window: aligned with the ring-sweep cron (which flips
+// calls older than 60s to missed) plus a 30s grace for slow networks.
+// Stale ringing rows beyond 90s are silently ignored here — the sweep
+// will clean them up within the next minute.
+async function getActive(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const call = await db('calls')
+      .where(function () {
+        this.where('caller_id', userId).orWhere('callee_id', userId);
+      })
+      .where('status', STATUS.RINGING)
+      .whereRaw("started_at > NOW() - INTERVAL '90 seconds'")
+      .orderBy('started_at', 'desc')
+      .first();
+
+    if (!call) {
+      throw AppError.notFound('No active call.', 'CALL_NONE_ACTIVE');
+    }
+    return ok(res, { call: await publicCallSnapshot(call) });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   initiate,
   accept,
   decline,
   end,
+  getActive,
+  // Exported for the ring-sweep cron (publishes SSE + bell notifications
+  // on the ringing→missed transition it triggers server-side):
+  publishCallEvent,
   // Exported for tests:
   _internal: {
     STATUS,

@@ -13,6 +13,9 @@ const cs = require('../controllers/callSignalController');
 
 router.use(authenticate);
 
+// Active call lookup (VoIP cold-start hydration) — GET before /:id routes
+router.get('/active', c.getActive);
+
 // Caller side
 router.post('/initiate', c.initiate);
 

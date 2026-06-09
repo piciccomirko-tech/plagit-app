@@ -50,6 +50,7 @@ async function registerToken(req, res, next) {
     const fcmToken   = typeof body.fcm_token === 'string' ? body.fcm_token.trim() : '';
     const platform   = typeof body.platform === 'string' ? body.platform.trim().toLowerCase() : '';
     const apnsToken  = typeof body.apns_token === 'string' ? body.apns_token.trim() : null;
+    const voipToken  = typeof body.voip_token === 'string' ? body.voip_token.trim() : null;
     const deviceId   = typeof body.device_id === 'string' ? body.device_id.trim() : null;
     const appVersion = typeof body.app_version === 'string' ? body.app_version.trim() : null;
 
@@ -72,6 +73,7 @@ async function registerToken(req, res, next) {
           role,
           platform,
           apns_token: apnsToken || existing.apns_token, // keep prior if not supplied
+          voip_token: voipToken || existing.voip_token, // keep prior if not supplied
           device_id:  deviceId  || existing.device_id,
           app_version: appVersion || existing.app_version,
           last_seen_at: db.fn.now(),
@@ -91,6 +93,7 @@ async function registerToken(req, res, next) {
       token: fcmToken,
       platform,
       apns_token: apnsToken,
+      voip_token: voipToken,
       device_id: deviceId,
       app_version: appVersion,
       last_seen_at: db.fn.now(),

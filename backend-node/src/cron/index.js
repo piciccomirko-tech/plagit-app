@@ -21,16 +21,24 @@ const handles = [];
 function startIfEnabled({ logger = console } = {}) {
   if (started) return handles;
 
-  if (!flags.cronEnabled) {
-    logger.log('[cron] BOOST_CRON_ENABLED is OFF — skipping registration');
-    return handles;
+  if (flags.cronEnabled) {
+    const boostExpiry      = require('./boostExpiryJob');
+    const visibilityRecalc = require('./visibilityRecalcJob');
+
+    handles.push(boostExpiry.start({ logger }));
+    handles.push(visibilityRecalc.start({ logger }));
+  } else {
+    logger.log('[cron] BOOST_CRON_ENABLED is OFF — boost jobs skipped');
   }
 
-  const boostExpiry      = require('./boostExpiryJob');
-  const visibilityRecalc = require('./visibilityRecalcJob');
-
-  handles.push(boostExpiry.start({ logger }));
-  handles.push(visibilityRecalc.start({ logger }));
+  // Ring-sweep is gated independently so it can be enabled without
+  // enabling the boost cron jobs (and vice versa).
+  if (flags.callRingSweepEnabled) {
+    const callRingSweep = require('./callRingSweepJob');
+    handles.push(callRingSweep.start({ logger }));
+  } else {
+    logger.log('[cron] CALL_RING_SWEEP_ENABLED is OFF — ring sweep skipped');
+  }
 
   started = true;
   logger.log(`[cron] registered ${handles.length} job(s)`);
