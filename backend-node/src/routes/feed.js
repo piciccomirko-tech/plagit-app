@@ -2,6 +2,11 @@ const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 const c = require('../controllers/feedController');
 
+// PUBLIC — feed media proxy (registered BEFORE authenticate) so <img src> and
+// the video player can fetch media without an auth header. mediaId is an
+// unguessable uuid (or <postId>-img/-vid for legacy); read-only, IDOR-guarded.
+router.get('/media/:mediaId', c.getFeedMedia);
+
 router.use(authenticate);
 
 router.get('/notifications', c.listFeedNotifications);

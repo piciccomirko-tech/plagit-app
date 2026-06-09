@@ -3,6 +3,24 @@ const { ok, paginated } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
 
+// ---------------------------------------------------------------------------
+// Feed media proxy helper
+// ---------------------------------------------------------------------------
+// Turn an inline base64 data-URI into a SHORT absolute proxy URL pointing at
+// the public GET /v1/feed/media/:mediaId endpoint, so feed JSON payloads stay
+// tiny (bytes are streamed on demand). Already-external http(s) URLs and
+// non-data values are returned unchanged. HTTPS is forced in production via the
+// Railway-provided x-forwarded-proto header (the app rejects relative/non-https
+// media URLs) without relying on Express "trust proxy".
+function publicMediaUrl(mediaId, rawValue, req) {
+  if (typeof rawValue !== 'string' || rawValue.length === 0) return rawValue;
+  if (rawValue.startsWith('http://') || rawValue.startsWith('https://')) return rawValue;
+  if (!rawValue.startsWith('data:')) return rawValue;
+  const fwd = (req.headers['x-forwarded-proto'] || '').split(',')[0].trim();
+  const proto = fwd || (process.env.NODE_ENV === 'production' ? 'https' : (req.protocol || 'http'));
+  return `${proto}://${req.get('host')}/v1/feed/media/${mediaId}`;
+}
+
 // Helper: create a feed notification (fire-and-forget)
 async function notify(recipientId, actorId, actionType, postId, preview) {
   if (recipientId === actorId) return; // Don't notify yourself
@@ -191,6 +209,11 @@ async function listPosts(req, res, next) {
       } else {
         row.media = [];
       }
+      // Swap inline base64/data-URI media for short absolute proxy URLs so the
+      // JSON payload stays tiny (external http(s) URLs are left unchanged).
+      row.media = row.media.map(it => ({ ...it, url: publicMediaUrl(it.id, it.url, req) }));
+      row.image_url = publicMediaUrl(row.original_post_id + '-img', row.image_url, req);
+      row.video_url = publicMediaUrl(row.original_post_id + '-vid', row.video_url, req);
       row.is_liked = likedSet.has(row.original_post_id);
       row.is_saved = mySaves.has(row.original_post_id);
       row.is_reposted_by_me = myReposts.has(row.original_post_id);
@@ -247,6 +270,10 @@ async function createPost(req, res, next) {
       image_url ? [{ id: post.id + '-img', media_type: 'photo', url: image_url, sort_order: 0 }] :
       processedVideoUrl ? [{ id: post.id + '-vid', media_type: 'video', url: processedVideoUrl, sort_order: 0 }] : []
     );
+    // Serve media through the proxy (short absolute URLs) in the response + SSE payload.
+    full.media = (full.media || []).map(it => ({ ...it, url: publicMediaUrl(it.id, it.url, req) }));
+    full.image_url = publicMediaUrl(post.id + '-img', full.image_url, req);
+    full.video_url = publicMediaUrl(post.id + '-vid', full.video_url, req);
 
     // Broadcast to every authenticated SSE listener so the other role's
     // feed surfaces the new post live without restart. Payload is the
@@ -763,4 +790,49 @@ async function buildRepostItem(postId, reposterId) {
   return row;
 }
 
-module.exports = { listPosts, createPost, toggleLike, toggleRepost, listComments, addComment, deletePost, seedFeed, followUser, unfollowUser, listFollowing, listFeedNotifications, unreadNotifCount, markNotifRead, markAllNotifsRead, savePost, unsavePost, recordView };
+// ---------------------------------------------------------------------------
+// GET /feed/media/:mediaId — PUBLIC media proxy (registered BEFORE authenticate
+// so <img>/VideoPlayer can fetch without an auth header). Streams the decoded
+// bytes of an inline base64 data-URI stored on post_media / feed_posts. mediaId
+// is an unguessable uuid (or <postId>-img/-vid for legacy single media), and
+// media is only served for ACTIVE posts (IDOR guard). Read-only, no DB write.
+// ---------------------------------------------------------------------------
+async function getFeedMedia(req, res, next) {
+  try {
+    const { mediaId } = req.params;
+    let raw = null;
+    if (mediaId.endsWith('-img') || mediaId.endsWith('-vid')) {
+      const postId = mediaId.slice(0, -4);
+      const col = mediaId.endsWith('-img') ? 'image_url' : 'video_url';
+      const post = await db('feed_posts').where({ id: postId, status: 'active' }).select(col).first();
+      raw = post ? post[col] : null;
+    } else {
+      const row = await db('post_media as pm')
+        .join('feed_posts as fp', 'pm.post_id', 'fp.id')
+        .where('pm.id', mediaId)
+        .andWhere('fp.status', 'active')
+        .select('pm.url')
+        .first();
+      raw = row ? row.url : null;
+    }
+    if (typeof raw !== 'string' || !raw.startsWith('data:')) {
+      return res.status(404).json({ success: false, error: 'Media not found.' });
+    }
+    const comma = raw.indexOf(',');
+    const meta = comma >= 0 ? raw.slice(5, comma) : '';
+    const mime = (meta.split(';')[0] || '').toLowerCase();
+    if (!mime.startsWith('image/') && !mime.startsWith('video/')) {
+      return res.status(404).json({ success: false, error: 'Media not found.' });
+    }
+    const isB64 = /;base64/i.test(meta);
+    const payload = raw.slice(comma + 1);
+    const buf = isB64 ? Buffer.from(payload, 'base64') : Buffer.from(decodeURIComponent(payload));
+    res.set('Content-Type', mime);
+    res.set('Cache-Control', 'public, max-age=86400, immutable');
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.set('Content-Security-Policy', "default-src 'none'");
+    return res.send(buf);
+  } catch (err) { next(err); }
+}
+
+module.exports = { listPosts, createPost, toggleLike, toggleRepost, listComments, addComment, deletePost, seedFeed, followUser, unfollowUser, listFollowing, listFeedNotifications, unreadNotifCount, markNotifRead, markAllNotifsRead, savePost, unsavePost, recordView, getFeedMedia, publicMediaUrl };
