@@ -118,6 +118,25 @@ async function resolvePushRecipients(evt) {
   return nonAdmin.filter((uid) => uid !== senderId);
 }
 
+// Media messages (voice/photo/video/document) carry an empty `body` —
+// the attachment is self-describing in-app, but a push with an empty body
+// shows only the sender name on the lock screen. Fall back to a label
+// derived from attachment_type so the recipient knows WHAT arrived.
+// Pure (no DB) so it is unit-testable; text/captions pass through as-is.
+const ATTACHMENT_PUSH_BODY = Object.freeze({
+  audio: 'Voice message',
+  image: 'Photo',
+  video: 'Video',
+  document: 'Document',
+});
+
+function messagePushBody(message) {
+  const body = (message && message.body) || '';
+  if (body.trim()) return body;
+  const type = message && message.attachment_type;
+  return ATTACHMENT_PUSH_BODY[type] || 'New message';
+}
+
 async function buildPayload(type, payload) {
   switch (type) {
     case 'message.new': {
@@ -129,7 +148,7 @@ async function buildPayload(type, payload) {
           if (u && u.name) senderName = u.name;
         } catch (_) { /* ignore */ }
       }
-      const body = payload.message?.body || '';
+      const body = messagePushBody(payload.message);
       return {
         title: senderName,
         body: body.slice(0, 160),
@@ -271,5 +290,7 @@ function start() {
 module.exports = {
   start,
   // Exported for tests:
-  _internal: { resolvePushRecipients, filterOutAdmins, ADMIN_ONLY_ROUTES },
+  _internal: {
+    resolvePushRecipients, filterOutAdmins, ADMIN_ONLY_ROUTES, messagePushBody,
+  },
 };
