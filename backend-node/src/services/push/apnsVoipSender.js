@@ -1,71 +1,82 @@
 /**
- * APNs VoIP push sender — SKELETON (Step D, flag-gated, OFF by default).
+ * APNs VoIP push sender — Step D (flag-gated, OFF by default).
  *
- * Purpose: when a call starts (`call.ringing`), wake the callee's iOS device
- * via an Apple PushKit VoIP push so CallKit rings WhatsApp-style even when the
- * app is killed. firebase-admin CANNOT send VoIP pushes (it cannot set the
- * `apns-push-type: voip` header), so the real sender needs a direct APNs
- * HTTP/2 connection authenticated with an Apple `.p8` key.
+ * Wakes the callee's iOS device with an Apple PushKit VoIP push on
+ * `call.ringing` so CallKit rings WhatsApp-style even when the app is killed.
+ * firebase-admin CANNOT send VoIP pushes (it cannot set `apns-push-type: voip`),
+ * so this uses a direct APNs HTTP/2 token connection (@parse/node-apn) with an
+ * Apple `.p8` key.
  *
- * ── SAFETY — this is a SKELETON. It NEVER transmits a real push yet. ──
- *   • Default OFF: `VOIP_PUSH_ENABLED` is false unless explicitly set.
- *   • OFF                       → no-op. One boot log, no DB query, no network.
- *   • ON but credentials missing → LOG MODE. Logs `[voip:log]`, no send, no crash.
- *   • ON and credentials present → STILL no send. Logs `[voip:stub]`.
- *     Real transmission is intentionally deferred until the Apple `.p8` VoIP
- *     key is provisioned and the `apn` HTTP/2 client is wired (see TODO below).
+ * ── SAFETY (mirrors pushSender.js PUSH_REAL_ENABLED pattern) ──
+ *   • Default OFF: `VOIP_PUSH_ENABLED` false → MODE 'off' → total no-op
+ *     (no DB, no provider init, no network). Production stays dormant until we
+ *     deliberately arm it.
+ *   • Armed but credentials incomplete → MODE 'log' (never transmits).
+ *   • Armed + all credentials present → MODE 'live' (real VoIP push).
+ *   • Effective mode is resolved PER CALL, so flipping the flag/env at runtime
+ *     (tests, staged rollout) takes effect without a reload.
+ *   • Every path is reject-proof — a VoIP failure must never break call
+ *     initiation (the call-site uses `.catch()` too, belt-and-suspenders).
  *
- * Mirroring the existing `pushSender.js` safety pattern (PUSH_REAL_ENABLED):
- * the code can be deployed with this module present and stay completely
- * dormant in production until we deliberately arm it.
- *
- * ── Required env (NONE committed — set on Railway only when going live) ──
- *   VOIP_PUSH_ENABLED   '1'/'true' to arm (stays in stub until the real
- *                       sender lands — arming alone does NOT transmit).
- *   APNS_VOIP_KEY       the `.p8` private key contents — NEVER logged.
- *   APNS_KEY_ID         10-char Apple key id.
- *   APNS_TEAM_ID        10-char Apple team id.
- *   APNS_BUNDLE_ID      app bundle id (apns-topic will be `<bundle>.voip`).
+ * ── Credentials (set on Railway / local .env only — NEVER committed) ──
+ *   VOIP_PUSH_ENABLED     '1'/'true' to arm.
+ *   APNS_KEY_ID           10-char Apple key id (filename AuthKey_<id>.p8).
+ *   APNS_TEAM_ID          10-char Apple team id.
+ *   APNS_BUNDLE_ID        app bundle id → apns-topic is `<bundle>.voip`.
+ *   APNS_VOIP_KEY         the .p8 contents inline (Railway), OR…
+ *   APNS_VOIP_KEY_PATH    path to the .p8 file (local dev, keeps key off .env).
+ *   APNS_VOIP_PRODUCTION  'false' to target the APNs sandbox (default: production,
+ *                         which is what TestFlight/App Store builds use).
  *
  * ── SECURITY ──
- *   • Never log the `.p8` key or any of its bytes.
- *   • Never log full device tokens — `short()` prefix/suffix only.
+ *   • The .p8 is read into memory ONLY when going live (getProvider). Its bytes
+ *     are NEVER logged. Tokens are logged via short() (prefix/suffix) only.
  */
 
+const os = require('os');
+const fs = require('fs');
 const db = require('../../config/db');
 const flags = require('../../config/featureFlags');
 
-// The four credentials the REAL sender will need. Presence-checked only —
-// values are never read into a log line.
-const CRED_KEYS = ['APNS_VOIP_KEY', 'APNS_KEY_ID', 'APNS_TEAM_ID', 'APNS_BUNDLE_ID'];
+// Always-required identifiers. The key MATERIAL is separate: either
+// APNS_VOIP_KEY (inline) or APNS_VOIP_KEY_PATH (file).
+const REQUIRED_IDS = ['APNS_KEY_ID', 'APNS_TEAM_ID', 'APNS_BUNDLE_ID'];
+
+function hasKeyMaterialConfig() {
+  return Boolean(process.env.APNS_VOIP_KEY || process.env.APNS_VOIP_KEY_PATH);
+}
+
+function hasCreds() {
+  if (REQUIRED_IDS.some((k) => !process.env[k])) return false;
+  return hasKeyMaterialConfig();
+}
 
 /**
- * Resolve the operating mode once at load:
- *   'off'  — flag disabled (production default). Total no-op.
- *   'log'  — armed but at least one credential is missing. Log, never send.
- *   'stub' — armed and all credentials present, but the real HTTP/2 sender
- *            is not implemented yet, so we STILL do not transmit.
+ * Effective mode:
+ *   'off'  — flag disabled (production default). Pure no-op.
+ *   'log'  — armed but credentials incomplete. Logs intent, never sends.
+ *   'live' — armed + all credentials present. Real VoIP push.
  */
 function resolveMode() {
   if (!flags.voipPushEnabled) return 'off';
-  const missing = CRED_KEYS.filter((k) => !process.env[k]);
-  if (missing.length) return 'log';
-  return 'stub';
+  return hasCreds() ? 'live' : 'log';
 }
 
+// Load-time posture, logged once so the dormant/armed state is visible in
+// Railway logs. No credential values — only the resolved mode.
 const MODE = resolveMode();
-
-// Visible-once boot line so the dormant/armed state is obvious in Railway logs.
-// No credential values, ever — only the resolved mode and which keys are absent.
 (function logBootMode() {
   /* eslint-disable no-console */
   if (MODE === 'off') {
     console.log('[voip:provider] VoIP push DISABLED (VOIP_PUSH_ENABLED off) — no-op');
   } else if (MODE === 'log') {
-    const missing = CRED_KEYS.filter((k) => !process.env[k]).join(', ');
-    console.log(`[voip:provider] VoIP push armed but LOG MODE — missing creds: ${missing}`);
+    const missing = [
+      ...REQUIRED_IDS.filter((k) => !process.env[k]),
+      ...(hasKeyMaterialConfig() ? [] : ['APNS_VOIP_KEY|APNS_VOIP_KEY_PATH']),
+    ].join(', ');
+    console.log(`[voip:provider] VoIP push armed but LOG MODE — missing: ${missing}`);
   } else {
-    console.log('[voip:provider] VoIP push armed, creds present — STUB MODE (real sender not wired yet)');
+    console.log('[voip:provider] VoIP push armed, creds present — LIVE');
   }
   /* eslint-enable no-console */
 }());
@@ -76,11 +87,90 @@ function short(token) {
   return `${token.slice(0, 6)}…${token.slice(-4)}`;
 }
 
+// Expand a leading ~ to the home dir so APNS_VOIP_KEY_PATH can be "~/secure/…".
+function expandHome(p) {
+  return p.startsWith('~') ? p.replace(/^~/, os.homedir()) : p;
+}
+
+// Read the .p8 material — inline contents win; otherwise read the file. Only
+// ever called from getProvider (i.e. only when going live). Never logged.
+function loadKeyMaterial() {
+  if (process.env.APNS_VOIP_KEY) return process.env.APNS_VOIP_KEY;
+  if (process.env.APNS_VOIP_KEY_PATH) {
+    return fs.readFileSync(expandHome(process.env.APNS_VOIP_KEY_PATH));
+  }
+  return null;
+}
+
+// ── Provider (lazy, cached, fail-closed) ────────────────────────────────────
+let _provider = null;
+let _providerFailed = false;
+
+function getProvider() {
+  if (_provider) return _provider;
+  if (_providerFailed) return null;
+  try {
+    // eslint-disable-next-line global-require
+    const apn = require('@parse/node-apn');
+    const key = loadKeyMaterial();
+    if (!key) { _providerFailed = true; return null; }
+    const production = process.env.APNS_VOIP_PRODUCTION !== 'false';
+    _provider = new apn.Provider({
+      token: {
+        key, // Buffer or string — never logged
+        keyId: process.env.APNS_KEY_ID,
+        teamId: process.env.APNS_TEAM_ID,
+      },
+      production,
+    });
+    // eslint-disable-next-line no-console
+    console.log(`[voip:provider] APNs VoIP provider initialised (production=${production})`);
+    return _provider;
+  } catch (err) {
+    _providerFailed = true;
+    // eslint-disable-next-line no-console
+    console.error('[voip:provider] init failed:', err && err.message);
+    return null;
+  }
+}
+
 /**
- * Fetch the callee's active VoIP (PushKit) tokens. Distinct from FCM tokens:
- * the `voip_token` column is added by migration 056 (NOT yet in production).
- * Wrapped so a missing column / DB hiccup degrades to `[]` instead of throwing
- * — but note this only runs when armed, which never happens in production.
+ * Build the PushKit VoIP notification. Pure (apart from Date.now) and exported
+ * for tests so the headers/payload contract can be asserted without a network.
+ * Headers that make Apple wake the app cold-start: apns-push-type: voip and
+ * apns-topic: <bundle>.voip.
+ */
+function buildVoipNotification(ctx, callerName) {
+  // eslint-disable-next-line global-require
+  const apn = require('@parse/node-apn');
+  const note = new apn.Notification();
+  note.topic = `${process.env.APNS_BUNDLE_ID}.voip`;
+  note.pushType = 'voip';
+  note.priority = 10;
+  // Short ring window — a VoIP push that arrives late should not ring.
+  note.expiry = Math.floor(Date.now() / 1000) + 30;
+  note.payload = {
+    call_id: ctx.callId || null,
+    caller_name: callerName || 'Plagit Call',
+    call_type: ctx.callType || 'audio',
+  };
+  return note;
+}
+
+/** Resolve the caller display name for the CallKit screen. Cheap, fail-soft. */
+async function resolveCallerName(callerId) {
+  if (!callerId) return 'Plagit Call';
+  try {
+    const u = await db('users').where({ id: callerId }).select('name').first();
+    return (u && u.name) || 'Plagit Call';
+  } catch (_) {
+    return 'Plagit Call';
+  }
+}
+
+/**
+ * Active VoIP (PushKit) tokens for a user. Distinct from FCM tokens — the
+ * `voip_token` column is added by migration 056. Fail-soft to [].
  */
 async function getVoipTokensForUser(userId) {
   try {
@@ -95,55 +185,92 @@ async function getVoipTokensForUser(userId) {
   }
 }
 
+// Soft-revoke a dead VoIP token so we stop pushing to it (Apple's contract:
+// BadDeviceToken / Unregistered mean the token is permanently invalid).
+async function maybeRevoke(failure, token) {
+  const reason = (failure
+    && ((failure.response && failure.response.reason) || failure.reason)) || '';
+  if (reason === 'BadDeviceToken' || reason === 'Unregistered') {
+    try {
+      await db('device_tokens').where({ voip_token: token }).update({ revoked_at: db.fn.now() });
+      // eslint-disable-next-line no-console
+      console.log(`[voip:revoke] soft-revoked token=${short(token)} reason=${reason}`);
+    } catch (_) { /* best-effort */ }
+  }
+}
+
 /**
- * Best-effort "ring" to a callee. SKELETON: never transmits. Returns a small
- * result object describing what it WOULD do, so callers/tests can assert
- * behaviour without any network. NEVER throws — call-site treats it as
- * fire-and-forget so a VoIP hiccup can never break call initiation.
+ * Best-effort "ring" to a callee. NEVER throws/rejects. Mode is resolved per
+ * call: 'off' → no-op; 'log' → log only; 'live' → real VoIP push to each
+ * active token, soft-revoking dead ones.
  *
  * @param {string} calleeUserId
  * @param {{callId: string, callType?: string, callerId?: string}} ctx
  */
 async function sendRingToUser(calleeUserId, ctx = {}) {
-  if (MODE === 'off') {
-    return { mode: 'off', sent: 0, skipped: true };
-  }
+  const mode = resolveMode();
+  if (mode === 'off') return { mode: 'off', sent: 0, skipped: true };
   /* eslint-disable no-console */
   try {
     const tokens = await getVoipTokensForUser(calleeUserId);
     if (!tokens.length) {
-      console.log(`[voip:${MODE}] no VoIP token for callee — nothing to ring (call=${ctx.callId})`);
-      return { mode: MODE, sent: 0, tokens: 0 };
+      console.log(`[voip:${mode}] no VoIP token for callee — nothing to ring (call=${ctx.callId})`);
+      return { mode, sent: 0, tokens: 0 };
     }
+
+    if (mode === 'log') {
+      for (const t of tokens) {
+        console.log(`[voip:log] would ring token=${short(t)} call=${ctx.callId} type=${ctx.callType || 'audio'}`);
+      }
+      return { mode, sent: 0, tokens: tokens.length, transmitted: false };
+    }
+
+    // mode === 'live'
+    const provider = getProvider();
+    if (!provider) {
+      console.warn(`[voip:live] provider unavailable — no send (call=${ctx.callId})`);
+      return { mode, sent: 0, tokens: tokens.length, transmitted: false, providerDown: true };
+    }
+    const callerName = await resolveCallerName(ctx.callerId);
+    let sent = 0;
     for (const t of tokens) {
-      // STUB/LOG: describe the intended push; do NOT transmit.
-      // The real payload (when wired) will carry: call_id, caller_name,
-      // call_type, with headers apns-push-type:voip + apns-topic:<bundle>.voip.
-      console.log(
-        `[voip:${MODE}] would ring token=${short(t)} call=${ctx.callId} type=${ctx.callType || 'audio'}`,
-      );
+      const note = buildVoipNotification(ctx, callerName);
+      const res = await provider.send(note, t);
+      const okCount = (res && res.sent && res.sent.length) || 0;
+      sent += okCount;
+      const failed = (res && res.failed) || [];
+      for (const f of failed) await maybeRevoke(f, t);
+      if (okCount) console.log(`[voip:live] rang token=${short(t)} call=${ctx.callId}`);
     }
-    return { mode: MODE, sent: 0, tokens: tokens.length, transmitted: false };
+    return { mode, sent, tokens: tokens.length, transmitted: true };
   } catch (err) {
     // Defensive: never let a VoIP path break the caller.
     console.error('[voip:error] sendRingToUser failed (non-fatal):', err && err.message);
-    return { mode: MODE, sent: 0, error: true };
+    return { mode, sent: 0, error: true };
   }
   /* eslint-enable no-console */
 }
 
-// ── TODO (when the Apple .p8 VoIP key is provisioned) ──────────────────────
-//   1. `npm i apn` (or a maintained HTTP/2 APNs client).
-//   2. Lazily init the provider from APNS_VOIP_KEY / KEY_ID / TEAM_ID, like
-//      getAdmin() in pushSender.js. Cache it; fail closed on init error.
-//   3. In sendRingToUser, when MODE === 'stub' (rename to 'live'), build the
-//      VoIP payload {call_id, caller_name, call_type} and send with headers
-//      apns-push-type: 'voip' and apns-topic: `${APNS_BUNDLE_ID}.voip`.
-//   4. Handle BadDeviceToken / Unregistered → soft-revoke that voip_token.
-//   5. Resolve caller_name (cheap users lookup) before sending.
+// Test hook — inject a fake provider so the live path is exercisable WITHOUT a
+// real APNs network connection. Never used in production code paths.
+function _setProviderForTest(fake) {
+  _provider = fake;
+  _providerFailed = false;
+}
 
 module.exports = {
   sendRingToUser,
   // Exported for tests / introspection:
-  _internal: { resolveMode, getVoipTokensForUser, short, MODE, CRED_KEYS },
+  _internal: {
+    resolveMode,
+    hasCreds,
+    short,
+    buildVoipNotification,
+    resolveCallerName,
+    getVoipTokensForUser,
+    maybeRevoke,
+    _setProviderForTest,
+    MODE,
+    REQUIRED_IDS,
+  },
 };
