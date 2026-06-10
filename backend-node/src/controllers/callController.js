@@ -41,6 +41,10 @@ const { isCallLogColumnPresent } = require('../services/schemaFeatureFlags');
 // missed-call bell notification. No import cycle: businessController does
 // not require callController. Same precedent as candidate/chatRequests.
 const { hiringNotify } = require('./businessController');
+// Step D — VoIP push sender (SKELETON, flag-gated OFF). Wakes the callee's iOS
+// device via PushKit so CallKit can ring cold-start. No-op in production until
+// VOIP_PUSH_ENABLED is armed AND the real .p8 sender is wired — see the module.
+const voipPush = require('../services/push/apnsVoipSender');
 
 // ── State machine ──────────────────────────────────────────────────
 const STATUS = Object.freeze({
@@ -558,6 +562,18 @@ async function initiate(req, res, next) {
     // SSE fan-out to both participants. `call.ringing` is the trigger
     // the Flutter side uses to push the incoming-call screen.
     await publishCallEvent(row);
+
+    // Step D — best-effort VoIP ring to the callee (PushKit/CallKit cold-start).
+    // SKELETON + flag-gated OFF → no-op in production. Strictly non-fatal: a
+    // VoIP push must NEVER break call initiation (SSE already fired above), so
+    // it is fire-and-forget and swallows its own errors.
+    voipPush
+      .sendRingToUser(calleeUserId, {
+        callId: row.id,
+        callType,
+        callerId: userId,
+      })
+      .catch(() => { /* non-fatal: the sender logs its own failures */ });
 
     return created(res, { call: await publicCallSnapshot(row) });
   } catch (err) { next(err); }

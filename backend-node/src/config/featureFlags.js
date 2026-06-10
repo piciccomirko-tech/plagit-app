@@ -16,6 +16,8 @@
  * | BOOST_CRON_ENABLED        | cronEnabled        | cron registry boots its scheduled jobs           |
  * | BOOST_ACTIVATION_ENABLED  | activationEnabled  | admin/business boost activation endpoints accept |
  *                                                   | requests; OFF returns 503 BOOST_ACTIVATION_OFF   |
+ * | VOIP_PUSH_ENABLED         | voipPushEnabled    | arms apnsVoipSender (still STUB — no real send    |
+ *                                                   | until the Apple .p8 key + HTTP/2 client land)    |
  */
 
 function asBool(value, fallback = false) {
@@ -30,6 +32,7 @@ const flags = {
   cronEnabled:          asBool(process.env.BOOST_CRON_ENABLED,       false),
   activationEnabled:    asBool(process.env.BOOST_ACTIVATION_ENABLED, false),
   callRingSweepEnabled: asBool(process.env.CALL_RING_SWEEP_ENABLED,  false),
+  voipPushEnabled:      asBool(process.env.VOIP_PUSH_ENABLED,        false),
 };
 
 module.exports = flags;
