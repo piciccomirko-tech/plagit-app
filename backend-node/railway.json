@@ -4,6 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
+    "preDeployCommand": "npm run migrate:prod",
     "startCommand": "node src/server.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 30,
