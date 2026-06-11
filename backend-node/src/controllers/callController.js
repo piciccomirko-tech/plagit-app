@@ -769,12 +769,65 @@ async function getActive(req, res, next) {
   } catch (err) { next(err); }
 }
 
+// ── GET /v1/calls/:id/recovery ─────────────────────────────────────
+//
+// Cold-start recovery for a callee that answered a CallKit call while the
+// app was terminated/locked and therefore had NO SSE connection to receive
+// the offer / ICE / terminal events. Returns the persisted call snapshot
+// plus any pending offer + the counterpart's ICE so the cold-started engine
+// can negotiate over REST instead of waiting for an SSE that never arrives.
+// Participant-only, read-only.
+async function recovery(req, res, next) {
+  try {
+    const userId = req.user.id;
+    const call = await db('calls').where({ id: req.params.id }).first();
+    if (!call) throw AppError.notFound('Call not found.', 'CALL_NOT_FOUND');
+    if (call.caller_id !== userId && call.callee_id !== userId) {
+      throw AppError.forbidden('Not a participant of this call.', 'CALL_NOT_PARTICIPANT');
+    }
+
+    const isTerminal = TERMINAL_STATES.has(call.status);
+
+    // Persisted offer (caller's) + the counterpart's ICE the recovering side
+    // missed while it had no SSE. `andWhereNot` keeps only the OTHER party's
+    // candidates — the recovering side doesn't need its own echoed back.
+    const offerRow = isTerminal
+      ? null
+      : await db('call_signals').where({ call_id: call.id, kind: 'offer' }).first();
+    const iceRows = isTerminal
+      ? []
+      : await db('call_signals')
+        .where({ call_id: call.id, kind: 'ice' })
+        .andWhereNot({ sender_user_id: userId })
+        .orderBy('created_at', 'asc');
+
+    return ok(res, {
+      recovery: {
+        call: await publicCallSnapshot(call),
+        terminal: isTerminal,
+        offer: offerRow
+          ? {
+            sdp: offerRow.payload.sdp,
+            sdpType: offerRow.payload.sdpType,
+            fromUserId: offerRow.sender_user_id,
+          }
+          : null,
+        pendingIce: iceRows.map((r) => ({
+          fromUserId: r.sender_user_id,
+          candidates: (r.payload && r.payload.candidates) || [],
+        })),
+      },
+    });
+  } catch (err) { next(err); }
+}
+
 module.exports = {
   initiate,
   accept,
   decline,
   end,
   getActive,
+  recovery,
   // Exported for the ring-sweep cron (publishes SSE + bell notifications
   // on the ringing→missed transition it triggers server-side):
   publishCallEvent,

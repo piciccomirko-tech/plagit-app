@@ -16,6 +16,11 @@ router.use(authenticate);
 // Active call lookup (VoIP cold-start hydration) — GET before /:id routes
 router.get('/active', c.getActive);
 
+// Cold-start recovery: a callee that answered from a terminated/locked
+// device has no SSE, so it fetches the pending offer + counterpart ICE +
+// terminal state over REST to negotiate WebRTC (or dismiss CallKit).
+router.get('/:id/recovery', c.recovery);
+
 // Caller side
 router.post('/initiate', c.initiate);
 
