@@ -7,6 +7,7 @@
  * that every provider funnels into.
  */
 const db = require('../config/db');
+const AppError = require('../utils/AppError');
 
 // Statuses that grant premium while current_period_end is still in the future.
 // `past_due` is honoured during the store's billing-grace window — the provider
@@ -47,6 +48,16 @@ async function isPremium(userId) {
  * from the provider's server API (validated), never from the client.
  */
 async function upsertEntitlement(e) {
+  // Ownership guard (defense-in-depth, receipt-replay / takeover): a provider
+  // subscription (provider_ref) is permanently bound to its FIRST owner. Reject
+  // any attempt to bind it to a different user.
+  const existing = await db('user_entitlements')
+    .where({ provider: e.provider, provider_ref: e.providerRef })
+    .first();
+  if (existing && existing.user_id !== e.userId) {
+    throw new AppError('Entitlement already bound to a different user.', 409, 'ENTITLEMENT_OWNER_MISMATCH');
+  }
+
   const row = {
     user_id: e.userId,
     product: e.product,
@@ -65,7 +76,12 @@ async function upsertEntitlement(e) {
   const [out] = await db('user_entitlements')
     .insert(row)
     .onConflict(['provider', 'provider_ref'])
-    .merge() // existing row (same subscription) is updated in place
+    // Update the subscription state in place but NEVER overwrite user_id —
+    // ownership is immutable (also bounds the check-then-insert race above).
+    .merge([
+      'product', 'plan', 'status', 'current_period_start', 'current_period_end',
+      'trial_end', 'cancel_at_period_end', 'environment', 'raw_payload', 'updated_at',
+    ])
     .returning('*');
   return out;
 }

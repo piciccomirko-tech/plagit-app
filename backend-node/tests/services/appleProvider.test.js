@@ -14,6 +14,7 @@ const assert = require('node:assert/strict');
 const { _internal } = require('../../src/services/providers/apple');
 const {
   PRODUCT_PLAN, mapEnvironment, isFreeTrial, transactionToEntitlement, notificationStatusHint,
+  assertTransactionOwner,
 } = _internal;
 
 const USER = 'user-123';
@@ -99,6 +100,21 @@ test('notification status hints (ASSN V2 lifecycle)', () => {
   assert.equal(notificationStatusHint('DID_FAIL_TO_RENEW', 'GRACE_PERIOD'), 'past_due');
   assert.equal(notificationStatusHint('DID_FAIL_TO_RENEW', undefined), 'expired');
   assert.equal(notificationStatusHint('DID_CHANGE_RENEWAL_STATUS'), null);
+});
+
+test('assertTransactionOwner: requires a present, matching appAccountToken', () => {
+  // matching → ok
+  assert.doesNotThrow(() => assertTransactionOwner({ appAccountToken: USER }, USER));
+  // missing → rejected (replay guard: an untagged receipt cannot bind to a user)
+  assert.throws(
+    () => assertTransactionOwner({ appAccountToken: undefined }, USER),
+    (e) => e.code === 'APPLE_NO_ACCOUNT_TOKEN',
+  );
+  // mismatched → rejected (someone else's receipt)
+  assert.throws(
+    () => assertTransactionOwner({ appAccountToken: 'other-user' }, USER),
+    (e) => e.code === 'APPLE_USER_MISMATCH',
+  );
 });
 
 test('teardown: close db pool (apple.js requires db on load)', async () => {

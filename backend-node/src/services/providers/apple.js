@@ -119,6 +119,28 @@ function notificationStatusHint(notificationType, subtype) {
   }
 }
 
+/**
+ * Bind a verified transaction to the authenticated user. The signed
+ * `appAccountToken` (set by our app at purchase, included in Apple's signed
+ * payload) is the ONLY trustworthy link between an Apple transaction and our
+ * user. REQUIRE it and require an exact match — otherwise a replayed or shared
+ * receipt could grant premium to whoever submits it. Pure + unit-tested.
+ */
+function assertTransactionOwner(decoded, userId) {
+  if (!decoded.appAccountToken) {
+    throw AppError.badRequest(
+      'Transaction missing appAccountToken; cannot bind to user.',
+      'APPLE_NO_ACCOUNT_TOKEN',
+    );
+  }
+  if (decoded.appAccountToken !== userId) {
+    throw AppError.forbidden(
+      'Transaction does not belong to this user.',
+      'APPLE_USER_MISMATCH',
+    );
+  }
+}
+
 // ── GATED verification (real credentials/certs plug in here) ──────────
 
 function loadAppleLib() {
@@ -176,10 +198,8 @@ async function validatePurchase({ userId, jws } = {}) {
   if (!userId) throw AppError.badRequest('Missing user.', 'APPLE_NO_USER');
   if (!jws || typeof jws !== 'string') throw AppError.badRequest('Missing signed transaction.', 'APPLE_NO_JWS');
   const decoded = await verifyTransaction(jws);
-  // A transaction that names a different appAccountToken isn't this caller's.
-  if (decoded.appAccountToken && decoded.appAccountToken !== userId) {
-    throw AppError.forbidden('Transaction does not belong to this user.', 'APPLE_USER_MISMATCH');
-  }
+  // Bind the signed transaction to this caller (replay/sharing guard).
+  assertTransactionOwner(decoded, userId);
   const ent = transactionToEntitlement(decoded, userId, null);
   if (!ent) throw AppError.badRequest('Unknown Apple product.', 'APPLE_UNKNOWN_PRODUCT');
   return entitlements.upsertEntitlement(ent);
@@ -235,5 +255,6 @@ module.exports = {
     isFreeTrial,
     transactionToEntitlement,
     notificationStatusHint,
+    assertTransactionOwner,
   },
 };

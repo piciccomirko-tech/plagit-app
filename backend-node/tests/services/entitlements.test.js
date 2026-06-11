@@ -117,6 +117,32 @@ if (!RUN) {
     assert.equal(await ent.isPremium(ctx.userId), false);
   });
 
+  test('upsert rejects rebinding a provider_ref to a DIFFERENT user (replay/takeover guard)', async () => {
+    const EMAIL_B = `ent-b-${STAMP}@plagit.test`;
+    const [b] = await db('users')
+      .insert({ name: EMAIL_B, email: EMAIL_B, password_hash: 'x', user_type: 'candidate' })
+      .returning('id');
+    const REF2 = `shared-${STAMP}`;
+    // User A claims the Apple subscription first.
+    await ent.upsertEntitlement({
+      userId: ctx.userId, product: 'plagit_premium', plan: 'monthly',
+      provider: 'apple', providerRef: REF2, status: 'active', currentPeriodEnd: future(),
+    });
+    // User B submits the SAME provider_ref → must be rejected, not reassigned.
+    let err = null;
+    try {
+      await ent.upsertEntitlement({
+        userId: b.id, product: 'plagit_premium', plan: 'monthly',
+        provider: 'apple', providerRef: REF2, status: 'active', currentPeriodEnd: future(),
+      });
+    } catch (e) { err = e; }
+    assert.ok(err && err.code === 'ENTITLEMENT_OWNER_MISMATCH', 'rebind rejected');
+    const row = await db('user_entitlements').where({ provider: 'apple', provider_ref: REF2 }).first();
+    assert.equal(row.user_id, ctx.userId, 'ownership unchanged (still user A)');
+    await db('user_entitlements').where({ user_id: b.id }).del();
+    await db('users').where({ id: b.id }).del();
+  });
+
   test('teardown', async () => {
     await cleanup();
     await db.destroy();
