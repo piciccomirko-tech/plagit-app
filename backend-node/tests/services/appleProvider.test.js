@@ -11,11 +11,21 @@ require('dotenv').config({ quiet: true });
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
-const { _internal } = require('../../src/services/providers/apple');
+const crypto = require('node:crypto');
+const apple = require('../../src/services/providers/apple');
+const { _internal } = apple;
 const {
   PRODUCT_PLAN, mapEnvironment, isFreeTrial, transactionToEntitlement, notificationStatusHint,
-  assertTransactionOwner,
+  assertTransactionOwner, readPrivateKey, buildVerifier, buildApiClient,
 } = _internal;
+
+function fakeP8Base64() {
+  const { privateKey } = crypto.generateKeyPairSync('ec', { namedCurve: 'P-256' });
+  return Buffer.from(privateKey.export({ type: 'pkcs8', format: 'pem' })).toString('base64');
+}
+function clearAppleEnv() {
+  for (const k of ['APPLE_PRIVATE_KEY', 'APPLE_KEY_ID', 'APPLE_ISSUER_ID', 'APPLE_APP_APPLE_ID']) delete process.env[k];
+}
 
 const USER = 'user-123';
 const NOW = Date.now();
@@ -115,6 +125,47 @@ test('assertTransactionOwner: requires a present, matching appAccountToken', () 
     () => assertTransactionOwner({ appAccountToken: 'other-user' }, USER),
     (e) => e.code === 'APPLE_USER_MISMATCH',
   );
+});
+
+test('readPrivateKey: decodes base64 .p8 → PEM (and accepts raw PEM)', () => {
+  const pem = '-----BEGIN PRIVATE KEY-----\nMIGTfake\n-----END PRIVATE KEY-----\n';
+  process.env.APPLE_PRIVATE_KEY = Buffer.from(pem).toString('base64');
+  assert.equal(readPrivateKey(), pem);
+  process.env.APPLE_PRIVATE_KEY = pem;
+  assert.equal(readPrivateKey(), pem);
+  clearAppleEnv();
+});
+
+test('buildVerifier: constructs with the bundled Apple root certs', () => {
+  process.env.APPLE_APP_APPLE_ID = '6762192547';
+  assert.doesNotThrow(() => buildVerifier('sandbox'));
+  clearAppleEnv();
+});
+
+test('buildApiClient: constructs with a valid signing key', () => {
+  process.env.APPLE_PRIVATE_KEY = fakeP8Base64();
+  process.env.APPLE_KEY_ID = 'ABCDE12345';
+  process.env.APPLE_ISSUER_ID = '11111111-2222-3333-4444-555555555555';
+  assert.doesNotThrow(() => buildApiClient('sandbox'));
+  clearAppleEnv();
+});
+
+test('configStatus: missing when unset, ready when fully configured (certs bundled)', () => {
+  clearAppleEnv();
+  let s = apple.configStatus();
+  assert.equal(s.ready, false);
+  assert.ok(s.missing.includes('APPLE_PRIVATE_KEY'));
+  assert.ok(s.certsLoaded >= 1, 'bundled Apple root certs load');
+  assert.equal(s.libInstalled, true);
+
+  process.env.APPLE_PRIVATE_KEY = fakeP8Base64();
+  process.env.APPLE_KEY_ID = 'ABCDE12345';
+  process.env.APPLE_ISSUER_ID = '11111111-2222-3333-4444-555555555555';
+  process.env.APPLE_APP_APPLE_ID = '6762192547';
+  s = apple.configStatus();
+  assert.deepEqual(s.missing, []);
+  assert.equal(s.ready, true);
+  clearAppleEnv();
 });
 
 test('teardown: close db pool (apple.js requires db on load)', async () => {

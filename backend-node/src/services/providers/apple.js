@@ -33,16 +33,35 @@ const PRODUCT_PLAN = Object.freeze({
   'com.plagit.premium.yearly': { product: 'plagit_premium', plan: 'yearly' },
 });
 
-// ── config (placeholder env vars — see README/response) ───────────────
+// ── config ────────────────────────────────────────────────────────────
+// Apple public root certs are bundled in the repo (downloaded from
+// apple.com/certificateauthority) — override only for tests.
+const DEFAULT_CERTS_DIR = path.join(__dirname, 'apple_root_certs');
+
+// App Store Server API signing key (.p8). Accept base64 (Railway-safe,
+// recommended) OR raw PEM OR a file path. NEVER logged.
+function readPrivateKey() {
+  const raw = process.env.APPLE_PRIVATE_KEY;
+  if (raw && raw.trim()) {
+    if (raw.includes('BEGIN PRIVATE KEY')) return raw; // already PEM
+    try {
+      const pem = Buffer.from(raw.trim(), 'base64').toString('utf8');
+      return pem.includes('BEGIN PRIVATE KEY') ? pem : null;
+    } catch (_) { return null; }
+  }
+  const p = process.env.APPLE_PRIVATE_KEY_PATH;
+  if (p && fs.existsSync(p)) return fs.readFileSync(p, 'utf8');
+  return null;
+}
+
 function cfg() {
   return {
     bundleId: process.env.APPLE_BUNDLE_ID || 'com.plagit.plagit',
     appAppleId: process.env.APPLE_APP_APPLE_ID ? Number(process.env.APPLE_APP_APPLE_ID) : undefined,
     issuerId: process.env.APPLE_ISSUER_ID || null,
     keyId: process.env.APPLE_KEY_ID || null,
-    privateKey: process.env.APPLE_PRIVATE_KEY || null,          // .p8 PEM contents
-    privateKeyPath: process.env.APPLE_PRIVATE_KEY_PATH || null, // …or path to the .p8
-    rootCertsDir: process.env.APPLE_ROOT_CERTS_DIR || null,     // dir of Apple root *.cer
+    privateKey: readPrivateKey(),
+    rootCertsDir: process.env.APPLE_ROOT_CERTS_DIR || DEFAULT_CERTS_DIR,
   };
 }
 
@@ -169,6 +188,45 @@ function buildVerifier(environment) {
   return new lib.SignedDataVerifier(certs, true, env, c.bundleId, c.appAppleId);
 }
 
+// App Store Server API client (status/history queries) — uses the .p8 signing
+// key + Key ID + Issuer ID. Available for status re-checks; the verify/webhook
+// paths verify the signed JWS directly and don't require it.
+function buildApiClient(environment) {
+  const c = cfg();
+  if (!c.privateKey || !c.keyId || !c.issuerId) {
+    throw new AppError('App Store Server API not configured.', 501, 'APPLE_API_NOT_CONFIGURED');
+  }
+  const lib = loadAppleLib();
+  const env = environment === 'production' ? lib.Environment.PRODUCTION : lib.Environment.SANDBOX;
+  return new lib.AppStoreServerAPIClient(c.privateKey, c.keyId, c.issuerId, c.bundleId, env);
+}
+
+// Non-secret config self-check (verify Railway env after deploy via
+// `railway ssh`). Returns booleans / non-secret values only — NEVER the key.
+function configStatus() {
+  const c = cfg();
+  const missing = [];
+  if (!c.appAppleId) missing.push('APPLE_APP_APPLE_ID');
+  if (!c.issuerId) missing.push('APPLE_ISSUER_ID');
+  if (!c.keyId) missing.push('APPLE_KEY_ID');
+  if (!c.privateKey) missing.push('APPLE_PRIVATE_KEY');
+  let certsLoaded = 0;
+  try { certsLoaded = loadRootCerts(c.rootCertsDir).length; } catch (_) { /* none */ }
+  let libInstalled = false;
+  try { loadAppleLib(); libInstalled = true; } catch (_) { /* missing */ }
+  return {
+    bundleId: c.bundleId,
+    appAppleId: c.appAppleId || null,
+    hasPrivateKey: !!c.privateKey,
+    hasKeyId: !!c.keyId,
+    hasIssuerId: !!c.issuerId,
+    certsLoaded,
+    libInstalled,
+    ready: missing.length === 0 && certsLoaded > 0 && libInstalled,
+    missing,
+  };
+}
+
 // Try production first, fall back to sandbox (TestFlight uses sandbox).
 async function verifyTransaction(jws) {
   try {
@@ -248,7 +306,7 @@ async function handleNotification({ signedPayload } = {}) {
 module.exports = {
   validatePurchase,
   handleNotification,
-  // Exported for unit tests — the pure, credential-free logic.
+  configStatus,
   _internal: {
     PRODUCT_PLAN,
     mapEnvironment,
@@ -256,5 +314,8 @@ module.exports = {
     transactionToEntitlement,
     notificationStatusHint,
     assertTransactionOwner,
+    readPrivateKey,
+    buildVerifier,
+    buildApiClient,
   },
 };
