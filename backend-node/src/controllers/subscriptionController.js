@@ -2,9 +2,21 @@ const db = require('../config/db');
 const { ok } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const entitlements = require('../services/entitlements');
+const apple = require('../services/providers/apple');
 
 async function verifyReceipt(req, res, next) {
   try {
+    // Payments Step 2 — Apple StoreKit 2 path → provider-agnostic
+    // user_entitlements. Validates the signed JWS server-side and upserts the
+    // entitlement; returns the derived premium status. The legacy
+    // candidate/business path (users.subscription_*) below is untouched and
+    // still serves callers that don't send `provider`.
+    if (req.body && req.body.provider === 'apple') {
+      await apple.validatePurchase({ userId: req.user.id, jws: req.body.jws });
+      const status = await entitlements.buildPremiumStatus(req.user.id);
+      return ok(res, status);
+    }
+
     const { signed_transaction, product_id } = req.body;
     if (!product_id) throw AppError.badRequest('product_id is required.');
 

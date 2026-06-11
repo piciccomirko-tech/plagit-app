@@ -31,6 +31,9 @@ router.use('/calls', require('./calls'));
 // Subscriptions
 router.use('/subscription', require('./subscription'));
 
+// Payment provider webhooks (no user auth — verified by signed payload)
+router.use('/webhooks', require('./paymentWebhooks'));
+
 // Admin
 router.use('/admin/dashboard', require('./adminDashboard'));
 router.use('/admin/users', require('./adminUsers'));
