@@ -103,6 +103,19 @@ async function filterOutAdmins(userIds) {
 // FCM sender.
 async function resolvePushRecipients(evt) {
   if (!evt || !PUSH_TYPES.has(evt.type)) return [];
+  // Call-log chat events (the 📞/📹 bubble inserted when a call is
+  // missed/ended) flow through `message.new` but are NOT real chat messages —
+  // pushing them shows a misleading "New message". Skip the push here. A
+  // dedicated missed-call notification is a separate future step.
+  if (
+    evt.type === 'message.new'
+    && evt.payload && evt.payload.message
+    && evt.payload.message.attachment_type === 'call_log'
+  ) {
+    // eslint-disable-next-line no-console
+    console.log('[push:skip-call-log] message.new attachment_type=call_log (no push)');
+    return [];
+  }
   const route = evt.type === 'notification.new'
     ? (evt.payload && evt.payload.destination_route) : null;
   if (route && ADMIN_ONLY_ROUTES.has(route)) {

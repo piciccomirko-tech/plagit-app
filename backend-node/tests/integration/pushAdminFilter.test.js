@@ -107,6 +107,21 @@ if (!RUN) {
     assert.deepEqual(r, [ctx.biz]);
   });
 
+  // 6b. message.new with attachment_type=call_log → NO push. The call-log
+  // bubble is a chat event, not a real message; pushing it shows a misleading
+  // "New message". (A dedicated missed-call notification is a separate step.)
+  test('message.new call_log → no push recipients', async () => {
+    const r = await resolvePushRecipients({
+      type: 'message.new',
+      payload: {
+        sender_user_id: ctx.cand,
+        message: { attachment_type: 'call_log' },
+      },
+      audience: [`user:${ctx.cand}`, `user:${ctx.biz}`],
+    });
+    assert.deepEqual(r, []);
+  });
+
   // 7. admin with a device token is STILL excluded (no crash)
   test('admin with a stale device token is still excluded (no crash)', async () => {
     const r = await resolvePushRecipients(
