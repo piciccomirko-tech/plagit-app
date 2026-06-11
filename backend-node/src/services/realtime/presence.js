@@ -99,4 +99,51 @@ function lastSeenAt(userId) {
   return lastSeen.get(userId) || null;
 }
 
-module.exports = { connect, disconnect, isOnline, lastSeenAt };
+// ── Foreground-state freshness (CallKit suppression) ──────────────────
+//
+// The VoIP push wakes the callee's device into the CallKit system call
+// screen. When the callee's app is already FOREGROUND it shows its own
+// in-app IncomingCallView from the SSE `call.ringing` event, so a CallKit
+// banner on top is double UI. The mobile app reports its foreground state
+// here (POST /v1/presence/app-state) and callController.initiate asks
+// `isForeground` to decide whether to SKIP the push.
+//
+// Deliberately NOT derived from `isOnline` (the SSE connection counter):
+// the SSE stream stays connected for a while after the app backgrounds,
+// so `isOnline` is true in background too — unsafe as a foreground proxy.
+//
+// A short TTL makes the state self-expire: if it is stale (app was killed
+// or the heartbeat stopped) or unknown, `isForeground` returns false →
+// the push IS sent → CallKit rings. Background is therefore never broken;
+// the worst case of a missing report is "CallKit shows", not "no call".
+const FOREGROUND_TTL_MS = 15000; // 15s freshness window
+const foregroundAt = new Map(); // userId -> ms epoch of last foreground=true report
+
+function setAppState(userId, foreground) {
+  if (!userId) return;
+  if (foreground) {
+    foregroundAt.set(userId, Date.now());
+  } else {
+    foregroundAt.delete(userId);
+  }
+}
+
+function isForeground(userId) {
+  const at = foregroundAt.get(userId);
+  if (at === undefined) return false; // no report → safe default (send push)
+  if (Date.now() - at > FOREGROUND_TTL_MS) {
+    foregroundAt.delete(userId); // prune stale entry
+    return false;
+  }
+  return true;
+}
+
+module.exports = {
+  connect,
+  disconnect,
+  isOnline,
+  lastSeenAt,
+  setAppState,
+  isForeground,
+  FOREGROUND_TTL_MS,
+};

@@ -53,4 +53,29 @@ router.get('/conversation/:convId', async (req, res, next) => {
   } catch (err) { next(err); }
 });
 
+/**
+ * POST /v1/presence/app-state
+ *
+ * The mobile app reports whether it is currently FOREGROUND. The call
+ * controller uses this to decide whether to send a VoIP push (CallKit)
+ * or rely on the in-app IncomingCallView driven by the `call.ringing`
+ * SSE event. Body: { foreground: boolean }.
+ *
+ * Foreground state has a short TTL (presence.FOREGROUND_TTL_MS); the app
+ * refreshes it with a heartbeat while active and reports `false` on
+ * background/inactive. A stale or absent state resolves to "not
+ * foreground" → the push IS sent → CallKit rings (background never
+ * broken). Anything other than the literal boolean `true` is treated
+ * as false (safe default).
+ *
+ * Response: { foreground }
+ */
+router.post('/app-state', (req, res, next) => {
+  try {
+    const foreground = req.body && req.body.foreground === true;
+    presence.setAppState(req.user.id, foreground);
+    ok(res, { foreground });
+  } catch (err) { next(err); }
+});
+
 module.exports = router;

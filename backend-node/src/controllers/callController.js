@@ -45,6 +45,7 @@ const { hiringNotify } = require('./businessController');
 // device via PushKit so CallKit can ring cold-start. No-op in production until
 // VOIP_PUSH_ENABLED is armed AND the real .p8 sender is wired — see the module.
 const voipPush = require('../services/push/apnsVoipSender');
+const presence = require('../services/realtime/presence');
 
 // ── State machine ──────────────────────────────────────────────────
 const STATUS = Object.freeze({
@@ -564,16 +565,26 @@ async function initiate(req, res, next) {
     await publishCallEvent(row);
 
     // Step D — best-effort VoIP ring to the callee (PushKit/CallKit cold-start).
-    // SKELETON + flag-gated OFF → no-op in production. Strictly non-fatal: a
-    // VoIP push must NEVER break call initiation (SSE already fired above), so
-    // it is fire-and-forget and swallows its own errors.
-    voipPush
-      .sendRingToUser(calleeUserId, {
-        callId: row.id,
-        callType,
-        callerId: userId,
-      })
-      .catch(() => { /* non-fatal: the sender logs its own failures */ });
+    // Strictly non-fatal: a VoIP push must NEVER break call initiation (SSE
+    // already fired above), so it is fire-and-forget and swallows its errors.
+    //
+    // Foreground suppression: when the callee's app is FOREGROUND it already
+    // shows the in-app IncomingCallView from the `call.ringing` SSE above, so
+    // a CallKit banner on top would be double UI. Skip the push in that case.
+    // `isForeground` is false for background / locked / terminated / unknown /
+    // stale state → the push IS sent → CallKit rings (background never broken).
+    if (presence.isForeground(calleeUserId)) {
+      // eslint-disable-next-line no-console
+      console.log(`[voip:gate] callee foreground — VoIP push skipped (in-app UI), call=${row.id}`);
+    } else {
+      voipPush
+        .sendRingToUser(calleeUserId, {
+          callId: row.id,
+          callType,
+          callerId: userId,
+        })
+        .catch(() => { /* non-fatal: the sender logs its own failures */ });
+    }
 
     return created(res, { call: await publicCallSnapshot(row) });
   } catch (err) { next(err); }

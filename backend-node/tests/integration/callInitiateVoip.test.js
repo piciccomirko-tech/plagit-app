@@ -28,6 +28,7 @@ if (!RUN) {
   const db = require('../../src/config/db');
   const { initiate } = require('../../src/controllers/callController');
   const voipPush = require('../../src/services/push/apnsVoipSender');
+  const presence = require('../../src/services/realtime/presence');
 
   const STAMP = `${Date.now()}`;
   const EMAIL = {
@@ -121,8 +122,44 @@ if (!RUN) {
     assert.equal(row.status, 'ringing');
   });
 
+  test('initiate SKIPS the VoIP push when the callee is FOREGROUND', async () => {
+    // Clear the ringing call the previous test left, else CALL_ALREADY_LIVE.
+    await db('calls').where({ id: ctx.callId }).del();
+
+    let called = false;
+    voipPush.sendRingToUser = () => { called = true; return Promise.resolve({}); };
+    presence.setAppState(ctx.calleeId, true); // callee app reports foreground
+
+    const { status, body } = await callInitiate(ctx.callerId, {
+      conversation_id: ctx.convId,
+      type: 'audio',
+    });
+
+    assert.equal(status, 201, 'call still created');
+    assert.equal(called, false, 'VoIP push SKIPPED because callee is foreground');
+    ctx.callId = body.data.call.callId;
+  });
+
+  test('initiate SENDS the VoIP push when the callee is NOT foreground', async () => {
+    await db('calls').where({ id: ctx.callId }).del();
+
+    let called = false;
+    voipPush.sendRingToUser = () => { called = true; return Promise.resolve({}); };
+    presence.setAppState(ctx.calleeId, false); // background → push must fire
+
+    const { status, body } = await callInitiate(ctx.callerId, {
+      conversation_id: ctx.convId,
+      type: 'audio',
+    });
+
+    assert.equal(status, 201, 'call still created');
+    assert.equal(called, true, 'VoIP push SENT because callee is not foreground');
+    ctx.callId = body.data.call.callId;
+  });
+
   test('teardown: restore real sender + delete seed', async () => {
     voipPush.sendRingToUser = realSend;
+    presence.setAppState(ctx.calleeId, false);
     await cleanup();
     await db.destroy();
   });
