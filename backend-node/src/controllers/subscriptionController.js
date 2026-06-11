@@ -1,6 +1,7 @@
 const db = require('../config/db');
 const { ok } = require('../utils/response');
 const AppError = require('../utils/AppError');
+const entitlements = require('../services/entitlements');
 
 async function verifyReceipt(req, res, next) {
   try {
@@ -76,7 +77,14 @@ async function getStatus(req, res, next) {
       }
     }
 
+    // Payments Step 1 — provider-agnostic premium derived from
+    // user_entitlements (the new source of truth). Additive: `is_premium`
+    // + `premium` are the fields the app will read; the legacy
+    // subscription_* fields are kept untouched for backward-compat.
+    const premium = await entitlements.buildPremiumStatus(req.user.id);
+
     ok(res, {
+      ...premium,
       subscription_plan: plan,
       subscription_status: status,
       subscription_expires: user.subscription_expires ? new Date(user.subscription_expires).toISOString() : null,
