@@ -387,17 +387,25 @@ async function maybeInsertCallLogMessage(row) {
 // 'message' call-log row). linked_entity = call id (per-call dedupe).
 async function maybeNotifyMissedCall(row, identities) {
   if (row.status !== STATUS.MISSED) return;
+  // WhatsApp-style missed-call notification: TITLE = caller display name
+  // (business / candidate name), BODY = "<emoji> Missed voice/video call".
+  // No redundant "Missed call" title and no "from <name>" in the body (the
+  // name is already the title). Both surfaces — the OS push banner
+  // (subscriber passes title/body verbatim) and the in-app bell list
+  // (renders the stored title/body) — pick this up with no client change.
   const callerName = (identities
     && identities[row.caller_id]
-    && identities[row.caller_id].name) || 'Someone';
-  const kind = row.type === 'video' ? 'video' : 'voice';
+    && identities[row.caller_id].name) || 'Plagit Call';
+  const body = row.type === 'video'
+    ? '🎥 Missed video call'
+    : '☎️ Missed voice call';
   await hiringNotify(
     row.callee_id,
-    'Missed call',
+    callerName,
     'in_app',
     row.id,
     'call_missed',
-    `Missed ${kind} call from ${callerName}`,
+    body,
   );
 }
 
