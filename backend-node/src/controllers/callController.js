@@ -734,6 +734,18 @@ async function end(req, res, next) {
     // the transition we just executed.
     await publishCallEvent(updated);
 
+    // BUG1 — caller cancelled before pickup: a still-RINGING callee may be
+    // killed (no SSE), so the SSE `call.missed` above never reaches it and the
+    // CallKit ring lingers until a manual swipe. Push a VoIP "end" so the
+    // device dismisses CallKit on its own → missed, no swipe. Only when the
+    // CALLER cancels a still-RINGING call (callee-side decline already dismisses
+    // its own CallKit, and accepted-end is delivered over the live SSE).
+    if (call.status === STATUS.RINGING && userId === call.caller_id) {
+      voipPush
+        .sendEndToUser(call.callee_id, { callId: call.id })
+        .catch(() => { /* non-fatal: the sender logs its own failures */ });
+    }
+
     return ok(res, { call: await publicCallSnapshot(updated) });
   } catch (err) { next(err); }
 }

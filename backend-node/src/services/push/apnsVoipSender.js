@@ -251,6 +251,69 @@ async function sendRingToUser(calleeUserId, ctx = {}) {
   /* eslint-enable no-console */
 }
 
+/**
+ * Build the PushKit "end/cancel" notification. Same VoIP envelope as the ring
+ * (apns-push-type: voip, topic <bundle>.voip) but payload carries
+ * `event: 'end'` so AppDelegate dismisses the ringing CallKit instead of
+ * showing it. Exported for tests.
+ */
+function buildEndNotification(ctx) {
+  // eslint-disable-next-line global-require
+  const apn = require('@parse/node-apn');
+  const note = new apn.Notification();
+  note.topic = `${process.env.APNS_BUNDLE_ID}.voip`;
+  note.pushType = 'voip';
+  note.priority = 10;
+  note.expiry = Math.floor(Date.now() / 1000) + 30;
+  note.payload = { call_id: ctx.callId || null, event: 'end' };
+  return note;
+}
+
+/**
+ * Best-effort "cancel/end" VoIP push to a callee that is still RINGING when the
+ * caller hangs up before pickup. Wakes the (possibly killed) device so it can
+ * dismiss the CallKit ring → the call becomes missed without a manual swipe.
+ * NEVER throws. Same mode-gating as [sendRingToUser].
+ */
+async function sendEndToUser(calleeUserId, ctx = {}) {
+  const mode = resolveMode();
+  if (mode === 'off') return { mode: 'off', sent: 0, skipped: true };
+  /* eslint-disable no-console */
+  try {
+    const tokens = await getVoipTokensForUser(calleeUserId);
+    if (!tokens.length) {
+      console.log(`[voip:${mode}] no VoIP token for callee — no end push (call=${ctx.callId})`);
+      return { mode, sent: 0, tokens: 0 };
+    }
+    if (mode === 'log') {
+      for (const t of tokens) {
+        console.log(`[voip:log] would END token=${short(t)} call=${ctx.callId}`);
+      }
+      return { mode, sent: 0, tokens: tokens.length, transmitted: false };
+    }
+    const provider = getProvider();
+    if (!provider) {
+      console.warn(`[voip:live] provider unavailable — no end (call=${ctx.callId})`);
+      return { mode, sent: 0, tokens: tokens.length, transmitted: false, providerDown: true };
+    }
+    let sent = 0;
+    for (const t of tokens) {
+      const note = buildEndNotification(ctx);
+      const res = await provider.send(note, t);
+      const okCount = (res && res.sent && res.sent.length) || 0;
+      sent += okCount;
+      const failed = (res && res.failed) || [];
+      for (const f of failed) await maybeRevoke(f, t);
+      if (okCount) console.log(`[voip:live] END sent token=${short(t)} call=${ctx.callId}`);
+    }
+    return { mode, sent, tokens: tokens.length, transmitted: true };
+  } catch (err) {
+    console.error('[voip:error] sendEndToUser failed (non-fatal):', err && err.message);
+    return { mode, sent: 0, error: true };
+  }
+  /* eslint-enable no-console */
+}
+
 // Test hook — inject a fake provider so the live path is exercisable WITHOUT a
 // real APNs network connection. Never used in production code paths.
 function _setProviderForTest(fake) {
@@ -260,12 +323,14 @@ function _setProviderForTest(fake) {
 
 module.exports = {
   sendRingToUser,
+  sendEndToUser,
   // Exported for tests / introspection:
   _internal: {
     resolveMode,
     hasCreds,
     short,
     buildVoipNotification,
+    buildEndNotification,
     resolveCallerName,
     getVoipTokensForUser,
     maybeRevoke,
