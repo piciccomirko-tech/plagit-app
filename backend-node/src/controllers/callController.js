@@ -573,7 +573,13 @@ async function initiate(req, res, next) {
     // a CallKit banner on top would be double UI. Skip the push in that case.
     // `isForeground` is false for background / locked / terminated / unknown /
     // stale state → the push IS sent → CallKit rings (background never broken).
-    if (presence.isForeground(calleeUserId)) {
+    // Skip the VoIP push ONLY when the callee is truly foreground AND online.
+    // A force-killed app cannot report `foreground:false` (its async POST is
+    // torn down with the process), so its foreground flag lingers up to the
+    // 15s TTL → a quick follow-up call would be wrongly suppressed. The killed
+    // app DOES drop its SSE socket (→ isOnline=false within ~1-2s), so adding
+    // the online conjunction means killed/background always rings.
+    if (presence.isForeground(calleeUserId) && presence.isOnline(calleeUserId)) {
       // eslint-disable-next-line no-console
       console.log(`[voip:gate] callee foreground — VoIP push skipped (in-app UI), call=${row.id}`);
     } else {
