@@ -46,7 +46,12 @@ workflows:
       # CM_KEYSTORE_PASSWORD, CM_KEY_ALIAS, CM_KEY_PASSWORD during the build.
       android_signing:
         - plagit_upload_keystore
-      flutter: stable
+      # Pinned: this old project uses the legacy Android Gradle structure
+      # (settings.gradle `apply from app_plugin_loader.gradle`), which Flutter
+      # 3.29+ no longer supports ("unsupported Gradle project"). 3.24.5 still
+      # supports it and satisfies the Dart >=3.4.1 constraint; its template
+      # matches AGP 8.1.0 + Gradle 8.3.
+      flutter: 3.24.5
     scripts:
       - name: Get dependencies
         script: flutter pub get
