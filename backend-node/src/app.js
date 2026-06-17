@@ -51,6 +51,32 @@ app.get('/health', async (_req, res) => {
   });
 });
 
+// ── iOS Universal Links ──
+// Apple fetches this file (no /v1 prefix, no auth, no redirect) to learn which
+// app handles which paths on this domain. When the email "Open Plagit" link
+// (https://<this-domain>/open) is tapped on a device with Plagit installed,
+// iOS opens the app directly instead of Safari.
+const APPLE_APP_ID = process.env.APPLE_APP_ID || '6CVZ9J92UW.com.plagit.plagit';
+app.get('/.well-known/apple-app-site-association', (_req, res) => {
+  res.type('application/json').json({
+    applinks: {
+      apps: [],
+      details: [{ appID: APPLE_APP_ID, paths: ['/open', '/open/*'] }],
+    },
+  });
+});
+
+// Web FALLBACK for the universal link: only reached when the app is NOT
+// installed (otherwise iOS intercepts before the request leaves the device).
+// Sends the user to the marketing site / store.
+// NOTE: Express 5 (path-to-regexp v8) rejects a bare "*" wildcard — it must be
+// a NAMED splat ("/open/*splat"), otherwise the server throws at route
+// registration and crashes on boot. The AASA JSON above keeps the standard
+// Apple "/open/*" glob, which is unrelated to Express path parsing.
+app.get(['/open', '/open/*splat'], (_req, res) => {
+  res.redirect(302, process.env.APP_WEBSITE_URL || 'https://plagit.com');
+});
+
 // API routes — all prefixed with /v1
 app.use('/v1', routes);
 
