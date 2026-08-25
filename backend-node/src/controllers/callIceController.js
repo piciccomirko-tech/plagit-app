@@ -14,7 +14,8 @@
 const db = require('../config/db');
 const { ok, noContent } = require('../utils/response');
 const {
-  buildIceConfig,
+  resolveIceConfig,
+  resolveProvider,
   resolveTransportPolicy,
 } = require('../services/iceServers');
 const { sanitizeQaBeacon } = require('../services/callQaBeacon');
@@ -33,14 +34,14 @@ const { sanitizeQaBeacon } = require('../services/callQaBeacon');
  */
 async function getIceServers(req, res) {
   const userId = req.user && req.user.id;
-  const config = buildIceConfig({ userId });
+  const config = await resolveIceConfig({ userId });
   const iceTransportPolicy = resolveTransportPolicy({ userId });
 
   // Diagnostics only — deliberately no username, no credential, no secret.
   if (!config.turnEnabled) {
     console.warn(
-      '[calls][ice] TURN not configured — serving STUN-only. ' +
-        'Calls behind symmetric NAT / CGNAT will fail.',
+      `[calls][ice] TURN unavailable (provider=${resolveProvider()}) — ` +
+        'serving STUN-only. Calls behind symmetric NAT / CGNAT will fail.',
     );
   } else if (iceTransportPolicy === 'relay') {
     console.info('[calls][ice] relay-only policy served (QA)');

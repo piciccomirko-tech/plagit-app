@@ -22,11 +22,25 @@
  */
 
 const crypto = require('crypto');
+const cloudflare = require('./turn/cloudflare');
 
 const DEFAULT_STUN = 'stun:stun.l.google.com:19302';
-const DEFAULT_TTL_SECONDS = 600;
 const MIN_TTL_SECONDS = 60;
+
+// coturn: the shared secret is ours, so a short life costs nothing and limits
+// the blast radius of a leak.
+const DEFAULT_TTL_SECONDS = 600;
 const MAX_TTL_SECONDS = 3600;
+
+// Cloudflare: the credential has to outlive the CALL, not the request.
+//
+// The shipped client caches the ICE config for the whole app session
+// (`_ensureIceServers` returns early once `_remoteIceServers` is set) and has
+// no refresh path — no setConfiguration, no ICE restart. So a credential must
+// survive both a long-backgrounded app and a long call. A 10-minute TTL would
+// expire before many calls even start.
+const DEFAULT_CLOUDFLARE_TTL_SECONDS = 86400; // 24h
+const MAX_CLOUDFLARE_TTL_SECONDS = 172800; // 48h
 
 /** Comma-separated env list → trimmed, non-empty entries. */
 function parseList(raw) {
@@ -46,10 +60,13 @@ const isStunUrl = (u) => /^stuns?:/i.test(u);
  * stays useful. Anything unparseable falls back to the default rather than
  * producing a NaN expiry.
  */
-function resolveTtlSeconds(raw) {
+function resolveTtlSeconds(
+  raw,
+  { fallback = DEFAULT_TTL_SECONDS, max = MAX_TTL_SECONDS } = {},
+) {
   const n = Number.parseInt(raw, 10);
-  if (!Number.isFinite(n)) return DEFAULT_TTL_SECONDS;
-  return Math.min(MAX_TTL_SECONDS, Math.max(MIN_TTL_SECONDS, n));
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(max, Math.max(MIN_TTL_SECONDS, n));
 }
 
 /**
@@ -142,6 +159,70 @@ function buildIceConfig({ userId, env = process.env, now = Date.now() } = {}) {
  * relays traffic that would have gone peer-to-peer). So it is opt-in per user
  * id, or behind an explicit all-users switch for a staging environment.
  */
+/** Explicit provider selection. Mixing auth models yields rejected credentials. */
+function resolveProvider(env = process.env) {
+  const p = String(env.TURN_PROVIDER || '').trim().toLowerCase();
+  return p === 'cloudflare' ? 'cloudflare' : 'coturn';
+}
+
+/**
+ * Provider-aware entry point used by the endpoint.
+ *
+ * Cloudflare mints the credential on its own side, so this is async; the
+ * coturn/static paths stay synchronous underneath. Any Cloudflare failure
+ * degrades to the STUN-only config rather than erroring — an honest degraded
+ * call beats no calling at all.
+ */
+async function resolveIceConfig({
+  userId,
+  env = process.env,
+  now = Date.now(),
+  fetchImpl,
+  logger = console,
+} = {}) {
+  if (resolveProvider(env) !== 'cloudflare') {
+    return buildIceConfig({ userId, env, now });
+  }
+
+  const ttlSeconds = resolveTtlSeconds(env.TURN_TTL_SECONDS, {
+    fallback: DEFAULT_CLOUDFLARE_TTL_SECONDS,
+    max: MAX_CLOUDFLARE_TTL_SECONDS,
+  });
+
+  const result = await cloudflare.fetchIceServers({
+    env,
+    ttlSeconds,
+    fetchImpl,
+    logger,
+  });
+
+  if (!result) return stunOnlyConfig(env);
+
+  // Cloudflare's own list already carries its STUN alongside TURN, and its
+  // credential is scoped to exactly those urls — so it is passed through
+  // untouched rather than merged with ours.
+  return {
+    iceServers: result.iceServers,
+    turnEnabled: true,
+    credentialMode: 'cloudflare',
+    ttlSeconds: result.ttlSeconds,
+    expiresAt: Math.floor(now / 1000) + result.ttlSeconds,
+  };
+}
+
+function stunOnlyConfig(env = process.env) {
+  const configured = parseList(env.STUN_URLS).filter(isStunUrl);
+  return {
+    iceServers: [
+      { urls: configured.length > 0 ? configured : [DEFAULT_STUN] },
+    ],
+    turnEnabled: false,
+    credentialMode: 'none',
+    ttlSeconds: null,
+    expiresAt: null,
+  };
+}
+
 function resolveTransportPolicy({ userId, env = process.env } = {}) {
   const qaUserIds = parseList(env.ICE_RELAY_QA_USER_IDS);
   if (userId && qaUserIds.includes(String(userId))) return 'relay';
@@ -151,6 +232,9 @@ function resolveTransportPolicy({ userId, env = process.env } = {}) {
 
 module.exports = {
   buildIceConfig,
+  resolveIceConfig,
+  resolveProvider,
+  stunOnlyConfig,
   resolveTransportPolicy,
   makeEphemeralCredential,
   resolveTtlSeconds,
@@ -158,4 +242,6 @@ module.exports = {
   DEFAULT_TTL_SECONDS,
   MIN_TTL_SECONDS,
   MAX_TTL_SECONDS,
+  DEFAULT_CLOUDFLARE_TTL_SECONDS,
+  MAX_CLOUDFLARE_TTL_SECONDS,
 };
