@@ -261,3 +261,65 @@ test('QA beacon normalises case and rejects absurd durations', () => {
   assert.equal(sanitizeQaBeacon({ role: 'CALLER' }).role, 'caller');
   assert.equal(sanitizeQaBeacon({ engine_to_ice_ms: 99_999_999 }).engineToIceMs, null);
 });
+
+test('the shape production actually has today yields working TURN', () => {
+  // Production already carries TURN_URLS / TURN_USERNAME / TURN_CREDENTIAL for
+  // a managed relay, and no TURN_PROVIDER and no shared secret. That must
+  // resolve to a usable TURN config the moment the endpoint ships — the whole
+  // point of this work is that those variables were configured but nothing
+  // ever served them.
+  const cfg = buildIceConfig({
+    userId: USER,
+    env: {
+      TURN_URLS: [
+        'turn:global.relay.example:80',
+        'turn:global.relay.example:80?transport=tcp',
+        'turn:global.relay.example:443',
+        'turns:global.relay.example:443?transport=tcp',
+      ].join(','),
+      TURN_USERNAME: 'provider-issued-user',
+      TURN_CREDENTIAL: 'provider-issued-pass',
+    },
+    now: NOW,
+  });
+
+  assert.equal(cfg.turnEnabled, true, 'existing managed TURN must be served');
+  assert.equal(cfg.credentialMode, 'static');
+
+  const urls = turnEntry(cfg).urls;
+  assert.equal(urls.length, 4, 'every configured transport survives');
+  assert.ok(urls.some((u) => u.startsWith('turns:')), 'TLS must be offered');
+  assert.ok(
+    urls.some((u) => u.includes(':443')),
+    'port 443 is the only way out of restrictive venue wifi',
+  );
+  assert.ok(
+    urls.some((u) => !/transport=tcp/.test(u)),
+    'a UDP-capable entry must remain — it is the best relay path',
+  );
+});
+
+test('switching provider without its credentials must not silently kill TURN', async () => {
+  // Setting TURN_PROVIDER=cloudflare on an environment configured for a
+  // different managed relay would drop a WORKING relay to STUN-only. This
+  // asserts the failure is total and obvious rather than partial.
+  const { resolveIceConfig } = require('../../src/services/iceServers');
+  const cfg = await resolveIceConfig({
+    userId: USER,
+    env: {
+      TURN_PROVIDER: 'cloudflare',
+      TURN_URLS: 'turn:global.relay.example:443',
+      TURN_USERNAME: 'provider-issued-user',
+      TURN_CREDENTIAL: 'provider-issued-pass',
+    },
+    now: NOW,
+    fetchImpl: async () => ({ ok: false, status: 401, json: async () => ({}) }),
+    logger: { warn() {}, info() {} },
+  });
+  assert.equal(cfg.turnEnabled, false);
+  assert.equal(
+    JSON.stringify(cfg).includes('provider-issued-user'),
+    false,
+    'the other provider\'s credentials are not reused under cloudflare mode',
+  );
+});
