@@ -10,11 +10,16 @@ const router = require('express').Router();
 const { authenticate } = require('../middleware/auth');
 const c = require('../controllers/callController');
 const cs = require('../controllers/callSignalController');
+const ci = require('../controllers/callIceController');
 
 router.use(authenticate);
 
 // Active call lookup (VoIP cold-start hydration) — GET before /:id routes
 router.get('/active', c.getActive);
+
+// STUN/TURN config for the WebRTC engine. Static path, so it MUST stay above
+// the /:id routes or '/ice-servers' would be swallowed as a call id.
+router.get('/ice-servers', ci.getIceServers);
 
 // Cold-start recovery: a callee that answered from a terminated/locked
 // device has no SSE, so it fetches the pending offer + counterpart ICE +
@@ -35,5 +40,9 @@ router.post('/:id/end', c.end);
 router.post('/:id/signal/offer',  cs.submitOffer);
 router.post('/:id/signal/answer', cs.submitAnswer);
 router.post('/:id/signal/ice',    cs.submitIce);
+
+// RELAY-vs-DIRECT diagnostic beacon (Call Reliability Phase 1). Fire-and-
+// forget on the device; always 204 so a diagnostic can never fail a call.
+router.post('/:id/qa', ci.qaBeacon);
 
 module.exports = router;
