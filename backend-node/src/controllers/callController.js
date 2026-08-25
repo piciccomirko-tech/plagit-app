@@ -32,6 +32,7 @@
  */
 
 const db = require('../config/db');
+const { identityFromRow } = require('../services/callIdentity');
 const { ok, created } = require('../utils/response');
 const AppError = require('../utils/AppError');
 const { bus } = require('../services/realtime/eventBus');
@@ -147,39 +148,30 @@ async function loadCallParticipantIdentities(callerUserId, calleeUserId) {
       'candidates.name as candidate_name',
       'candidates.initials as candidate_initials',
       'candidates.avatar_hue as candidate_avatar_hue',
+      // Professional role. `primary_role` is the canonical column added by
+      // migration 012 and back-filled from the legacy `role`; the same
+      // COALESCE is what candidateController uses to build a candidate's
+      // effective role, so the call screen cannot disagree with the rest of
+      // the app about what someone does.
+      'candidates.primary_role as candidate_primary_role',
+      'candidates.role as candidate_role',
+      // Role-specific verification. `users.is_verified` is the ACCOUNT flag
+      // and is deliberately not used here: the app verifies candidates and
+      // businesses through their own profile state, and showing a badge from
+      // a different source would be a claim nobody actually granted.
+      'candidates.verification_status as candidate_verification_status',
       'businesses.name as business_name',
       'businesses.initials as business_initials',
       'businesses.avatar_hue as business_avatar_hue',
+      'businesses.venue_type as business_venue_type',
+      'businesses.contact as business_contact',
+      'businesses.is_verified as business_is_verified',
     );
 
   const out = {};
   for (const r of rows) {
-    const isBusiness = r.user_type === 'business';
-    const isCandidate = r.user_type === 'candidate';
-    const name =
-      (isBusiness && r.business_name) ||
-      (isCandidate && r.candidate_name) ||
-      r.user_name ||
-      null;
-    const initials =
-      (isBusiness && r.business_initials) ||
-      (isCandidate && r.candidate_initials) ||
-      r.user_initials ||
-      null;
-    const avatarHue =
-      (isBusiness && r.business_avatar_hue) ??
-      (isCandidate && r.candidate_avatar_hue) ??
-      r.user_avatar_hue ??
-      null;
-
-    out[r.user_id] = {
-      id: r.user_id,
-      role: r.user_type || null,
-      name,
-      initials,
-      photoUrl: r.photo_url || null,
-      avatarHue,
-    };
+    const identity = identityFromRow(r);
+    if (identity) out[r.user_id] = identity;
   }
   return out;
 }
